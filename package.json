@@ -1,0 +1,55 @@
+{
+  "name": "dodo",
+  "version": "1.0.0",
+  "description": "a kind of bird",
+  "main": "index.js",
+  "author": "dodo breeder",
+  "license": "Apache-2.0",
+  "keywords": [
+    "dodo",
+    "ethereum",
+    "lmm"
+  ],
+  "scripts": {
+    "prettier": "prettier --write **/*.sol",
+    "migrate": "truffle migrate",
+    "compile": "truffle compile",
+    "coverage": "NETWORK_ID=1002 RPC_NODE_URI=http://127.0.0.1:6545 COVERAGE=true truffle run coverage",
+    "test": "truffle compile && truffle test",
+    "test_only": "truffle test",
+    "deploy": "truffle migrate --network=$NETWORK --reset",
+    "deploy_kovan": "NETWORK=kovan npm run deploy",
+    "deploy_mainnet": "NETWORK=mainnet npm run deploy",
+    "deploy_test": "NETWORK=development npm run deploy",
+    "node": "ganache-cli --port 8545 -l 0x1fffffffffffff -i 5777 -g 1 --allowUnlimitedContractSize"
+  },
+  "dependencies": {
+    "@types/chai": "^4.2.11",
+    "@types/es6-promisify": "^6.0.0",
+    "@types/mocha": "^7.0.2",
+    "assert": "^2.0.0",
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^10.1.0",
+    "bignumber.js": "^9.0.0",
+    "chai": "^4.2.0",
+    "chai-bignumber": "^3.0.0",
+    "debug": "^4.1.1",
+    "dotenv-flow": "^3.1.0",
+    "es6-promisify": "^6.1.1",
+    "ethereumjs-util": "^7.0.2",
+    "lodash": "^4.17.15",
+    "mocha": "^7.2.0",
+    "truffle-hdwallet-provider": "^1.0.17",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.5",
+    "web3": "^1.2.8",
+    "web3-core-helpers": "^1.2.8",
+    "web3-eth-contract": "^1.2.8"
+  },
+  "devDependencies": {
+    "ganache-cli": "^6.9.1",
+    "prettier": "^2.0.5",
+    "prettier-plugin-solidity": "^1.0.0-alpha.52",
+    "solidity-coverage": "^0.7.7"
+  }
+}
