@@ -60,18 +60,18 @@ describe("Trader", () => {
       assert.equal(await ctx.DODO.methods._QUOTE_BALANCE_().call(), "1101418160497943759027")
     })
 
-    it("buy when R is ABOVE ONE", async () => {
+    it.only("buy when R is ABOVE ONE", async () => {
       await ctx.DODO.methods.buyBaseToken(decimalStr("1"), decimalStr("110")).send(ctx.sendParam(trader))
-      await ctx.DODO.methods.buyBaseToken(decimalStr("4"), decimalStr("500")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.buyBaseToken(decimalStr("1"), decimalStr("130")).send(ctx.sendParam(trader))
       // trader balances
-      assert.equal(await ctx.BASE.methods.balanceOf(trader).call(), decimalStr("15"))
-      assert.equal(await ctx.QUOTE.methods.balanceOf(trader).call(), "448068135932873382076")
+      assert.equal(await ctx.BASE.methods.balanceOf(trader).call(), decimalStr("12"))
+      assert.equal(await ctx.QUOTE.methods.balanceOf(trader).call(), "794367183433412077753")
       // maintainer balances
-      assert.equal(await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(), decimalStr("0.005"))
+      assert.equal(await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(), decimalStr("0.002"))
       assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(), decimalStr("0"))
       // dodo balances
-      assert.equal(await ctx.DODO.methods._BASE_BALANCE_().call(), decimalStr("4.995"))
-      assert.equal(await ctx.DODO.methods._QUOTE_BALANCE_().call(), "1551931864067126617924")
+      assert.equal(await ctx.DODO.methods._BASE_BALANCE_().call(), decimalStr("7.998"))
+      assert.equal(await ctx.DODO.methods._QUOTE_BALANCE_().call(), "1205632816566587922247")
     })
 
     it("sell when R is ABOVE ONE", async () => {
@@ -141,22 +141,18 @@ describe("Trader", () => {
       assert.equal(await ctx.DODO.methods._QUOTE_BALANCE_().call(), "901283631576572307520")
     })
 
-    it.only("sell when R is BELOW ONE", async () => {
+    it("sell when R is BELOW ONE", async () => {
       await ctx.DODO.methods.sellBaseToken(decimalStr("3"), decimalStr("90")).send(ctx.sendParam(trader))
-      console.log(await ctx.BASE.methods.balanceOf(trader).call(), decimalStr("8"))
-      console.log(await ctx.QUOTE.methods.balanceOf(trader).call(), "1197235140964438116338")
-      console.log(await ctx.DODO.methods._QUOTE_BALANCE_().call())
-
       await ctx.DODO.methods.sellBaseToken(decimalStr("3"), decimalStr("90")).send(ctx.sendParam(trader))
       // trader balances
-      console.log(await ctx.BASE.methods.balanceOf(trader).call(), decimalStr("8"))
-      console.log(await ctx.QUOTE.methods.balanceOf(trader).call(), "1197235140964438116338")
+      assert.equal(await ctx.BASE.methods.balanceOf(trader).call(), decimalStr("4"))
+      assert.equal(await ctx.QUOTE.methods.balanceOf(trader).call(), "1535961012052716726546")
       // maintainer balances
-      console.log(await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(), "0")
-      console.log(await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(), "197828626844973035")
+      assert.equal(await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(), "0")
+      assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(), "537573733252474148")
       // dodo balances
-      console.log(await ctx.DODO.methods._BASE_BALANCE_().call(), decimalStr("12"))
-      console.log(await ctx.DODO.methods._QUOTE_BALANCE_().call(), "802567030408716910627")
+      assert.equal(await ctx.DODO.methods._BASE_BALANCE_().call(), decimalStr("16"))
+      assert.equal(await ctx.DODO.methods._QUOTE_BALANCE_().call(), "463501414214030799306")
     })
 
     it("buy when R is BELOW ONE", async () => {
