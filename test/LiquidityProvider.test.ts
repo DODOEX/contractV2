@@ -386,7 +386,7 @@ describe("LiquidityProvider", () => {
 
       await assert.rejects(
         ctx.DODO.methods.getWithdrawBasePenalty(decimalStr("10")).call(),
-        /DODO_BASE_BALANCE_NOT_ENOUGH/
+        /DODO_BASE_TOKEN_BALANCE_NOT_ENOUGH/
       )
     })
 
@@ -401,7 +401,7 @@ describe("LiquidityProvider", () => {
 
       await assert.rejects(
         ctx.DODO.methods.getWithdrawQuotePenalty(decimalStr("1000")).call(),
-        /DODO_QUOTE_BALANCE_NOT_ENOUGH/
+        /DODO_QUOTE_TOKEN_BALANCE_NOT_ENOUGH/
       )
     })
 
@@ -439,6 +439,17 @@ describe("LiquidityProvider", () => {
       await assert.rejects(
         ctx.DODO.methods.withdrawQuote(decimalStr("1100")).send(ctx.sendParam(lp1)),
         /LP_QUOTE_CAPITAL_BALANCE_NOT_ENOUGH/
+      )
+    })
+
+    it("withdraw when there is no lp", async () => {
+      await assert.rejects(
+        ctx.DODO.methods.withdrawBase(decimalStr("1")).send(ctx.sendParam(lp1)),
+        /NO_BASE_LP/
+      )
+      await assert.rejects(
+        ctx.DODO.methods.withdrawQuote(decimalStr("1")).send(ctx.sendParam(lp1)),
+        /NO_QUOTE_LP/
       )
     })
   })
