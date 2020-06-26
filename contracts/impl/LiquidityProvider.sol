@@ -17,7 +17,6 @@ import {Storage} from "./Storage.sol";
 import {Settlement} from "./Settlement.sol";
 import {Pricing} from "./Pricing.sol";
 
-
 /**
  * @title LiquidityProvider
  * @author DODO Breeder
@@ -87,35 +86,37 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
         depositQuoteAllowed
     {
         (, uint256 quoteTarget) = _getExpectedTarget();
-        uint256 capital = amount;
         uint256 totalQuoteCapital = getTotalQuoteCapital();
+        uint256 capital = amount;
         if (totalQuoteCapital == 0) {
-            capital = amount.add(quoteTarget); // give remaining quote token to lp as a gift
-        }
-        if (quoteTarget > 0 && totalQuoteCapital > 0) {
+            // give remaining quote token to lp as a gift
+            capital = amount.add(quoteTarget);
+        } else if (quoteTarget > 0) {
             capital = amount.mul(totalQuoteCapital).div(quoteTarget);
         }
+
         // settlement
         _quoteTokenTransferIn(msg.sender, amount);
-        _mintQuoteTokenCapital(to, capital);
+        _mintQuoteCapital(to, capital);
         _TARGET_QUOTE_TOKEN_AMOUNT_ = _TARGET_QUOTE_TOKEN_AMOUNT_.add(amount);
 
         emit DepositQuoteToken(msg.sender, to, amount);
     }
 
-    function depositBaseTo(address to, uint256 amount) public preventReentrant depositBaseAllowed {
+    function depositBaseTo(address to, uint256 amount) public preventReentrant depositQuoteAllowed {
         (uint256 baseTarget, ) = _getExpectedTarget();
-        uint256 capital = amount;
         uint256 totalBaseCapital = getTotalBaseCapital();
+        uint256 capital = amount;
         if (totalBaseCapital == 0) {
-            capital = amount.add(baseTarget); // give remaining base token to lp as a gift
-        }
-        if (baseTarget > 0 && totalBaseCapital > 0) {
+            // give remaining base token to lp as a gift
+            capital = amount.add(baseTarget);
+        } else if (baseTarget > 0) {
             capital = amount.mul(totalBaseCapital).div(baseTarget);
         }
+
         // settlement
         _baseTokenTransferIn(msg.sender, amount);
-        _mintBaseTokenCapital(to, capital);
+        _mintBaseCapital(to, capital);
         _TARGET_BASE_TOKEN_AMOUNT_ = _TARGET_BASE_TOKEN_AMOUNT_.add(amount);
 
         emit DepositBaseToken(msg.sender, to, amount);
@@ -124,12 +125,12 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
     // ============ Withdraw Functions ============
 
     function withdrawQuoteTo(address to, uint256 amount) public preventReentrant returns (uint256) {
-        uint256 Q = _QUOTE_BALANCE_;
-        require(amount <= Q, "DODO_QUOTE_TOKEN_BALANCE_NOT_ENOUGH");
-
         // calculate capital
         (, uint256 quoteTarget) = _getExpectedTarget();
-        uint256 requireQuoteCapital = amount.mul(getTotalQuoteCapital()).divCeil(quoteTarget);
+        uint256 totalQuoteCapital = getTotalQuoteCapital();
+        require(totalQuoteCapital > 0, "NO_QUOTE_LP");
+
+        uint256 requireQuoteCapital = amount.mul(totalQuoteCapital).divCeil(quoteTarget);
         require(
             requireQuoteCapital <= getQuoteCapitalBalanceOf(msg.sender),
             "LP_QUOTE_CAPITAL_BALANCE_NOT_ENOUGH"
@@ -137,11 +138,11 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
         // handle penalty, penalty may exceed amount
         uint256 penalty = getWithdrawQuotePenalty(amount);
-        require(penalty <= amount, "COULD_NOT_AFFORD_LIQUIDITY_PENALTY");
+        require(penalty < amount, "COULD_NOT_AFFORD_LIQUIDITY_PENALTY");
 
         // settlement
         _TARGET_QUOTE_TOKEN_AMOUNT_ = _TARGET_QUOTE_TOKEN_AMOUNT_.sub(amount);
-        _burnQuoteTokenCapital(msg.sender, requireQuoteCapital);
+        _burnQuoteCapital(msg.sender, requireQuoteCapital);
         _quoteTokenTransferOut(to, amount.sub(penalty));
         _donateQuoteToken(penalty);
 
@@ -152,12 +153,12 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
     }
 
     function withdrawBaseTo(address to, uint256 amount) public preventReentrant returns (uint256) {
-        uint256 B = _BASE_BALANCE_;
-        require(amount <= B, "DODO_BASE_TOKEN_BALANCE_NOT_ENOUGH");
-
         // calculate capital
         (uint256 baseTarget, ) = _getExpectedTarget();
-        uint256 requireBaseCapital = amount.mul(getTotalBaseCapital()).divCeil(baseTarget);
+        uint256 totalBaseCapital = getTotalBaseCapital();
+        require(totalBaseCapital > 0, "NO_BASE_LP");
+
+        uint256 requireBaseCapital = amount.mul(totalBaseCapital).divCeil(baseTarget);
         require(
             requireBaseCapital <= getBaseCapitalBalanceOf(msg.sender),
             "LP_BASE_CAPITAL_BALANCE_NOT_ENOUGH"
@@ -169,7 +170,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
         // settlement
         _TARGET_BASE_TOKEN_AMOUNT_ = _TARGET_BASE_TOKEN_AMOUNT_.sub(amount);
-        _burnBaseTokenCapital(msg.sender, requireBaseCapital);
+        _burnBaseCapital(msg.sender, requireBaseCapital);
         _baseTokenTransferOut(to, amount.sub(penalty));
         _donateBaseToken(penalty);
 
@@ -182,9 +183,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
     // ============ Withdraw all Functions ============
 
     function withdrawAllQuoteTo(address to) public preventReentrant returns (uint256) {
-        uint256 Q = _QUOTE_BALANCE_;
         uint256 withdrawAmount = getLpQuoteBalance(msg.sender);
-        require(withdrawAmount <= Q, "DODO_QUOTE_TOKEN_BALANCE_NOT_ENOUGH");
 
         // handle penalty, penalty may exceed amount
         uint256 penalty = getWithdrawQuotePenalty(withdrawAmount);
@@ -192,7 +191,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
         // settlement
         _TARGET_QUOTE_TOKEN_AMOUNT_ = _TARGET_QUOTE_TOKEN_AMOUNT_.sub(withdrawAmount);
-        _burnQuoteTokenCapital(msg.sender, getQuoteCapitalBalanceOf(msg.sender));
+        _burnQuoteCapital(msg.sender, getQuoteCapitalBalanceOf(msg.sender));
         _quoteTokenTransferOut(to, withdrawAmount.sub(penalty));
         _donateQuoteToken(penalty);
 
@@ -203,9 +202,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
     }
 
     function withdrawAllBaseTo(address to) public preventReentrant returns (uint256) {
-        uint256 B = _BASE_BALANCE_;
         uint256 withdrawAmount = getLpBaseBalance(msg.sender);
-        require(withdrawAmount <= B, "DODO_BASE_TOKEN_BALANCE_NOT_ENOUGH");
 
         // handle penalty, penalty may exceed amount
         uint256 penalty = getWithdrawBasePenalty(withdrawAmount);
@@ -213,7 +210,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
         // settlement
         _TARGET_BASE_TOKEN_AMOUNT_ = _TARGET_BASE_TOKEN_AMOUNT_.sub(withdrawAmount);
-        _burnBaseTokenCapital(msg.sender, getBaseCapitalBalanceOf(msg.sender));
+        _burnBaseCapital(msg.sender, getBaseCapitalBalanceOf(msg.sender));
         _baseTokenTransferOut(to, withdrawAmount.sub(penalty));
         _donateBaseToken(penalty);
 
@@ -225,19 +222,19 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
     // ============ Helper Functions ============
 
-    function _mintBaseTokenCapital(address user, uint256 amount) internal {
+    function _mintBaseCapital(address user, uint256 amount) internal {
         IDODOLpToken(_BASE_CAPITAL_TOKEN_).mint(user, amount);
     }
 
-    function _mintQuoteTokenCapital(address user, uint256 amount) internal {
+    function _mintQuoteCapital(address user, uint256 amount) internal {
         IDODOLpToken(_QUOTE_CAPITAL_TOKEN_).mint(user, amount);
     }
 
-    function _burnBaseTokenCapital(address user, uint256 amount) internal {
+    function _burnBaseCapital(address user, uint256 amount) internal {
         IDODOLpToken(_BASE_CAPITAL_TOKEN_).burn(user, amount);
     }
 
-    function _burnQuoteTokenCapital(address user, uint256 amount) internal {
+    function _burnQuoteCapital(address user, uint256 amount) internal {
         IDODOLpToken(_QUOTE_CAPITAL_TOKEN_).burn(user, amount);
     }
 
@@ -264,8 +261,8 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
     }
 
     function getWithdrawQuotePenalty(uint256 amount) public view returns (uint256 penalty) {
+        require(amount <= _QUOTE_BALANCE_, "DODO_QUOTE_TOKEN_BALANCE_NOT_ENOUGH");
         if (_R_STATUS_ == Types.RStatus.BELOW_ONE) {
-            require(amount < _QUOTE_BALANCE_, "DODO_QUOTE_BALANCE_NOT_ENOUGH");
             uint256 spareBase = _BASE_BALANCE_.sub(_TARGET_BASE_TOKEN_AMOUNT_);
             uint256 price = getOraclePrice();
             uint256 fairAmount = DecimalMath.mul(spareBase, price);
@@ -274,6 +271,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
                 _K_,
                 fairAmount
             );
+            // if amount = _QUOTE_BALANCE_, div error
             uint256 targetQuoteWithWithdraw = DODOMath._SolveQuadraticFunctionForTarget(
                 _QUOTE_BALANCE_.sub(amount),
                 _K_,
@@ -286,8 +284,8 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
     }
 
     function getWithdrawBasePenalty(uint256 amount) public view returns (uint256 penalty) {
+        require(amount <= _BASE_BALANCE_, "DODO_BASE_TOKEN_BALANCE_NOT_ENOUGH");
         if (_R_STATUS_ == Types.RStatus.ABOVE_ONE) {
-            require(amount < _BASE_BALANCE_, "DODO_BASE_BALANCE_NOT_ENOUGH");
             uint256 spareQuote = _QUOTE_BALANCE_.sub(_TARGET_QUOTE_TOKEN_AMOUNT_);
             uint256 price = getOraclePrice();
             uint256 fairAmount = DecimalMath.divFloor(spareQuote, price);
@@ -296,6 +294,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
                 _K_,
                 fairAmount
             );
+            // if amount = _BASE_BALANCE_, div error
             uint256 targetBaseWithWithdraw = DODOMath._SolveQuadraticFunctionForTarget(
                 _BASE_BALANCE_.sub(amount),
                 _K_,
