@@ -43,12 +43,12 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
     // ============ Modifiers ============
 
     modifier depositQuoteAllowed() {
-        require(_DEPOSIT_QUOTE_ALLOWED_, "DEPOSIT_QUOTE_NOT_ALLOWED");
+        require(_DEPOSIT_QUOTE_ALLOWED_, "DEPOSIT_QUOTE_TOKEN_NOT_ALLOWED");
         _;
     }
 
     modifier depositBaseAllowed() {
-        require(_DEPOSIT_BASE_ALLOWED_, "DEPOSIT_BASE_NOT_ALLOWED");
+        require(_DEPOSIT_BASE_ALLOWED_, "DEPOSIT_BASE_TOKEN_NOT_ALLOWED");
         _;
     }
 
@@ -103,7 +103,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
         emit DepositQuoteToken(msg.sender, to, amount);
     }
 
-    function depositBaseTo(address to, uint256 amount) public preventReentrant depositQuoteAllowed {
+    function depositBaseTo(address to, uint256 amount) public preventReentrant depositBaseAllowed {
         (uint256 baseTarget, ) = _getExpectedTarget();
         uint256 totalBaseCapital = getTotalBaseCapital();
         uint256 capital = amount;
