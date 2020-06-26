@@ -223,6 +223,7 @@ contract Trader is Storage, Pricing, Settlement {
             // complex case, R status may change
             if (buyBaseAmount < backToOneReceiveBase) {
                 // case 3.1: R status do not change
+                // no need to check payQuote because spare base token must be greater than zero
                 payQuote = _RBelowBuyBaseToken(buyBaseAmount, _QUOTE_BALANCE_, newQuoteTarget);
                 newRStatus = Types.RStatus.BELOW_ONE;
             } else if (buyBaseAmount == backToOneReceiveBase) {
