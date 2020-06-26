@@ -13,7 +13,7 @@
   "scripts": {
     "prettier": "prettier --write **/*.sol",
     "migrate": "truffle migrate",
-    "compile": "truffle compile",
+    "compile": "rm -r build && truffle compile",
     "coverage": "NETWORK_ID=1002 RPC_NODE_URI=http://127.0.0.1:6545 COVERAGE=true truffle run coverage",
     "test": "truffle compile && truffle test",
     "test_only": "truffle test",

@@ -89,7 +89,7 @@ describe("Admin", () => {
       await ctx.DODO.methods.disableBaseDeposit().send(ctx.sendParam(ctx.Supervisor))
       await assert.rejects(
         ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1)),
-        /DEPOSIT_BASE_NOT_ALLOWED/
+        /DEPOSIT_BASE_TOKEN_NOT_ALLOWED/
       )
 
       await ctx.DODO.methods.enableBaseDeposit().send(ctx.sendParam(ctx.Deployer))
@@ -99,7 +99,7 @@ describe("Admin", () => {
       await ctx.DODO.methods.disableQuoteDeposit().send(ctx.sendParam(ctx.Supervisor))
       await assert.rejects(
         ctx.DODO.methods.depositQuote(decimalStr("1000")).send(ctx.sendParam(lp1)),
-        /DEPOSIT_QUOTE_NOT_ALLOWED/
+        /DEPOSIT_QUOTE_TOKEN_NOT_ALLOWED/
       )
 
       await ctx.DODO.methods.enableQuoteDeposit().send(ctx.sendParam(ctx.Deployer))

@@ -60,7 +60,7 @@ describe("Trader", () => {
       assert.equal(await ctx.DODO.methods._QUOTE_BALANCE_().call(), "1101418160497943759027")
     })
 
-    it.only("buy when R is ABOVE ONE", async () => {
+    it("buy when R is ABOVE ONE", async () => {
       await ctx.DODO.methods.buyBaseToken(decimalStr("1"), decimalStr("110")).send(ctx.sendParam(trader))
       await ctx.DODO.methods.buyBaseToken(decimalStr("1"), decimalStr("130")).send(ctx.sendParam(trader))
       // trader balances
