@@ -10,6 +10,7 @@ docs/src
 node_modules/
 coverage/
 lint/
+script/
 
 # VIM
 *.swo
