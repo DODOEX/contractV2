@@ -122,5 +122,6 @@ contract DODOLpToken is Ownable {
         balances[user] = balances[user].sub(value);
         totalSupply = totalSupply.sub(value);
         emit Burn(user, value);
+        emit Transfer(user, address(0), value);
     }
 }
