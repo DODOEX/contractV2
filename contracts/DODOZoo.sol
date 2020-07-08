@@ -12,7 +12,6 @@ import {Ownable} from "./lib/Ownable.sol";
 import {IDODO} from "./intf/IDODO.sol";
 import {DODO} from "./DODO.sol";
 
-
 /**
  * @title DODOZoo
  * @author DODO Breeder
@@ -24,7 +23,7 @@ contract DODOZoo is Ownable {
 
     // ============ Events ============
 
-    event DODOBirth(address newBorn);
+    event DODOBirth(address newBorn, address baseToken, address quoteToken);
 
     // ============ Breed DODO Function ============
 
@@ -55,7 +54,7 @@ contract DODOZoo is Ownable {
         );
         IDODO(newBornDODO).transferOwnership(_OWNER_);
         _DODO_REGISTER_[baseToken][quoteToken] = newBornDODO;
-        emit DODOBirth(newBornDODO);
+        emit DODOBirth(newBornDODO, baseToken, quoteToken);
         return newBornDODO;
     }
 
