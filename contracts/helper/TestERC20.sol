@@ -9,15 +9,22 @@ pragma solidity 0.6.9;
 
 import {SafeMath} from "../lib/SafeMath.sol";
 
-
 contract TestERC20 {
     using SafeMath for uint256;
+
+    string public name;
+    uint8 public decimals;
 
     mapping(address => uint256) balances;
     mapping(address => mapping(address => uint256)) internal allowed;
 
     event Transfer(address indexed from, address indexed to, uint256 amount);
     event Approval(address indexed owner, address indexed spender, uint256 amount);
+
+    constructor(string memory _name, uint8 _decimals) public {
+        name = _name;
+        decimals = _decimals;
+    }
 
     function transfer(address to, uint256 amount) public returns (bool) {
         require(to != address(0), "TO_ADDRESS_IS_EMPTY");
