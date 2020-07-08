@@ -20,6 +20,9 @@ import {Ownable} from "../lib/Ownable.sol";
 contract DODOLpToken is Ownable {
     using SafeMath for uint256;
 
+    string public name;
+    uint8 public decimals;
+
     uint256 public totalSupply;
     mapping(address => uint256) internal balances;
     mapping(address => mapping(address => uint256)) internal allowed;
@@ -35,6 +38,11 @@ contract DODOLpToken is Ownable {
     event Burn(address indexed user, uint256 value);
 
     // ============ Functions ============
+
+    constructor(string memory _name, uint8 _decimals) public {
+        name = _name;
+        decimals = _decimals;
+    }
 
     /**
      * @dev transfer token for a specified address

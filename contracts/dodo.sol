@@ -9,12 +9,12 @@ pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
 import {Types} from "./lib/Types.sol";
+import {IERC20} from "./intf/IERC20.sol";
 import {Storage} from "./impl/Storage.sol";
 import {Trader} from "./impl/Trader.sol";
 import {LiquidityProvider} from "./impl/LiquidityProvider.sol";
 import {Admin} from "./impl/Admin.sol";
 import {DODOLpToken} from "./impl/DODOLpToken.sol";
-
 
 /**
  * @title DODO
@@ -53,8 +53,19 @@ contract DODO is Admin, Trader, LiquidityProvider {
         _K_ = k;
         _R_STATUS_ = Types.RStatus.ONE;
 
-        _BASE_CAPITAL_TOKEN_ = address(new DODOLpToken());
-        _QUOTE_CAPITAL_TOKEN_ = address(new DODOLpToken());
+        string memory lpTokenSuffix = "_DODO_LP_TOKEN_";
+
+        string memory baseName = string(
+            abi.encodePacked(IERC20(_BASE_TOKEN_).name(), lpTokenSuffix)
+        );
+        uint8 baseDecimals = IERC20(_BASE_TOKEN_).decimals();
+        _BASE_CAPITAL_TOKEN_ = address(new DODOLpToken(baseName, baseDecimals));
+
+        string memory quoteName = string(
+            abi.encodePacked(IERC20(_QUOTE_TOKEN_).name(), lpTokenSuffix)
+        );
+        uint8 quoteDecimals = IERC20(_QUOTE_TOKEN_).decimals();
+        _QUOTE_CAPITAL_TOKEN_ = address(new DODOLpToken(quoteName, quoteDecimals));
 
         _checkDODOParameters();
     }
