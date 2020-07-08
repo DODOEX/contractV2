@@ -85,7 +85,7 @@ library DODOMath {
             DecimalMath.ONE.sub(k).mul(4),
             DecimalMath.mul(k, Q0).mul(Q0)
         ); // 4(1-k)kQ0^2
-        squareRoot = b.mul(b).add(squareRoot).sqrt(); // sqrt(b*b-4(1-k)kQ0*Q0)
+        squareRoot = b.mul(b).add(squareRoot).sqrt(); // sqrt(b*b+4(1-k)kQ0*Q0)
 
         // final res
         uint256 denominator = DecimalMath.ONE.sub(k).mul(2); // 2(1-k)
@@ -108,7 +108,7 @@ library DODOMath {
         uint256 fairAmount
     ) internal pure returns (uint256 V0) {
         // V0 = V1+V1*(sqrt-1)/2k
-        uint256 sqrt = DecimalMath.divFloor(DecimalMath.mul(k, fairAmount), V1).mul(4);
+        uint256 sqrt = DecimalMath.divFloor(DecimalMath.mul(k, fairAmount).mul(4), V1);
         sqrt = sqrt.add(DecimalMath.ONE).mul(DecimalMath.ONE).sqrt();
         uint256 premium = DecimalMath.divFloor(sqrt.sub(DecimalMath.ONE), k.mul(2));
         // V0 is greater than or equal to V1 according to the solution
