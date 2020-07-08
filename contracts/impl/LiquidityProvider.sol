@@ -85,7 +85,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
         preventReentrant
         depositQuoteAllowed
     {
-        (, uint256 quoteTarget) = _getExpectedTarget();
+        (, uint256 quoteTarget) = getExpectedTarget();
         uint256 totalQuoteCapital = getTotalQuoteCapital();
         uint256 capital = amount;
         if (totalQuoteCapital == 0) {
@@ -104,7 +104,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
     }
 
     function depositBaseTo(address to, uint256 amount) public preventReentrant depositBaseAllowed {
-        (uint256 baseTarget, ) = _getExpectedTarget();
+        (uint256 baseTarget, ) = getExpectedTarget();
         uint256 totalBaseCapital = getTotalBaseCapital();
         uint256 capital = amount;
         if (totalBaseCapital == 0) {
@@ -126,7 +126,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
     function withdrawQuoteTo(address to, uint256 amount) public preventReentrant returns (uint256) {
         // calculate capital
-        (, uint256 quoteTarget) = _getExpectedTarget();
+        (, uint256 quoteTarget) = getExpectedTarget();
         uint256 totalQuoteCapital = getTotalQuoteCapital();
         require(totalQuoteCapital > 0, "NO_QUOTE_LP");
 
@@ -154,7 +154,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
     function withdrawBaseTo(address to, uint256 amount) public preventReentrant returns (uint256) {
         // calculate capital
-        (uint256 baseTarget, ) = _getExpectedTarget();
+        (uint256 baseTarget, ) = getExpectedTarget();
         uint256 totalBaseCapital = getTotalBaseCapital();
         require(totalBaseCapital > 0, "NO_BASE_LP");
 
@@ -242,7 +242,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
     function getLpBaseBalance(address lp) public view returns (uint256 lpBalance) {
         uint256 totalBaseCapital = getTotalBaseCapital();
-        (uint256 baseTarget, ) = _getExpectedTarget();
+        (uint256 baseTarget, ) = getExpectedTarget();
         if (totalBaseCapital == 0) {
             return 0;
         }
@@ -252,7 +252,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
     function getLpQuoteBalance(address lp) public view returns (uint256 lpBalance) {
         uint256 totalQuoteCapital = getTotalQuoteCapital();
-        (, uint256 quoteTarget) = _getExpectedTarget();
+        (, uint256 quoteTarget) = getExpectedTarget();
         if (totalQuoteCapital == 0) {
             return 0;
         }

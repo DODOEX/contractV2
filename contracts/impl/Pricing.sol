@@ -151,7 +151,7 @@ contract Pricing is Storage {
 
     // ============ Helper functions ============
 
-    function _getExpectedTarget() internal view returns (uint256 baseTarget, uint256 quoteTarget) {
+    function getExpectedTarget() public view returns (uint256 baseTarget, uint256 quoteTarget) {
         uint256 Q = _QUOTE_BALANCE_;
         uint256 B = _BASE_BALANCE_;
         if (_R_STATUS_ == Types.RStatus.ONE) {
