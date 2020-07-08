@@ -8,7 +8,6 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-
 interface IDODO {
     function init(
         address supervisor,
@@ -23,6 +22,8 @@ interface IDODO {
     ) external;
 
     function transferOwnership(address newOwner) external;
+
+    function claimOwnership() external;
 
     function sellBaseToken(uint256 amount, uint256 minReceiveQuote) external returns (uint256);
 
