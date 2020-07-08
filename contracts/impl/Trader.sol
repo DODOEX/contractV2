@@ -140,7 +140,7 @@ contract Trader is Storage, Pricing, Settlement {
             uint256 newBaseTarget
         )
     {
-        (newBaseTarget, newQuoteTarget) = _getExpectedTarget();
+        (newBaseTarget, newQuoteTarget) = getExpectedTarget();
 
         uint256 sellBaseAmount = amount;
 
@@ -201,7 +201,7 @@ contract Trader is Storage, Pricing, Settlement {
             uint256 newBaseTarget
         )
     {
-        (newBaseTarget, newQuoteTarget) = _getExpectedTarget();
+        (newBaseTarget, newQuoteTarget) = getExpectedTarget();
 
         // charge fee from user receive amount
         lpFeeBase = DecimalMath.mul(amount, _LP_FEE_RATE_);
