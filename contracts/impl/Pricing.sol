@@ -91,11 +91,7 @@ contract Pricing is Storage {
         return Q2.sub(quoteBalance);
     }
 
-    function _RBelowBackToOne()
-        internal
-        view
-        returns (uint256 payQuoteToken, uint256 receiveBaseToken)
-    {
+    function _RBelowBackToOne() internal view returns (uint256 payQuoteToken) {
         // important: carefully design the system to make sure spareBase always greater than or equal to 0
         uint256 spareBase = _BASE_BALANCE_.sub(_TARGET_BASE_TOKEN_AMOUNT_);
         uint256 price = getOraclePrice();
@@ -105,7 +101,7 @@ contract Pricing is Storage {
             _K_,
             fairAmount
         );
-        return (newTargetQuote.sub(_QUOTE_BALANCE_), spareBase);
+        return newTargetQuote.sub(_QUOTE_BALANCE_);
     }
 
     // ============ R > 1 cases ============
@@ -132,11 +128,7 @@ contract Pricing is Storage {
         return _RAboveIntegrate(targetBaseAmount, B1, baseBalance);
     }
 
-    function _RAboveBackToOne()
-        internal
-        view
-        returns (uint256 payBaseToken, uint256 receiveQuoteToken)
-    {
+    function _RAboveBackToOne() internal view returns (uint256 payBaseToken) {
         // important: carefully design the system to make sure spareBase always greater than or equal to 0
         uint256 spareQuote = _QUOTE_BALANCE_.sub(_TARGET_QUOTE_TOKEN_AMOUNT_);
         uint256 price = getOraclePrice();
@@ -146,7 +138,7 @@ contract Pricing is Storage {
             _K_,
             fairAmount
         );
-        return (newTargetBase.sub(_BASE_BALANCE_), spareQuote);
+        return newTargetBase.sub(_BASE_BALANCE_);
     }
 
     // ============ Helper functions ============
@@ -157,11 +149,11 @@ contract Pricing is Storage {
         if (_R_STATUS_ == Types.RStatus.ONE) {
             return (_TARGET_BASE_TOKEN_AMOUNT_, _TARGET_QUOTE_TOKEN_AMOUNT_);
         } else if (_R_STATUS_ == Types.RStatus.BELOW_ONE) {
-            (uint256 payQuoteToken, uint256 receiveBaseToken) = _RBelowBackToOne();
-            return (B.sub(receiveBaseToken), Q.add(payQuoteToken));
+            uint256 payQuoteToken = _RBelowBackToOne();
+            return (_TARGET_BASE_TOKEN_AMOUNT_, Q.add(payQuoteToken));
         } else if (_R_STATUS_ == Types.RStatus.ABOVE_ONE) {
-            (uint256 payBaseToken, uint256 receiveQuoteToken) = _RAboveBackToOne();
-            return (B.add(payBaseToken), Q.sub(receiveQuoteToken));
+            uint256 payBaseToken = _RAboveBackToOne();
+            return (B.add(payBaseToken), _TARGET_QUOTE_TOKEN_AMOUNT_);
         }
     }
 
