@@ -58,6 +58,10 @@ contract DODOZoo is Ownable {
         return newBornDODO;
     }
 
+    function removeDODO(address baseToken, address quoteToken) public onlyOwner {
+        _DODO_REGISTER_[baseToken][quoteToken] = address(0);
+    }
+
     // ============ View Functions ============
 
     function isDODORegistered(address baseToken, address quoteToken) public view returns (bool) {
