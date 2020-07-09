@@ -68,11 +68,9 @@ contract DODOEthProxy is ReentrancyGuard {
         require(msg.value == ethAmount, "ETH_AMOUNT_NOT_MATCH");
         address DODO = IDODOZoo(_DODO_ZOO_).getDODO(_WETH_, quoteTokenAddress);
         require(DODO != address(0), "DODO_NOT_EXIST");
-        receiveTokenAmount = IDODO(DODO).querySellBaseToken(ethAmount);
-        require(receiveTokenAmount >= minReceiveTokenAmount, "RECEIVE_NOT_ENOUGH");
         IWETH(_WETH_).deposit{value: ethAmount}();
         IWETH(_WETH_).approve(DODO, ethAmount);
-        IDODO(DODO).sellBaseToken(ethAmount, minReceiveTokenAmount);
+        receiveTokenAmount = IDODO(DODO).sellBaseToken(ethAmount, minReceiveTokenAmount);
         _transferOut(quoteTokenAddress, msg.sender, receiveTokenAmount);
         emit ProxySellEth(msg.sender, quoteTokenAddress, ethAmount, receiveTokenAmount);
         return receiveTokenAmount;
@@ -86,7 +84,6 @@ contract DODOEthProxy is ReentrancyGuard {
         address DODO = IDODOZoo(_DODO_ZOO_).getDODO(_WETH_, quoteTokenAddress);
         require(DODO != address(0), "DODO_NOT_EXIST");
         payTokenAmount = IDODO(DODO).queryBuyBaseToken(ethAmount);
-        require(payTokenAmount <= maxPayTokenAmount, "PAY_TOO_MUCH");
         _transferIn(quoteTokenAddress, msg.sender, payTokenAmount);
         IERC20(quoteTokenAddress).approve(DODO, payTokenAmount);
         IDODO(DODO).buyBaseToken(ethAmount, maxPayTokenAmount);

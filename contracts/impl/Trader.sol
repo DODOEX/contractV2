@@ -70,9 +70,15 @@ contract Trader is Storage, Pricing, Settlement {
         _quoteTokenTransferOut(_MAINTAINER_, mtFeeQuote);
 
         // update TARGET
-        _TARGET_QUOTE_TOKEN_AMOUNT_ = newQuoteTarget;
-        _TARGET_BASE_TOKEN_AMOUNT_ = newBaseTarget;
-        _R_STATUS_ = newRStatus;
+        if (_TARGET_QUOTE_TOKEN_AMOUNT_ != newQuoteTarget) {
+            _TARGET_QUOTE_TOKEN_AMOUNT_ = newQuoteTarget;
+        }
+        if (_TARGET_BASE_TOKEN_AMOUNT_ != newBaseTarget) {
+            _TARGET_BASE_TOKEN_AMOUNT_ = newBaseTarget;
+        }
+        if (_R_STATUS_ != newRStatus) {
+            _R_STATUS_ = newRStatus;
+        }
 
         _donateQuoteToken(lpFeeQuote);
         emit SellBaseToken(msg.sender, amount, receiveQuote);
@@ -105,9 +111,15 @@ contract Trader is Storage, Pricing, Settlement {
         _baseTokenTransferOut(_MAINTAINER_, mtFeeBase);
 
         // update TARGET
-        _TARGET_QUOTE_TOKEN_AMOUNT_ = newQuoteTarget;
-        _TARGET_BASE_TOKEN_AMOUNT_ = newBaseTarget;
-        _R_STATUS_ = newRStatus;
+        if (_TARGET_QUOTE_TOKEN_AMOUNT_ != newQuoteTarget) {
+            _TARGET_QUOTE_TOKEN_AMOUNT_ = newQuoteTarget;
+        }
+        if (_TARGET_BASE_TOKEN_AMOUNT_ != newBaseTarget) {
+            _TARGET_BASE_TOKEN_AMOUNT_ = newBaseTarget;
+        }
+        if (_R_STATUS_ != newRStatus) {
+            _R_STATUS_ = newRStatus;
+        }
 
         _donateBaseToken(lpFeeBase);
         emit BuyBaseToken(msg.sender, amount, payQuote);
