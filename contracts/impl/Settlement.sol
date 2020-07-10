@@ -36,23 +36,31 @@ contract Settlement is Storage {
     // ============ Assets IN/OUT Functions ============
 
     function _baseTokenTransferIn(address from, uint256 amount) internal {
+        uint256 beforeBalance = IERC20(_BASE_TOKEN_).balanceOf(address(this));
         IERC20(_BASE_TOKEN_).safeTransferFrom(from, address(this), amount);
-        _BASE_BALANCE_ = _BASE_BALANCE_.add(amount);
+        uint256 afterBalance = IERC20(_BASE_TOKEN_).balanceOf(address(this));
+        _BASE_BALANCE_ = _BASE_BALANCE_.add(afterBalance.sub(beforeBalance));
     }
 
     function _quoteTokenTransferIn(address from, uint256 amount) internal {
+        uint256 beforeBalance = IERC20(_QUOTE_TOKEN_).balanceOf(address(this));
         IERC20(_QUOTE_TOKEN_).safeTransferFrom(from, address(this), amount);
-        _QUOTE_BALANCE_ = _QUOTE_BALANCE_.add(amount);
+        uint256 afterBalance = IERC20(_QUOTE_TOKEN_).balanceOf(address(this));
+        _QUOTE_BALANCE_ = _QUOTE_BALANCE_.add(afterBalance.sub(beforeBalance));
     }
 
     function _baseTokenTransferOut(address to, uint256 amount) internal {
+        uint256 beforeBalance = IERC20(_BASE_TOKEN_).balanceOf(address(this));
         IERC20(_BASE_TOKEN_).safeTransfer(to, amount);
-        _BASE_BALANCE_ = _BASE_BALANCE_.sub(amount);
+        uint256 afterBalance = IERC20(_BASE_TOKEN_).balanceOf(address(this));
+        _BASE_BALANCE_ = _BASE_BALANCE_.sub(beforeBalance.sub(afterBalance));
     }
 
     function _quoteTokenTransferOut(address to, uint256 amount) internal {
+        uint256 beforeBalance = IERC20(_QUOTE_TOKEN_).balanceOf(address(this));
         IERC20(_QUOTE_TOKEN_).safeTransfer(to, amount);
-        _QUOTE_BALANCE_ = _QUOTE_BALANCE_.sub(amount);
+        uint256 afterBalance = IERC20(_QUOTE_TOKEN_).balanceOf(address(this));
+        _QUOTE_BALANCE_ = _QUOTE_BALANCE_.sub(beforeBalance.sub(afterBalance));
     }
 
     // ============ Donate to Liquidity Pool Functions ============
