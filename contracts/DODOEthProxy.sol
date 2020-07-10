@@ -19,7 +19,7 @@ import {IWETH} from "./intf/IWETH.sol";
  * @title DODO Eth Proxy
  * @author DODO Breeder
  *
- * @notice Handle ETH-WETH converting for users
+ * @notice Handle ETH-WETH converting for users. Use it only when WETH is base token
  */
 contract DODOEthProxy is ReentrancyGuard {
     using SafeERC20 for IERC20;
@@ -43,7 +43,9 @@ contract DODOEthProxy is ReentrancyGuard {
         uint256 payQuote
     );
 
-    event ProxyDepositEth(address indexed lp, address indexed quoteToken, uint256 ethAmount);
+    event ProxyDepositEth(address indexed lp, address indexed DODO, uint256 ethAmount);
+
+    event ProxyWithdrawEth(address indexed lp, address indexed DODO, uint256 ethAmount);
 
     // ============ Functions ============
 
@@ -104,7 +106,57 @@ contract DODOEthProxy is ReentrancyGuard {
         IWETH(_WETH_).deposit{value: ethAmount}();
         IWETH(_WETH_).approve(DODO, ethAmount);
         IDODO(DODO).depositBaseTo(msg.sender, ethAmount);
-        emit ProxyDepositEth(msg.sender, quoteTokenAddress, ethAmount);
+        emit ProxyDepositEth(msg.sender, DODO, ethAmount);
+    }
+
+    function withdrawEth(uint256 ethAmount, address quoteTokenAddress)
+        external
+        preventReentrant
+        returns (uint256 withdrawAmount)
+    {
+        address DODO = IDODOZoo(_DODO_ZOO_).getDODO(_WETH_, quoteTokenAddress);
+        require(DODO != address(0), "DODO_NOT_EXIST");
+        address ethLpToken = IDODO(DODO)._BASE_CAPITAL_TOKEN_();
+
+        // transfer all pool shares to proxy
+        uint256 lpBalance = IERC20(ethLpToken).balanceOf(msg.sender);
+        IERC20(ethLpToken).transferFrom(msg.sender, address(this), lpBalance);
+        IDODO(DODO).withdrawBase(ethAmount);
+
+        // transfer remain shares back to msg.sender
+        lpBalance = IERC20(ethLpToken).balanceOf(address(this));
+        IERC20(ethLpToken).transfer(msg.sender, lpBalance);
+
+        // because of withdraw penalty, withdrawAmount may not equal to ethAmount
+        // query weth amount first and than transfer ETH to msg.sender
+        uint256 wethAmount = IERC20(_WETH_).balanceOf(address(this));
+        IWETH(_WETH_).withdraw(wethAmount);
+        msg.sender.transfer(wethAmount);
+        emit ProxyWithdrawEth(msg.sender, DODO, wethAmount);
+        return wethAmount;
+    }
+
+    function withdrawAllEth(address quoteTokenAddress)
+        external
+        preventReentrant
+        returns (uint256 withdrawAmount)
+    {
+        address DODO = IDODOZoo(_DODO_ZOO_).getDODO(_WETH_, quoteTokenAddress);
+        require(DODO != address(0), "DODO_NOT_EXIST");
+        address ethLpToken = IDODO(DODO)._BASE_CAPITAL_TOKEN_();
+
+        // transfer all pool shares to proxy
+        uint256 lpBalance = IERC20(ethLpToken).balanceOf(msg.sender);
+        IERC20(ethLpToken).transferFrom(msg.sender, address(this), lpBalance);
+        IDODO(DODO).withdrawAllBase();
+
+        // because of withdraw penalty, withdrawAmount may not equal to ethAmount
+        // query weth amount first and than transfer ETH to msg.sender
+        uint256 wethAmount = IERC20(_WETH_).balanceOf(address(this));
+        IWETH(_WETH_).withdraw(wethAmount);
+        msg.sender.transfer(wethAmount);
+        emit ProxyWithdrawEth(msg.sender, DODO, wethAmount);
+        return wethAmount;
     }
 
     // ============ Helper Functions ============

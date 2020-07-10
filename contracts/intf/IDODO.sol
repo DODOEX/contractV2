@@ -44,4 +44,8 @@ interface IDODO {
     function withdrawQuote(uint256 amount) external returns (uint256);
 
     function withdrawAllQuote() external returns (uint256);
+
+    function _BASE_CAPITAL_TOKEN_() external returns (address);
+
+    function _QUOTE_CAPITAL_TOKEN_() external returns (address);
 }
