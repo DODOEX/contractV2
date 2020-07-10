@@ -35,9 +35,8 @@ library DODOMath {
         uint256 k
     ) internal pure returns (uint256) {
         uint256 fairAmount = DecimalMath.mul(i, V1.sub(V2)); // i*delta
-        uint256 V0V1 = DecimalMath.divCeil(V0, V1); // V0/V1
-        uint256 V0V2 = DecimalMath.divCeil(V0, V2); // V0/V2
-        uint256 penalty = DecimalMath.mul(DecimalMath.mul(k, V0V1), V0V2); // k(V0^2/V1/V2)
+        uint256 V0V0V1V2 = DecimalMath.divCeil(V0.mul(V0).div(V1), V2);
+        uint256 penalty = DecimalMath.mul(k, V0V0V1V2); // k(V0^2/V1/V2)
         return DecimalMath.mul(fairAmount, DecimalMath.ONE.sub(k).add(penalty));
     }
 
@@ -70,7 +69,7 @@ library DODOMath {
         if (deltaBSig) {
             b = b.add(ideltaB); // (1-k)Q1+i*deltaB
         } else {
-            kQ02Q1 = kQ02Q1.add(ideltaB); // -i*(-deltaB)-kQ0^2/Q1
+            kQ02Q1 = kQ02Q1.add(ideltaB); // i*deltaB+kQ0^2/Q1
         }
         if (b >= kQ02Q1) {
             b = b.sub(kQ02Q1);
@@ -89,10 +88,17 @@ library DODOMath {
 
         // final res
         uint256 denominator = DecimalMath.ONE.sub(k).mul(2); // 2(1-k)
+        uint256 numerator;
         if (minusbSig) {
-            return DecimalMath.divFloor(b.add(squareRoot), denominator);
+            numerator = b.add(squareRoot);
         } else {
-            return DecimalMath.divFloor(squareRoot.sub(b), denominator);
+            numerator = squareRoot.sub(b);
+        }
+
+        if (deltaBSig) {
+            return DecimalMath.divFloor(numerator, denominator);
+        } else {
+            return DecimalMath.divCeil(numerator, denominator);
         }
     }
 
@@ -108,9 +114,9 @@ library DODOMath {
         uint256 fairAmount
     ) internal pure returns (uint256 V0) {
         // V0 = V1+V1*(sqrt-1)/2k
-        uint256 sqrt = DecimalMath.divFloor(DecimalMath.mul(k, fairAmount).mul(4), V1);
+        uint256 sqrt = DecimalMath.divCeil(DecimalMath.mul(k, fairAmount).mul(4), V1);
         sqrt = sqrt.add(DecimalMath.ONE).mul(DecimalMath.ONE).sqrt();
-        uint256 premium = DecimalMath.divFloor(sqrt.sub(DecimalMath.ONE), k.mul(2));
+        uint256 premium = DecimalMath.divCeil(sqrt.sub(DecimalMath.ONE), k.mul(2));
         // V0 is greater than or equal to V1 according to the solution
         return DecimalMath.mul(V1, DecimalMath.ONE.add(premium));
     }
