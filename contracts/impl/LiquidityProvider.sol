@@ -28,13 +28,33 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
     // ============ Events ============
 
-    event DepositBaseToken(address indexed payer, address indexed receiver, uint256 amount);
+    event DepositBaseToken(
+        address indexed payer,
+        address indexed receiver,
+        uint256 amount,
+        uint256 lpTokenAmount
+    );
 
-    event DepositQuoteToken(address indexed payer, address indexed receiver, uint256 amount);
+    event DepositQuoteToken(
+        address indexed payer,
+        address indexed receiver,
+        uint256 amount,
+        uint256 lpTokenAmount
+    );
 
-    event WithdrawBaseToken(address indexed payer, address indexed receiver, uint256 amount);
+    event WithdrawBaseToken(
+        address indexed payer,
+        address indexed receiver,
+        uint256 amount,
+        uint256 lpTokenAmount
+    );
 
-    event WithdrawQuoteToken(address indexed payer, address indexed receiver, uint256 amount);
+    event WithdrawQuoteToken(
+        address indexed payer,
+        address indexed receiver,
+        uint256 amount,
+        uint256 lpTokenAmount
+    );
 
     event ChargeBasePenalty(address indexed payer, uint256 amount);
 
@@ -100,7 +120,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
         _mintQuoteCapital(to, capital);
         _TARGET_QUOTE_TOKEN_AMOUNT_ = _TARGET_QUOTE_TOKEN_AMOUNT_.add(amount);
 
-        emit DepositQuoteToken(msg.sender, to, amount);
+        emit DepositQuoteToken(msg.sender, to, amount, capital);
     }
 
     function depositBaseTo(address to, uint256 amount) public preventReentrant depositBaseAllowed {
@@ -119,7 +139,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
         _mintBaseCapital(to, capital);
         _TARGET_BASE_TOKEN_AMOUNT_ = _TARGET_BASE_TOKEN_AMOUNT_.add(amount);
 
-        emit DepositBaseToken(msg.sender, to, amount);
+        emit DepositBaseToken(msg.sender, to, amount, capital);
     }
 
     // ============ Withdraw Functions ============
@@ -146,7 +166,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
         _quoteTokenTransferOut(to, amount.sub(penalty));
         _donateQuoteToken(penalty);
 
-        emit WithdrawQuoteToken(msg.sender, to, amount.sub(penalty));
+        emit WithdrawQuoteToken(msg.sender, to, amount.sub(penalty), requireQuoteCapital);
         emit ChargeQuotePenalty(msg.sender, penalty);
 
         return amount.sub(penalty);
@@ -174,7 +194,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
         _baseTokenTransferOut(to, amount.sub(penalty));
         _donateBaseToken(penalty);
 
-        emit WithdrawBaseToken(msg.sender, to, amount.sub(penalty));
+        emit WithdrawBaseToken(msg.sender, to, amount.sub(penalty), requireBaseCapital);
         emit ChargeBasePenalty(msg.sender, penalty);
 
         return amount.sub(penalty);
@@ -184,6 +204,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
     function withdrawAllQuoteTo(address to) public preventReentrant returns (uint256) {
         uint256 withdrawAmount = getLpQuoteBalance(msg.sender);
+        uint256 capital = getQuoteCapitalBalanceOf(msg.sender);
 
         // handle penalty, penalty may exceed amount
         uint256 penalty = getWithdrawQuotePenalty(withdrawAmount);
@@ -191,11 +212,11 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
         // settlement
         _TARGET_QUOTE_TOKEN_AMOUNT_ = _TARGET_QUOTE_TOKEN_AMOUNT_.sub(withdrawAmount);
-        _burnQuoteCapital(msg.sender, getQuoteCapitalBalanceOf(msg.sender));
+        _burnQuoteCapital(msg.sender, capital);
         _quoteTokenTransferOut(to, withdrawAmount.sub(penalty));
         _donateQuoteToken(penalty);
 
-        emit WithdrawQuoteToken(msg.sender, to, withdrawAmount);
+        emit WithdrawQuoteToken(msg.sender, to, withdrawAmount, capital);
         emit ChargeQuotePenalty(msg.sender, penalty);
 
         return withdrawAmount.sub(penalty);
@@ -203,6 +224,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
     function withdrawAllBaseTo(address to) public preventReentrant returns (uint256) {
         uint256 withdrawAmount = getLpBaseBalance(msg.sender);
+        uint256 capital = getBaseCapitalBalanceOf(msg.sender);
 
         // handle penalty, penalty may exceed amount
         uint256 penalty = getWithdrawBasePenalty(withdrawAmount);
@@ -210,11 +232,11 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
         // settlement
         _TARGET_BASE_TOKEN_AMOUNT_ = _TARGET_BASE_TOKEN_AMOUNT_.sub(withdrawAmount);
-        _burnBaseCapital(msg.sender, getBaseCapitalBalanceOf(msg.sender));
+        _burnBaseCapital(msg.sender, capital);
         _baseTokenTransferOut(to, withdrawAmount.sub(penalty));
         _donateBaseToken(penalty);
 
-        emit WithdrawBaseToken(msg.sender, to, withdrawAmount);
+        emit WithdrawBaseToken(msg.sender, to, withdrawAmount, capital);
         emit ChargeBasePenalty(msg.sender, penalty);
 
         return withdrawAmount.sub(penalty);
