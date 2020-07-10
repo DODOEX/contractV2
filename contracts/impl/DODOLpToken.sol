@@ -20,6 +20,7 @@ import {Ownable} from "../lib/Ownable.sol";
 contract DODOLpToken is Ownable {
     using SafeMath for uint256;
 
+    string public symbol = "DLP";
     string public name;
     uint8 public decimals;
 
