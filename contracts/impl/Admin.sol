@@ -19,7 +19,16 @@ import {Storage} from "./Storage.sol";
 contract Admin is Storage {
     // ============ Events ============
 
-    event UpdateGasPriceLimit(uint256 newGasPriceLimit);
+    event UpdateGasPriceLimit(uint256 oldGasPriceLimit, uint256 newGasPriceLimit);
+
+    event UpdateLiquidityProviderFeeRate(
+        uint256 oldLiquidityProviderFeeRate,
+        uint256 newLiquidityProviderFeeRate
+    );
+
+    event UpdateMaintainerFeeRate(uint256 oldMaintainerFeeRate, uint256 newMaintainerFeeRate);
+
+    event UpdateK(uint256 oldK, uint256 newK);
 
     // ============ Params Setting Functions ============
 
@@ -36,23 +45,26 @@ contract Admin is Storage {
     }
 
     function setLiquidityProviderFeeRate(uint256 newLiquidityPorviderFeeRate) external onlyOwner {
+        emit UpdateLiquidityProviderFeeRate(_LP_FEE_RATE_, newLiquidityPorviderFeeRate);
         _LP_FEE_RATE_ = newLiquidityPorviderFeeRate;
         _checkDODOParameters();
     }
 
     function setMaintainerFeeRate(uint256 newMaintainerFeeRate) external onlyOwner {
+        emit UpdateMaintainerFeeRate(_MT_FEE_RATE_, newMaintainerFeeRate);
         _MT_FEE_RATE_ = newMaintainerFeeRate;
         _checkDODOParameters();
     }
 
     function setK(uint256 newK) external onlyOwner {
+        emit UpdateK(_K_, newK);
         _K_ = newK;
         _checkDODOParameters();
     }
 
     function setGasPriceLimit(uint256 newGasPriceLimit) external onlySupervisorOrOwner {
+        emit UpdateGasPriceLimit(_GAS_PRICE_LIMIT_, newGasPriceLimit);
         _GAS_PRICE_LIMIT_ = newGasPriceLimit;
-        emit UpdateGasPriceLimit(newGasPriceLimit);
     }
 
     // ============ System Control Functions ============

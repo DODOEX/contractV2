@@ -30,7 +30,9 @@ contract Trader is Storage, Pricing, Settlement {
 
     event BuyBaseToken(address indexed buyer, uint256 receiveBase, uint256 payQuote);
 
-    event MaintainerFee(bool isBaseToken, uint256 amount);
+    event ChargeMaintainerFeeBase(address indexed maintainer, uint256 amount);
+
+    event ChargeMaintainerFeeQuote(address indexed maintainer, uint256 amount);
 
     // ============ Modifiers ============
 
@@ -82,7 +84,9 @@ contract Trader is Storage, Pricing, Settlement {
 
         _donateQuoteToken(lpFeeQuote);
         emit SellBaseToken(msg.sender, amount, receiveQuote);
-        emit MaintainerFee(false, mtFeeQuote);
+        if (mtFeeQuote != 0) {
+            emit ChargeMaintainerFeeQuote(_MAINTAINER_, mtFeeQuote);
+        }
 
         return receiveQuote;
     }
@@ -123,7 +127,9 @@ contract Trader is Storage, Pricing, Settlement {
 
         _donateBaseToken(lpFeeBase);
         emit BuyBaseToken(msg.sender, amount, payQuote);
-        emit MaintainerFee(true, mtFeeBase);
+        if (mtFeeBase != 0) {
+            emit ChargeMaintainerFeeBase(_MAINTAINER_, mtFeeBase);
+        }
 
         return payQuote;
     }
