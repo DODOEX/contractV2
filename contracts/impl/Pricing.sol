@@ -157,6 +157,25 @@ contract Pricing is Storage {
         }
     }
 
+    function getMidPrice() public view returns (uint256 midPrice) {
+        (uint256 baseTarget, uint256 quoteTarget) = getExpectedTarget();
+        if (_R_STATUS_ == Types.RStatus.BELOW_ONE) {
+            uint256 R = DecimalMath.divFloor(
+                quoteTarget.mul(quoteTarget).div(_QUOTE_BALANCE_),
+                _QUOTE_BALANCE_
+            );
+            R = DecimalMath.ONE.sub(_K_).add(DecimalMath.mul(_K_, R));
+            return DecimalMath.divFloor(getOraclePrice(), R);
+        } else {
+            uint256 R = DecimalMath.divFloor(
+                baseTarget.mul(baseTarget).div(_BASE_BALANCE_),
+                _BASE_BALANCE_
+            );
+            R = DecimalMath.ONE.sub(_K_).add(DecimalMath.mul(_K_, R));
+            return DecimalMath.mul(getOraclePrice(), R);
+        }
+    }
+
     function _RAboveIntegrate(
         uint256 B0,
         uint256 B1,
