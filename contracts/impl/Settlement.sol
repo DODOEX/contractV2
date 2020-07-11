@@ -27,9 +27,7 @@ contract Settlement is Storage {
 
     // ============ Events ============
 
-    event DonateBaseToken(uint256 amount);
-
-    event DonateQuoteToken(uint256 amount);
+    event Donate(uint256 amount, bool isBaseToken);
 
     event Claim(address indexed user, uint256 baseTokenAmount, uint256 quoteTokenAmount);
 
@@ -67,12 +65,12 @@ contract Settlement is Storage {
 
     function _donateBaseToken(uint256 amount) internal {
         _TARGET_BASE_TOKEN_AMOUNT_ = _TARGET_BASE_TOKEN_AMOUNT_.add(amount);
-        emit DonateBaseToken(amount);
+        emit Donate(amount, true);
     }
 
     function _donateQuoteToken(uint256 amount) internal {
         _TARGET_QUOTE_TOKEN_AMOUNT_ = _TARGET_QUOTE_TOKEN_AMOUNT_.add(amount);
-        emit DonateQuoteToken(amount);
+        emit Donate(amount, false);
     }
 
     function donateBaseToken(uint256 amount) external {
