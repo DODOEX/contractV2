@@ -44,8 +44,8 @@ describe("DODO ZOO", () => {
     })
 
     it("breed new dodo", async () => {
-      let newBase = await newContract(TEST_ERC20_CONTRACT_NAME)
-      let newQuote = await newContract(TEST_ERC20_CONTRACT_NAME)
+      let newBase = await newContract(TEST_ERC20_CONTRACT_NAME, ["AnotherBase", 18])
+      let newQuote = await newContract(TEST_ERC20_CONTRACT_NAME, ["AnotherQuote", 18])
       await assert.rejects(
         ctx.DODOZoo.methods.breedDODO(ctx.Supervisor, ctx.Maintainer, newBase.options.address, newQuote.options.address, ctx.ORACLE.options.address, "0", "0", "1", "0").send(ctx.sendParam(ctx.Maintainer)),
         /NOT_OWNER/
@@ -56,6 +56,8 @@ describe("DODO ZOO", () => {
       assert.equal(await newDODO.methods._BASE_TOKEN_().call(), newBase.options.address)
       assert.equal(await newDODO.methods._QUOTE_TOKEN_().call(), newQuote.options.address)
 
+      await newDODO.methods.claimOwnership().send(ctx.sendParam(ctx.Deployer))
+
       // could not init twice
       await assert.rejects(
         newDODO.methods.init(ctx.Supervisor, ctx.Maintainer, ctx.QUOTE.options.address, ctx.BASE.options.address, ctx.ORACLE.options.address, "0", "0", "1", "0").send(ctx.sendParam(ctx.Deployer)),
@@ -63,6 +65,10 @@ describe("DODO ZOO", () => {
       )
     })
 
+    it("remove dodo", async () => {
+      await ctx.DODOZoo.methods.removeDODO(ctx.BASE.options.address, ctx.QUOTE.options.address).send(ctx.sendParam(ctx.Deployer))
+      assert.equal(await ctx.DODOZoo.methods.getDODO(ctx.BASE.options.address, ctx.QUOTE.options.address).call(), "0x0000000000000000000000000000000000000000")
+    })
 
   })
 })

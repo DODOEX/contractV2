@@ -10,6 +10,7 @@ import * as contracts from "./utils/Contracts";
 import * as assert from "assert"
 import { decimalStr, MAX_UINT256 } from './utils/Converter';
 import { Contract } from "web3-eth-contract";
+import { logGas } from './utils/Log';
 
 let lp: string
 let trader: string
@@ -36,7 +37,6 @@ async function init(ctx: DODOContext): Promise<void> {
   ctx.BaseCapital = await contracts.getContractWithAddress(contracts.DODO_LP_TOKEN_CONTRACT_NAME, await ctx.DODO.methods._BASE_CAPITAL_TOKEN_().call())
 
   DODOEthProxy = await contracts.newContract(contracts.DODO_ETH_PROXY_CONTRACT_NAME, [ctx.DODOZoo.options.address, WETH.options.address])
-
 
   // env
   lp = ctx.spareAccounts[0]
@@ -76,16 +76,38 @@ describe("DODO ETH PROXY", () => {
   describe("buy&sell eth directly", () => {
     it("buy", async () => {
       let buyAmount = "1"
-      await DODOEthProxy.methods.buyEthWith(ctx.QUOTE.options.address, decimalStr(buyAmount), decimalStr("200")).send(ctx.sendParam(trader))
+      logGas(await DODOEthProxy.methods.buyEthWith(ctx.QUOTE.options.address, decimalStr(buyAmount), decimalStr("200")).send(ctx.sendParam(trader)), "buy with eth directly")
       assert.equal(await ctx.DODO.methods._BASE_BALANCE_().call(), decimalStr("8.999"))
       assert.equal(await ctx.QUOTE.methods.balanceOf(trader).call(), "898581839502056240973")
       ctx.Web3
     })
     it("sell", async () => {
       let sellAmount = "1"
-      await DODOEthProxy.methods.sellEthTo(ctx.QUOTE.options.address, decimalStr(sellAmount), decimalStr("50")).send(ctx.sendParam(trader, sellAmount))
+      logGas(await DODOEthProxy.methods.sellEthTo(ctx.QUOTE.options.address, decimalStr(sellAmount), decimalStr("50")).send(ctx.sendParam(trader, sellAmount)), "sell to eth directly")
       assert.equal(await ctx.DODO.methods._BASE_BALANCE_().call(), decimalStr("11"))
-      assert.equal(await ctx.QUOTE.methods.balanceOf(trader).call(), "1098617454226610630664")
+      assert.equal(await ctx.QUOTE.methods.balanceOf(trader).call(), "1098617454226610630663")
+    })
+  })
+
+  describe("withdraw eth directly", () => {
+    it("withdraw", async () => {
+      let baseLpTokenAddress = await ctx.DODO.methods._BASE_CAPITAL_TOKEN_().call()
+      let baseLpToken = contracts.getContractWithAddress(contracts.TEST_ERC20_CONTRACT_NAME, baseLpTokenAddress)
+      await baseLpToken.methods.approve(DODOEthProxy.options.address, MAX_UINT256).send(ctx.sendParam(lp))
+      await DODOEthProxy.methods.withdrawEth(decimalStr("5"), ctx.QUOTE.options.address).send(ctx.sendParam(lp))
+
+      assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp).call(), decimalStr("5"))
+      // console.log(await ctx.Web3.eth.getBalance(lp)) eth balance confirmed
+    })
+
+    it("withdraw all", async () => {
+      let baseLpTokenAddress = await ctx.DODO.methods._BASE_CAPITAL_TOKEN_().call()
+      let baseLpToken = contracts.getContractWithAddress(contracts.TEST_ERC20_CONTRACT_NAME, baseLpTokenAddress)
+      await baseLpToken.methods.approve(DODOEthProxy.options.address, MAX_UINT256).send(ctx.sendParam(lp))
+      await DODOEthProxy.methods.withdrawAllEth(ctx.QUOTE.options.address).send(ctx.sendParam(lp))
+
+      assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp).call(), "0")
+      // console.log(await ctx.Web3.eth.getBalance(lp)) eth balance confirmed
     })
   })
 

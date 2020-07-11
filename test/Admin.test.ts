@@ -221,7 +221,7 @@ describe("Admin", () => {
       await ctx.DODO.methods.withdrawAllBase().send(ctx.sendParam(lp1))
       await ctx.DODO.methods.withdrawAllQuote().send(ctx.sendParam(lp1))
       assert.equal(await ctx.BASE.methods.balanceOf(lp1).call(), decimalStr("105"))
-      assert.equal(await ctx.QUOTE.methods.balanceOf(lp1).call(), "9540265973590798352834")
+      assert.equal(await ctx.QUOTE.methods.balanceOf(lp1).call(), "9540265973590798352835")
     })
 
     it("final settlement revert cases", async () => {

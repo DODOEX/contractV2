@@ -63,19 +63,19 @@ describe("Trader", () => {
       // avg price = 12.475
       await ctx.DODO.methods.buyBaseToken(decimalStr("1000"), decimalStr("100000")).send(ctx.sendParam(trader))
       assert.equal(await ctx.BASE.methods.balanceOf(trader).call(), decimalStr("2000"))
-      assert.equal(await ctx.QUOTE.methods.balanceOf(trader).call(), "9975050000000000000020000")
+      assert.equal(await ctx.QUOTE.methods.balanceOf(trader).call(), "9975049999999999999970000")
 
       // 50% depth
       // avg price = 19.9
       await ctx.DODO.methods.buyBaseToken(decimalStr("3000"), decimalStr("300000")).send(ctx.sendParam(trader))
       assert.equal(await ctx.BASE.methods.balanceOf(trader).call(), decimalStr("5000"))
-      assert.equal(await ctx.QUOTE.methods.balanceOf(trader).call(), "9900500000000000000260000")
+      assert.equal(await ctx.QUOTE.methods.balanceOf(trader).call(), "9900499999999999999970000")
 
       // 80% depth
       // avg price = 49.6
       await ctx.DODO.methods.buyBaseToken(decimalStr("3000"), decimalStr("300000")).send(ctx.sendParam(trader))
       assert.equal(await ctx.BASE.methods.balanceOf(trader).call(), decimalStr("8000"))
-      assert.equal(await ctx.QUOTE.methods.balanceOf(trader).call(), "9603200000000000001130000")
+      assert.equal(await ctx.QUOTE.methods.balanceOf(trader).call(), "9603199999999999999970000")
     })
 
     it("user has no pnl if buy and sell immediately", async () => {

@@ -66,8 +66,8 @@ export class DODOContext {
     this.EVM = new EVM
     this.Web3 = getDefaultWeb3()
     this.DODOZoo = await contracts.newContract(contracts.DODO_ZOO_CONTRACT_NAME)
-    this.BASE = await contracts.newContract(contracts.TEST_ERC20_CONTRACT_NAME)
-    this.QUOTE = await contracts.newContract(contracts.TEST_ERC20_CONTRACT_NAME)
+    this.BASE = await contracts.newContract(contracts.TEST_ERC20_CONTRACT_NAME, ["TestBase", 18])
+    this.QUOTE = await contracts.newContract(contracts.TEST_ERC20_CONTRACT_NAME, ["TestQuote", 18])
     this.ORACLE = await contracts.newContract(contracts.NAIVE_ORACLE_CONTRACT_NAME)
 
     const allAccounts = await this.Web3.eth.getAccounts();
@@ -92,6 +92,8 @@ export class DODOContext {
 
     this.BaseCapital = contracts.getContractWithAddress(contracts.DODO_LP_TOKEN_CONTRACT_NAME, await this.DODO.methods._BASE_CAPITAL_TOKEN_().call())
     this.QuoteCapital = contracts.getContractWithAddress(contracts.DODO_LP_TOKEN_CONTRACT_NAME, await this.DODO.methods._QUOTE_CAPITAL_TOKEN_().call())
+
+    this.DODO.methods.claimOwnership().send(this.sendParam(this.Deployer))
 
     console.log(log.blueText("[Init dodo context]"))
   }

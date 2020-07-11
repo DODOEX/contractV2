@@ -61,12 +61,12 @@ describe("Trader", () => {
       // 99.9% depth avg price 1.00010109
       await ctx.DODO.methods.buyBaseToken(decimalStr("8990"), decimalStr("10000")).send(ctx.sendParam(trader))
       assert.equal(await ctx.BASE.methods.balanceOf(trader).call(), decimalStr("19990"))
-      assert.equal(await ctx.QUOTE.methods.balanceOf(trader).call(), "8990031967821738650")
+      assert.equal(await ctx.QUOTE.methods.balanceOf(trader).call(), "8990031967806921648")
 
       // sell to 99.9% depth avg price 0.9999
       await ctx.DODO.methods.sellBaseToken(decimalStr("19980"), decimalStr("19970")).send(ctx.sendParam(trader))
       assert.equal(await ctx.BASE.methods.balanceOf(trader).call(), decimalStr("10"))
-      assert.equal(await ctx.QUOTE.methods.balanceOf(trader).call(), "19986992950440794519885")
+      assert.equal(await ctx.QUOTE.methods.balanceOf(trader).call(), "19986992950440794518402")
     })
 
     it("huge sell trading amount", async () => {
@@ -76,7 +76,7 @@ describe("Trader", () => {
       await ctx.DODO.methods.sellBaseToken(decimalStr("20000"), decimalStr("0")).send(ctx.sendParam(trader))
 
       assert.equal(await ctx.BASE.methods.balanceOf(trader).call(), decimalStr("0"))
-      assert.equal(await ctx.QUOTE.methods.balanceOf(trader).call(), "19998999990001000029998")
+      assert.equal(await ctx.QUOTE.methods.balanceOf(trader).call(), "19998999990001000029997")
     })
 
     it("huge buy trading amount", async () => {
@@ -97,7 +97,7 @@ describe("Trader", () => {
       await ctx.DODO.methods.buyBaseToken(decimalStr("9990"), decimalStr("10000")).send(ctx.sendParam(trader))
 
       // penalty only 0.2% even if withdraw make pool utilization rate raise to 99.5%
-      assert.equal(await ctx.DODO.methods.getWithdrawBasePenalty(decimalStr("5")).call(), "9981962500000000")
+      assert.equal(await ctx.DODO.methods.getWithdrawBasePenalty(decimalStr("5")).call(), "9981967500000000")
     })
   })
 })
