@@ -100,13 +100,13 @@ describe("LiquidityProvider", () => {
 
       // lp1 & lp2 would both have profit because the curve becomes flatter
       // but the withdraw penalty is greater than this free profit
-      assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp1).call(), "10163234422929069690")
+      assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp1).call(), "10163234422929069723")
       assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp1).call(), decimalStr("1000"))
 
-      assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp2).call(), "5076114129127759275")
+      assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp2).call(), "5076114129127759292")
       assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp2).call(), decimalStr("100"))
 
-      assert.equal(await ctx.DODO.methods.getWithdrawBasePenalty(decimalStr("5")).call(), "228507420047606043")
+      assert.equal(await ctx.DODO.methods.getWithdrawBasePenalty(decimalStr("5")).call(), "228507420047606093")
       assert.equal(await ctx.DODO.methods.getWithdrawQuotePenalty(decimalStr("100")).call(), "0")
     })
 
@@ -115,13 +115,13 @@ describe("LiquidityProvider", () => {
       await ctx.DODO.methods.depositQuote(decimalStr("1000")).send(ctx.sendParam(lp1))
       await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000")).send(ctx.sendParam(trader))
 
-      assert.equal(await ctx.DODO.methods.getWithdrawBasePenalty(decimalStr("4")).call(), "1065045389392391670")
+      assert.equal(await ctx.DODO.methods.getWithdrawBasePenalty(decimalStr("4")).call(), "1065045389392391665")
       assert.equal(await ctx.DODO.methods.getWithdrawQuotePenalty(decimalStr("100")).call(), "0")
 
       await ctx.DODO.methods.withdrawBase(decimalStr("4")).send(ctx.sendParam(lp1))
-      assert.equal(await ctx.BASE.methods.balanceOf(lp1).call(), "92934954610607608330")
-      assert.equal(await ctx.DODO.methods._BASE_BALANCE_().call(), "2060045389392391670")
-      assert.equal(await ctx.DODO.methods._TARGET_BASE_TOKEN_AMOUNT_().call(), "7075045389392391670")
+      assert.equal(await ctx.BASE.methods.balanceOf(lp1).call(), "92934954610607608335")
+      assert.equal(await ctx.DODO.methods._BASE_BALANCE_().call(), "2060045389392391665")
+      assert.equal(await ctx.DODO.methods._TARGET_BASE_TOKEN_AMOUNT_().call(), "7075045389392391665")
 
       await ctx.DODO.methods.withdrawQuote(decimalStr("100")).send(ctx.sendParam(lp1))
       assert.equal(await ctx.QUOTE.methods.balanceOf(lp1).call(), decimalStr("9100"))
@@ -137,19 +137,19 @@ describe("LiquidityProvider", () => {
       await ctx.DODO.methods.sellBaseToken(decimalStr("5"), decimalStr("200")).send(ctx.sendParam(trader))
 
       assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp1).call(), decimalStr("10"))
-      assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp1).call(), "1000978629616255274293")
+      assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp1).call(), "1000978629616255276996")
 
       await ctx.DODO.methods.depositQuote(decimalStr("500")).send(ctx.sendParam(lp2))
       await ctx.DODO.methods.depositBase(decimalStr("5")).send(ctx.sendParam(lp2))
 
       assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp1).call(), decimalStr("10"))
-      assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp1).call(), "1012529270910521748792")
+      assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp1).call(), "1012529270910521756641")
 
       assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp2).call(), decimalStr("5"))
-      assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp2).call(), "505769674273013520099")
+      assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp2).call(), "505769674273013522654")
 
       assert.equal(await ctx.DODO.methods.getWithdrawBasePenalty(decimalStr("5")).call(), "0")
-      assert.equal(await ctx.DODO.methods.getWithdrawQuotePenalty(decimalStr("500")).call(), "17320315567279994599")
+      assert.equal(await ctx.DODO.methods.getWithdrawQuotePenalty(decimalStr("500")).call(), "17320315567280002300")
     })
 
     it("withdraw", async () => {
@@ -158,12 +158,12 @@ describe("LiquidityProvider", () => {
       await ctx.DODO.methods.sellBaseToken(decimalStr("5"), decimalStr("200")).send(ctx.sendParam(trader))
 
       assert.equal(await ctx.DODO.methods.getWithdrawBasePenalty(decimalStr("4")).call(), "0")
-      assert.equal(await ctx.DODO.methods.getWithdrawQuotePenalty(decimalStr("100")).call(), "7389428846238898052")
+      assert.equal(await ctx.DODO.methods.getWithdrawQuotePenalty(decimalStr("100")).call(), "7389428846238900753")
 
       await ctx.DODO.methods.withdrawQuote(decimalStr("100")).send(ctx.sendParam(lp1))
-      assert.equal(await ctx.QUOTE.methods.balanceOf(lp1).call(), "9092610571153761101948")
-      assert.equal(await ctx.DODO.methods._QUOTE_BALANCE_().call(), "447655402437037250886")
-      assert.equal(await ctx.DODO.methods._TARGET_QUOTE_TOKEN_AMOUNT_().call(), "908310739520405634819")
+      assert.equal(await ctx.QUOTE.methods.balanceOf(lp1).call(), "9092610571153761099247")
+      assert.equal(await ctx.DODO.methods._QUOTE_BALANCE_().call(), "447655402437037253588")
+      assert.equal(await ctx.DODO.methods._TARGET_QUOTE_TOKEN_AMOUNT_().call(), "908310739520405637520")
 
       await ctx.DODO.methods.withdrawBase(decimalStr("4")).send(ctx.sendParam(lp1))
       assert.equal(await ctx.BASE.methods.balanceOf(lp1).call(), decimalStr("94"))
@@ -181,12 +181,12 @@ describe("LiquidityProvider", () => {
       await ctx.setOraclePrice(decimalStr("80"));
 
       assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp1).call(), decimalStr("10"))
-      assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp1).call(), "914362409397559034505")
+      assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp1).call(), "914362409397559037208")
 
       await ctx.setOraclePrice(decimalStr("120"))
 
       assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp1).call(), decimalStr("10"))
-      assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp1).call(), "1085284653936129403614")
+      assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp1).call(), "1085284653936129406317")
     })
 
     it("quote side lp don't has pnl when R is ABOVE ONE", async () => {
@@ -201,7 +201,7 @@ describe("LiquidityProvider", () => {
 
       await ctx.setOraclePrice(decimalStr("120"))
 
-      assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp1).call(), "9234731968726215538")
+      assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp1).call(), "9234731968726215588")
       assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp1).call(), decimalStr("1000"))
     })
 
@@ -281,13 +281,13 @@ describe("LiquidityProvider", () => {
       await ctx.DODO.methods.sellBaseToken(decimalStr("1"), decimalStr("0")).send(ctx.sendParam(trader))
 
       assert.equal(await ctx.DODO.methods._R_STATUS_().call(), "2")
-      assert.equal(await ctx.DODO.methods._TARGET_BASE_TOKEN_AMOUNT_().call(), "9234731968726215513")
+      assert.equal(await ctx.DODO.methods._TARGET_BASE_TOKEN_AMOUNT_().call(), "9234731968726215603")
       assert.equal(await ctx.DODO.methods._TARGET_QUOTE_TOKEN_AMOUNT_().call(), "1105993618321025490")
 
       await ctx.DODO.methods.depositQuote("1").send(ctx.sendParam(lp2))
-      assert.equal(await ctx.DODO.methods.getQuoteCapitalBalanceOf(lp2).call(), "7221653398290522326")
-      assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp2).call(), "7221653398290522382")
-      assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp1).call(), "9234731968726215513")
+      assert.equal(await ctx.DODO.methods.getQuoteCapitalBalanceOf(lp2).call(), "7221653398290521828")
+      assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp2).call(), "7221653398290521884")
+      assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp1).call(), "9234731968726215603")
     })
 
     it("single side deposit (base) & oracle change introduces profit", async () => {
@@ -303,8 +303,8 @@ describe("LiquidityProvider", () => {
       assert.equal(await ctx.DODO.methods._TARGET_QUOTE_TOKEN_AMOUNT_().call(), "1105408308382702868")
 
       await ctx.DODO.methods.depositQuote("1").send(ctx.sendParam(lp2))
-      assert.equal(await ctx.DODO.methods.getQuoteCapitalBalanceOf(lp2).call(), "21553269260529319697")
-      assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp2).call(), "21553269260529319725")
+      assert.equal(await ctx.DODO.methods.getQuoteCapitalBalanceOf(lp2).call(), "21553269260529319669")
+      assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp2).call(), "21553269260529319697")
       assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp1).call(), "11138732839027528584")
     })
 
@@ -318,12 +318,12 @@ describe("LiquidityProvider", () => {
 
       assert.equal(await ctx.DODO.methods._R_STATUS_().call(), "1")
       assert.equal(await ctx.DODO.methods._TARGET_BASE_TOKEN_AMOUNT_().call(), "9980000000000000")
-      assert.equal(await ctx.DODO.methods._TARGET_QUOTE_TOKEN_AMOUNT_().call(), "914362409397559031579")
+      assert.equal(await ctx.DODO.methods._TARGET_QUOTE_TOKEN_AMOUNT_().call(), "914362409397559035414")
 
       await ctx.DODO.methods.depositBase("1").send(ctx.sendParam(lp2))
       assert.equal(await ctx.DODO.methods.getBaseCapitalBalanceOf(lp2).call(), "10247647352975730")
       assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp2).call(), "10247647352975730")
-      assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp1).call(), "914362409397559031579")
+      assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp1).call(), "914362409397559035414")
     })
 
     it("deposit and withdraw immediately", async () => {
@@ -334,13 +334,13 @@ describe("LiquidityProvider", () => {
 
       await ctx.DODO.methods.depositBase(decimalStr("5")).send(ctx.sendParam(lp2))
 
-      assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp1).call(), "10163234422929069690")
-      assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp2).call(), "5076114129127759275")
+      assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp1).call(), "10163234422929069723")
+      assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp2).call(), "5076114129127759292")
 
       await ctx.DODO.methods.withdrawAllBase().send(ctx.sendParam(lp2))
 
-      assert.equal(await ctx.BASE.methods.balanceOf(lp2).call(), "99841132414635941818")
-      assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp1).call(), "10182702153814588570")
+      assert.equal(await ctx.BASE.methods.balanceOf(lp2).call(), "99841132414635941792")
+      assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp1).call(), "10182702153814588648")
     })
   })
 
