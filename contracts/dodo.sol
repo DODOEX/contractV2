@@ -34,7 +34,7 @@ contract DODO is Admin, Trader, LiquidityProvider {
         uint256 k,
         uint256 gasPriceLimit
     ) external onlyOwner preventReentrant {
-        require(!_INITIALIZED_, "DODO_ALREADY_INITIALIZED");
+        require(!_INITIALIZED_, "DODO_INITIALIZED");
         _INITIALIZED_ = true;
 
         _SUPERVISOR_ = supervisor;
@@ -53,19 +53,8 @@ contract DODO is Admin, Trader, LiquidityProvider {
         _K_ = k;
         _R_STATUS_ = Types.RStatus.ONE;
 
-        string memory lpTokenSuffix = "_DODO_LP_TOKEN_";
-
-        string memory baseName = string(
-            abi.encodePacked(IERC20(_BASE_TOKEN_).name(), lpTokenSuffix)
-        );
-        uint8 baseDecimals = IERC20(_BASE_TOKEN_).decimals();
-        _BASE_CAPITAL_TOKEN_ = address(new DODOLpToken(baseName, baseDecimals));
-
-        string memory quoteName = string(
-            abi.encodePacked(IERC20(_QUOTE_TOKEN_).name(), lpTokenSuffix)
-        );
-        uint8 quoteDecimals = IERC20(_QUOTE_TOKEN_).decimals();
-        _QUOTE_CAPITAL_TOKEN_ = address(new DODOLpToken(quoteName, quoteDecimals));
+        _BASE_CAPITAL_TOKEN_ = address(new DODOLpToken(_BASE_TOKEN_));
+        _QUOTE_CAPITAL_TOKEN_ = address(new DODOLpToken(_QUOTE_TOKEN_));
 
         _checkDODOParameters();
     }
