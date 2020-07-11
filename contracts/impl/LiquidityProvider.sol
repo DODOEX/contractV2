@@ -28,37 +28,23 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
     // ============ Events ============
 
-    event DepositBaseToken(
+    event Deposit(
         address indexed payer,
         address indexed receiver,
+        bool isBaseToken,
         uint256 amount,
         uint256 lpTokenAmount
     );
 
-    event DepositQuoteToken(
+    event Withdraw(
         address indexed payer,
         address indexed receiver,
+        bool isBaseToken,
         uint256 amount,
         uint256 lpTokenAmount
     );
 
-    event WithdrawBaseToken(
-        address indexed payer,
-        address indexed receiver,
-        uint256 amount,
-        uint256 lpTokenAmount
-    );
-
-    event WithdrawQuoteToken(
-        address indexed payer,
-        address indexed receiver,
-        uint256 amount,
-        uint256 lpTokenAmount
-    );
-
-    event ChargeBasePenalty(address indexed payer, uint256 amount);
-
-    event ChargeQuotePenalty(address indexed payer, uint256 amount);
+    event ChargePenalty(address indexed payer, bool isBaseToken, uint256 amount);
 
     // ============ Modifiers ============
 
@@ -120,7 +106,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
         _mintQuoteCapital(to, capital);
         _TARGET_QUOTE_TOKEN_AMOUNT_ = _TARGET_QUOTE_TOKEN_AMOUNT_.add(amount);
 
-        emit DepositQuoteToken(msg.sender, to, amount, capital);
+        emit Deposit(msg.sender, to, false, amount, capital);
     }
 
     function depositBaseTo(address to, uint256 amount) public preventReentrant depositBaseAllowed {
@@ -139,7 +125,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
         _mintBaseCapital(to, capital);
         _TARGET_BASE_TOKEN_AMOUNT_ = _TARGET_BASE_TOKEN_AMOUNT_.add(amount);
 
-        emit DepositBaseToken(msg.sender, to, amount, capital);
+        emit Deposit(msg.sender, to, true, amount, capital);
     }
 
     // ============ Withdraw Functions ============
@@ -166,8 +152,8 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
         _quoteTokenTransferOut(to, amount.sub(penalty));
         _donateQuoteToken(penalty);
 
-        emit WithdrawQuoteToken(msg.sender, to, amount.sub(penalty), requireQuoteCapital);
-        emit ChargeQuotePenalty(msg.sender, penalty);
+        emit Withdraw(msg.sender, to, false, amount.sub(penalty), requireQuoteCapital);
+        emit ChargePenalty(msg.sender, false, penalty);
 
         return amount.sub(penalty);
     }
@@ -194,8 +180,8 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
         _baseTokenTransferOut(to, amount.sub(penalty));
         _donateBaseToken(penalty);
 
-        emit WithdrawBaseToken(msg.sender, to, amount.sub(penalty), requireBaseCapital);
-        emit ChargeBasePenalty(msg.sender, penalty);
+        emit Withdraw(msg.sender, to, true, amount.sub(penalty), requireBaseCapital);
+        emit ChargePenalty(msg.sender, true, penalty);
 
         return amount.sub(penalty);
     }
@@ -216,8 +202,8 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
         _quoteTokenTransferOut(to, withdrawAmount.sub(penalty));
         _donateQuoteToken(penalty);
 
-        emit WithdrawQuoteToken(msg.sender, to, withdrawAmount, capital);
-        emit ChargeQuotePenalty(msg.sender, penalty);
+        emit Withdraw(msg.sender, to, false, withdrawAmount, capital);
+        emit ChargePenalty(msg.sender, false, penalty);
 
         return withdrawAmount.sub(penalty);
     }
@@ -236,8 +222,8 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
         _baseTokenTransferOut(to, withdrawAmount.sub(penalty));
         _donateBaseToken(penalty);
 
-        emit WithdrawBaseToken(msg.sender, to, withdrawAmount, capital);
-        emit ChargeBasePenalty(msg.sender, penalty);
+        emit Withdraw(msg.sender, to, true, withdrawAmount, capital);
+        emit ChargePenalty(msg.sender, true, penalty);
 
         return withdrawAmount.sub(penalty);
     }
