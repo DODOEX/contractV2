@@ -72,16 +72,16 @@ contract Storage is Ownable, ReentrancyGuard {
     }
 
     modifier notClosed() {
-        require(!_CLOSED_, "DODO_IS_CLOSED");
+        require(!_CLOSED_, "DODO_CLOSED");
         _;
     }
 
     // ============ Helper Functions ============
 
     function _checkDODOParameters() internal view returns (uint256) {
-        require(_K_ < DecimalMath.ONE, "K_MUST_BE_LESS_THAN_ONE");
-        require(_K_ > 0, "K_MUST_BE_GREATER_THAN_ZERO");
-        require(_LP_FEE_RATE_.add(_MT_FEE_RATE_) < DecimalMath.ONE, "FEE_MUST_BE_LESS_THAN_ONE");
+        require(_K_ < DecimalMath.ONE, "K>=1");
+        require(_K_ > 0, "K=0");
+        require(_LP_FEE_RATE_.add(_MT_FEE_RATE_) < DecimalMath.ONE, "FEE_RATE>=1");
     }
 
     function getOraclePrice() public view returns (uint256) {

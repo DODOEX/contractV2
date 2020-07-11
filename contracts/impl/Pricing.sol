@@ -48,7 +48,7 @@ contract Pricing is Storage {
         view
         returns (uint256 payQuoteToken)
     {
-        require(amount < targetBaseTokenAmount, "DODO_BASE_TOKEN_BALANCE_NOT_ENOUGH");
+        require(amount < targetBaseTokenAmount, "DODO_BASE_BALANCE_NOT_ENOUGH");
         uint256 B2 = targetBaseTokenAmount.sub(amount);
         payQuoteToken = _RAboveIntegrate(targetBaseTokenAmount, targetBaseTokenAmount, B2);
         return payQuoteToken;
@@ -111,7 +111,7 @@ contract Pricing is Storage {
         uint256 baseBalance,
         uint256 targetBaseAmount
     ) internal view returns (uint256 payQuoteToken) {
-        require(amount < baseBalance, "DODO_BASE_TOKEN_BALANCE_NOT_ENOUGH");
+        require(amount < baseBalance, "DODO_BASE_BALANCE_NOT_ENOUGH");
         uint256 B2 = baseBalance.sub(amount);
         return _RAboveIntegrate(targetBaseAmount, baseBalance, B2);
     }

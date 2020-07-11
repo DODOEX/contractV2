@@ -113,7 +113,7 @@ contract Settlement is Storage {
 
     // claim remaining assets after final settlement
     function claim() external preventReentrant {
-        require(_CLOSED_, "DODO_IS_NOT_CLOSED");
+        require(_CLOSED_, "DODO_NOT_CLOSED");
         require(!_CLAIMED_[msg.sender], "ALREADY_CLAIMED");
         _CLAIMED_[msg.sender] = true;
         uint256 quoteAmount = DecimalMath.mul(

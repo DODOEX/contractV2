@@ -38,8 +38,7 @@ contract DODOZoo is Ownable {
         uint256 k,
         uint256 gasPriceLimit
     ) public onlyOwner returns (address) {
-        require(!isDODORegistered(baseToken, quoteToken), "DODO_IS_REGISTERED");
-        require(baseToken != quoteToken, "BASE_IS_SAME_WITH_QUOTE");
+        require(!isDODORegistered(baseToken, quoteToken), "DODO_REGISTERED");
         address newBornDODO = address(new DODO());
         IDODO(newBornDODO).init(
             supervisor,
