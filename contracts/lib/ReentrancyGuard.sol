@@ -24,7 +24,7 @@ contract ReentrancyGuard {
     }
 
     modifier preventReentrant() {
-        require(_ENTER_STATUS_ != Types.EnterStatus.ENTERED, "ReentrancyGuard: reentrant call");
+        require(_ENTER_STATUS_ != Types.EnterStatus.ENTERED, "REENTRANT");
         _ENTER_STATUS_ = Types.EnterStatus.ENTERED;
         _;
         _ENTER_STATUS_ = Types.EnterStatus.NOT_ENTERED;

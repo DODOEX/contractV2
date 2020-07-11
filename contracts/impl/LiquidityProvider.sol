@@ -49,12 +49,12 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
     // ============ Modifiers ============
 
     modifier depositQuoteAllowed() {
-        require(_DEPOSIT_QUOTE_ALLOWED_, "DEPOSIT_QUOTE_TOKEN_NOT_ALLOWED");
+        require(_DEPOSIT_QUOTE_ALLOWED_, "DEPOSIT_QUOTE_NOT_ALLOWED");
         _;
     }
 
     modifier depositBaseAllowed() {
-        require(_DEPOSIT_BASE_ALLOWED_, "DEPOSIT_BASE_TOKEN_NOT_ALLOWED");
+        require(_DEPOSIT_BASE_ALLOWED_, "DEPOSIT_BASE_NOT_ALLOWED");
         _;
     }
 
@@ -144,7 +144,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
         // handle penalty, penalty may exceed amount
         uint256 penalty = getWithdrawQuotePenalty(amount);
-        require(penalty < amount, "COULD_NOT_AFFORD_LIQUIDITY_PENALTY");
+        require(penalty < amount, "PENALTY_EXCEED");
 
         // settlement
         _TARGET_QUOTE_TOKEN_AMOUNT_ = _TARGET_QUOTE_TOKEN_AMOUNT_.sub(amount);
@@ -172,7 +172,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
         // handle penalty, penalty may exceed amount
         uint256 penalty = getWithdrawBasePenalty(amount);
-        require(penalty <= amount, "COULD_NOT_AFFORD_LIQUIDITY_PENALTY");
+        require(penalty <= amount, "PENALTY_EXCEED");
 
         // settlement
         _TARGET_BASE_TOKEN_AMOUNT_ = _TARGET_BASE_TOKEN_AMOUNT_.sub(amount);
@@ -194,7 +194,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
         // handle penalty, penalty may exceed amount
         uint256 penalty = getWithdrawQuotePenalty(withdrawAmount);
-        require(penalty <= withdrawAmount, "COULD_NOT_AFFORD_LIQUIDITY_PENALTY");
+        require(penalty <= withdrawAmount, "PENALTY_EXCEED");
 
         // settlement
         _TARGET_QUOTE_TOKEN_AMOUNT_ = _TARGET_QUOTE_TOKEN_AMOUNT_.sub(withdrawAmount);
@@ -214,7 +214,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
         // handle penalty, penalty may exceed amount
         uint256 penalty = getWithdrawBasePenalty(withdrawAmount);
-        require(penalty <= withdrawAmount, "COULD_NOT_AFFORD_LIQUIDITY_PENALTY");
+        require(penalty <= withdrawAmount, "PENALTY_EXCEED");
 
         // settlement
         _TARGET_BASE_TOKEN_AMOUNT_ = _TARGET_BASE_TOKEN_AMOUNT_.sub(withdrawAmount);
@@ -269,7 +269,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
     }
 
     function getWithdrawQuotePenalty(uint256 amount) public view returns (uint256 penalty) {
-        require(amount <= _QUOTE_BALANCE_, "DODO_QUOTE_TOKEN_BALANCE_NOT_ENOUGH");
+        require(amount <= _QUOTE_BALANCE_, "DODO_QUOTE_BALANCE_NOT_ENOUGH");
         if (_R_STATUS_ == Types.RStatus.BELOW_ONE) {
             uint256 spareBase = _BASE_BALANCE_.sub(_TARGET_BASE_TOKEN_AMOUNT_);
             uint256 price = getOraclePrice();
@@ -292,7 +292,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
     }
 
     function getWithdrawBasePenalty(uint256 amount) public view returns (uint256 penalty) {
-        require(amount <= _BASE_BALANCE_, "DODO_BASE_TOKEN_BALANCE_NOT_ENOUGH");
+        require(amount <= _BASE_BALANCE_, "DODO_BASE_BALANCE_NOT_ENOUGH");
         if (_R_STATUS_ == Types.RStatus.ABOVE_ONE) {
             uint256 spareQuote = _QUOTE_BALANCE_.sub(_TARGET_QUOTE_TOKEN_AMOUNT_);
             uint256 price = getOraclePrice();
