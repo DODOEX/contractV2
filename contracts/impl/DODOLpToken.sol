@@ -8,6 +8,7 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
+import {IERC20} from "../intf/IERC20.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {Ownable} from "../lib/Ownable.sol";
 
@@ -21,8 +22,7 @@ contract DODOLpToken is Ownable {
     using SafeMath for uint256;
 
     string public symbol = "DLP";
-    string public name;
-    uint8 public decimals;
+    address public originToken;
 
     uint256 public totalSupply;
     mapping(address => uint256) internal balances;
@@ -40,9 +40,17 @@ contract DODOLpToken is Ownable {
 
     // ============ Functions ============
 
-    constructor(string memory _name, uint8 _decimals) public {
-        name = _name;
-        decimals = _decimals;
+    constructor(address _originToken) public {
+        originToken = _originToken;
+    }
+
+    function name() public view returns (string memory) {
+        string memory lpTokenSuffix = "_DODO_LP_TOKEN_";
+        return string(abi.encodePacked(IERC20(originToken).name(), lpTokenSuffix));
+    }
+
+    function decimals() public view returns (uint8) {
+        return IERC20(originToken).decimals();
     }
 
     /**
@@ -51,7 +59,6 @@ contract DODOLpToken is Ownable {
      * @param amount The amount to be transferred.
      */
     function transfer(address to, uint256 amount) public returns (bool) {
-        require(to != address(0), "TO_ADDRESS_IS_EMPTY");
         require(amount <= balances[msg.sender], "BALANCE_NOT_ENOUGH");
 
         balances[msg.sender] = balances[msg.sender].sub(amount);
@@ -80,7 +87,6 @@ contract DODOLpToken is Ownable {
         address to,
         uint256 amount
     ) public returns (bool) {
-        require(to != address(0), "TO_ADDRESS_IS_EMPTY");
         require(amount <= balances[from], "BALANCE_NOT_ENOUGH");
         require(amount <= allowed[from][msg.sender], "ALLOWANCE_NOT_ENOUGH");
 
@@ -123,6 +129,5 @@ contract DODOLpToken is Ownable {
         balances[user] = balances[user].sub(value);
         totalSupply = totalSupply.sub(value);
         emit Burn(user, value);
-        emit Transfer(user, address(0), value);
     }
 }
