@@ -34,12 +34,12 @@ describe("DODO ZOO", () => {
     it("could not deploy the same dodo", async () => {
       await assert.rejects(
         ctx.DODOZoo.methods.breedDODO(ctx.Supervisor, ctx.Maintainer, ctx.BASE.options.address, ctx.QUOTE.options.address, ctx.ORACLE.options.address, "0", "0", "1", "0").send(ctx.sendParam(ctx.Deployer)),
-        /DODO_IS_REGISTERED/
+        /DODO_REGISTERED/
       )
 
       await assert.rejects(
         ctx.DODOZoo.methods.breedDODO(ctx.Supervisor, ctx.Maintainer, ctx.QUOTE.options.address, ctx.BASE.options.address, ctx.ORACLE.options.address, "0", "0", "1", "0").send(ctx.sendParam(ctx.Deployer)),
-        /DODO_IS_REGISTERED/
+        /DODO_REGISTERED/
       )
     })
 
@@ -61,7 +61,7 @@ describe("DODO ZOO", () => {
       // could not init twice
       await assert.rejects(
         newDODO.methods.init(ctx.Supervisor, ctx.Maintainer, ctx.QUOTE.options.address, ctx.BASE.options.address, ctx.ORACLE.options.address, "0", "0", "1", "0").send(ctx.sendParam(ctx.Deployer)),
-        /DODO_ALREADY_INITIALIZED/
+        /DODO_INITIALIZED/
       )
     })
 
