@@ -83,7 +83,7 @@ describe("Trader", () => {
       // could not buy all base balance
       await assert.rejects(
         ctx.DODO.methods.buyBaseToken(decimalStr("10000"), decimalStr("10010")).send(ctx.sendParam(trader)),
-        /DODO_BASE_TOKEN_BALANCE_NOT_ENOUGH/
+        /DODO_BASE_BALANCE_NOT_ENOUGH/
       )
 
       // when buy amount close to base balance, price will increase quickly

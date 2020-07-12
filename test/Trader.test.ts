@@ -267,14 +267,14 @@ describe("Trader", () => {
     it("base balance limit", async () => {
       await assert.rejects(
         ctx.DODO.methods.buyBaseToken(decimalStr("11"), decimalStr("10000")).send(ctx.sendParam(trader)),
-        /DODO_BASE_TOKEN_BALANCE_NOT_ENOUGH/
+        /DODO_BASE_BALANCE_NOT_ENOUGH/
       )
 
       await ctx.DODO.methods.buyBaseToken(decimalStr("1"), decimalStr("200")).send(ctx.sendParam(trader))
 
       await assert.rejects(
         ctx.DODO.methods.buyBaseToken(decimalStr("11"), decimalStr("10000")).send(ctx.sendParam(trader)),
-        /DODO_BASE_TOKEN_BALANCE_NOT_ENOUGH/
+        /DODO_BASE_BALANCE_NOT_ENOUGH/
       )
     })
   })

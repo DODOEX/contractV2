@@ -351,12 +351,12 @@ describe("LiquidityProvider", () => {
 
       await assert.rejects(
         ctx.DODO.methods.withdrawBase(decimalStr("6")).send(ctx.sendParam(lp1)),
-        /DODO_BASE_TOKEN_BALANCE_NOT_ENOUGH/
+        /DODO_BASE_BALANCE_NOT_ENOUGH/
       )
 
       await assert.rejects(
         ctx.DODO.methods.withdrawAllBase().send(ctx.sendParam(lp1)),
-        /DODO_BASE_TOKEN_BALANCE_NOT_ENOUGH/
+        /DODO_BASE_BALANCE_NOT_ENOUGH/
       )
     })
 
@@ -366,12 +366,12 @@ describe("LiquidityProvider", () => {
 
       await assert.rejects(
         ctx.DODO.methods.withdrawQuote(decimalStr("600")).send(ctx.sendParam(lp1)),
-        /DODO_QUOTE_TOKEN_BALANCE_NOT_ENOUGH/
+        /DODO_QUOTE_BALANCE_NOT_ENOUGH/
       )
 
       await assert.rejects(
         ctx.DODO.methods.withdrawAllQuote().send(ctx.sendParam(lp1)),
-        /DODO_QUOTE_TOKEN_BALANCE_NOT_ENOUGH/
+        /DODO_QUOTE_BALANCE_NOT_ENOUGH/
       )
     })
 
@@ -381,12 +381,12 @@ describe("LiquidityProvider", () => {
 
       await assert.rejects(
         ctx.DODO.methods.withdrawBase(decimalStr("0.5")).send(ctx.sendParam(lp1)),
-        /COULD_NOT_AFFORD_LIQUIDITY_PENALTY/
+        /PENALTY_EXCEED/
       )
 
       await assert.rejects(
         ctx.DODO.methods.getWithdrawBasePenalty(decimalStr("10")).call(),
-        /DODO_BASE_TOKEN_BALANCE_NOT_ENOUGH/
+        /DODO_BASE_BALANCE_NOT_ENOUGH/
       )
     })
 
@@ -396,12 +396,12 @@ describe("LiquidityProvider", () => {
 
       await assert.rejects(
         ctx.DODO.methods.withdrawQuote(decimalStr("200")).send(ctx.sendParam(lp1)),
-        /COULD_NOT_AFFORD_LIQUIDITY_PENALTY/
+        /PENALTY_EXCEED/
       )
 
       await assert.rejects(
         ctx.DODO.methods.getWithdrawQuotePenalty(decimalStr("1000")).call(),
-        /DODO_QUOTE_TOKEN_BALANCE_NOT_ENOUGH/
+        /DODO_QUOTE_BALANCE_NOT_ENOUGH/
       )
     })
 
@@ -412,7 +412,7 @@ describe("LiquidityProvider", () => {
 
       await assert.rejects(
         ctx.DODO.methods.withdrawBase(decimalStr("0.5")).send(ctx.sendParam(lp2)),
-        /COULD_NOT_AFFORD_LIQUIDITY_PENALTY/
+        /PENALTY_EXCEED/
       )
     })
 
@@ -423,7 +423,7 @@ describe("LiquidityProvider", () => {
 
       await assert.rejects(
         ctx.DODO.methods.withdrawQuote(decimalStr("200")).send(ctx.sendParam(lp2)),
-        /COULD_NOT_AFFORD_LIQUIDITY_PENALTY/
+        /PENALTY_EXCEED/
       )
     })
 

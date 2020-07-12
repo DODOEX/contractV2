@@ -89,7 +89,7 @@ describe("Admin", () => {
       await ctx.DODO.methods.disableBaseDeposit().send(ctx.sendParam(ctx.Supervisor))
       await assert.rejects(
         ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1)),
-        /DEPOSIT_BASE_TOKEN_NOT_ALLOWED/
+        /DEPOSIT_BASE_NOT_ALLOWED/
       )
 
       await ctx.DODO.methods.enableBaseDeposit().send(ctx.sendParam(ctx.Deployer))
@@ -99,7 +99,7 @@ describe("Admin", () => {
       await ctx.DODO.methods.disableQuoteDeposit().send(ctx.sendParam(ctx.Supervisor))
       await assert.rejects(
         ctx.DODO.methods.depositQuote(decimalStr("1000")).send(ctx.sendParam(lp1)),
-        /DEPOSIT_QUOTE_TOKEN_NOT_ALLOWED/
+        /DEPOSIT_QUOTE_NOT_ALLOWED/
       )
 
       await ctx.DODO.methods.enableQuoteDeposit().send(ctx.sendParam(ctx.Deployer))
@@ -227,7 +227,7 @@ describe("Admin", () => {
     it("final settlement revert cases", async () => {
       await assert.rejects(
         ctx.DODO.methods.claim().send(ctx.sendParam(lp1)),
-        /DODO_IS_NOT_CLOSED/
+        /DODO_NOT_CLOSED/
       )
       await ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1))
       await ctx.DODO.methods.depositQuote(decimalStr("500")).send(ctx.sendParam(lp2))
@@ -236,7 +236,7 @@ describe("Admin", () => {
       await ctx.DODO.methods.finalSettlement().send(ctx.sendParam(ctx.Deployer))
       await assert.rejects(
         ctx.DODO.methods.finalSettlement().send(ctx.sendParam(ctx.Deployer)),
-        / DODO_IS_CLOSED/
+        / DODO_CLOSED/
       )
 
       await ctx.DODO.methods.claim().send(ctx.sendParam(lp2))
@@ -247,15 +247,15 @@ describe("Admin", () => {
 
       await assert.rejects(
         ctx.DODO.methods.enableQuoteDeposit().send(ctx.sendParam(ctx.Deployer)),
-        /DODO_IS_CLOSED/
+        /DODO_CLOSED/
       )
       await assert.rejects(
         ctx.DODO.methods.enableBaseDeposit().send(ctx.sendParam(ctx.Deployer)),
-        /DODO_IS_CLOSED/
+        /DODO_CLOSED/
       )
       await assert.rejects(
         ctx.DODO.methods.enableTrading().send(ctx.sendParam(ctx.Deployer)),
-        /DODO_IS_CLOSED/
+        /DODO_CLOSED/
       )
     })
   })
@@ -318,22 +318,22 @@ describe("Admin", () => {
     it("k revert cases", async () => {
       await assert.rejects(
         ctx.DODO.methods.setK(decimalStr("1")).send(ctx.sendParam(ctx.Deployer)),
-        /K_MUST_BE_LESS_THAN_ONE/
+        /K>=1/
       )
       await assert.rejects(
         ctx.DODO.methods.setK(decimalStr("0")).send(ctx.sendParam(ctx.Deployer)),
-        /K_MUST_BE_GREATER_THAN_ZERO/
+        /K=0/
       )
     })
 
     it("fee revert cases", async () => {
       await assert.rejects(
         ctx.DODO.methods.setLiquidityProviderFeeRate(decimalStr("0.999")).send(ctx.sendParam(ctx.Deployer)),
-        /FEE_MUST_BE_LESS_THAN_ONE/
+        /FEE_RATE>=1/
       )
       await assert.rejects(
         ctx.DODO.methods.setMaintainerFeeRate(decimalStr("0.998")).send(ctx.sendParam(ctx.Deployer)),
-        /FEE_MUST_BE_LESS_THAN_ONE/
+        /FEE_RATE>=1/
       )
     })
   })
