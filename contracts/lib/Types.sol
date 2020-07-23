@@ -10,5 +10,4 @@ pragma experimental ABIEncoderV2;
 
 library Types {
     enum RStatus {ONE, ABOVE_ONE, BELOW_ONE}
-    enum EnterStatus {ENTERED, NOT_ENTERED}
 }

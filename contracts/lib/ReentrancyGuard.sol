@@ -8,8 +8,6 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {Types} from "./Types.sol";
-
 /**
  * @title ReentrancyGuard
  * @author DODO Breeder
@@ -17,16 +15,14 @@ import {Types} from "./Types.sol";
  * @notice Protect functions from Reentrancy Attack
  */
 contract ReentrancyGuard {
-    Types.EnterStatus private _ENTER_STATUS_;
-
-    constructor() internal {
-        _ENTER_STATUS_ = Types.EnterStatus.NOT_ENTERED;
-    }
+    // https://solidity.readthedocs.io/en/latest/control-structures.html?highlight=zero-state#scoping-and-declarations
+    // zero-state of _ENTERED_ is false
+    bool private _ENTERED_;
 
     modifier preventReentrant() {
-        require(_ENTER_STATUS_ != Types.EnterStatus.ENTERED, "REENTRANT");
-        _ENTER_STATUS_ = Types.EnterStatus.ENTERED;
+        require(!_ENTERED_, "REENTRANT");
+        _ENTERED_ = true;
         _;
-        _ENTER_STATUS_ = Types.EnterStatus.NOT_ENTERED;
+        _ENTERED_ = false;
     }
 }
