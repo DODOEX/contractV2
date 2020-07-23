@@ -11,6 +11,7 @@ pragma experimental ABIEncoderV2;
 import {SafeMath} from "../lib/SafeMath.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
 import {Types} from "../lib/Types.sol";
+import {IDODOCallee} from "../intf/IDODOCallee.sol";
 import {Storage} from "./Storage.sol";
 import {Pricing} from "./Pricing.sol";
 import {Settlement} from "./Settlement.sol";
@@ -46,13 +47,11 @@ contract Trader is Storage, Pricing, Settlement {
 
     // ============ Trade Functions ============
 
-    function sellBaseToken(uint256 amount, uint256 minReceiveQuote)
-        external
-        tradeAllowed
-        gasPriceLimit
-        preventReentrant
-        returns (uint256)
-    {
+    function sellBaseToken(
+        uint256 amount,
+        uint256 minReceiveQuote,
+        bytes calldata data
+    ) external tradeAllowed gasPriceLimit preventReentrant returns (uint256) {
         // query price
         (
             uint256 receiveQuote,
@@ -65,9 +64,15 @@ contract Trader is Storage, Pricing, Settlement {
         require(receiveQuote >= minReceiveQuote, "SELL_BASE_RECEIVE_NOT_ENOUGH");
 
         // settle assets
-        _baseTokenTransferIn(msg.sender, amount);
         _quoteTokenTransferOut(msg.sender, receiveQuote);
-        _quoteTokenTransferOut(_MAINTAINER_, mtFeeQuote);
+        if (data.length > 0) {
+            IDODOCallee(msg.sender).dodoCall(false, amount, receiveQuote, data);
+        }
+        _baseTokenTransferIn(msg.sender, amount);
+        if (mtFeeQuote != 0) {
+            _quoteTokenTransferOut(_MAINTAINER_, mtFeeQuote);
+            emit ChargeMaintainerFee(_MAINTAINER_, false, mtFeeQuote);
+        }
 
         // update TARGET
         if (_TARGET_QUOTE_TOKEN_AMOUNT_ != newQuoteTarget) {
@@ -82,20 +87,15 @@ contract Trader is Storage, Pricing, Settlement {
 
         _donateQuoteToken(lpFeeQuote);
         emit SellBaseToken(msg.sender, amount, receiveQuote);
-        if (mtFeeQuote != 0) {
-            emit ChargeMaintainerFee(_MAINTAINER_, false, mtFeeQuote);
-        }
 
         return receiveQuote;
     }
 
-    function buyBaseToken(uint256 amount, uint256 maxPayQuote)
-        external
-        tradeAllowed
-        gasPriceLimit
-        preventReentrant
-        returns (uint256)
-    {
+    function buyBaseToken(
+        uint256 amount,
+        uint256 maxPayQuote,
+        bytes calldata data
+    ) external tradeAllowed gasPriceLimit preventReentrant returns (uint256) {
         // query price
         (
             uint256 payQuote,
@@ -108,9 +108,15 @@ contract Trader is Storage, Pricing, Settlement {
         require(payQuote <= maxPayQuote, "BUY_BASE_COST_TOO_MUCH");
 
         // settle assets
-        _quoteTokenTransferIn(msg.sender, payQuote);
         _baseTokenTransferOut(msg.sender, amount);
-        _baseTokenTransferOut(_MAINTAINER_, mtFeeBase);
+        if (data.length > 0) {
+            IDODOCallee(msg.sender).dodoCall(true, amount, payQuote, data);
+        }
+        _quoteTokenTransferIn(msg.sender, payQuote);
+        if (mtFeeBase != 0) {
+            _baseTokenTransferOut(_MAINTAINER_, mtFeeBase);
+            emit ChargeMaintainerFee(_MAINTAINER_, true, mtFeeBase);
+        }
 
         // update TARGET
         if (_TARGET_QUOTE_TOKEN_AMOUNT_ != newQuoteTarget) {
@@ -125,9 +131,6 @@ contract Trader is Storage, Pricing, Settlement {
 
         _donateBaseToken(lpFeeBase);
         emit BuyBaseToken(msg.sender, amount, payQuote);
-        if (mtFeeBase != 0) {
-            emit ChargeMaintainerFee(_MAINTAINER_, true, mtFeeBase);
-        }
 
         return payQuote;
     }
