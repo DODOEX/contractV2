@@ -9,8 +9,22 @@ pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
 import {Ownable} from "./lib/Ownable.sol";
-import {IDODO} from "./intf/IDODO.sol";
-import {DODO} from "./DODO.sol";
+
+interface IDODO {
+    function init(
+        address supervisor,
+        address maintainer,
+        address baseToken,
+        address quoteToken,
+        address oracle,
+        uint256 lpFeeRate,
+        uint256 mtFeeRate,
+        uint256 k,
+        uint256 gasPriceLimit
+    ) external;
+
+    function transferOwnership(address newOwner) external;
+}
 
 /**
  * @title DODOZoo
@@ -19,11 +33,18 @@ import {DODO} from "./DODO.sol";
  * @notice Register of All DODO
  */
 contract DODOZoo is Ownable {
+    address public _DODO_LOGIC_;
     mapping(address => mapping(address => address)) internal _DODO_REGISTER_;
 
     // ============ Events ============
 
     event DODOBirth(address newBorn, address baseToken, address quoteToken);
+
+    // ============ Constructor Function ============
+
+    constructor(address _dodoLogic) public {
+        _DODO_LOGIC_ = _dodoLogic;
+    }
 
     // ============ Breed DODO Function ============
 
@@ -37,9 +58,21 @@ contract DODOZoo is Ownable {
         uint256 mtFeeRate,
         uint256 k,
         uint256 gasPriceLimit
-    ) public onlyOwner returns (address) {
+    ) external onlyOwner returns (address newBornDODO) {
         require(!isDODORegistered(baseToken, quoteToken), "DODO_REGISTERED");
-        address newBornDODO = address(new DODO());
+        // Adapted from https://github.com/optionality/clone-factory/blob/32782f82dfc5a00d103a7e61a17a5dedbd1e8e9d/contracts/CloneFactory.sol
+        // create proxy
+        bytes20 targetBytes = bytes20(_DODO_LOGIC_);
+        assembly {
+            let clone := mload(0x40)
+            mstore(clone, 0x3d602d80600a3d3981f3363d3d373d3d3d363d73000000000000000000000000)
+            mstore(add(clone, 0x14), targetBytes)
+            mstore(
+                add(clone, 0x28),
+                0x5af43d82803e903d91602b57fd5bf30000000000000000000000000000000000
+            )
+            newBornDODO := create(0, clone, 0x37)
+        }
         IDODO(newBornDODO).init(
             supervisor,
             maintainer,
@@ -57,7 +90,7 @@ contract DODOZoo is Ownable {
         return newBornDODO;
     }
 
-    function removeDODO(address baseToken, address quoteToken) public onlyOwner {
+    function removeDODO(address baseToken, address quoteToken) external onlyOwner {
         _DODO_REGISTER_[baseToken][quoteToken] = address(0);
     }
 
