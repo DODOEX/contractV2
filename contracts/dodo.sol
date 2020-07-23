@@ -33,9 +33,13 @@ contract DODO is Admin, Trader, LiquidityProvider {
         uint256 mtFeeRate,
         uint256 k,
         uint256 gasPriceLimit
-    ) external onlyOwner preventReentrant {
+    ) external {
         require(!_INITIALIZED_, "DODO_INITIALIZED");
         _INITIALIZED_ = true;
+
+        // constructor
+        _OWNER_ = msg.sender;
+        emit OwnershipTransferred(address(0), _OWNER_);
 
         _SUPERVISOR_ = supervisor;
         _MAINTAINER_ = maintainer;

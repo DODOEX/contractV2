@@ -8,7 +8,7 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {Ownable} from "../lib/Ownable.sol";
+import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
 import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
@@ -22,7 +22,7 @@ import {Types} from "../lib/Types.sol";
  *
  * @notice Local Variables
  */
-contract Storage is Ownable, ReentrancyGuard {
+contract Storage is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
 
     // ============ Variables for Control ============
