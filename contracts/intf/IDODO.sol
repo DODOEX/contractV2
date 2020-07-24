@@ -56,4 +56,8 @@ interface IDODO {
     function _BASE_CAPITAL_TOKEN_() external returns (address);
 
     function _QUOTE_CAPITAL_TOKEN_() external returns (address);
+
+    function _BASE_TOKEN_() external returns (address);
+
+    function _QUOTE_TOKEN_() external returns (address);
 }
