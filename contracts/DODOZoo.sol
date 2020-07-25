@@ -37,6 +37,8 @@ contract DODOZoo is Ownable {
     address public _DODO_LOGIC_;
     address public _CLONE_FACTORY_;
 
+    address public _DEFAULT_SUPERVISOR_;
+
     mapping(address => mapping(address => address)) internal _DODO_REGISTER_;
 
     // ============ Events ============
@@ -45,15 +47,19 @@ contract DODOZoo is Ownable {
 
     // ============ Constructor Function ============
 
-    constructor(address _dodoLogic, address _cloneFactory) public {
+    constructor(
+        address _dodoLogic,
+        address _cloneFactory,
+        address _defaultSupervisor
+    ) public {
         _DODO_LOGIC_ = _dodoLogic;
         _CLONE_FACTORY_ = _cloneFactory;
+        _DEFAULT_SUPERVISOR_ = _defaultSupervisor;
     }
 
     // ============ Breed DODO Function ============
 
     function breedDODO(
-        address supervisor,
         address maintainer,
         address baseToken,
         address quoteToken,
@@ -68,7 +74,7 @@ contract DODOZoo is Ownable {
         // create proxy
         newBornDODO = ICloneFactory(_CLONE_FACTORY_).clone(_DODO_LOGIC_);
         IDODO(newBornDODO).init(
-            supervisor,
+            _DEFAULT_SUPERVISOR_,
             maintainer,
             baseToken,
             quoteToken,
