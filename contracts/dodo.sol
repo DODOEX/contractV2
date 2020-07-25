@@ -24,6 +24,7 @@ import {DODOLpToken} from "./impl/DODOLpToken.sol";
  */
 contract DODO is Admin, Trader, LiquidityProvider {
     function init(
+        address owner,
         address supervisor,
         address maintainer,
         address baseToken,
@@ -38,7 +39,7 @@ contract DODO is Admin, Trader, LiquidityProvider {
         _INITIALIZED_ = true;
 
         // constructor
-        _OWNER_ = msg.sender;
+        _OWNER_ = owner;
         emit OwnershipTransferred(address(0), _OWNER_);
 
         _SUPERVISOR_ = supervisor;

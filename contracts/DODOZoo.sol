@@ -13,6 +13,7 @@ import {ICloneFactory} from "./helper/CloneFactory.sol";
 
 interface IDODO {
     function init(
+        address owner,
         address supervisor,
         address maintainer,
         address baseToken,
@@ -88,10 +89,9 @@ contract DODOZoo is Ownable {
         uint256 gasPriceLimit
     ) external onlyOwner returns (address newBornDODO) {
         require(!isDODORegistered(baseToken, quoteToken), "DODO_REGISTERED");
-        // Adapted from https://github.com/optionality/clone-factory/blob/32782f82dfc5a00d103a7e61a17a5dedbd1e8e9d/contracts/CloneFactory.sol
-        // create proxy
         newBornDODO = ICloneFactory(_CLONE_FACTORY_).clone(_DODO_LOGIC_);
         IDODO(newBornDODO).init(
+            _OWNER_,
             _DEFAULT_SUPERVISOR_,
             maintainer,
             baseToken,
@@ -102,7 +102,6 @@ contract DODOZoo is Ownable {
             k,
             gasPriceLimit
         );
-        IDODO(newBornDODO).transferOwnership(_OWNER_);
         _DODO_REGISTER_[baseToken][quoteToken] = newBornDODO;
         emit DODOBirth(newBornDODO, baseToken, quoteToken);
         return newBornDODO;
