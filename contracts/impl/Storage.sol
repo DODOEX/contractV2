@@ -103,4 +103,9 @@ contract Storage is InitializableOwnable, ReentrancyGuard {
     function getTotalQuoteCapital() public view returns (uint256) {
         return IDODOLpToken(_QUOTE_CAPITAL_TOKEN_).totalSupply();
     }
+
+    // ============ Version Control ============
+    function version() external pure returns (uint256) {
+        return 1;
+    }
 }
