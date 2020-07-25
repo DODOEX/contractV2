@@ -57,6 +57,24 @@ contract DODOZoo is Ownable {
         _DEFAULT_SUPERVISOR_ = _defaultSupervisor;
     }
 
+    // ============ Admin Function ============
+
+    function setDODOLogic(address _dodoLogic) external onlyOwner {
+        _DODO_LOGIC_ = _dodoLogic;
+    }
+
+    function setCloneFactory(address _cloneFactory) external onlyOwner {
+        _CLONE_FACTORY_ = _cloneFactory;
+    }
+
+    function setDefaultSupervisor(address _defaultSupervisor) external onlyOwner {
+        _DEFAULT_SUPERVISOR_ = _defaultSupervisor;
+    }
+
+    function removeDODO(address baseToken, address quoteToken) external onlyOwner {
+        _DODO_REGISTER_[baseToken][quoteToken] = address(0);
+    }
+
     // ============ Breed DODO Function ============
 
     function breedDODO(
@@ -88,10 +106,6 @@ contract DODOZoo is Ownable {
         _DODO_REGISTER_[baseToken][quoteToken] = newBornDODO;
         emit DODOBirth(newBornDODO, baseToken, quoteToken);
         return newBornDODO;
-    }
-
-    function removeDODO(address baseToken, address quoteToken) external onlyOwner {
-        _DODO_REGISTER_[baseToken][quoteToken] = address(0);
     }
 
     // ============ View Functions ============
