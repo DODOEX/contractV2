@@ -106,6 +106,6 @@ contract Storage is InitializableOwnable, ReentrancyGuard {
 
     // ============ Version Control ============
     function version() external pure returns (uint256) {
-        return 1;
+        return 100; // 1.0.0
     }
 }

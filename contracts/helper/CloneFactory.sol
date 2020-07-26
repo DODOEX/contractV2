@@ -12,6 +12,9 @@ interface ICloneFactory {
     function clone(address prototype) external returns (address proxy);
 }
 
+// introduction of proxy mode design: https://docs.openzeppelin.com/upgrades/2.8/
+// minimum implementation of transparent proxy: https://eips.ethereum.org/EIPS/eip-1167
+
 contract CloneFactory is ICloneFactory {
     function clone(address prototype) external override returns (address proxy) {
         bytes20 targetBytes = bytes20(prototype);
