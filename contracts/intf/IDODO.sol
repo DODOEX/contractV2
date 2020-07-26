@@ -10,6 +10,7 @@ pragma experimental ABIEncoderV2;
 
 interface IDODO {
     function init(
+        address owner,
         address supervisor,
         address maintainer,
         address baseToken,
