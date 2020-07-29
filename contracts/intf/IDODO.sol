@@ -42,13 +42,13 @@ interface IDODO {
 
     function queryBuyBaseToken(uint256 amount) external view returns (uint256 payQuote);
 
-    function depositBaseTo(address to, uint256 amount) external;
+    function depositBaseTo(address to, uint256 amount) external returns (uint256);
 
     function withdrawBase(uint256 amount) external returns (uint256);
 
     function withdrawAllBase() external returns (uint256);
 
-    function depositQuoteTo(address to, uint256 amount) external;
+    function depositQuoteTo(address to, uint256 amount) external returns (uint256);
 
     function withdrawQuote(uint256 amount) external returns (uint256);
 
