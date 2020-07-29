@@ -9,24 +9,8 @@ pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
 import {Ownable} from "./lib/Ownable.sol";
+import {IDODO} from "./intf/IDODO.sol";
 import {ICloneFactory} from "./helper/CloneFactory.sol";
-
-interface IDODO {
-    function init(
-        address owner,
-        address supervisor,
-        address maintainer,
-        address baseToken,
-        address quoteToken,
-        address oracle,
-        uint256 lpFeeRate,
-        uint256 mtFeeRate,
-        uint256 k,
-        uint256 gasPriceLimit
-    ) external;
-
-    function transferOwnership(address newOwner) external;
-}
 
 /**
  * @title DODOZoo
@@ -41,6 +25,7 @@ contract DODOZoo is Ownable {
     address public _DEFAULT_SUPERVISOR_;
 
     mapping(address => mapping(address => address)) internal _DODO_REGISTER_;
+    address[] public _DODOs;
 
     // ============ Events ============
 
@@ -72,8 +57,25 @@ contract DODOZoo is Ownable {
         _DEFAULT_SUPERVISOR_ = _defaultSupervisor;
     }
 
-    function removeDODO(address baseToken, address quoteToken) external onlyOwner {
+    function removeDODO(address dodo) external onlyOwner {
+        address baseToken = IDODO(dodo)._BASE_TOKEN_();
+        address quoteToken = IDODO(dodo)._QUOTE_TOKEN_();
+        require(isDODORegistered(baseToken, quoteToken), "DODO_NOT_REGISTERED");
         _DODO_REGISTER_[baseToken][quoteToken] = address(0);
+        for (uint256 i = 0; i < _DODOs.length - 1; i++)
+            if (_DODOs[i] == dodo) {
+                _DODOs[i] = _DODOs[_DODOs.length - 1];
+                break;
+            }
+        _DODOs.pop();
+    }
+
+    function addDODO(address dodo) external onlyOwner {
+        address baseToken = IDODO(dodo)._BASE_TOKEN_();
+        address quoteToken = IDODO(dodo)._QUOTE_TOKEN_();
+        require(!isDODORegistered(baseToken, quoteToken), "DODO_REGISTERED");
+        _DODO_REGISTER_[baseToken][quoteToken] = dodo;
+        _DODOs.push(dodo);
     }
 
     // ============ Breed DODO Function ============
@@ -103,6 +105,7 @@ contract DODOZoo is Ownable {
             gasPriceLimit
         );
         _DODO_REGISTER_[baseToken][quoteToken] = newBornDODO;
+        _DODOs.push(newBornDODO);
         emit DODOBirth(newBornDODO, baseToken, quoteToken);
         return newBornDODO;
     }
