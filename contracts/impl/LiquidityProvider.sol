@@ -64,16 +64,16 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
         return withdrawBaseTo(msg.sender, amount);
     }
 
-    function depositBase(uint256 amount) external {
-        depositBaseTo(msg.sender, amount);
+    function depositBase(uint256 amount) external returns (uint256) {
+        return depositBaseTo(msg.sender, amount);
     }
 
     function withdrawQuote(uint256 amount) external returns (uint256) {
         return withdrawQuoteTo(msg.sender, amount);
     }
 
-    function depositQuote(uint256 amount) external {
-        depositQuoteTo(msg.sender, amount);
+    function depositQuote(uint256 amount) external returns (uint256) {
+        return depositQuoteTo(msg.sender, amount);
     }
 
     function withdrawAllBase() external returns (uint256) {
@@ -90,6 +90,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
         public
         preventReentrant
         depositQuoteAllowed
+        returns (uint256)
     {
         (, uint256 quoteTarget) = getExpectedTarget();
         uint256 totalQuoteCapital = getTotalQuoteCapital();
@@ -107,9 +108,15 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
         _TARGET_QUOTE_TOKEN_AMOUNT_ = _TARGET_QUOTE_TOKEN_AMOUNT_.add(amount);
 
         emit Deposit(msg.sender, to, false, amount, capital);
+        return capital;
     }
 
-    function depositBaseTo(address to, uint256 amount) public preventReentrant depositBaseAllowed {
+    function depositBaseTo(address to, uint256 amount)
+        public
+        preventReentrant
+        depositBaseAllowed
+        returns (uint256)
+    {
         (uint256 baseTarget, ) = getExpectedTarget();
         uint256 totalBaseCapital = getTotalBaseCapital();
         uint256 capital = amount;
@@ -126,6 +133,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
         _TARGET_BASE_TOKEN_AMOUNT_ = _TARGET_BASE_TOKEN_AMOUNT_.add(amount);
 
         emit Deposit(msg.sender, to, true, amount, capital);
+        return capital;
     }
 
     // ============ Withdraw Functions ============
