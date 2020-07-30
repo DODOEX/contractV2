@@ -70,7 +70,7 @@ contract DODOZoo is Ownable {
         _DODOs.pop();
     }
 
-    function addDODO(address dodo) external onlyOwner {
+    function addDODO(address dodo) public onlyOwner {
         address baseToken = IDODO(dodo)._BASE_TOKEN_();
         address quoteToken = IDODO(dodo)._QUOTE_TOKEN_();
         require(!isDODORegistered(baseToken, quoteToken), "DODO_REGISTERED");
@@ -104,8 +104,7 @@ contract DODOZoo is Ownable {
             k,
             gasPriceLimit
         );
-        _DODO_REGISTER_[baseToken][quoteToken] = newBornDODO;
-        _DODOs.push(newBornDODO);
+        addDODO(newBornDODO);
         emit DODOBirth(newBornDODO, baseToken, quoteToken);
         return newBornDODO;
     }
@@ -125,5 +124,9 @@ contract DODOZoo is Ownable {
 
     function getDODO(address baseToken, address quoteToken) external view returns (address) {
         return _DODO_REGISTER_[baseToken][quoteToken];
+    }
+
+    function getDODOs() external view returns (address[] memory) {
+        return _DODOs;
     }
 }
