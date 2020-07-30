@@ -11,9 +11,12 @@ pragma experimental ABIEncoderV2;
 import {ReentrancyGuard} from "./lib/ReentrancyGuard.sol";
 import {SafeERC20} from "./lib/SafeERC20.sol";
 import {IDODO} from "./intf/IDODO.sol";
-import {IDODOZoo} from "./intf/IDODOZoo.sol";
 import {IERC20} from "./intf/IERC20.sol";
 import {IWETH} from "./intf/IWETH.sol";
+
+interface IDODOZoo {
+    function getDODO(address baseToken, address quoteToken) external view returns (address);
+}
 
 /**
  * @title DODO Eth Proxy
