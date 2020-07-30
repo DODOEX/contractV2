@@ -5,14 +5,14 @@
 
 */
 
+pragma solidity 0.6.9;
+pragma experimental ABIEncoderV2;
+
 import {Ownable} from "../lib/Ownable.sol";
 import {IDODO} from "../intf/IDODO.sol";
 import {IERC20} from "../intf/IERC20.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
-
-pragma solidity 0.6.9;
-pragma experimental ABIEncoderV2;
 
 interface IUniswapV2Pair {
     function token0() external view returns (address);
@@ -40,8 +40,6 @@ contract UniswapArbitrageur {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    bool public _INITIALIZED_;
-
     address public _UNISWAP_;
     address public _DODO_;
     address public _BASE_;
@@ -51,9 +49,7 @@ contract UniswapArbitrageur {
 
     uint256 public lastArbitrageProfit;
 
-    function init(address _uniswap, address _dodo) external {
-        require(!_INITIALIZED_, "ALREADY_INITIALIZED");
-        _INITIALIZED_ = true;
+    constructor(address _uniswap, address _dodo) public {
         _UNISWAP_ = _uniswap;
         _DODO_ = _dodo;
 
@@ -70,6 +66,9 @@ contract UniswapArbitrageur {
         } else {
             require(true, "DODO_UNISWAP_NOT_MATCH");
         }
+
+        IERC20(_BASE_).approve(_DODO_, uint256(-1));
+        IERC20(_QUOTE_).approve(_DODO_, uint256(-1));
     }
 
     function executeBuyArbitrage(uint256 baseAmount) external returns (uint256 quoteProfit) {
@@ -168,9 +167,5 @@ contract UniswapArbitrageur {
 
     function retrieve(address token, uint256 amount) external {
         IERC20(token).safeTransfer(msg.sender, amount);
-    }
-
-    function approve(address token, address spender) external {
-        IERC20(token).approve(spender, uint256(-1));
     }
 }
