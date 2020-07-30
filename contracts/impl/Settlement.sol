@@ -65,12 +65,12 @@ contract Settlement is Storage {
         emit Donate(amount, false);
     }
 
-    function donateBaseToken(uint256 amount) external {
+    function donateBaseToken(uint256 amount) external preventReentrant {
         _baseTokenTransferIn(msg.sender, amount);
         _donateBaseToken(amount);
     }
 
-    function donateQuoteToken(uint256 amount) external {
+    function donateQuoteToken(uint256 amount) external preventReentrant {
         _quoteTokenTransferIn(msg.sender, amount);
         _donateQuoteToken(amount);
     }
