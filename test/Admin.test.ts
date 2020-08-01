@@ -108,12 +108,12 @@ describe("Admin", () => {
 
       await ctx.DODO.methods.disableTrading().send(ctx.sendParam(ctx.Supervisor))
       await assert.rejects(
-        ctx.DODO.methods.buyBaseToken(decimalStr("1"), decimalStr("200")).send(ctx.sendParam(trader)),
+        ctx.DODO.methods.buyBaseToken(decimalStr("1"), decimalStr("200"), "0x").send(ctx.sendParam(trader)),
         /TRADE_NOT_ALLOWED/
       )
 
       await ctx.DODO.methods.enableTrading().send(ctx.sendParam(ctx.Deployer))
-      await ctx.DODO.methods.buyBaseToken(decimalStr("1"), decimalStr("200")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.buyBaseToken(decimalStr("1"), decimalStr("200"), "0x").send(ctx.sendParam(trader))
       assert.equal(await ctx.BASE.methods.balanceOf(trader).call(), decimalStr("101"))
     })
 
@@ -194,7 +194,7 @@ describe("Admin", () => {
       await ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1))
       await ctx.DODO.methods.depositQuote(decimalStr("1000")).send(ctx.sendParam(lp1))
 
-      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000"), "0x").send(ctx.sendParam(trader))
       await ctx.DODO.methods.finalSettlement().send(ctx.sendParam(ctx.Deployer))
       assert.equal(await ctx.DODO.methods._R_STATUS_().call(), "0")
 
@@ -211,7 +211,7 @@ describe("Admin", () => {
       await ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1))
       await ctx.DODO.methods.depositQuote(decimalStr("1000")).send(ctx.sendParam(lp1))
 
-      await ctx.DODO.methods.sellBaseToken(decimalStr("5"), decimalStr("100")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.sellBaseToken(decimalStr("5"), decimalStr("100"), "0x").send(ctx.sendParam(trader))
       await ctx.DODO.methods.finalSettlement().send(ctx.sendParam(ctx.Deployer))
       assert.equal(await ctx.DODO.methods._R_STATUS_().call(), "0")
 
@@ -232,7 +232,7 @@ describe("Admin", () => {
       await ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1))
       await ctx.DODO.methods.depositQuote(decimalStr("500")).send(ctx.sendParam(lp2))
 
-      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000"), "0x").send(ctx.sendParam(trader))
       await ctx.DODO.methods.finalSettlement().send(ctx.sendParam(ctx.Deployer))
       await assert.rejects(
         ctx.DODO.methods.finalSettlement().send(ctx.sendParam(ctx.Deployer)),

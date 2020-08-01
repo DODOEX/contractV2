@@ -20,7 +20,6 @@ async function init(ctx: DODOContext): Promise<void> {
   // switch ctx to eth proxy mode
   let WETH = await contracts.newContract(contracts.WETH_CONTRACT_NAME)
   await ctx.DODOZoo.methods.breedDODO(
-    ctx.Supervisor,
     ctx.Maintainer,
     WETH.options.address,
     ctx.QUOTE.options.address,

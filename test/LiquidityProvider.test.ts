@@ -90,7 +90,7 @@ describe("LiquidityProvider", () => {
     it("deposit", async () => {
       await ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1))
       await ctx.DODO.methods.depositQuote(decimalStr("1000")).send(ctx.sendParam(lp1))
-      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000"), "0x").send(ctx.sendParam(trader))
 
       assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp1).call(), "10010841132009222923")
       assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp1).call(), decimalStr("1000"))
@@ -113,7 +113,7 @@ describe("LiquidityProvider", () => {
     it("withdraw", async () => {
       await ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1))
       await ctx.DODO.methods.depositQuote(decimalStr("1000")).send(ctx.sendParam(lp1))
-      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000"), "0x").send(ctx.sendParam(trader))
 
       assert.equal(await ctx.DODO.methods.getWithdrawBasePenalty(decimalStr("4")).call(), "1065045389392391665")
       assert.equal(await ctx.DODO.methods.getWithdrawQuotePenalty(decimalStr("100")).call(), "0")
@@ -134,7 +134,7 @@ describe("LiquidityProvider", () => {
     it("deposit", async () => {
       await ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1))
       await ctx.DODO.methods.depositQuote(decimalStr("1000")).send(ctx.sendParam(lp1))
-      await ctx.DODO.methods.sellBaseToken(decimalStr("5"), decimalStr("200")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.sellBaseToken(decimalStr("5"), decimalStr("200"), "0x").send(ctx.sendParam(trader))
 
       assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp1).call(), decimalStr("10"))
       assert.equal(await ctx.DODO.methods.getLpQuoteBalance(lp1).call(), "1000978629616255276996")
@@ -155,7 +155,7 @@ describe("LiquidityProvider", () => {
     it("withdraw", async () => {
       await ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1))
       await ctx.DODO.methods.depositQuote(decimalStr("1000")).send(ctx.sendParam(lp1))
-      await ctx.DODO.methods.sellBaseToken(decimalStr("5"), decimalStr("200")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.sellBaseToken(decimalStr("5"), decimalStr("200"), "0x").send(ctx.sendParam(trader))
 
       assert.equal(await ctx.DODO.methods.getWithdrawBasePenalty(decimalStr("4")).call(), "0")
       assert.equal(await ctx.DODO.methods.getWithdrawQuotePenalty(decimalStr("100")).call(), "7389428846238900753")
@@ -176,7 +176,7 @@ describe("LiquidityProvider", () => {
     it("base side lp don't has pnl when R is BELOW ONE", async () => {
       await ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1))
       await ctx.DODO.methods.depositQuote(decimalStr("1000")).send(ctx.sendParam(lp1))
-      await ctx.DODO.methods.sellBaseToken(decimalStr("5"), decimalStr("200")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.sellBaseToken(decimalStr("5"), decimalStr("200"), "0x").send(ctx.sendParam(trader))
 
       await ctx.setOraclePrice(decimalStr("80"));
 
@@ -192,7 +192,7 @@ describe("LiquidityProvider", () => {
     it("quote side lp don't has pnl when R is ABOVE ONE", async () => {
       await ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1))
       await ctx.DODO.methods.depositQuote(decimalStr("1000")).send(ctx.sendParam(lp1))
-      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("600")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("600"), "0x").send(ctx.sendParam(trader))
 
       await ctx.setOraclePrice(decimalStr("80"));
 
@@ -250,8 +250,8 @@ describe("LiquidityProvider", () => {
   describe("Corner cases", () => {
     it("single side deposit", async () => {
       await ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1))
-      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000")).send(ctx.sendParam(trader))
-      await ctx.DODO.methods.sellBaseToken("5015841132009222923", decimalStr("0")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000"), "0x").send(ctx.sendParam(trader))
+      await ctx.DODO.methods.sellBaseToken("5015841132009222923", decimalStr("0"), "0x").send(ctx.sendParam(trader))
 
       assert.equal(await ctx.DODO.methods._R_STATUS_().call(), "0")
       assert.equal(await ctx.DODO.methods._TARGET_BASE_TOKEN_AMOUNT_().call(), "10010841132009222923")
@@ -264,7 +264,7 @@ describe("LiquidityProvider", () => {
 
     it("single side deposit & lp deposit when R isn't equal to ONE", async () => {
       await ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1))
-      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000"), "0x").send(ctx.sendParam(trader))
 
       await ctx.DODO.methods.depositQuote("1").send(ctx.sendParam(lp2))
 
@@ -274,11 +274,11 @@ describe("LiquidityProvider", () => {
 
     it("single side deposit (base) & oracle change introduces loss", async () => {
       await ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1))
-      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000"), "0x").send(ctx.sendParam(trader))
 
       await ctx.setOraclePrice(decimalStr("120"))
-      await ctx.DODO.methods.sellBaseToken(decimalStr("4"), decimalStr("0")).send(ctx.sendParam(trader))
-      await ctx.DODO.methods.sellBaseToken(decimalStr("1"), decimalStr("0")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.sellBaseToken(decimalStr("4"), decimalStr("0"), "0x").send(ctx.sendParam(trader))
+      await ctx.DODO.methods.sellBaseToken(decimalStr("1"), decimalStr("0"), "0x").send(ctx.sendParam(trader))
 
       assert.equal(await ctx.DODO.methods._R_STATUS_().call(), "2")
       assert.equal(await ctx.DODO.methods._TARGET_BASE_TOKEN_AMOUNT_().call(), "9234731968726215603")
@@ -292,11 +292,11 @@ describe("LiquidityProvider", () => {
 
     it("single side deposit (base) & oracle change introduces profit", async () => {
       await ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1))
-      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000"), "0x").send(ctx.sendParam(trader))
 
       await ctx.setOraclePrice(decimalStr("80"))
-      await ctx.DODO.methods.sellBaseToken(decimalStr("4"), decimalStr("0")).send(ctx.sendParam(trader))
-      await ctx.DODO.methods.sellBaseToken(decimalStr("4"), decimalStr("0")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.sellBaseToken(decimalStr("4"), decimalStr("0"), "0x").send(ctx.sendParam(trader))
+      await ctx.DODO.methods.sellBaseToken(decimalStr("4"), decimalStr("0"), "0x").send(ctx.sendParam(trader))
 
       assert.equal(await ctx.DODO.methods._R_STATUS_().call(), "2")
       assert.equal(await ctx.DODO.methods._TARGET_BASE_TOKEN_AMOUNT_().call(), "11138732839027528584")
@@ -310,11 +310,11 @@ describe("LiquidityProvider", () => {
 
     it("single side deposit (quote) & oracle change introduces loss", async () => {
       await ctx.DODO.methods.depositQuote(decimalStr("1000")).send(ctx.sendParam(lp1))
-      await ctx.DODO.methods.sellBaseToken(decimalStr("5"), decimalStr("0")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.sellBaseToken(decimalStr("5"), decimalStr("0"), "0x").send(ctx.sendParam(trader))
 
       await ctx.setOraclePrice(decimalStr("80"))
-      await ctx.DODO.methods.buyBaseToken(decimalStr("4"), decimalStr("600")).send(ctx.sendParam(trader))
-      await ctx.DODO.methods.buyBaseToken(decimalStr("0.99"), decimalStr("500")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.buyBaseToken(decimalStr("4"), decimalStr("600"), "0x").send(ctx.sendParam(trader))
+      await ctx.DODO.methods.buyBaseToken(decimalStr("0.99"), decimalStr("500"), "0x").send(ctx.sendParam(trader))
 
       assert.equal(await ctx.DODO.methods._R_STATUS_().call(), "1")
       assert.equal(await ctx.DODO.methods._TARGET_BASE_TOKEN_AMOUNT_().call(), "9980000000000000")
@@ -328,7 +328,7 @@ describe("LiquidityProvider", () => {
 
     it("deposit and withdraw immediately", async () => {
       await ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1))
-      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000"), "0x").send(ctx.sendParam(trader))
 
       assert.equal(await ctx.DODO.methods.getLpBaseBalance(lp1).call(), "10010841132009222923")
 
@@ -347,7 +347,7 @@ describe("LiquidityProvider", () => {
   describe("Revert cases", () => {
     it("withdraw base amount exceeds DODO balance", async () => {
       await ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1))
-      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.buyBaseToken(decimalStr("5"), decimalStr("1000"), "0x").send(ctx.sendParam(trader))
 
       await assert.rejects(
         ctx.DODO.methods.withdrawBase(decimalStr("6")).send(ctx.sendParam(lp1)),
@@ -362,7 +362,7 @@ describe("LiquidityProvider", () => {
 
     it("withdraw quote amount exceeds DODO balance", async () => {
       await ctx.DODO.methods.depositQuote(decimalStr("1000")).send(ctx.sendParam(lp1))
-      await ctx.DODO.methods.sellBaseToken(decimalStr("5"), decimalStr("0")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.sellBaseToken(decimalStr("5"), decimalStr("0"), "0x").send(ctx.sendParam(trader))
 
       await assert.rejects(
         ctx.DODO.methods.withdrawQuote(decimalStr("600")).send(ctx.sendParam(lp1)),
@@ -377,7 +377,7 @@ describe("LiquidityProvider", () => {
 
     it("withdraw base could not afford penalty", async () => {
       await ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1))
-      await ctx.DODO.methods.buyBaseToken(decimalStr("9"), decimalStr("10000")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.buyBaseToken(decimalStr("9"), decimalStr("10000"), "0x").send(ctx.sendParam(trader))
 
       await assert.rejects(
         ctx.DODO.methods.withdrawBase(decimalStr("0.5")).send(ctx.sendParam(lp1)),
@@ -392,7 +392,7 @@ describe("LiquidityProvider", () => {
 
     it("withdraw quote could not afford penalty", async () => {
       await ctx.DODO.methods.depositQuote(decimalStr("1000")).send(ctx.sendParam(lp1))
-      await ctx.DODO.methods.sellBaseToken(decimalStr("10"), decimalStr("0")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.sellBaseToken(decimalStr("10"), decimalStr("0"), "0x").send(ctx.sendParam(trader))
 
       await assert.rejects(
         ctx.DODO.methods.withdrawQuote(decimalStr("200")).send(ctx.sendParam(lp1)),
@@ -408,7 +408,7 @@ describe("LiquidityProvider", () => {
     it("withdraw all base could not afford penalty", async () => {
       await ctx.DODO.methods.depositBase(decimalStr("9.5")).send(ctx.sendParam(lp1))
       await ctx.DODO.methods.depositBase(decimalStr("0.5")).send(ctx.sendParam(lp2))
-      await ctx.DODO.methods.buyBaseToken(decimalStr("9"), decimalStr("10000")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.buyBaseToken(decimalStr("9"), decimalStr("10000"), "0x").send(ctx.sendParam(trader))
 
       await assert.rejects(
         ctx.DODO.methods.withdrawBase(decimalStr("0.5")).send(ctx.sendParam(lp2)),
@@ -419,7 +419,7 @@ describe("LiquidityProvider", () => {
     it("withdraw all quote could not afford penalty", async () => {
       await ctx.DODO.methods.depositQuote(decimalStr("800")).send(ctx.sendParam(lp1))
       await ctx.DODO.methods.depositQuote(decimalStr("200")).send(ctx.sendParam(lp2))
-      await ctx.DODO.methods.sellBaseToken(decimalStr("10"), decimalStr("0")).send(ctx.sendParam(trader))
+      await ctx.DODO.methods.sellBaseToken(decimalStr("10"), decimalStr("0"), "0x").send(ctx.sendParam(trader))
 
       await assert.rejects(
         ctx.DODO.methods.withdrawQuote(decimalStr("200")).send(ctx.sendParam(lp2)),
