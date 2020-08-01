@@ -29,7 +29,7 @@ contract Settlement is Storage {
 
     event Donate(uint256 amount, bool isBaseToken);
 
-    event Claim(address indexed user, uint256 baseTokenAmount, uint256 quoteTokenAmount);
+    event ClaimAssets(address indexed user, uint256 baseTokenAmount, uint256 quoteTokenAmount);
 
     // ============ Assets IN/OUT Functions ============
 
@@ -104,7 +104,7 @@ contract Settlement is Storage {
     }
 
     // claim remaining assets after final settlement
-    function claim() external preventReentrant {
+    function claimAssets() external preventReentrant {
         require(_CLOSED_, "DODO_NOT_CLOSED");
         require(!_CLAIMED_[msg.sender], "ALREADY_CLAIMED");
         _CLAIMED_[msg.sender] = true;
@@ -118,7 +118,7 @@ contract Settlement is Storage {
         );
         _baseTokenTransferOut(msg.sender, baseAmount);
         _quoteTokenTransferOut(msg.sender, quoteAmount);
-        emit Claim(msg.sender, baseAmount, quoteAmount);
+        emit ClaimAssets(msg.sender, baseAmount, quoteAmount);
         return;
     }
 
