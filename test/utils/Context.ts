@@ -65,7 +65,8 @@ export class DODOContext {
   async init(config: DODOContextInitConfig) {
     this.EVM = new EVM
     this.Web3 = getDefaultWeb3()
-    this.DODOZoo = await contracts.newContract(contracts.DODO_ZOO_CONTRACT_NAME)
+    var cloneFactory = await contracts.newContract(contracts.CLONE_FACTORY_CONTRACT_NAME)
+
     this.BASE = await contracts.newContract(contracts.TEST_ERC20_CONTRACT_NAME, ["TestBase", 18])
     this.QUOTE = await contracts.newContract(contracts.TEST_ERC20_CONTRACT_NAME, ["TestQuote", 18])
     this.ORACLE = await contracts.newContract(contracts.NAIVE_ORACLE_CONTRACT_NAME)
@@ -76,8 +77,10 @@ export class DODOContext {
     this.Maintainer = allAccounts[2]
     this.spareAccounts = allAccounts.slice(3, 10)
 
+    var DODOTemplate = await contracts.newContract(contracts.DODO_CONTRACT_NAME)
+    this.DODOZoo = await contracts.newContract(contracts.DODO_ZOO_CONTRACT_NAME, [DODOTemplate.options.address, cloneFactory.options.address, this.Supervisor])
+
     await this.DODOZoo.methods.breedDODO(
-      this.Supervisor,
       this.Maintainer,
       this.BASE.options.address,
       this.QUOTE.options.address,
@@ -92,8 +95,6 @@ export class DODOContext {
 
     this.BaseCapital = contracts.getContractWithAddress(contracts.DODO_LP_TOKEN_CONTRACT_NAME, await this.DODO.methods._BASE_CAPITAL_TOKEN_().call())
     this.QuoteCapital = contracts.getContractWithAddress(contracts.DODO_LP_TOKEN_CONTRACT_NAME, await this.DODO.methods._QUOTE_CAPITAL_TOKEN_().call())
-
-    this.DODO.methods.claimOwnership().send(this.sendParam(this.Deployer))
 
     console.log(log.blueText("[Init dodo context]"))
   }

@@ -71,15 +71,15 @@ describe("Attacks", () => {
       // attack step 1
       await ctx.DODO.methods.depositBase(decimalStr("5000")).send(ctx.sendParam(hacker))
       // attack step 2
-      await ctx.DODO.methods.buyBaseToken(decimalStr("9.5"), decimalStr("2000")).send(ctx.sendParam(hacker))
+      await ctx.DODO.methods.buyBaseToken(decimalStr("9.5"), decimalStr("2000"), "0x").send(ctx.sendParam(hacker))
       // attack step 3
       await ctx.DODO.methods.withdrawBase(decimalStr("5000")).send(ctx.sendParam(hacker))
       // attack step 4
       let hackerTempBaseBalance = new BigNumber(await ctx.BASE.methods.balanceOf(hacker).call())
       if (hackerTempBaseBalance.isGreaterThan(hackerInitBaseBalance)) {
-        await ctx.DODO.methods.sellBaseToken(hackerTempBaseBalance.minus(hackerInitBaseBalance).toString(), "0").send(ctx.sendParam(hacker))
+        await ctx.DODO.methods.sellBaseToken(hackerTempBaseBalance.minus(hackerInitBaseBalance).toString(), "0", "0x").send(ctx.sendParam(hacker))
       } else {
-        await ctx.DODO.methods.buyBaseToken(hackerInitBaseBalance.minus(hackerTempBaseBalance).toString(), decimalStr("5000")).send(ctx.sendParam(hacker))
+        await ctx.DODO.methods.buyBaseToken(hackerInitBaseBalance.minus(hackerTempBaseBalance).toString(), decimalStr("5000"), "0x").send(ctx.sendParam(hacker))
       }
 
       // expected hacker no profit
@@ -106,15 +106,15 @@ describe("Attacks", () => {
       // attack step 1
       await ctx.DODO.methods.depositQuote(decimalStr("100000")).send(ctx.sendParam(hacker))
       // attack step 2
-      await ctx.DODO.methods.sellBaseToken(decimalStr("9"), decimalStr("500")).send(ctx.sendParam(hacker))
+      await ctx.DODO.methods.sellBaseToken(decimalStr("9"), decimalStr("500"), "0x").send(ctx.sendParam(hacker))
       // attack step 3
       await ctx.DODO.methods.withdrawQuote(decimalStr("100000")).send(ctx.sendParam(hacker))
       // attack step 4
       let hackerTempBaseBalance = new BigNumber(await ctx.BASE.methods.balanceOf(hacker).call())
       if (hackerTempBaseBalance.isGreaterThan(hackerInitBaseBalance)) {
-        await ctx.DODO.methods.sellBaseToken(hackerTempBaseBalance.minus(hackerInitBaseBalance).toString(), "0").send(ctx.sendParam(hacker))
+        await ctx.DODO.methods.sellBaseToken(hackerTempBaseBalance.minus(hackerInitBaseBalance).toString(), "0", "0x").send(ctx.sendParam(hacker))
       } else {
-        await ctx.DODO.methods.buyBaseToken(hackerInitBaseBalance.minus(hackerTempBaseBalance).toString(), decimalStr("5000")).send(ctx.sendParam(hacker))
+        await ctx.DODO.methods.buyBaseToken(hackerInitBaseBalance.minus(hackerTempBaseBalance).toString(), decimalStr("5000"), "0x").send(ctx.sendParam(hacker))
       }
 
       // expected hacker no profit
@@ -145,10 +145,10 @@ describe("Attacks", () => {
       await ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1))
       await ctx.DODO.methods.depositQuote(decimalStr("1000")).send(ctx.sendParam(lp1))
       await assert.rejects(
-        ctx.DODO.methods.buyBaseToken(decimalStr("1"), decimalStr("200")).send({ from: trader, gas: 300000, gasPrice: gweiStr("200") }), /GAS_PRICE_EXCEED/
+        ctx.DODO.methods.buyBaseToken(decimalStr("1"), decimalStr("200"), "0x").send({ from: trader, gas: 300000, gasPrice: gweiStr("200") }), /GAS_PRICE_EXCEED/
       )
       await assert.rejects(
-        ctx.DODO.methods.sellBaseToken(decimalStr("1"), decimalStr("200")).send({ from: trader, gas: 300000, gasPrice: gweiStr("200") }), /GAS_PRICE_EXCEED/
+        ctx.DODO.methods.sellBaseToken(decimalStr("1"), decimalStr("200"), "0x").send({ from: trader, gas: 300000, gasPrice: gweiStr("200") }), /GAS_PRICE_EXCEED/
       )
     })
 
