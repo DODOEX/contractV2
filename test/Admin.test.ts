@@ -182,7 +182,7 @@ describe("Admin", () => {
 
       await ctx.DODO.methods.finalSettlement().send(ctx.sendParam(ctx.Deployer))
 
-      await ctx.DODO.methods.claim().send(ctx.sendParam(lp1))
+      await ctx.DODO.methods.claimAssets().send(ctx.sendParam(lp1))
       await ctx.DODO.methods.withdrawAllBase().send(ctx.sendParam(lp1))
       await ctx.DODO.methods.withdrawAllQuote().send(ctx.sendParam(lp1))
 
@@ -198,7 +198,7 @@ describe("Admin", () => {
       await ctx.DODO.methods.finalSettlement().send(ctx.sendParam(ctx.Deployer))
       assert.equal(await ctx.DODO.methods._R_STATUS_().call(), "0")
 
-      await ctx.DODO.methods.claim().send(ctx.sendParam(lp1))
+      await ctx.DODO.methods.claimAssets().send(ctx.sendParam(lp1))
       assert.equal(await ctx.BASE.methods.balanceOf(lp1).call(), decimalStr("90"))
       assert.equal(await ctx.QUOTE.methods.balanceOf(lp1).call(), "9551951805416248746110")
       await ctx.DODO.methods.withdrawAllBase().send(ctx.sendParam(lp1))
@@ -215,7 +215,7 @@ describe("Admin", () => {
       await ctx.DODO.methods.finalSettlement().send(ctx.sendParam(ctx.Deployer))
       assert.equal(await ctx.DODO.methods._R_STATUS_().call(), "0")
 
-      await ctx.DODO.methods.claim().send(ctx.sendParam(lp1))
+      await ctx.DODO.methods.claimAssets().send(ctx.sendParam(lp1))
       assert.equal(await ctx.BASE.methods.balanceOf(lp1).call(), decimalStr("95"))
       assert.equal(await ctx.QUOTE.methods.balanceOf(lp1).call(), decimalStr("9000"))
       await ctx.DODO.methods.withdrawAllBase().send(ctx.sendParam(lp1))
@@ -226,7 +226,7 @@ describe("Admin", () => {
 
     it("final settlement revert cases", async () => {
       await assert.rejects(
-        ctx.DODO.methods.claim().send(ctx.sendParam(lp1)),
+        ctx.DODO.methods.claimAssets().send(ctx.sendParam(lp1)),
         /DODO_NOT_CLOSED/
       )
       await ctx.DODO.methods.depositBase(decimalStr("10")).send(ctx.sendParam(lp1))
@@ -239,9 +239,9 @@ describe("Admin", () => {
         / DODO_CLOSED/
       )
 
-      await ctx.DODO.methods.claim().send(ctx.sendParam(lp2))
+      await ctx.DODO.methods.claimAssets().send(ctx.sendParam(lp2))
       await assert.rejects(
-        ctx.DODO.methods.claim().send(ctx.sendParam(lp2)),
+        ctx.DODO.methods.claimAssets().send(ctx.sendParam(lp2)),
         /ALREADY_CLAIMED/
       )
 
