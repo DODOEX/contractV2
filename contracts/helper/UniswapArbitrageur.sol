@@ -47,8 +47,6 @@ contract UniswapArbitrageur {
 
     bool public _REVERSE_; // true if dodo.baseToken=uniswap.token0
 
-    uint256 public lastArbitrageProfit;
-
     constructor(address _uniswap, address _dodo) public {
         _UNISWAP_ = _uniswap;
         _DODO_ = _dodo;
@@ -73,12 +71,16 @@ contract UniswapArbitrageur {
 
     function executeBuyArbitrage(uint256 baseAmount) external returns (uint256 quoteProfit) {
         IDODO(_DODO_).buyBaseToken(baseAmount, uint256(-1), "0xd");
-        return lastArbitrageProfit;
+        quoteProfit = IERC20(_QUOTE_).balanceOf(address(this));
+        IERC20(_QUOTE_).transfer(msg.sender, quoteProfit);
+        return quoteProfit;
     }
 
     function executeSellArbitrage(uint256 baseAmount) external returns (uint256 baseProfit) {
         IDODO(_DODO_).sellBaseToken(baseAmount, 0, "0xd");
-        return lastArbitrageProfit;
+        baseProfit = IERC20(_BASE_).balanceOf(address(this));
+        IERC20(_BASE_).transfer(msg.sender, baseProfit);
+        return baseProfit;
     }
 
     function dodoCall(
@@ -113,9 +115,7 @@ contract UniswapArbitrageur {
             );
             token0Amount = token0Balance.sub(newToken0Balance).mul(9969).div(10000); // mul 0.9969
             require(token0Amount > quoteAmount, "NOT_PROFITABLE");
-            lastArbitrageProfit = token0Amount.sub(quoteAmount);
             IUniswapV2Pair(_UNISWAP_).swap(token0Amount, token1Amount, address(this), "");
-            IERC20(_QUOTE_).transfer(tx.origin, lastArbitrageProfit);
         } else {
             IERC20(_QUOTE_).transfer(_UNISWAP_, quoteAmount);
             // transfer token0 into uniswap
@@ -124,9 +124,7 @@ contract UniswapArbitrageur {
             );
             token1Amount = token1Balance.sub(newToken1Balance).mul(9969).div(10000); // mul 0.9969
             require(token1Amount > baseAmount, "NOT_PROFITABLE");
-            lastArbitrageProfit = token1Amount.sub(baseAmount);
             IUniswapV2Pair(_UNISWAP_).swap(token0Amount, token1Amount, address(this), "");
-            IERC20(_BASE_).transfer(tx.origin, lastArbitrageProfit);
         }
     }
 
@@ -148,9 +146,7 @@ contract UniswapArbitrageur {
             );
             token1Amount = token1Balance.sub(newToken1Balance).mul(9969).div(10000); // mul 0.9969
             require(token1Amount > quoteAmount, "NOT_PROFITABLE");
-            lastArbitrageProfit = token1Amount.sub(quoteAmount);
             IUniswapV2Pair(_UNISWAP_).swap(token0Amount, token1Amount, address(this), "");
-            IERC20(_QUOTE_).transfer(tx.origin, lastArbitrageProfit);
         } else {
             IERC20(_QUOTE_).transfer(_UNISWAP_, quoteAmount);
             // transfer token1 into uniswap
@@ -159,9 +155,7 @@ contract UniswapArbitrageur {
             );
             token0Amount = token0Balance.sub(newToken0Balance).mul(9969).div(10000); // mul 0.9969
             require(token0Amount > baseAmount, "NOT_PROFITABLE");
-            lastArbitrageProfit = token0Amount.sub(baseAmount);
             IUniswapV2Pair(_UNISWAP_).swap(token0Amount, token1Amount, address(this), "");
-            IERC20(_BASE_).transfer(tx.origin, lastArbitrageProfit);
         }
     }
 
