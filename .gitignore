@@ -5,8 +5,6 @@
 
 build/
 dist/
-docs/img
-docs/src
 node_modules/
 coverage/
 lint/
