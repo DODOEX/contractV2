@@ -121,7 +121,7 @@ contract DODOLpToken is Ownable {
     function mint(address user, uint256 value) external onlyOwner {
         balances[user] = balances[user].add(value);
         totalSupply = totalSupply.add(value);
-        emit Mint(address(0), value);
+        emit Mint(user, value);
         emit Transfer(address(0), user, value);
     }
 
