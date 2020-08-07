@@ -62,12 +62,13 @@ contract DODOZoo is Ownable {
         address quoteToken = IDODO(dodo)._QUOTE_TOKEN_();
         require(isDODORegistered(baseToken, quoteToken), "DODO_NOT_REGISTERED");
         _DODO_REGISTER_[baseToken][quoteToken] = address(0);
-        for (uint256 i = 0; i < _DODOs.length - 1; i++)
+        for (uint256 i = 0; i < _DODOs.length - 1; i++) {
             if (_DODOs[i] == dodo) {
                 _DODOs[i] = _DODOs[_DODOs.length - 1];
+                _DODOs.pop();
                 break;
             }
-        _DODOs.pop();
+        }
     }
 
     function addDODO(address dodo) public onlyOwner {
