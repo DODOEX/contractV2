@@ -151,7 +151,7 @@ contract MultiSigWalletWithTimelock {
             }
         }
 
-        owners.pop;
+        owners.pop();
 
         if (required > owners.length) {
             changeRequirement(owners.length);
@@ -269,7 +269,7 @@ contract MultiSigWalletWithTimelock {
         require(block.timestamp >= unlockTimes[transactionId], "TRANSACTION_NEED_TO_UNLOCK");
 
         if (isConfirmed(transactionId)) {
-            Transaction storage transaction = transactions[transactionId];
+            Transaction memory transaction = transactions[transactionId];
             transaction.executed = true;
             (bool success, ) = transaction.destination.call{value: transaction.value}(
                 transaction.data
