@@ -1,11 +1,26 @@
+/**
+ *Submitted for verification at Etherscan.io on 2019-10-15
+ */
+
 /*
 
-    Copyright 2020 DODO ZOO.
-    SPDX-License-Identifier: Apache-2.0
+    Copyright 2019 The Hydro Protocol Foundation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 
 */
 
-pragma solidity 0.6.9;
+pragma solidity 0.5.8;
 pragma experimental ABIEncoderV2;
 
 contract MultiSigWalletWithTimelock {
@@ -39,6 +54,14 @@ contract MultiSigWalletWithTimelock {
         bytes data;
         bool executed;
     }
+
+    struct EmergencyCall {
+        bytes32 selector;
+        uint256 paramsBytesCount;
+    }
+
+    // Functions bypass the time lock process
+    EmergencyCall[] public emergencyCalls;
 
     modifier onlyWallet() {
         if (msg.sender != address(this)) revert("ONLY_WALLET_ERROR");
@@ -92,13 +115,7 @@ contract MultiSigWalletWithTimelock {
     }
 
     /** @dev Fallback function allows to deposit ether. */
-    fallback() external payable {
-        if (msg.value > 0) {
-            emit Deposit(msg.sender, msg.value);
-        }
-    }
-
-    receive() external payable {
+    function() external payable {
         if (msg.value > 0) {
             emit Deposit(msg.sender, msg.value);
         }
@@ -122,6 +139,18 @@ contract MultiSigWalletWithTimelock {
 
         owners = _owners;
         required = _required;
+
+        // initialzie Emergency calls
+        emergencyCalls.push(
+            EmergencyCall({
+                selector: keccak256(abi.encodePacked("setMarketBorrowUsability(uint16,bool)")),
+                paramsBytesCount: 64
+            })
+        );
+    }
+
+    function getEmergencyCallsCount() external view returns (uint256 count) {
+        return emergencyCalls.length;
     }
 
     /** @dev Allows to add a new owner. Transaction has to be sent by wallet.
@@ -151,7 +180,7 @@ contract MultiSigWalletWithTimelock {
             }
         }
 
-        owners.pop();
+        owners.length -= 1;
 
         if (required > owners.length) {
             changeRequirement(owners.length);
@@ -207,7 +236,7 @@ contract MultiSigWalletWithTimelock {
      * @param destination Transaction target address.
      * @param value Transaction ether value.
      * @param data Transaction data payload.
-     * @return transactionId Returns transaction ID.
+     * @return Returns transaction ID.
      */
     function submitTransaction(
         address destination,
@@ -238,11 +267,36 @@ contract MultiSigWalletWithTimelock {
         confirmations[transactionId][msg.sender] = true;
         emit Confirmation(msg.sender, transactionId);
 
-        if (isConfirmed(transactionId) && unlockTimes[transactionId] == 0) {
+        if (
+            isConfirmed(transactionId) &&
+            unlockTimes[transactionId] == 0 &&
+            !isEmergencyCall(transactionId)
+        ) {
             uint256 unlockTime = block.timestamp + lockSeconds;
             unlockTimes[transactionId] = unlockTime;
             emit UnlockTimeSet(transactionId, unlockTime);
         }
+    }
+
+    function isEmergencyCall(uint256 transactionId) internal view returns (bool) {
+        bytes memory data = transactions[transactionId].data;
+
+        for (uint256 i = 0; i < emergencyCalls.length; i++) {
+            EmergencyCall memory emergencyCall = emergencyCalls[i];
+
+            if (
+                data.length == emergencyCall.paramsBytesCount + 4 &&
+                data.length >= 4 &&
+                emergencyCall.selector[0] == data[0] &&
+                emergencyCall.selector[1] == data[1] &&
+                emergencyCall.selector[2] == data[2] &&
+                emergencyCall.selector[3] == data[3]
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** @dev Allows an owner to revoke a confirmation for a transaction.
@@ -269,9 +323,9 @@ contract MultiSigWalletWithTimelock {
         require(block.timestamp >= unlockTimes[transactionId], "TRANSACTION_NEED_TO_UNLOCK");
 
         if (isConfirmed(transactionId)) {
-            Transaction memory transaction = transactions[transactionId];
+            Transaction storage transaction = transactions[transactionId];
             transaction.executed = true;
-            (bool success, ) = transaction.destination.call{value: transaction.value}(
+            (bool success, ) = transaction.destination.call.value(transaction.value)(
                 transaction.data
             );
             if (success) emit Execution(transactionId);
@@ -306,7 +360,7 @@ contract MultiSigWalletWithTimelock {
 
     /** @dev Returns number of confirmations of a transaction.
      * @param transactionId Transaction ID.
-     * @return count Number of confirmations.
+     * @return Number of confirmations.
      */
     function getConfirmationCount(uint256 transactionId) external view returns (uint256 count) {
         for (uint256 i = 0; i < owners.length; i++) {
@@ -319,7 +373,7 @@ contract MultiSigWalletWithTimelock {
     /** @dev Returns total number of transactions after filers are applied.
      * @param pending Include pending transactions.
      * @param executed Include executed transactions.
-     * @return count Total number of transactions after filters are applied.
+     * @return Total number of transactions after filters are applied.
      */
     function getTransactionCount(bool pending, bool executed)
         external
@@ -342,7 +396,7 @@ contract MultiSigWalletWithTimelock {
 
     /** @dev Returns array with owner addresses, which confirmed transaction.
      * @param transactionId Transaction ID.
-     * @return _confirmations Returns array of owner addresses.
+     * @return Returns array of owner addresses.
      */
     function getConfirmations(uint256 transactionId)
         external
