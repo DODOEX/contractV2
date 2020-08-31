@@ -14,12 +14,12 @@ interface IChainlink {
 }
 
 
-// for WETH-USDC(decimals=6) price convert
+// for WBTC(decimals=8)-USDC(decimals=6) price convert
 
-contract ChainlinkETHPriceOracleProxy {
-    address public chainlink = 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419;
+contract ChainlinkWBTCUSDCPriceOracleProxy {
+    address public chainlink = 0xF4030086522a5bEEa4988F8cA5B36dbC97BeE88c;
 
     function getPrice() external view returns (uint256) {
-        return IChainlink(chainlink).latestAnswer() / 100;
+        return IChainlink(chainlink).latestAnswer() * (10**8);
     }
 }

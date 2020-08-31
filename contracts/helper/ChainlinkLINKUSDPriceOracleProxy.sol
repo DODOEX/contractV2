@@ -14,10 +14,10 @@ interface IChainlink {
 }
 
 
-// for WETH-USDC(decimals=6) price convert
+// for LINK-USDC(decimals=6) price convert
 
-contract ChainlinkETHPriceOracleProxy {
-    address public chainlink = 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419;
+contract ChainlinkLINKUSDCPriceOracleProxy {
+    address public chainlink = 0x2c1d072e956AFFC0D435Cb7AC38EF18d24d9127c;
 
     function getPrice() external view returns (uint256) {
         return IChainlink(chainlink).latestAnswer() / 100;
