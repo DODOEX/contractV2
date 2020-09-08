@@ -15,6 +15,7 @@ import {Types} from "../lib/Types.sol";
 import {IERC20} from "../intf/IERC20.sol";
 import {Storage} from "./Storage.sol";
 
+
 /**
  * @title Settlement
  * @author DODO Breeder
@@ -34,11 +35,16 @@ contract Settlement is Storage {
     // ============ Assets IN/OUT Functions ============
 
     function _baseTokenTransferIn(address from, uint256 amount) internal {
+        require(_BASE_BALANCE_.add(amount) <= _BASE_BALANCE_LIMIT_, "BASE_BALANCE_LIMIT_EXCEEDED");
         IERC20(_BASE_TOKEN_).safeTransferFrom(from, address(this), amount);
         _BASE_BALANCE_ = _BASE_BALANCE_.add(amount);
     }
 
     function _quoteTokenTransferIn(address from, uint256 amount) internal {
+        require(
+            _QUOTE_BALANCE_.add(amount) <= _QUOTE_BALANCE_LIMIT_,
+            "QUOTE_BALANCE_LIMIT_EXCEEDED"
+        );
         IERC20(_QUOTE_TOKEN_).safeTransferFrom(from, address(this), amount);
         _QUOTE_BALANCE_ = _QUOTE_BALANCE_.add(amount);
     }

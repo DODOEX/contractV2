@@ -10,6 +10,7 @@ pragma experimental ABIEncoderV2;
 
 import {Storage} from "./Storage.sol";
 
+
 /**
  * @title Admin
  * @author DODO Breeder
@@ -91,5 +92,31 @@ contract Admin is Storage {
 
     function enableBaseDeposit() external onlyOwner notClosed {
         _DEPOSIT_BASE_ALLOWED_ = true;
+    }
+
+    // ============ Advanced Control Functions ============
+
+    function disableBuying() external onlySupervisorOrOwner {
+        _BUYING_ALLOWED_ = false;
+    }
+
+    function enableBuying() external onlyOwner notClosed {
+        _BUYING_ALLOWED_ = true;
+    }
+
+    function disableSelling() external onlySupervisorOrOwner {
+        _SELLING_ALLOWED_ = false;
+    }
+
+    function enableSelling() external onlyOwner notClosed {
+        _SELLING_ALLOWED_ = true;
+    }
+
+    function setBaseBalanceLimit(uint256 newBaseBalanceLimit) external onlyOwner notClosed {
+        _BASE_BALANCE_LIMIT_ = newBaseBalanceLimit;
+    }
+
+    function setQuoteBalanceLimit(uint256 newQuoteBalanceLimit) external onlyOwner notClosed {
+        _QUOTE_BALANCE_LIMIT_ = newQuoteBalanceLimit;
     }
 }
