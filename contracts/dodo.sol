@@ -16,6 +16,7 @@ import {LiquidityProvider} from "./impl/LiquidityProvider.sol";
 import {Admin} from "./impl/Admin.sol";
 import {DODOLpToken} from "./impl/DODOLpToken.sol";
 
+
 /**
  * @title DODO
  * @author DODO Breeder
@@ -48,10 +49,17 @@ contract DODO is Admin, Trader, LiquidityProvider {
         _QUOTE_TOKEN_ = quoteToken;
         _ORACLE_ = oracle;
 
-        _DEPOSIT_BASE_ALLOWED_ = true;
-        _DEPOSIT_QUOTE_ALLOWED_ = true;
-        _TRADE_ALLOWED_ = true;
+        _DEPOSIT_BASE_ALLOWED_ = false;
+        _DEPOSIT_QUOTE_ALLOWED_ = false;
+        _TRADE_ALLOWED_ = false;
         _GAS_PRICE_LIMIT_ = gasPriceLimit;
+
+        // Advanced controls are disabled by default
+        _BUYING_ALLOWED_ = true;
+        _SELLING_ALLOWED_ = true;
+        uint256 MAX_INT = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
+        _BASE_BALANCE_LIMIT_ = MAX_INT;
+        _QUOTE_BALANCE_LIMIT_ = MAX_INT;
 
         _LP_FEE_RATE_ = lpFeeRate;
         _MT_FEE_RATE_ = mtFeeRate;

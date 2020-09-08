@@ -44,6 +44,9 @@ async function init(ctx: DODOContext): Promise<void> {
       .getDODO(WETH.options.address, ctx.QUOTE.options.address)
       .call()
   );
+  await ctx.DODO.methods.enableBaseDeposit().send(ctx.sendParam(ctx.Deployer));
+  await ctx.DODO.methods.enableQuoteDeposit().send(ctx.sendParam(ctx.Deployer));
+  await ctx.DODO.methods.enableTrading().send(ctx.sendParam(ctx.Deployer));
 
   ctx.BASE = WETH;
 
@@ -102,12 +105,11 @@ describe("DODO ETH PROXY", () => {
     it("buy", async () => {
       const buyAmount = "1";
       await logGas(
-        DODOEthProxy.methods
-          .buyEthWithToken(
-            ctx.QUOTE.options.address,
-            decimalStr(buyAmount),
-            decimalStr("200")
-          ),
+        DODOEthProxy.methods.buyEthWithToken(
+          ctx.QUOTE.options.address,
+          decimalStr(buyAmount),
+          decimalStr("200")
+        ),
         ctx.sendParam(trader),
         "buy ETH with token directly"
       );
@@ -123,12 +125,11 @@ describe("DODO ETH PROXY", () => {
     it("sell", async () => {
       const sellAmount = "1";
       await logGas(
-        DODOEthProxy.methods
-          .sellEthToToken(
-            ctx.QUOTE.options.address,
-            decimalStr(sellAmount),
-            decimalStr("50")
-          ),
+        DODOEthProxy.methods.sellEthToToken(
+          ctx.QUOTE.options.address,
+          decimalStr(sellAmount),
+          decimalStr("50")
+        ),
         ctx.sendParam(trader, sellAmount),
         "sell ETH to token directly"
       );

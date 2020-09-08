@@ -16,6 +16,7 @@ import {IOracle} from "../intf/IOracle.sol";
 import {IDODOLpToken} from "../intf/IDODOLpToken.sol";
 import {Types} from "../lib/Types.sol";
 
+
 /**
  * @title Storage
  * @author DODO Breeder
@@ -33,6 +34,12 @@ contract Storage is InitializableOwnable, ReentrancyGuard {
     bool public _DEPOSIT_BASE_ALLOWED_;
     bool public _TRADE_ALLOWED_;
     uint256 public _GAS_PRICE_LIMIT_;
+
+    // ============ Advanced Controls ============
+    bool public _BUYING_ALLOWED_;
+    bool public _SELLING_ALLOWED_;
+    uint256 public _BASE_BALANCE_LIMIT_;
+    uint256 public _QUOTE_BALANCE_LIMIT_;
 
     // ============ Core Address ============
 
@@ -106,6 +113,6 @@ contract Storage is InitializableOwnable, ReentrancyGuard {
 
     // ============ Version Control ============
     function version() external pure returns (uint256) {
-        return 100; // 1.0.0
+        return 101; // 1.0.1
     }
 }
