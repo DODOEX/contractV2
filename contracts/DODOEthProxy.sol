@@ -15,11 +15,9 @@ import {IDODO} from "./intf/IDODO.sol";
 import {IERC20} from "./intf/IERC20.sol";
 import {IWETH} from "./intf/IWETH.sol";
 
-
 interface IDODOZoo {
     function getDODO(address baseToken, address quoteToken) external view returns (address);
 }
-
 
 /**
  * @title DODO Eth Proxy
@@ -112,7 +110,7 @@ contract DODOEthProxy is ReentrancyGuard {
         require(DODO != address(0), "DODO_NOT_EXIST");
         payTokenAmount = IDODO(DODO).queryBuyBaseToken(ethAmount);
         _transferIn(quoteTokenAddress, msg.sender, payTokenAmount);
-        IERC20(quoteTokenAddress).approve(DODO, payTokenAmount);
+        IERC20(quoteTokenAddress).safeApprove(DODO, payTokenAmount);
         IDODO(DODO).buyBaseToken(ethAmount, maxPayTokenAmount, "");
         IWETH(_WETH_).withdraw(ethAmount);
         msg.sender.transfer(ethAmount);
@@ -127,7 +125,7 @@ contract DODOEthProxy is ReentrancyGuard {
     ) external preventReentrant returns (uint256 receiveEthAmount) {
         address DODO = IDODOZoo(_DODO_ZOO_).getDODO(baseTokenAddress, _WETH_);
         require(DODO != address(0), "DODO_NOT_EXIST");
-        IERC20(baseTokenAddress).approve(DODO, tokenAmount);
+        IERC20(baseTokenAddress).safeApprove(DODO, tokenAmount);
         _transferIn(baseTokenAddress, msg.sender, tokenAmount);
         receiveEthAmount = IDODO(DODO).sellBaseToken(tokenAmount, minReceiveEthAmount, "");
         IWETH(_WETH_).withdraw(receiveEthAmount);
