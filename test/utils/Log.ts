@@ -5,15 +5,15 @@
 
 */
 
-import { TransactionReceipt } from "web3-core"
-
 export const blueText = x => `\x1b[36m${x}\x1b[0m`;
 export const yellowText = x => `\x1b[33m${x}\x1b[0m`;
 export const greenText = x => `\x1b[32m${x}\x1b[0m`;
 export const redText = x => `\x1b[31m${x}\x1b[0m`;
 export const numberWithCommas = x => x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-export function logGas(receipt: TransactionReceipt, desc: string) {
+export async function logGas(funcCall: any, params: any, desc: string) {
+  const estimatedGas = await funcCall.estimateGas(params)
+  const receipt = await funcCall.send(params)
   const gasUsed = receipt.gasUsed;
   let colorFn;
 
@@ -25,5 +25,6 @@ export function logGas(receipt: TransactionReceipt, desc: string) {
     colorFn = redText;
   }
 
-  console.log(("Gas used:").padEnd(60, '.'), blueText(desc) + "  ", colorFn(numberWithCommas(gasUsed).padStart(5)));
+  console.log(("Gas estimated:" + numberWithCommas(estimatedGas)).padEnd(60, '.'), blueText(desc) + "  ", colorFn(numberWithCommas(gasUsed).padStart(5)));
+  return receipt
 }

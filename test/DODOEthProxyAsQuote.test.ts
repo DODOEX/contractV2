@@ -103,14 +103,12 @@ describe("DODO ETH PROXY", () => {
       const maxPayEthAmount = "2.1";
       const ethInPoolBefore = decimalStr("10");
       const traderEthBalanceBefore = await ctx.Web3.eth.getBalance(trader);
-      const txReceipt: TransactionReceipt = await DODOEthProxy.methods
+      const txReceipt: TransactionReceipt = await logGas(DODOEthProxy.methods
         .buyTokenWithEth(
           ctx.BASE.options.address,
           decimalStr("200"),
           decimalStr(maxPayEthAmount)
-        )
-        .send(ctx.sendParam(trader, maxPayEthAmount));
-      logGas(txReceipt, "buy token with ETH directly");
+        ), ctx.sendParam(trader, maxPayEthAmount), "buy token with ETH directly");
       const ethInPoolAfter = "12056338203652739553";
       assert.strictEqual(
         await ctx.DODO.methods._QUOTE_BALANCE_().call(),
@@ -134,14 +132,14 @@ describe("DODO ETH PROXY", () => {
     });
     it("sell", async () => {
       const minReceiveEthAmount = "0.45";
-      logGas(
-        await DODOEthProxy.methods
+      await logGas(
+        DODOEthProxy.methods
           .sellTokenToEth(
             ctx.BASE.options.address,
             decimalStr("50"),
             decimalStr(minReceiveEthAmount)
-          )
-          .send(ctx.sendParam(trader)),
+          ),
+        ctx.sendParam(trader),
         "sell token to ETH directly"
       );
       assert.strictEqual(

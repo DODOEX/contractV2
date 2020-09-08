@@ -101,14 +101,14 @@ describe("DODO ETH PROXY", () => {
   describe("buy&sell eth directly", () => {
     it("buy", async () => {
       const buyAmount = "1";
-      logGas(
-        await DODOEthProxy.methods
+      await logGas(
+        DODOEthProxy.methods
           .buyEthWithToken(
             ctx.QUOTE.options.address,
             decimalStr(buyAmount),
             decimalStr("200")
-          )
-          .send(ctx.sendParam(trader)),
+          ),
+        ctx.sendParam(trader),
         "buy ETH with token directly"
       );
       assert.strictEqual(
@@ -122,14 +122,14 @@ describe("DODO ETH PROXY", () => {
     });
     it("sell", async () => {
       const sellAmount = "1";
-      logGas(
-        await DODOEthProxy.methods
+      await logGas(
+        DODOEthProxy.methods
           .sellEthToToken(
             ctx.QUOTE.options.address,
             decimalStr(sellAmount),
             decimalStr("50")
-          )
-          .send(ctx.sendParam(trader, sellAmount)),
+          ),
+        ctx.sendParam(trader, sellAmount),
         "sell ETH to token directly"
       );
       assert.strictEqual(
