@@ -16,6 +16,7 @@ import {Storage} from "./Storage.sol";
 import {Pricing} from "./Pricing.sol";
 import {Settlement} from "./Settlement.sol";
 
+
 /**
  * @title Trader
  * @author DODO Breeder
@@ -40,6 +41,16 @@ contract Trader is Storage, Pricing, Settlement {
         _;
     }
 
+    modifier buyingAllowed() {
+        require(_BUYING_ALLOWED_, "BUYING_NOT_ALLOWED");
+        _;
+    }
+
+    modifier sellingAllowed() {
+        require(_SELLING_ALLOWED_, "SELLING_NOT_ALLOWED");
+        _;
+    }
+
     modifier gasPriceLimit() {
         require(tx.gasprice <= _GAS_PRICE_LIMIT_, "GAS_PRICE_EXCEED");
         _;
@@ -51,7 +62,7 @@ contract Trader is Storage, Pricing, Settlement {
         uint256 amount,
         uint256 minReceiveQuote,
         bytes calldata data
-    ) external tradeAllowed gasPriceLimit preventReentrant returns (uint256) {
+    ) external tradeAllowed sellingAllowed gasPriceLimit preventReentrant returns (uint256) {
         // query price
         (
             uint256 receiveQuote,
@@ -95,7 +106,7 @@ contract Trader is Storage, Pricing, Settlement {
         uint256 amount,
         uint256 maxPayQuote,
         bytes calldata data
-    ) external tradeAllowed gasPriceLimit preventReentrant returns (uint256) {
+    ) external tradeAllowed buyingAllowed gasPriceLimit preventReentrant returns (uint256) {
         // query price
         (
             uint256 payQuote,
