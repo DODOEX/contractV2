@@ -55,7 +55,7 @@ contract DODOMine is Ownable {
     mapping(uint256 => mapping(address => UserInfo)) public userInfo;
     mapping(address => uint256) public realizedReward;
 
-    // Total allocation poitns. Must be the sum of all allocation points in all pools.
+    // Total allocation points. Must be the sum of all allocation points in all pools.
     uint256 public totalAllocPoint = 0;
     // The block number when DODO mining starts.
     uint256 public startBlock;
@@ -234,7 +234,7 @@ contract DODOMine is Ownable {
         }
         IERC20(pool.lpToken).safeTransferFrom(address(msg.sender), address(this), _amount);
         user.amount = user.amount.add(_amount);
-        user.rewardDebt = DecimalMath.divFloor(user.amount, pool.accDODOPerShare);
+        user.rewardDebt = DecimalMath.mul(user.amount, pool.accDODOPerShare);
         emit Deposit(msg.sender, pid, _amount);
     }
 
@@ -248,7 +248,7 @@ contract DODOMine is Ownable {
         uint256 pending = DecimalMath.mul(user.amount, pool.accDODOPerShare).sub(user.rewardDebt);
         safeDODOTransfer(msg.sender, pending);
         user.amount = user.amount.sub(_amount);
-        user.rewardDebt = DecimalMath.divFloor(user.amount, pool.accDODOPerShare);
+        user.rewardDebt = DecimalMath.mul(user.amount, pool.accDODOPerShare);
         IERC20(pool.lpToken).safeTransfer(address(msg.sender), _amount);
         emit Withdraw(msg.sender, pid, _amount);
     }
@@ -277,7 +277,7 @@ contract DODOMine is Ownable {
         UserInfo storage user = userInfo[pid][msg.sender];
         updatePool(pid);
         uint256 pending = DecimalMath.mul(user.amount, pool.accDODOPerShare).sub(user.rewardDebt);
-        user.rewardDebt = DecimalMath.divFloor(user.amount, pool.accDODOPerShare);
+        user.rewardDebt = DecimalMath.mul(user.amount, pool.accDODOPerShare);
         safeDODOTransfer(msg.sender, pending);
     }
 
@@ -294,7 +294,7 @@ contract DODOMine is Ownable {
             pending = pending.add(
                 DecimalMath.mul(user.amount, pool.accDODOPerShare).sub(user.rewardDebt)
             );
-            user.rewardDebt = DecimalMath.divFloor(user.amount, pool.accDODOPerShare);
+            user.rewardDebt = DecimalMath.mul(user.amount, pool.accDODOPerShare);
         }
         safeDODOTransfer(msg.sender, pending);
     }
