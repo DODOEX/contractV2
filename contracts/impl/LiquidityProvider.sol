@@ -17,6 +17,7 @@ import {Storage} from "./Storage.sol";
 import {Settlement} from "./Settlement.sol";
 import {Pricing} from "./Pricing.sol";
 
+
 /**
  * @title LiquidityProvider
  * @author DODO Breeder
@@ -55,6 +56,11 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
     modifier depositBaseAllowed() {
         require(_DEPOSIT_BASE_ALLOWED_, "DEPOSIT_BASE_NOT_ALLOWED");
+        _;
+    }
+
+    modifier dodoNotClosed() {
+        require(!_CLOSED_, "DODO_CLOSED");
         _;
     }
 
@@ -138,7 +144,12 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
     // ============ Withdraw Functions ============
 
-    function withdrawQuoteTo(address to, uint256 amount) public preventReentrant returns (uint256) {
+    function withdrawQuoteTo(address to, uint256 amount)
+        public
+        preventReentrant
+        dodoNotClosed
+        returns (uint256)
+    {
         // calculate capital
         (, uint256 quoteTarget) = getExpectedTarget();
         uint256 totalQuoteCapital = getTotalQuoteCapital();
@@ -166,7 +177,12 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
         return amount.sub(penalty);
     }
 
-    function withdrawBaseTo(address to, uint256 amount) public preventReentrant returns (uint256) {
+    function withdrawBaseTo(address to, uint256 amount)
+        public
+        preventReentrant
+        dodoNotClosed
+        returns (uint256)
+    {
         // calculate capital
         (uint256 baseTarget, ) = getExpectedTarget();
         uint256 totalBaseCapital = getTotalBaseCapital();
@@ -196,7 +212,12 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
 
     // ============ Withdraw all Functions ============
 
-    function withdrawAllQuoteTo(address to) public preventReentrant returns (uint256) {
+    function withdrawAllQuoteTo(address to)
+        public
+        preventReentrant
+        dodoNotClosed
+        returns (uint256)
+    {
         uint256 withdrawAmount = getLpQuoteBalance(msg.sender);
         uint256 capital = getQuoteCapitalBalanceOf(msg.sender);
 
@@ -216,7 +237,7 @@ contract LiquidityProvider is Storage, Pricing, Settlement {
         return withdrawAmount.sub(penalty);
     }
 
-    function withdrawAllBaseTo(address to) public preventReentrant returns (uint256) {
+    function withdrawAllBaseTo(address to) public preventReentrant dodoNotClosed returns (uint256) {
         uint256 withdrawAmount = getLpBaseBalance(msg.sender);
         uint256 capital = getBaseCapitalBalanceOf(msg.sender);
 

@@ -327,8 +327,6 @@ describe("Admin", () => {
         .send(ctx.sendParam(ctx.Deployer));
 
       await ctx.DODO.methods.claimAssets().send(ctx.sendParam(lp1));
-      await ctx.DODO.methods.withdrawAllBase().send(ctx.sendParam(lp1));
-      await ctx.DODO.methods.withdrawAllQuote().send(ctx.sendParam(lp1));
 
       assert.equal(
         await ctx.BASE.methods.balanceOf(lp1).call(),
@@ -357,16 +355,7 @@ describe("Admin", () => {
       assert.equal(await ctx.DODO.methods._R_STATUS_().call(), "0");
 
       await ctx.DODO.methods.claimAssets().send(ctx.sendParam(lp1));
-      assert.equal(
-        await ctx.BASE.methods.balanceOf(lp1).call(),
-        decimalStr("90")
-      );
-      assert.equal(
-        await ctx.QUOTE.methods.balanceOf(lp1).call(),
-        "9551951805416248746110"
-      );
-      await ctx.DODO.methods.withdrawAllBase().send(ctx.sendParam(lp1));
-      await ctx.DODO.methods.withdrawAllQuote().send(ctx.sendParam(lp1));
+
       assert.equal(
         await ctx.BASE.methods.balanceOf(lp1).call(),
         decimalStr("94.995")
@@ -394,16 +383,7 @@ describe("Admin", () => {
       assert.equal(await ctx.DODO.methods._R_STATUS_().call(), "0");
 
       await ctx.DODO.methods.claimAssets().send(ctx.sendParam(lp1));
-      assert.equal(
-        await ctx.BASE.methods.balanceOf(lp1).call(),
-        decimalStr("95")
-      );
-      assert.equal(
-        await ctx.QUOTE.methods.balanceOf(lp1).call(),
-        decimalStr("9000")
-      );
-      await ctx.DODO.methods.withdrawAllBase().send(ctx.sendParam(lp1));
-      await ctx.DODO.methods.withdrawAllQuote().send(ctx.sendParam(lp1));
+
       assert.equal(
         await ctx.BASE.methods.balanceOf(lp1).call(),
         decimalStr("105")
@@ -434,8 +414,17 @@ describe("Admin", () => {
         .send(ctx.sendParam(ctx.Deployer));
       await assert.rejects(
         ctx.DODO.methods.finalSettlement().send(ctx.sendParam(ctx.Deployer)),
-        / DODO_CLOSED/
+        /DODO_CLOSED/
       );
+
+      await assert.rejects(
+        ctx.DODO.methods.withdrawAllBase().send(ctx.sendParam(lp1)),
+        /DODO_CLOSED/
+      )
+      await assert.rejects(
+        ctx.DODO.methods.withdrawAllQuote().send(ctx.sendParam(lp1)),
+        /DODO_CLOSED/
+      )
 
       await ctx.DODO.methods.claimAssets().send(ctx.sendParam(lp2));
       await assert.rejects(
