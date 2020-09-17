@@ -97,6 +97,7 @@ describe("Uniswap Arbitrageur", () => {
       await ctx.setOraclePrice(decimalStr("100"));
       // dodo price 100 uniswap price 200
       // buy at dodo
+<<<<<<< Updated upstream
       await logGas(
         UniswapArbitrageur.methods.executeBuyArbitrage(decimalStr("1")),
         ctx.sendParam(keeper),
@@ -107,11 +108,17 @@ describe("Uniswap Arbitrageur", () => {
         "79836384956601695518"
       );
     });
+=======
+      logGas(await UniswapArbitrageur.methods.executeBuyArbitrage(decimalStr("1")), ctx.sendParam(keeper), "arbitrage buy at dodo not reverse")
+      assert.equal(await ctx.QUOTE.methods.balanceOf(keeper).call(), "79836384956601695518")
+    })
+>>>>>>> Stashed changes
 
     it("sell at dodo", async () => {
       await ctx.setOraclePrice(decimalStr("300"));
       // dodo price 300 uniswap price 200
       // sell at dodo
+<<<<<<< Updated upstream
       await logGas(
         UniswapArbitrageur.methods.executeSellArbitrage(decimalStr("1")),
         ctx.sendParam(keeper),
@@ -123,12 +130,19 @@ describe("Uniswap Arbitrageur", () => {
       );
     });
   });
+=======
+      logGas(await UniswapArbitrageur.methods.executeSellArbitrage(decimalStr("1")), ctx.sendParam(keeper), "arbitrage sell at dodo not reverse")
+      assert.equal(await ctx.BASE.methods.balanceOf(keeper).call(), "252761069524143743")
+    })
+  })
+>>>>>>> Stashed changes
 
   describe("arbitrage with reverse pair", () => {
     it("buy at dodo", async () => {
       await ctx.setOraclePrice(decimalStr("100"));
       // dodo price 100 uniswap price 200
       // buy at dodo
+<<<<<<< Updated upstream
       await logGas(
         UniswapArbitrageurReverse.methods.executeBuyArbitrage(decimalStr("1")),
         ctx.sendParam(keeper),
@@ -139,11 +153,17 @@ describe("Uniswap Arbitrageur", () => {
         "79836384956601695518"
       );
     });
+=======
+      logGas(await UniswapArbitrageurReverse.methods.executeBuyArbitrage(decimalStr("1")), ctx.sendParam(keeper), "arbitrage buy at dodo reverse")
+      assert.equal(await ctx.QUOTE.methods.balanceOf(keeper).call(), "79836384956601695518")
+    })
+>>>>>>> Stashed changes
 
     it("sell at dodo", async () => {
       await ctx.setOraclePrice(decimalStr("300"));
       // dodo price 300 uniswap price 200
       // sell at dodo
+<<<<<<< Updated upstream
       await logGas(
         UniswapArbitrageurReverse.methods.executeSellArbitrage(decimalStr("1")),
         ctx.sendParam(keeper),
@@ -155,6 +175,12 @@ describe("Uniswap Arbitrageur", () => {
       );
     });
   });
+=======
+      logGas(await UniswapArbitrageurReverse.methods.executeSellArbitrage(decimalStr("1")), ctx.sendParam(keeper), "arbitrage sell at dodo reverse")
+      assert.equal(await ctx.BASE.methods.balanceOf(keeper).call(), "252761069524143743")
+    })
+  })
+>>>>>>> Stashed changes
 
   describe("revert cases", () => {
     it("price not match", async () => {

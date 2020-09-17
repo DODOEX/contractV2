@@ -13,6 +13,7 @@ if (process.env["COVERAGE"]) {
 const CloneFactory = require(`${jsonPath}CloneFactory.json`)
 const DODO = require(`${jsonPath}DODO.json`)
 const DODOZoo = require(`${jsonPath}DODOZoo.json`)
+// const DODOWild = require(`${jsonPath}DODOWild.json`)
 const DODOEthProxy = require(`${jsonPath}DODOEthProxy.json`)
 const WETH = require(`${jsonPath}WETH9.json`)
 const TestERC20 = require(`${jsonPath}TestERC20.json`)
@@ -20,6 +21,8 @@ const NaiveOracle = require(`${jsonPath}NaiveOracle.json`)
 const DODOLpToken = require(`${jsonPath}DODOLpToken.json`)
 const Uniswap = require(`${jsonPath}UniswapV2Pair.json`)
 const UniswapArbitrageur = require(`${jsonPath}UniswapArbitrageur.json`)
+const DODOToken = require(`${jsonPath}DODOToken.json`)
+const LockedTokenVault = require(`${jsonPath}LockedTokenVault.json`)
 
 import { getDefaultWeb3 } from './EVM';
 import { Contract } from 'web3-eth-contract';
@@ -30,10 +33,13 @@ export const TEST_ERC20_CONTRACT_NAME = "TestERC20"
 export const NAIVE_ORACLE_CONTRACT_NAME = "NaiveOracle"
 export const DODO_LP_TOKEN_CONTRACT_NAME = "DODOLpToken"
 export const DODO_ZOO_CONTRACT_NAME = "DOOZoo"
+export const DODO_WILD_CONTRACT_NAME = "DOOWild"
 export const DODO_ETH_PROXY_CONTRACT_NAME = "DODOEthProxy"
 export const WETH_CONTRACT_NAME = "WETH"
 export const UNISWAP_CONTRACT_NAME = "Uniswap"
 export const UNISWAP_ARBITRAGEUR_CONTRACT_NAME = "UniswapArbitrageur"
+export const DODO_TOKEN_CONTRACT_NAME = "DODOToken"
+export const LOCKED_TOKEN_VAULT_CONTRACT_NAME = "LockedTokenVault"
 
 var contractMap: { [name: string]: any } = {}
 contractMap[CLONE_FACTORY_CONTRACT_NAME] = CloneFactory
@@ -46,6 +52,8 @@ contractMap[DODO_ETH_PROXY_CONTRACT_NAME] = DODOEthProxy
 contractMap[WETH_CONTRACT_NAME] = WETH
 contractMap[UNISWAP_CONTRACT_NAME] = Uniswap
 contractMap[UNISWAP_ARBITRAGEUR_CONTRACT_NAME] = UniswapArbitrageur
+contractMap[DODO_TOKEN_CONTRACT_NAME] = DODOToken
+contractMap[LOCKED_TOKEN_VAULT_CONTRACT_NAME] = LockedTokenVault
 
 interface ContractJson {
   abi: any;
