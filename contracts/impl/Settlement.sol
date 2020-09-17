@@ -12,6 +12,7 @@ import {SafeMath} from "../lib/SafeMath.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
 import {Types} from "../lib/Types.sol";
+import {IDODOLpToken} from "../intf/IDODOLpToken.sol";
 import {IERC20} from "../intf/IERC20.sol";
 import {Storage} from "./Storage.sol";
 
@@ -114,16 +115,27 @@ contract Settlement is Storage {
         require(_CLOSED_, "DODO_NOT_CLOSED");
         require(!_CLAIMED_[msg.sender], "ALREADY_CLAIMED");
         _CLAIMED_[msg.sender] = true;
-        uint256 quoteAmount = DecimalMath.mul(
-            getBaseCapitalBalanceOf(msg.sender),
-            _BASE_CAPITAL_RECEIVE_QUOTE_
+
+        uint256 quoteCapital = getQuoteCapitalBalanceOf(msg.sender);
+        uint256 baseCapital = getBaseCapitalBalanceOf(msg.sender);
+
+        uint256 quoteAmount = _TARGET_QUOTE_TOKEN_AMOUNT_.mul(quoteCapital).div(
+            getTotalQuoteCapital()
         );
-        uint256 baseAmount = DecimalMath.mul(
-            getQuoteCapitalBalanceOf(msg.sender),
-            _QUOTE_CAPITAL_RECEIVE_BASE_
-        );
+        uint256 baseAmount = _TARGET_BASE_TOKEN_AMOUNT_.mul(baseCapital).div(getTotalBaseCapital());
+
+        _TARGET_QUOTE_TOKEN_AMOUNT_ = _TARGET_QUOTE_TOKEN_AMOUNT_.sub(quoteAmount);
+        _TARGET_BASE_TOKEN_AMOUNT_ = _TARGET_BASE_TOKEN_AMOUNT_.sub(baseAmount);
+
+        quoteAmount = quoteAmount.add(DecimalMath.mul(baseCapital, _BASE_CAPITAL_RECEIVE_QUOTE_));
+        baseAmount = baseAmount.add(DecimalMath.mul(quoteCapital, _QUOTE_CAPITAL_RECEIVE_BASE_));
+
         _baseTokenTransferOut(msg.sender, baseAmount);
         _quoteTokenTransferOut(msg.sender, quoteAmount);
+
+        IDODOLpToken(_BASE_CAPITAL_TOKEN_).burn(msg.sender, baseCapital);
+        IDODOLpToken(_QUOTE_CAPITAL_TOKEN_).burn(msg.sender, quoteCapital);
+
         emit ClaimAssets(msg.sender, baseAmount, quoteAmount);
         return;
     }
