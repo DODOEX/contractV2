@@ -36,6 +36,7 @@ contract LockedTokenVault is Ownable {
 
     uint256 public _START_RELEASE_TIME_;
     uint256 public _RELEASE_DURATION_;
+    uint256 public _CLIFF_RATE_;
 
     // ============ Modifiers ============
 
@@ -64,11 +65,13 @@ contract LockedTokenVault is Ownable {
     constructor(
         address _token,
         uint256 _startReleaseTime,
-        uint256 _releaseDuration
+        uint256 _releaseDuration,
+        uint256 _cliffRate
     ) public {
         _TOKEN_ = _token;
         _START_RELEASE_TIME_ = _startReleaseTime;
         _RELEASE_DURATION_ = _releaseDuration;
+        _CLIFF_RATE_ = _cliffRate;
     }
 
     function deposit(uint256 amount) external onlyOwner beforeStartRelease {
@@ -175,7 +178,10 @@ contract LockedTokenVault is Ownable {
         uint256 timePast = block.timestamp.sub(_START_RELEASE_TIME_);
         if (timePast < _RELEASE_DURATION_) {
             uint256 remainingTime = _RELEASE_DURATION_.sub(timePast);
-            newRemaining = originBalances[holder].mul(remainingTime).div(_RELEASE_DURATION_);
+            newRemaining = originBalances[holder]
+                .sub(DecimalMath.mul(originBalances[holder], _CLIFF_RATE_))
+                .mul(remainingTime)
+                .div(_RELEASE_DURATION_);
         }
         return remainingBalances[msg.sender].sub(newRemaining);
     }
