@@ -65,6 +65,13 @@ describe("DODO ZOO", () => {
       // console.log(await ctx.DODOZoo.methods.getDODOs().call())
     })
 
+    // it.only("remove dodo", async () => {
+    //   console.log(await ctx.DODOZoo.methods.getDODOs().call())
+    //   await ctx.DODOZoo.methods.removeDODO(ctx.DODO.options.address).send(ctx.sendParam(ctx.Deployer))
+    //   console.log(await ctx.DODOZoo.methods.getDODO(ctx.BASE.options.address, ctx.QUOTE.options.address).call())
+    //   console.log(await ctx.DODOZoo.methods.getDODOs().call())
+    // })
+
     it("dodo register control flow", async () => {
       await ctx.DODOZoo.methods.removeDODO(ctx.DODO.options.address).send(ctx.sendParam(ctx.Deployer))
       assert.equal(await ctx.DODOZoo.methods.getDODO(ctx.BASE.options.address, ctx.QUOTE.options.address).call(), "0x0000000000000000000000000000000000000000")

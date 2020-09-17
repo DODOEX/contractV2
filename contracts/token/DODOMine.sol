@@ -160,7 +160,7 @@ contract DODOMine is Ownable {
         uint256 length = poolInfos.length;
         uint256 totalReward = 0;
         for (uint256 pid = 0; pid < length; ++pid) {
-            if (userInfo[pid][msg.sender].amount == 0) {
+            if (userInfo[pid][msg.sender].amount == 0 || poolInfos[pid].allocPoint == 0) {
                 continue; // save gas
             }
             PoolInfo storage pool = poolInfos[pid];
@@ -238,7 +238,6 @@ contract DODOMine is Ownable {
         emit Deposit(msg.sender, pid, _amount);
     }
 
-    // Withdraw LP tokens from MasterChef.
     function withdraw(address _lpToken, uint256 _amount) public {
         uint256 pid = getPid(_lpToken);
         PoolInfo storage pool = poolInfos[pid];
@@ -270,7 +269,7 @@ contract DODOMine is Ownable {
 
     function claim(address _lpToken) public {
         uint256 pid = getPid(_lpToken);
-        if (userInfo[pid][msg.sender].amount == 0) {
+        if (userInfo[pid][msg.sender].amount == 0 || poolInfos[pid].allocPoint == 0) {
             return; // save gas
         }
         PoolInfo storage pool = poolInfos[pid];
@@ -285,7 +284,7 @@ contract DODOMine is Ownable {
         uint256 length = poolInfos.length;
         uint256 pending = 0;
         for (uint256 pid = 0; pid < length; ++pid) {
-            if (userInfo[pid][msg.sender].amount == 0) {
+            if (userInfo[pid][msg.sender].amount == 0 || poolInfos[pid].allocPoint == 0) {
                 continue; // save gas
             }
             PoolInfo storage pool = poolInfos[pid];
@@ -303,5 +302,6 @@ contract DODOMine is Ownable {
     function safeDODOTransfer(address _to, uint256 _amount) internal {
         IERC20(dodoToken).safeTransfer(_to, _amount);
         realizedReward[_to] = realizedReward[_to].add(_amount);
+        emit Claim(_to, _amount);
     }
 }

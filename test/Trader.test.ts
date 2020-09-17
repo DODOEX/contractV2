@@ -52,11 +52,15 @@ describe("Trader", () => {
 
   describe("R goes above ONE", () => {
     it("buy when R equals ONE", async () => {
+<<<<<<< Updated upstream
       await logGas(
         ctx.DODO.methods.buyBaseToken(decimalStr("1"), decimalStr("110"), "0x"),
         ctx.sendParam(trader),
         "buy base token when balanced"
       );
+=======
+      await logGas(ctx.DODO.methods.buyBaseToken(decimalStr("1"), decimalStr("110"), "0x"), ctx.sendParam(trader), "buy base token when balanced")
+>>>>>>> Stashed changes
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
@@ -92,6 +96,7 @@ describe("Trader", () => {
     });
 
     it("buy when R is ABOVE ONE", async () => {
+<<<<<<< Updated upstream
       await ctx.DODO.methods
         .buyBaseToken(decimalStr("1"), decimalStr("110"), "0x")
         .send(ctx.sendParam(trader));
@@ -100,6 +105,10 @@ describe("Trader", () => {
         ctx.sendParam(trader),
         "buy when R is ABOVE ONE"
       );
+=======
+      await ctx.DODO.methods.buyBaseToken(decimalStr("1"), decimalStr("110"), "0x").send(ctx.sendParam(trader))
+      await logGas(ctx.DODO.methods.buyBaseToken(decimalStr("1"), decimalStr("130"), "0x"), ctx.sendParam(trader), "buy when R is ABOVE ONE")
+>>>>>>> Stashed changes
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
@@ -130,6 +139,7 @@ describe("Trader", () => {
     });
 
     it("sell when R is ABOVE ONE", async () => {
+<<<<<<< Updated upstream
       await ctx.DODO.methods
         .buyBaseToken(decimalStr("1"), decimalStr("110"), "0x")
         .send(ctx.sendParam(trader));
@@ -142,6 +152,10 @@ describe("Trader", () => {
         ctx.sendParam(trader),
         "sell when R is ABOVE ONE"
       );
+=======
+      await ctx.DODO.methods.buyBaseToken(decimalStr("1"), decimalStr("110"), "0x").send(ctx.sendParam(trader))
+      await logGas(ctx.DODO.methods.sellBaseToken(decimalStr("0.5"), decimalStr("40"), "0x"), ctx.sendParam(trader), "sell when R is ABOVE ONE")
+>>>>>>> Stashed changes
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
@@ -172,6 +186,7 @@ describe("Trader", () => {
     });
 
     it("sell when R is ABOVE ONE and RStatus back to ONE", async () => {
+<<<<<<< Updated upstream
       await ctx.DODO.methods
         .buyBaseToken(decimalStr("1"), decimalStr("110"), "0x")
         .send(ctx.sendParam(trader));
@@ -184,6 +199,10 @@ describe("Trader", () => {
         ctx.sendParam(trader),
         "sell when R is ABOVE ONE and RStatus back to ONE"
       );
+=======
+      await ctx.DODO.methods.buyBaseToken(decimalStr("1"), decimalStr("110"), "0x").send(ctx.sendParam(trader))
+      await logGas(ctx.DODO.methods.sellBaseToken("1003002430889317763", decimalStr("90"), "0x"), ctx.sendParam(trader), "sell when R is ABOVE ONE and RStatus back to ONE")
+>>>>>>> Stashed changes
       // R status
       assert.equal(await ctx.DODO.methods._R_STATUS_().call(), "0");
       // trader balances
@@ -225,6 +244,7 @@ describe("Trader", () => {
     });
 
     it("sell when R is ABOVE ONE and RStatus becomes BELOW ONE", async () => {
+<<<<<<< Updated upstream
       await ctx.DODO.methods
         .buyBaseToken(decimalStr("1"), decimalStr("110"), "0x")
         .send(ctx.sendParam(trader));
@@ -233,6 +253,10 @@ describe("Trader", () => {
         ctx.sendParam(trader),
         "sell when R is ABOVE ONE and RStatus becomes BELOW ONE [gas cost worst case]"
       );
+=======
+      await ctx.DODO.methods.buyBaseToken(decimalStr("1"), decimalStr("110"), "0x").send(ctx.sendParam(trader))
+      await logGas(ctx.DODO.methods.sellBaseToken(decimalStr("2"), decimalStr("90"), "0x"), ctx.sendParam(trader), "sell when R is ABOVE ONE and RStatus becomes BELOW ONE [gas cost worst case]")
+>>>>>>> Stashed changes
       // R status
       assert.equal(await ctx.DODO.methods._R_STATUS_().call(), "2");
       // trader balances
@@ -276,11 +300,15 @@ describe("Trader", () => {
 
   describe("R goes below ONE", () => {
     it("sell when R equals ONE", async () => {
+<<<<<<< Updated upstream
       await logGas(
         ctx.DODO.methods.sellBaseToken(decimalStr("1"), decimalStr("90"), "0x"),
         ctx.sendParam(trader),
         "sell base token when balanced"
       );
+=======
+      await logGas(ctx.DODO.methods.sellBaseToken(decimalStr("1"), decimalStr("90"), "0x"), ctx.sendParam(trader), "sell base token when balanced")
+>>>>>>> Stashed changes
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
@@ -316,6 +344,7 @@ describe("Trader", () => {
     });
 
     it("sell when R is BELOW ONE", async () => {
+<<<<<<< Updated upstream
       await ctx.DODO.methods
         .sellBaseToken(decimalStr("3"), decimalStr("90"), "0x")
         .send(ctx.sendParam(trader));
@@ -324,6 +353,10 @@ describe("Trader", () => {
         ctx.sendParam(trader),
         "sell when R is BELOW ONE"
       );
+=======
+      await ctx.DODO.methods.sellBaseToken(decimalStr("3"), decimalStr("90"), "0x").send(ctx.sendParam(trader))
+      await logGas(ctx.DODO.methods.sellBaseToken(decimalStr("3"), decimalStr("90"), "0x"), ctx.sendParam(trader), "sell when R is BELOW ONE")
+>>>>>>> Stashed changes
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
@@ -354,6 +387,7 @@ describe("Trader", () => {
     });
 
     it("buy when R is BELOW ONE", async () => {
+<<<<<<< Updated upstream
       await ctx.DODO.methods
         .sellBaseToken(decimalStr("1"), decimalStr("90"), "0x")
         .send(ctx.sendParam(trader));
@@ -366,6 +400,10 @@ describe("Trader", () => {
         ctx.sendParam(trader),
         "buy when R is BELOW ONE"
       );
+=======
+      await ctx.DODO.methods.sellBaseToken(decimalStr("1"), decimalStr("90"), "0x").send(ctx.sendParam(trader))
+      await logGas(ctx.DODO.methods.buyBaseToken(decimalStr("0.5"), decimalStr("60"), "0x"), ctx.sendParam(trader), "buy when R is BELOW ONE")
+>>>>>>> Stashed changes
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
@@ -396,6 +434,7 @@ describe("Trader", () => {
     });
 
     it("buy when R is BELOW ONE and RStatus back to ONE", async () => {
+<<<<<<< Updated upstream
       await ctx.DODO.methods
         .sellBaseToken(decimalStr("1"), decimalStr("90"), "0x")
         .send(ctx.sendParam(trader));
@@ -408,6 +447,10 @@ describe("Trader", () => {
         ctx.sendParam(trader),
         "buy when R is BELOW ONE and RStatus back to ONE"
       );
+=======
+      await ctx.DODO.methods.sellBaseToken(decimalStr("1"), decimalStr("90"), "0x").send(ctx.sendParam(trader))
+      await logGas(ctx.DODO.methods.buyBaseToken("997008973080757728", decimalStr("110"), "0x"), ctx.sendParam(trader), "buy when R is BELOW ONE and RStatus back to ONE")
+>>>>>>> Stashed changes
       // R status
       assert.equal(await ctx.DODO.methods._R_STATUS_().call(), "0");
       // trader balances
@@ -449,6 +492,7 @@ describe("Trader", () => {
     });
 
     it("buy when R is BELOW ONE and RStatus becomes ABOVE ONE", async () => {
+<<<<<<< Updated upstream
       await ctx.DODO.methods
         .sellBaseToken(decimalStr("1"), decimalStr("90"), "0x")
         .send(ctx.sendParam(trader));
@@ -457,6 +501,10 @@ describe("Trader", () => {
         ctx.sendParam(trader),
         "buy when R is BELOW ONE and RStatus becomes ABOVE ONE [gas cost worst case]"
       );
+=======
+      await ctx.DODO.methods.sellBaseToken(decimalStr("1"), decimalStr("90"), "0x").send(ctx.sendParam(trader))
+      await logGas(ctx.DODO.methods.buyBaseToken(decimalStr("2"), decimalStr("220"), "0x"), ctx.sendParam(trader), "buy when R is BELOW ONE and RStatus becomes ABOVE ONE [gas cost worst case]")
+>>>>>>> Stashed changes
       // R status
       assert.equal(await ctx.DODO.methods._R_STATUS_().call(), "1");
       // trader balances
