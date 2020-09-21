@@ -119,10 +119,14 @@ contract Settlement is Storage {
         uint256 quoteCapital = getQuoteCapitalBalanceOf(msg.sender);
         uint256 baseCapital = getBaseCapitalBalanceOf(msg.sender);
 
-        uint256 quoteAmount = _TARGET_QUOTE_TOKEN_AMOUNT_.mul(quoteCapital).div(
-            getTotalQuoteCapital()
-        );
-        uint256 baseAmount = _TARGET_BASE_TOKEN_AMOUNT_.mul(baseCapital).div(getTotalBaseCapital());
+        uint256 quoteAmount = 0;
+        if (quoteCapital > 0) {
+            quoteAmount = _TARGET_QUOTE_TOKEN_AMOUNT_.mul(quoteCapital).div(getTotalQuoteCapital());
+        }
+        uint256 baseAmount = 0;
+        if (baseCapital > 0) {
+            baseAmount = _TARGET_BASE_TOKEN_AMOUNT_.mul(baseCapital).div(getTotalBaseCapital());
+        }
 
         _TARGET_QUOTE_TOKEN_AMOUNT_ = _TARGET_QUOTE_TOKEN_AMOUNT_.sub(quoteAmount);
         _TARGET_BASE_TOKEN_AMOUNT_ = _TARGET_BASE_TOKEN_AMOUNT_.sub(baseAmount);
