@@ -394,6 +394,40 @@ describe("Admin", () => {
       );
     });
 
+    it("final settlement when only deposit base", async () => {
+      await ctx.DODO.methods
+        .depositBase(decimalStr("10"))
+        .send(ctx.sendParam(lp1));
+
+      await ctx.DODO.methods
+        .finalSettlement()
+        .send(ctx.sendParam(ctx.Deployer));
+
+      await ctx.DODO.methods.claimAssets().send(ctx.sendParam(lp1));
+
+      assert.equal(
+        await ctx.BASE.methods.balanceOf(lp1).call(),
+        decimalStr("100")
+      );
+    });
+
+    it("final settlement when only deposit quote", async () => {
+      await ctx.DODO.methods
+        .depositQuote(decimalStr("1000"))
+        .send(ctx.sendParam(lp1));
+
+      await ctx.DODO.methods
+        .finalSettlement()
+        .send(ctx.sendParam(ctx.Deployer));
+
+      await ctx.DODO.methods.claimAssets().send(ctx.sendParam(lp1));
+
+      assert.equal(
+        await ctx.QUOTE.methods.balanceOf(lp1).call(),
+        decimalStr("10000")
+      );
+    });
+
     it("final settlement revert cases", async () => {
       await assert.rejects(
         ctx.DODO.methods.claimAssets().send(ctx.sendParam(lp1)),
