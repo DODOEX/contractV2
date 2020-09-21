@@ -47,8 +47,17 @@ export class EVM {
     return this.callJsonrpcMethod('evm_mine');
   }
 
+  public async fastMove(moveBlockNum: number): Promise<string> {
+    var res: string
+    for (let i = 0; i < moveBlockNum; i++) {
+      res = await this.callJsonrpcMethod('evm_mine');
+    }
+    return res
+  }
+
   public async increaseTime(duration: number): Promise<string> {
-    return this.callJsonrpcMethod('evm_increaseTime', [duration]);
+    await this.callJsonrpcMethod('evm_increaseTime', [duration]);
+    return this.callJsonrpcMethod('evm_mine');
   }
 
   public async callJsonrpcMethod(method: string, params?: (any[])): Promise<string> {
