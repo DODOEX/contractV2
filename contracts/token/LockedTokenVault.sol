@@ -29,14 +29,16 @@ contract LockedTokenVault is Ownable {
     address _TOKEN_;
 
     mapping(address => uint256) internal originBalances;
-    mapping(address => uint256) internal remainingBalances;
+    mapping(address => uint256) internal claimedBalances;
 
-    mapping(address => bool) internal confirmOriginBalance;
     mapping(address => address) internal holderTransferRequest;
 
+    uint256 public _UNDISTRIBUTED_AMOUNT_;
     uint256 public _START_RELEASE_TIME_;
     uint256 public _RELEASE_DURATION_;
     uint256 public _CLIFF_RATE_;
+
+    bool public _DISTRIBUTE_FINISHED_;
 
     // ============ Modifiers ============
 
@@ -50,13 +52,8 @@ contract LockedTokenVault is Ownable {
         _;
     }
 
-    modifier holderConfirmed(address holder) {
-        require(confirmOriginBalance[holder], "HOLDER NOT CONFIRMED");
-        _;
-    }
-
-    modifier holderNotConfirmed(address holder) {
-        require(!confirmOriginBalance[holder], "HOLDER CONFIRMED");
+    modifier distributeNotFinished() {
+        require(!_DISTRIBUTE_FINISHED_, "DISTRIBUTE FINISHED");
         _;
     }
 
@@ -74,82 +71,55 @@ contract LockedTokenVault is Ownable {
         _CLIFF_RATE_ = _cliffRate;
     }
 
-    function deposit(uint256 amount) external onlyOwner beforeStartRelease {
+    function deposit(uint256 amount) external onlyOwner {
         _tokenTransferIn(_OWNER_, amount);
-        originBalances[_OWNER_] = originBalances[_OWNER_].add(amount);
-        remainingBalances[_OWNER_] = remainingBalances[_OWNER_].add(amount);
+        _UNDISTRIBUTED_AMOUNT_ = _UNDISTRIBUTED_AMOUNT_.add(amount);
     }
 
-    function withdraw(uint256 amount) external onlyOwner beforeStartRelease {
-        originBalances[_OWNER_] = originBalances[_OWNER_].sub(amount);
-        remainingBalances[_OWNER_] = remainingBalances[_OWNER_].sub(amount);
+    function withdraw(uint256 amount) external onlyOwner {
+        _UNDISTRIBUTED_AMOUNT_ = _UNDISTRIBUTED_AMOUNT_.sub(amount);
         _tokenTransferOut(_OWNER_, amount);
+    }
+
+    function finishDistribute() external onlyOwner {
+        _DISTRIBUTE_FINISHED_ = true;
     }
 
     // ============ For Owner ============
 
-    function grant(address holder, uint256 amount)
+    function grant(address[] calldata holderList, uint256[] calldata amountList)
         external
         onlyOwner
-        beforeStartRelease
-        holderNotConfirmed(holder)
     {
-        originBalances[holder] = originBalances[holder].add(amount);
-        remainingBalances[holder] = remainingBalances[holder].add(amount);
-
-        originBalances[_OWNER_] = originBalances[_OWNER_].sub(amount);
-        remainingBalances[_OWNER_] = remainingBalances[_OWNER_].sub(amount);
+        require(holderList.length == amountList.length, "batch grant length not match");
+        uint256 amount = 0;
+        for (uint256 i = 0; i < holderList.length; ++i) {
+            originBalances[holderList[i]] = originBalances[holderList[i]].add(amountList[i]);
+            amount = amount.add(amountList[i]);
+        }
+        _UNDISTRIBUTED_AMOUNT_ = _UNDISTRIBUTED_AMOUNT_.sub(amount);
     }
 
-    function recall(address holder)
-        external
-        onlyOwner
-        beforeStartRelease
-        holderNotConfirmed(holder)
-    {
+    function recall(address holder) external onlyOwner distributeNotFinished {
         uint256 amount = originBalances[holder];
-
         originBalances[holder] = 0;
-        remainingBalances[holder] = 0;
-
-        originBalances[_OWNER_] = originBalances[_OWNER_].add(amount);
-        remainingBalances[_OWNER_] = remainingBalances[_OWNER_].add(amount);
-    }
-
-    function executeHolderTransfer(address holder) external onlyOwner {
-        address newHolder = holderTransferRequest[holder];
-        require(newHolder != address(0), "INVALID NEW HOLDER");
-        require(originBalances[newHolder] == 0, "NOT NEW HOLDER");
-
-        originBalances[newHolder] = originBalances[holder];
-        remainingBalances[newHolder] = remainingBalances[holder];
-
-        originBalances[holder] = 0;
-        remainingBalances[holder] = 0;
-
-        holderTransferRequest[holder] = address(0);
+        _UNDISTRIBUTED_AMOUNT_ = _UNDISTRIBUTED_AMOUNT_.add(amount);
     }
 
     // ============ For Holder ============
 
-    function confirm() external {
-        confirmOriginBalance[msg.sender] = true;
+    function transferLockedToken(address to) external {
+        originBalances[to] = originBalances[to].add(originBalances[msg.sender]);
+        claimedBalances[to] = claimedBalances[to].add(claimedBalances[msg.sender]);
+
+        originBalances[msg.sender] = 0;
+        claimedBalances[msg.sender] = 0;
     }
 
-    function cancelConfirm() external {
-        confirmOriginBalance[msg.sender] = false;
-    }
-
-    function requestTransfer(address newHolder) external holderConfirmed(msg.sender) {
-        require(originBalances[newHolder] == 0, "NOT NEW HOLDER");
-        holderTransferRequest[msg.sender] = newHolder;
-    }
-
-    function claimToken() external afterStartRelease {
-        uint256 unLocked = getUnlockedBalance(msg.sender);
-
-        _tokenTransferOut(msg.sender, unLocked);
-        remainingBalances[msg.sender] = remainingBalances[msg.sender].sub(unLocked);
+    function claim() external {
+        uint256 claimableToken = getClaimableBalance(msg.sender);
+        _tokenTransferOut(msg.sender, claimableToken);
+        claimedBalances[msg.sender] = claimedBalances[msg.sender].add(claimableToken);
     }
 
     // ============ View ============
@@ -158,32 +128,33 @@ contract LockedTokenVault is Ownable {
         return originBalances[holder];
     }
 
-    function getRemainingBalance(address holder) external view returns (uint256) {
-        return remainingBalances[holder];
-    }
-
-    function isConfirmed(address holder) external view returns (bool) {
-        return confirmOriginBalance[holder];
+    function getClaimedBalance(address holder) external view returns (uint256) {
+        return claimedBalances[holder];
     }
 
     function getHolderTransferRequest(address holder) external view returns (address) {
         return holderTransferRequest[holder];
     }
 
-    function getUnlockedBalance(address holder) public view returns (uint256) {
+    function getClaimableBalance(address holder) public view returns (uint256) {
         if (block.timestamp < _START_RELEASE_TIME_) {
             return 0;
         }
-        uint256 newRemaining = 0;
+        uint256 remainingToken = getRemainingBalance(holder);
+        return originBalances[holder].sub(remainingToken).sub(claimedBalances[holder]);
+    }
+
+    function getRemainingBalance(address holder) public view returns (uint256) {
+        uint256 remainingToken = 0;
         uint256 timePast = block.timestamp.sub(_START_RELEASE_TIME_);
         if (timePast < _RELEASE_DURATION_) {
             uint256 remainingTime = _RELEASE_DURATION_.sub(timePast);
-            newRemaining = originBalances[holder]
+            remainingToken = originBalances[holder]
                 .sub(DecimalMath.mul(originBalances[holder], _CLIFF_RATE_))
                 .mul(remainingTime)
                 .div(_RELEASE_DURATION_);
         }
-        return remainingBalances[msg.sender].sub(newRemaining);
+        return remainingToken;
     }
 
     // ============ Internal Helper ============
