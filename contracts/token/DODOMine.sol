@@ -99,8 +99,8 @@ contract DODOMine is Ownable {
     // ============ Ownable ============
 
     function addLpToken(
-        uint256 _allocPoint,
         address _lpToken,
+        uint256 _allocPoint,
         bool _withUpdate
     ) public lpTokenNotExist(_lpToken) onlyOwner {
         if (_withUpdate) {
@@ -160,7 +160,7 @@ contract DODOMine is Ownable {
         uint256 length = poolInfos.length;
         uint256 totalReward = 0;
         for (uint256 pid = 0; pid < length; ++pid) {
-            if (userInfo[pid][msg.sender].amount == 0 || poolInfos[pid].allocPoint == 0) {
+            if (userInfo[pid][_user].amount == 0 || poolInfos[pid].allocPoint == 0) {
                 continue; // save gas
             }
             PoolInfo storage pool = poolInfos[pid];
@@ -185,6 +185,12 @@ contract DODOMine is Ownable {
 
     function getRealizedReward(address _user) external view returns (uint256) {
         return realizedReward[_user];
+    }
+
+    function getDlpMiningSpeed(address _lpToken) external view returns (uint256) {
+        uint256 pid = getPid(_lpToken);
+        PoolInfo storage pool = poolInfos[pid];
+        return dodoPerBlock.mul(pool.allocPoint).div(totalAllocPoint);
     }
 
     // ============ Update Pools ============
@@ -242,7 +248,7 @@ contract DODOMine is Ownable {
         uint256 pid = getPid(_lpToken);
         PoolInfo storage pool = poolInfos[pid];
         UserInfo storage user = userInfo[pid][msg.sender];
-        require(user.amount >= _amount, "withdraw: not good");
+        require(user.amount >= _amount, "withdraw too much");
         updatePool(pid);
         uint256 pending = DecimalMath.mul(user.amount, pool.accDODOPerShare).sub(user.rewardDebt);
         safeDODOTransfer(msg.sender, pending);
