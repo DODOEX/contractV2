@@ -134,6 +134,10 @@ describe("Lock DODO Token", () => {
       assert.equal(await LockedTokenVault.methods.getClaimableBalance(u3).call(), "0")
       assert.ok(approxEqual(await LockedTokenVault.methods.getRemainingBalance(u3).call(), decimalStr("82.5")))
       assert.ok(approxEqual(await DODOToken.methods.balanceOf(u3).call(), decimalStr("93.75")))
+
+      // transfer from u3 to u1
+      await LockedTokenVault.methods.transferLockedToken(u1).send(ctx.sendParam(u3))
+
     })
 
     it("withdraw", async () => {
