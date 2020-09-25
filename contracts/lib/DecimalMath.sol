@@ -10,6 +10,7 @@ pragma experimental ABIEncoderV2;
 
 import {SafeMath} from "./SafeMath.sol";
 
+
 /**
  * @title DecimalMath
  * @author DODO Breeder
@@ -23,6 +24,10 @@ library DecimalMath {
 
     function mul(uint256 target, uint256 d) internal pure returns (uint256) {
         return target.mul(d) / ONE;
+    }
+
+    function mulCeil(uint256 target, uint256 d) internal pure returns (uint256) {
+        return target.mul(d).divCeil(ONE);
     }
 
     function divFloor(uint256 target, uint256 d) internal pure returns (uint256) {

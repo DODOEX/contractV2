@@ -14,6 +14,7 @@ import {DODOMath} from "../lib/DODOMath.sol";
 import {Types} from "../lib/Types.sol";
 import {Storage} from "./Storage.sol";
 
+
 /**
  * @title Pricing
  * @author DODO Breeder
@@ -84,7 +85,7 @@ contract Pricing is Storage {
         uint256 Q2 = DODOMath._SolveQuadraticFunctionForTrade(
             targetQuoteAmount,
             quoteBalance,
-            DecimalMath.mul(i, amount),
+            DecimalMath.mulCeil(i, amount),
             true,
             _K_
         );
