@@ -132,7 +132,10 @@ contract DODOMine is Ownable {
         poolInfos[pid].allocPoint = _allocPoint;
     }
 
-    function setReward(uint256 _dodoPerBlock) external onlyOwner {
+    function setReward(uint256 _dodoPerBlock, bool _withUpdate) external onlyOwner {
+        if (_withUpdate) {
+            massUpdatePools();
+        }
         dodoPerBlock = _dodoPerBlock;
     }
 
