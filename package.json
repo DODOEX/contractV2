@@ -28,6 +28,7 @@
     "@types/es6-promisify": "^6.0.0",
     "@types/mocha": "^7.0.2",
     "assert": "^2.0.0",
+    "axios": "^0.20.0",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^10.1.0",
     "bignumber.js": "^9.0.0",
