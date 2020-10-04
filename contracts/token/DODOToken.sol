@@ -19,7 +19,7 @@ contract DODOToken {
     using SafeMath for uint256;
 
     string public symbol = "DODO";
-    string public name = "DODO bird food";
+    string public name = "DODO bird";
 
     uint256 public decimals = 18;
     uint256 public totalSupply = 1000000000 * 10**18; // 1 Billion

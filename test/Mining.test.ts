@@ -8,7 +8,7 @@
 import { DODOContext, getDODOContext } from './utils/Context';
 import { decimalStr, MAX_UINT256 } from './utils/Converter';
 // import * as assert from "assert"
-import { newContract, DODO_TOKEN_CONTRACT_NAME, DODO_MINE_NAME, TEST_ERC20_CONTRACT_NAME, getContractWithAddress } from './utils/Contracts';
+import { newContract, DODO_TOKEN_CONTRACT_NAME, DODO_MINE_NAME, TEST_ERC20_CONTRACT_NAME, getContractWithAddress, DODO_MINE_READER_NAME } from './utils/Contracts';
 import { Contract } from 'web3-eth-contract';
 import { assert } from 'chai';
 import { logGas } from './utils/Log';
@@ -17,6 +17,7 @@ let BaseDLP: Contract
 let QuoteDLP: Contract
 let DODOToken: Contract
 let DODOMine: Contract
+let DODOMineReader: Contract
 let lp1: string;
 let lp2: string;
 
@@ -38,6 +39,7 @@ async function init(ctx: DODOContext): Promise<void> {
 
   DODOToken = await newContract(DODO_TOKEN_CONTRACT_NAME)
   DODOMine = await newContract(DODO_MINE_NAME, [DODOToken.options.address, (await ctx.Web3.eth.getBlockNumber()).toString()])
+  DODOMineReader = await newContract(DODO_MINE_READER_NAME)
 
   BaseDLP = await getContractWithAddress(TEST_ERC20_CONTRACT_NAME, await ctx.DODO.methods._BASE_CAPITAL_TOKEN_().call())
   QuoteDLP = await getContractWithAddress(TEST_ERC20_CONTRACT_NAME, await ctx.DODO.methods._QUOTE_CAPITAL_TOKEN_().call())
@@ -48,10 +50,12 @@ async function init(ctx: DODOContext): Promise<void> {
   await BaseDLP.methods.approve(DODOMine.options.address, MAX_UINT256).send(ctx.sendParam(lp2))
   await QuoteDLP.methods.approve(DODOMine.options.address, MAX_UINT256).send(ctx.sendParam(lp2))
 
-  await DODOMine.methods.setReward(decimalStr("100")).send(ctx.sendParam(ctx.Deployer))
+  await DODOMine.methods.setReward(decimalStr("100"), true).send(ctx.sendParam(ctx.Deployer))
   await DODOMine.methods.addLpToken(BaseDLP.options.address, "1", true).send(ctx.sendParam(ctx.Deployer))
   await DODOMine.methods.addLpToken(QuoteDLP.options.address, "2", true).send(ctx.sendParam(ctx.Deployer))
-  await DODOToken.methods.transfer(DODOMine.options.address, decimalStr("100000000")).send(ctx.sendParam(ctx.Deployer))
+
+  const rewardVault = await DODOMine.methods.dodoRewardVault().call()
+  await DODOToken.methods.transfer(rewardVault, decimalStr("100000000")).send(ctx.sendParam(ctx.Deployer))
 }
 
 describe("Lock DODO Token", () => {
@@ -73,7 +77,7 @@ describe("Lock DODO Token", () => {
   });
 
   describe("Lp Deposit", () => {
-    it.only("single lp deposit", async () => {
+    it("single lp deposit", async () => {
       await logGas(DODOMine.methods.deposit(BaseDLP.options.address, decimalStr("100")), ctx.sendParam(lp1), "deposit")
       await ctx.EVM.fastMove(100)
       assert.equal(await DODOMine.methods.getPendingReward(BaseDLP.options.address, lp1).call(), "3333333333333333333300")
@@ -99,7 +103,7 @@ describe("Lock DODO Token", () => {
       assert.equal(await DODOMine.methods.getAllPendingReward(lp2).call(), "8366666666666666666600")
     })
 
-    it("lp multi deposit and withdraw", async () => {
+    it.only("lp multi deposit and withdraw", async () => {
       await DODOMine.methods.deposit(BaseDLP.options.address, decimalStr("100")).send(ctx.sendParam(lp2))
       await DODOMine.methods.deposit(BaseDLP.options.address, decimalStr("100")).send(ctx.sendParam(lp1))
       await ctx.EVM.fastMove(100)
@@ -112,6 +116,10 @@ describe("Lock DODO Token", () => {
       assert.equal(await DODOMine.methods.getAllPendingReward(lp1).call(), "0")
       assert.equal(await DODOToken.methods.balanceOf(lp1).call(), "2805555555555555555500")
       assert.equal(await DODOMine.methods.getRealizedReward(lp1).call(), "2805555555555555555500")
+
+      var balance = await DODOMineReader.methods.getUserStakedBalance(DODOMine.options.address, ctx.DODO.options.address, lp1).call()
+      assert.equal(balance.baseBalance, decimalStr("100"))
+      assert.equal(balance.quoteBalance, decimalStr("0"))
     })
 
     it("lp claim", async () => {

@@ -22,6 +22,7 @@ const Uniswap = require(`${jsonPath}UniswapV2Pair.json`)
 const UniswapArbitrageur = require(`${jsonPath}UniswapArbitrageur.json`)
 const DODOToken = require(`${jsonPath}DODOToken.json`)
 const DODOMine = require(`${jsonPath}DODOMine.json`)
+const DODOMineReader = require(`${jsonPath}DODOMineReader.json`)
 const LockedTokenVault = require(`${jsonPath}LockedTokenVault.json`)
 
 import { getDefaultWeb3 } from './EVM';
@@ -41,6 +42,7 @@ export const UNISWAP_ARBITRAGEUR_CONTRACT_NAME = "UniswapArbitrageur"
 export const DODO_TOKEN_CONTRACT_NAME = "DODOToken"
 export const LOCKED_TOKEN_VAULT_CONTRACT_NAME = "LockedTokenVault"
 export const DODO_MINE_NAME = "DODOMine"
+export const DODO_MINE_READER_NAME = "DODOMineReader"
 
 var contractMap: { [name: string]: any } = {}
 contractMap[CLONE_FACTORY_CONTRACT_NAME] = CloneFactory
@@ -56,6 +58,7 @@ contractMap[UNISWAP_ARBITRAGEUR_CONTRACT_NAME] = UniswapArbitrageur
 contractMap[DODO_TOKEN_CONTRACT_NAME] = DODOToken
 contractMap[LOCKED_TOKEN_VAULT_CONTRACT_NAME] = LockedTokenVault
 contractMap[DODO_MINE_NAME] = DODOMine
+contractMap[DODO_MINE_READER_NAME] = DODOMineReader
 
 interface ContractJson {
   abi: any;

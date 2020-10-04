@@ -13,6 +13,7 @@ import {DecimalMath} from "../lib/DecimalMath.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {IERC20} from "../intf/IERC20.sol";
+import {IDODORewardVault, DODORewardVault} from "./DODORewardVault.sol";
 
 
 contract DODOMine is Ownable {
@@ -44,7 +45,7 @@ contract DODOMine is Ownable {
         uint256 accDODOPerShare; // Accumulated DODOs per share, times 1e12. See below.
     }
 
-    address public dodoToken;
+    address public dodoRewardVault;
     uint256 public dodoPerBlock;
 
     // Info of each pool.
@@ -65,7 +66,7 @@ contract DODOMine is Ownable {
     event Claim(address indexed user, uint256 amount);
 
     constructor(address _dodoToken, uint256 _startBlock) public {
-        dodoToken = _dodoToken;
+        dodoRewardVault = address(new DODORewardVault(_dodoToken));
         startBlock = _startBlock;
     }
 
@@ -307,9 +308,9 @@ contract DODOMine is Ownable {
         safeDODOTransfer(msg.sender, pending);
     }
 
-    // Safe DODO transfer function, just in case if rounding error causes pool to not have enough DODOs.
+    // Safe DODO transfer function
     function safeDODOTransfer(address _to, uint256 _amount) internal {
-        IERC20(dodoToken).safeTransfer(_to, _amount);
+        IDODORewardVault(dodoRewardVault).reward(_to, _amount);
         realizedReward[_to] = realizedReward[_to].add(_amount);
         emit Claim(_to, _amount);
     }
