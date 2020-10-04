@@ -8,6 +8,7 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
+
 interface IDODO {
     function init(
         address owner,
@@ -42,6 +43,8 @@ interface IDODO {
 
     function queryBuyBaseToken(uint256 amount) external view returns (uint256 payQuote);
 
+    function getExpectedTarget() external view returns (uint256 baseTarget, uint256 quoteTarget);
+
     function depositBaseTo(address to, uint256 amount) external returns (uint256);
 
     function withdrawBase(uint256 amount) external returns (uint256);
@@ -54,9 +57,9 @@ interface IDODO {
 
     function withdrawAllQuote() external returns (uint256);
 
-    function _BASE_CAPITAL_TOKEN_() external returns (address);
+    function _BASE_CAPITAL_TOKEN_() external view returns (address);
 
-    function _QUOTE_CAPITAL_TOKEN_() external returns (address);
+    function _QUOTE_CAPITAL_TOKEN_() external view returns (address);
 
     function _BASE_TOKEN_() external returns (address);
 
