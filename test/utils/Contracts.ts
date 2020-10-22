@@ -10,55 +10,8 @@ if (process.env["COVERAGE"]) {
   jsonPath = "../../.coverage_artifacts/contracts/"
 }
 
-const CloneFactory = require(`${jsonPath}CloneFactory.json`)
-const DODO = require(`${jsonPath}DODO.json`)
-const DODOZoo = require(`${jsonPath}DODOZoo.json`)
-const DODOEthProxy = require(`${jsonPath}DODOEthProxy.json`)
-const WETH = require(`${jsonPath}WETH9.json`)
-const TestERC20 = require(`${jsonPath}TestERC20.json`)
-const NaiveOracle = require(`${jsonPath}NaiveOracle.json`)
-const DODOLpToken = require(`${jsonPath}DODOLpToken.json`)
-const Uniswap = require(`${jsonPath}UniswapV2Pair.json`)
-const UniswapArbitrageur = require(`${jsonPath}UniswapArbitrageur.json`)
-const DODOToken = require(`${jsonPath}DODOToken.json`)
-const DODOMine = require(`${jsonPath}DODOMine.json`)
-const DODOMineReader = require(`${jsonPath}DODOMineReader.json`)
-const LockedTokenVault = require(`${jsonPath}LockedTokenVault.json`)
-
 import { getDefaultWeb3 } from './EVM';
 import { Contract } from 'web3-eth-contract';
-
-export const CLONE_FACTORY_CONTRACT_NAME = "CloneFactory"
-export const DODO_CONTRACT_NAME = "DODO"
-export const TEST_ERC20_CONTRACT_NAME = "TestERC20"
-export const NAIVE_ORACLE_CONTRACT_NAME = "NaiveOracle"
-export const DODO_LP_TOKEN_CONTRACT_NAME = "DODOLpToken"
-export const DODO_ZOO_CONTRACT_NAME = "DOOZoo"
-export const DODO_WILD_CONTRACT_NAME = "DOOWild"
-export const DODO_ETH_PROXY_CONTRACT_NAME = "DODOEthProxy"
-export const WETH_CONTRACT_NAME = "WETH"
-export const UNISWAP_CONTRACT_NAME = "Uniswap"
-export const UNISWAP_ARBITRAGEUR_CONTRACT_NAME = "UniswapArbitrageur"
-export const DODO_TOKEN_CONTRACT_NAME = "DODOToken"
-export const LOCKED_TOKEN_VAULT_CONTRACT_NAME = "LockedTokenVault"
-export const DODO_MINE_NAME = "DODOMine"
-export const DODO_MINE_READER_NAME = "DODOMineReader"
-
-var contractMap: { [name: string]: any } = {}
-contractMap[CLONE_FACTORY_CONTRACT_NAME] = CloneFactory
-contractMap[DODO_CONTRACT_NAME] = DODO
-contractMap[TEST_ERC20_CONTRACT_NAME] = TestERC20
-contractMap[NAIVE_ORACLE_CONTRACT_NAME] = NaiveOracle
-contractMap[DODO_LP_TOKEN_CONTRACT_NAME] = DODOLpToken
-contractMap[DODO_ZOO_CONTRACT_NAME] = DODOZoo
-contractMap[DODO_ETH_PROXY_CONTRACT_NAME] = DODOEthProxy
-contractMap[WETH_CONTRACT_NAME] = WETH
-contractMap[UNISWAP_CONTRACT_NAME] = Uniswap
-contractMap[UNISWAP_ARBITRAGEUR_CONTRACT_NAME] = UniswapArbitrageur
-contractMap[DODO_TOKEN_CONTRACT_NAME] = DODOToken
-contractMap[LOCKED_TOKEN_VAULT_CONTRACT_NAME] = LockedTokenVault
-contractMap[DODO_MINE_NAME] = DODOMine
-contractMap[DODO_MINE_READER_NAME] = DODOMineReader
 
 interface ContractJson {
   abi: any;
@@ -67,7 +20,7 @@ interface ContractJson {
 }
 
 export function getContractJSON(contractName: string): ContractJson {
-  var info = contractMap[contractName]
+  var info = require(`${jsonPath}${contractName}.json`)
   return {
     abi: info.abi,
     networks: info.networks,

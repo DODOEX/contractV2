@@ -26,6 +26,10 @@ library DecimalMath {
         return target.mul(d) / ONE;
     }
 
+    function mulFloor(uint256 target, uint256 d) internal pure returns (uint256) {
+        return target.mul(d) / ONE;
+    }
+
     function mulCeil(uint256 target, uint256 d) internal pure returns (uint256) {
         return target.mul(d).divCeil(ONE);
     }

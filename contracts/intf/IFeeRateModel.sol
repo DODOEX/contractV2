@@ -8,6 +8,7 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-library Types {
-    enum RStatus {ONE, ABOVE_ONE, BELOW_ONE}
+
+interface IFeeRateModel {
+    function getFeeRate(uint256 amount) external view returns (uint256);
 }
