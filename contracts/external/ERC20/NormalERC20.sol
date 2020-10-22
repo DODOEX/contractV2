@@ -7,7 +7,7 @@
 
 pragma solidity 0.6.9;
 
-import {SafeMath} from "../lib/SafeMath.sol";
+import {SafeMath} from "../../lib/SafeMath.sol";
 
 contract TestERC20 {
     using SafeMath for uint256;
