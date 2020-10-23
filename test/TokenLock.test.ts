@@ -5,7 +5,7 @@
 
 */
 
-import { DODOContext, getDODOContext } from './utils/Context';
+import { DODOContext, getDODOContext } from './utils/DVMContext';
 import { decimalStr, MAX_UINT256 } from './utils/Converter';
 // import * as assert from "assert"
 import { newContract, DODO_TOKEN_CONTRACT_NAME, LOCKED_TOKEN_VAULT_CONTRACT_NAME } from './utils/Contracts';

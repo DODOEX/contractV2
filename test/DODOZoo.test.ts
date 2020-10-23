@@ -5,7 +5,7 @@
 
 */
 
-import { DODOContext, getDODOContext } from './utils/Context';
+import { DODOContext, getDODOContext } from './utils/DVMContext';
 import * as assert from "assert"
 import { newContract, TEST_ERC20_CONTRACT_NAME, getContractWithAddress, DODO_CONTRACT_NAME } from './utils/Contracts';
 

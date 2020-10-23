@@ -18,6 +18,19 @@ contract DVMFactory is Ownable {
     address public _VAULT_TEMPLATE_;
     address public _CONTROLLER_TEMPLATE_;
 
+    // base -> quote -> DVM address list
+    mapping(address => mapping(address => address[])) _REGISTRY_;
+
+    constructor(
+        address cloneFactory,
+        address vaultTemplate,
+        address controllerTemplate
+    ) public {
+        _CLONE_FACTORY_ = cloneFactory;
+        _VAULT_TEMPLATE_ = vaultTemplate;
+        _CONTROLLER_TEMPLATE_ = controllerTemplate;
+    }
+
     function createDODOVenderMachine(
         address maintainer,
         address baseToken,
@@ -46,6 +59,7 @@ contract DVMFactory is Ownable {
         );
 
         newVenderMachine = address(controller);
+        _REGISTRY_[baseToken][quoteToken].push(newVenderMachine);
         return newVenderMachine;
     }
 }

@@ -8,7 +8,7 @@
 import * as assert from 'assert';
 import { Contract } from 'web3-eth-contract';
 
-import { DODOContext, getDODOContext } from './utils/Context';
+import { DODOContext, getDODOContext } from './utils/DVMContext';
 import { DODO_REBALANCER_NAME, newContract } from './utils/Contracts';
 import { decimalStr } from './utils/Converter';
 

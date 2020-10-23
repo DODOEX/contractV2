@@ -13,7 +13,7 @@ import {
   DefaultDODOContextInitConfig,
   DODOContext,
   getDODOContext,
-} from './utils/Context';
+} from './utils/DVMContext';
 import * as contracts from './utils/Contracts';
 import { decimalStr, MAX_UINT256 } from './utils/Converter';
 import { logGas } from './utils/Log';
