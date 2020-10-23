@@ -5,7 +5,7 @@
 
 */
 
-import { DODOContext, getDODOContext } from './utils/Context';
+import { DODOContext, getDODOContext } from './utils/DVMContext';
 import { decimalStr, gweiStr } from './utils/Converter';
 import BigNumber from "bignumber.js";
 import * as assert from "assert"

@@ -19,10 +19,11 @@ BigNumber.config({
   DECIMAL_PLACES: 80,
 });
 
-export interface DODOContextInitConfig {
+export interface DVMContextInitConfig {
   lpFeeRate: string;
   mtFeeRate: string;
   k: string;
+  i: string;
   gasPriceLimit: string;
 }
 
@@ -43,6 +44,7 @@ export let DefaultDODOContextInitConfig = {
   lpFeeRate: decimalStr("0.002"),
   mtFeeRate: decimalStr("0.001"),
   k: decimalStr("0.1"),
+  i: decimalStr("100"),
   gasPriceLimit: gweiStr("100"),
 };
 
@@ -61,7 +63,7 @@ export class DODOContext {
   Maintainer: string;
   spareAccounts: string[];
 
-  constructor() {}
+  constructor() { }
 
   async init(config: DODOContextInitConfig) {
     this.EVM = new EVM();

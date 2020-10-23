@@ -77,6 +77,10 @@ contract DVMVault is InitializableOwnable {
         );
     }
 
+    function getVaultReserve() public view returns (uint256 baseReserve, uint256 quoteReserve) {
+        return (_BASE_RESERVE_, _QUOTE_RESERVE_);
+    }
+
     function getBaseBalance() public view returns (uint256 baseBalance) {
         return IERC20(_BASE_TOKEN_).balanceOf(address(this));
     }

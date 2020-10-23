@@ -7,7 +7,7 @@
 
 import * as assert from 'assert';
 
-import { DODOContext, getDODOContext } from './utils/Context';
+import { DODOContext, getDODOContext } from './utils/DVMContext';
 import { decimalStr } from './utils/Converter';
 
 let lp1: string;
