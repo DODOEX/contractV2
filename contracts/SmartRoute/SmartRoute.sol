@@ -53,9 +53,11 @@ contract SmartRoute is Ownable {
 
     function depositToDVM(
         address DVM,
+        address to,
         uint256 baseAmount,
         uint256 quoteAmount
     ) public returns (uint256 shares) {
+        address vault = address(DVMController(DVM)._VAULT_());
         uint256 adjustedBaseAmount;
         uint256 adjustedQuoteAmount;
         (uint256 baseReserve, uint256 quoteReserve) = DVMController(DVM)
@@ -75,9 +77,26 @@ contract SmartRoute is Ownable {
         if (quoteReserve > 0 && baseReserve > 0) {
             uint256 baseIncreaseRatio = DecimalMath.divFloor(baseAmount, baseReserve);
             uint256 quoteIncreaseRatio = DecimalMath.divFloor(quoteAmount, quoteReserve);
-            uint256 increaseRatio = baseIncreaseRatio>quoteIncreaseRatio?quoteIncreaseRatio:baseIncreaseRatio
-            adjustedBaseAmount = baseAmount;
-            adjustedQuoteAmount = 0;
+            if (baseIncreaseRatio <= quoteIncreaseRatio) {
+                adjustedBaseAmount = baseAmount;
+                adjustedQuoteAmount = DecimalMath.mulFloor(quoteReserve, baseIncreaseRatio);
+            } else {
+                adjustedQuoteAmount = quoteAmount;
+                adjustedBaseAmount = DecimalMath.mulFloor(baseReserve, quoteIncreaseRatio);
+            }
         }
+
+        IERC20(DVMController(DVM)._BASE_TOKEN_()).safeTransferFrom(
+            msg.sender,
+            vault,
+            adjustedBaseAmount
+        );
+        IERC20(DVMController(DVM)._QUOTE_TOKEN_()).safeTransferFrom(
+            msg.sender,
+            vault,
+            adjustedQuoteAmount
+        );
+
+        return DVMController(DVM).buyShares(to);
     }
 }
