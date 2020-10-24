@@ -11,7 +11,7 @@ pragma experimental ABIEncoderV2;
 import {IFeeRateModel} from "../intf/IFeeRateModel.sol";
 import {Ownable} from "../lib/Ownable.sol";
 
-contract ConstFeeRateModel is Ownable, IFeeRateModel {
+contract NaiveFeeRateModel is Ownable, IFeeRateModel {
     uint256 public _FEE_RATE_;
 
     constructor(uint256 feeRate) public {
