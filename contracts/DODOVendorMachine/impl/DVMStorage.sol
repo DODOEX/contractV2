@@ -46,7 +46,6 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     IFeeRateModel public _MT_FEE_RATE_MODEL_;
     uint256 public _K_;
     uint256 public _I_;
-    uint256 public _BASE0_;
 
     DVMVault public _VAULT_;
     DVMVault public _PROTECTION_VAULT_;
@@ -59,13 +58,9 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     }
 
     // ============ Helper Functions ============
-    function _updateBase0() internal {
+    function getBase0() public view returns (uint256) {
         uint256 fairAmount = DecimalMath.divFloor(_VAULT_._QUOTE_RESERVE_(), _I_);
-        _BASE0_ = DODOMath._SolveQuadraticFunctionForTarget(
-            _VAULT_._BASE_RESERVE_(),
-            _K_,
-            fairAmount
-        );
+        return DODOMath._SolveQuadraticFunctionForTarget(_VAULT_._BASE_RESERVE_(), _K_, fairAmount);
     }
 
     // ============ Version Control ============

@@ -46,7 +46,7 @@ contract SmartRoute is Ownable {
             address(DVMController(DVM)._VAULT_()),
             quoteAmount
         );
-        receiveAmount = DVMController(DVM).sellBase(to);
+        receiveAmount = DVMController(DVM).sellQuote(to);
         require(receiveAmount >= minReceive, "RECEIVE_NOT_ENOUGU");
         return receiveAmount;
     }
