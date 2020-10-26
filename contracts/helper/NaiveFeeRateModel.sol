@@ -15,7 +15,7 @@ contract NaiveFeeRateModel is Ownable, IFeeRateModel {
     uint256 public _FEE_RATE_;
 
     constructor(uint256 feeRate) public {
-        feeRate = _FEE_RATE_;
+        _FEE_RATE_ = feeRate;
     }
 
     function setFeeRate(uint256 newFeeRate) external {

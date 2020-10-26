@@ -105,6 +105,8 @@ export class DVMContext {
     var vendorMachines = await this.DVMFactory.methods.getVendorMachine(this.BASE.options.address, this.QUOTE.options.address).call()
     this.DVM = contracts.getContractWithAddress(contracts.DVM_CONTROLLER_NAME, vendorMachines[0])
 
+    this.Vault = contracts.getContractWithAddress(contracts.DVM_VAULT_NAME, await this.DVM.methods._VAULT_().call())
+
     console.log(log.blueText("[Init DVM context]"));
   }
 

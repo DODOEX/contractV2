@@ -25,7 +25,6 @@ contract DVMTrader is DVMStorage {
             _VAULT_.transferQuoteOut(_MAINTAINER_, mtFee);
         }
         _VAULT_.sync();
-        _updateBase0(); // 这里需要想想，原则上不需要update B0. 但精度问题，或者用户往合约里充值，可能导致需要updateBase0
         return receiveQuoteAmount;
     }
 
@@ -38,7 +37,6 @@ contract DVMTrader is DVMStorage {
             _VAULT_.transferBaseOut(_MAINTAINER_, mtFee);
         }
         _VAULT_.sync();
-        _updateBase0();
         return receiveBaseAmount;
     }
 
@@ -47,10 +45,11 @@ contract DVMTrader is DVMStorage {
         view
         returns (uint256 receiveQuoteAmount, uint256 mtFee)
     {
+        uint256 B0 = getBase0();
         uint256 B2 = _VAULT_._BASE_RESERVE_();
         uint256 B1 = B2.add(payBaseAmount);
-        require(_BASE0_ >= B1, "DODO_BASE_BALANCE_NOT_ENOUGH");
-        uint256 Q = DODOMath._GeneralIntegrate(_BASE0_, B1, B2, _I_, _K_);
+        require(B0 >= B1, "DODO_BASE_BALANCE_NOT_ENOUGH");
+        uint256 Q = DODOMath._GeneralIntegrate(B0, B1, B2, _I_, _K_);
         uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(Q);
         uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(Q);
         mtFee = DecimalMath.mulCeil(Q, mtFeeRate);
@@ -63,10 +62,11 @@ contract DVMTrader is DVMStorage {
         view
         returns (uint256 receiveBaseAmount, uint256 mtFee)
     {
+        uint256 B0 = getBase0();
         uint256 B1 = _VAULT_._BASE_RESERVE_();
         uint256 fairAmount = DecimalMath.divFloor(payQuoteAmount, _I_);
         uint256 newBaseReserve = DODOMath._SolveQuadraticFunctionForTrade(
-            _BASE0_,
+            B0,
             B1,
             fairAmount,
             false,
@@ -78,5 +78,13 @@ contract DVMTrader is DVMStorage {
         mtFee = DecimalMath.mulCeil(deltaBase, mtFeeRate);
         receiveBaseAmount = deltaBase.sub(mtFee).sub(DecimalMath.mulCeil(deltaBase, lpFeeRate));
         return (receiveBaseAmount, mtFee);
+    }
+
+    function getMidPrice() public view returns (uint256 midPrice) {
+        uint256 B0 = getBase0();
+        uint256 B1 = _VAULT_._BASE_RESERVE_();
+        uint256 offsetRatio = DecimalMath.ONE.mul(B0).div(B1).mul(B0).div(B1);
+        uint256 offset = DecimalMath.ONE.sub(_K_).add(DecimalMath.mulFloor(offsetRatio, _K_));
+        return DecimalMath.mulFloor(_I_, offset);
     }
 }
