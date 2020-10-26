@@ -8,8 +8,8 @@
 pragma solidity 0.6.9;
 
 import {Ownable} from "../lib/Ownable.sol";
-import {DVMController} from "../DODOVenderMachine/impl/DVMController.sol";
-import {DVMVault} from "../DODOVenderMachine/impl/DVMVault.sol";
+import {DVMController} from "../DODOVendorMachine/impl/DVMController.sol";
+import {DVMVault} from "../DODOVendorMachine/impl/DVMVault.sol";
 import {IERC20} from "../intf/IERC20.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
 import {SafeMath} from "../lib/SafeMath.sol";

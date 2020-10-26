@@ -66,6 +66,8 @@ contract DVMVault is InitializableOwnable {
         );
         symbol = "DLP";
         decimals = IERC20(_baseToken).decimals();
+        _BASE_TOKEN_ = _baseToken;
+        _QUOTE_TOKEN_ = _quoteToken;
     }
 
     // Vault related

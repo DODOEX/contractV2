@@ -9,10 +9,11 @@ pragma solidity 0.6.9;
 
 import {SafeMath} from "../../lib/SafeMath.sol";
 
-contract TestERC20 {
+contract MintableERC20 {
     using SafeMath for uint256;
 
     string public name;
+    string public symbol;
     uint8 public decimals;
 
     mapping(address => uint256) balances;
@@ -21,8 +22,13 @@ contract TestERC20 {
     event Transfer(address indexed from, address indexed to, uint256 amount);
     event Approval(address indexed owner, address indexed spender, uint256 amount);
 
-    constructor(string memory _name, uint8 _decimals) public {
+    constructor(
+        string memory _name,
+        string memory _symbol,
+        uint8 _decimals
+    ) public {
         name = _name;
+        symbol = _symbol;
         decimals = _decimals;
     }
 

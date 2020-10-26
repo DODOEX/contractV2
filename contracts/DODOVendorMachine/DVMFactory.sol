@@ -31,7 +31,7 @@ contract DVMFactory is Ownable {
         _CONTROLLER_TEMPLATE_ = controllerTemplate;
     }
 
-    function createDODOVenderMachine(
+    function createDODOVendorMachine(
         address maintainer,
         address baseToken,
         address quoteToken,
@@ -40,17 +40,15 @@ contract DVMFactory is Ownable {
         uint256 i,
         uint256 k,
         uint256 gasPriceLimit
-    ) external returns (address newVenderMachine) {
-        DVMController controller = DVMController(
-            ICloneFactory(_CLONE_FACTORY_).clone(_CONTROLLER_TEMPLATE_)
-        );
-        DVMVault vault = DVMVault(ICloneFactory(_CLONE_FACTORY_).clone(_VAULT_TEMPLATE_));
-        vault.init(address(controller), baseToken, quoteToken); // vault owner is controller
+    ) external returns (address newVendorMachine) {
+        newVendorMachine = ICloneFactory(_CLONE_FACTORY_).clone(_CONTROLLER_TEMPLATE_);
+        address vault = ICloneFactory(_CLONE_FACTORY_).clone(_VAULT_TEMPLATE_);
+        DVMVault(vault).init(newVendorMachine, baseToken, quoteToken); // vault owner is controller
 
-        controller.init(
+        DVMController(newVendorMachine).init(
             msg.sender,
             maintainer,
-            address(vault),
+            vault,
             lpFeeRateModel,
             mtFeeRateModel,
             i,
@@ -58,8 +56,15 @@ contract DVMFactory is Ownable {
             gasPriceLimit
         );
 
-        newVenderMachine = address(controller);
-        _REGISTRY_[baseToken][quoteToken].push(newVenderMachine);
-        return newVenderMachine;
+        _REGISTRY_[baseToken][quoteToken].push(newVendorMachine);
+        return newVendorMachine;
+    }
+
+    function getVendorMachine(address baseToken, address quoteToken)
+        external
+        view
+        returns (address[] memory machines)
+    {
+        return _REGISTRY_[baseToken][quoteToken];
     }
 }

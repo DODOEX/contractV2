@@ -15,7 +15,7 @@ import { Contract } from 'web3-eth-contract';
 
 export const CLONE_FACTORY_CONTRACT_NAME = "CloneFactory"
 export const DODO_CONTRACT_NAME = "DODO"
-export const TEST_ERC20_CONTRACT_NAME = "TestERC20"
+export const MINTABLE_ERC20_CONTRACT_NAME = "MintableERC20"
 export const NAIVE_ORACLE_CONTRACT_NAME = "NaiveOracle"
 export const DODO_LP_TOKEN_CONTRACT_NAME = "DODOLpToken"
 export const DODO_ZOO_CONTRACT_NAME = "DOOZoo"

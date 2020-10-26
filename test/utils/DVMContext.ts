@@ -77,12 +77,12 @@ export class DVMContext {
     this.DVMFactory = await contracts.newContract(contracts.DVM_FACTORY_NAME, [cloneFactory.options.address, vaultTemplate.options.address, controllerTemplate.options.address])
 
     this.BASE = await contracts.newContract(
-      contracts.TEST_ERC20_CONTRACT_NAME,
-      ["TestBase", 18]
+      contracts.MINTABLE_ERC20_CONTRACT_NAME,
+      ["TestBase", "BASE", 18]
     );
     this.QUOTE = await contracts.newContract(
-      contracts.TEST_ERC20_CONTRACT_NAME,
-      ["TestQuote", 18]
+      contracts.MINTABLE_ERC20_CONTRACT_NAME,
+      ["TestQuote", "QUOTE", 18]
     );
 
     const allAccounts = await this.Web3.eth.getAccounts();
@@ -92,7 +92,7 @@ export class DVMContext {
 
     var lpFeeRateModel = await contracts.newContract(contracts.NAIVE_FEE_RATE_MODEL_NAME, [config.lpFeeRate])
     var mtFeeRateModel = await contracts.newContract(contracts.NAIVE_FEE_RATE_MODEL_NAME, [config.mtFeeRate])
-    var DVMAddress = this.DVMFactory.methods.createDODOVenderMachine(
+    await this.DVMFactory.methods.createDODOVendorMachine(
       this.Maintainer,
       this.BASE.options.address,
       this.QUOTE.options.address,
@@ -102,7 +102,8 @@ export class DVMContext {
       config.k,
       config.gasPriceLimit).send(this.sendParam(this.Deployer))
 
-    this.DVM = contracts.getContractWithAddress(contracts.DVM_CONTROLLER_NAME, DVMAddress)
+    var vendorMachines = await this.DVMFactory.methods.getVendorMachine(this.BASE.options.address, this.QUOTE.options.address).call()
+    this.DVM = contracts.getContractWithAddress(contracts.DVM_CONTROLLER_NAME, vendorMachines[0])
 
     console.log(log.blueText("[Init DVM context]"));
   }
@@ -133,7 +134,7 @@ export class DVMContext {
   }
 }
 
-export async function getDODOContext(
+export async function getDVMContext(
   config: DVMContextInitConfig = DefaultDVMContextInitConfig
 ): Promise<DVMContext> {
   var context = new DVMContext();
