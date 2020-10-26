@@ -27,8 +27,9 @@ contract DVMController is DVMTrader, DVMFunding, DVMAdmin {
     ) external {
         initOwner(owner);
         _MAINTAINER_ = maintainer;
-        _BASE_TOKEN_ = DVMVault(vault)._BASE_TOKEN_();
-        _QUOTE_TOKEN_ = DVMVault(vault)._QUOTE_TOKEN_();
+        _VAULT_ = DVMVault(vault);
+        _BASE_TOKEN_ = _VAULT_._BASE_TOKEN_();
+        _QUOTE_TOKEN_ = _VAULT_._QUOTE_TOKEN_();
         _LP_FEE_RATE_MODEL_ = IFeeRateModel(lpFeeRateModel);
         _MT_FEE_RATE_MODEL_ = IFeeRateModel(mtFeeRateModel);
         _I_ = i;
