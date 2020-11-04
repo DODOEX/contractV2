@@ -8,6 +8,10 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-interface IFeeRateModel {
-    function getFeeRate(address trader, uint256 amount) external view returns (uint256);
+interface IDVMVault {
+    function init(
+        address owner,
+        address _baseToken,
+        address _quoteToken
+    ) external;
 }

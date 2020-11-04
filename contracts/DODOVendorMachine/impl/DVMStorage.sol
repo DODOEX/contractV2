@@ -13,7 +13,7 @@ import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {DODOMath} from "../../lib/DODOMath.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
-import {PermissionManager} from "../../lib/PermissionManager.sol";
+import {IPermissionManager} from "../../lib/PermissionManager.sol";
 import {IFeeRateModel} from "../../intf/IFeeRateModel.sol";
 import {DVMVault} from "./DVMVault.sol";
 
@@ -30,8 +30,8 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     bool public _BUYING_ALLOWED_;
     bool public _SELLING_ALLOWED_;
 
-    PermissionManager public _TRADE_PERMISSION_;
-    PermissionManager public _FUNDING_PERMISSION_;
+    IPermissionManager public _TRADE_PERMISSION_;
+    IPermissionManager public _FUNDING_PERMISSION_;
 
     // ============ Core Address ============
 
@@ -48,7 +48,6 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     uint256 public _I_;
 
     DVMVault public _VAULT_;
-    DVMVault public _PROTECTION_VAULT_;
 
     // ============ Modifiers ============
 
@@ -58,13 +57,31 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     }
 
     // ============ Helper Functions ============
-    function getBase0() public view returns (uint256) {
-        uint256 fairAmount = DecimalMath.divFloor(_VAULT_._QUOTE_RESERVE_(), _I_);
-        return DODOMath._SolveQuadraticFunctionForTarget(_VAULT_._BASE_RESERVE_(), _K_, fairAmount);
+
+    function getBase0(uint256 baseAmount, uint256 quoteAmount) public view returns (uint256) {
+        uint256 fairAmount = DecimalMath.divFloor(quoteAmount, _I_);
+        return DODOMath._SolveQuadraticFunctionForTarget(baseAmount, _K_, fairAmount);
     }
 
-    // ============ Version Control ============
-    function version() external pure returns (uint256) {
-        return 101; // 1.0.1
+    // ============ Setting Functions ============
+
+    function setLpFeeRateModel(address newLpFeeRateModel) external onlyOwner {
+        _LP_FEE_RATE_MODEL_ = IFeeRateModel(newLpFeeRateModel);
+    }
+
+    function setMtFeeRateModel(address newMtFeeRateModel) external onlyOwner {
+        _MT_FEE_RATE_MODEL_ = IFeeRateModel(newMtFeeRateModel);
+    }
+
+    function setTradePermissionManager(address newTradePermissionManager) external onlyOwner {
+        _TRADE_PERMISSION_ = IPermissionManager(newTradePermissionManager);
+    }
+
+    function setFundingPermissionManager(address newFundingPermissionManager) external onlyOwner {
+        _FUNDING_PERMISSION_ = IPermissionManager(newFundingPermissionManager);
+    }
+
+    function setMaintainer(address newMaintainer) external onlyOwner {
+        _MAINTAINER_ = newMaintainer;
     }
 }
