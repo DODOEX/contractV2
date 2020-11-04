@@ -109,14 +109,6 @@ contract DVMVault is InitializableOwnable {
         }
     }
 
-    function transferOut(
-        address token,
-        address to,
-        uint256 amount
-    ) public onlyOwner {
-        IERC20(token).safeTransfer(to, amount);
-    }
-
     function transferBaseOut(address to, uint256 amount) public onlyOwner {
         IERC20(_BASE_TOKEN_).safeTransfer(to, amount);
     }
@@ -208,4 +200,6 @@ contract DVMVault is InitializableOwnable {
         emit Burn(user, value);
         emit Transfer(user, address(0), value);
     }
+
+    // function approveAndCall()
 }
