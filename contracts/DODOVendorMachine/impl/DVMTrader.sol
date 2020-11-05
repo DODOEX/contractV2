@@ -102,6 +102,26 @@ contract DVMTrader is DVMStorage {
         return (receiveQuoteAmount, mtFee);
     }
 
+    // 这是一个仅供查询的合约，所有交易都是基于先给input，再输出output的
+    // 所以想要买10ETH，这个函数可以给你一个大概的成本，你用这个成本输入，最后能否得到10ETH是要看情况的
+    function queryBuyBase(address trader, uint256 receiveBaseAmount)
+        public
+        view
+        returns (uint256 payQuoteAmount)
+    {
+        uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(trader);
+        uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(trader);
+        uint256 validReceiveBaseAmount = DecimalMath.divCeil(
+            receiveBaseAmount,
+            DecimalMath.ONE.sub(mtFeeRate).sub(lpFeeRate)
+        );
+        (uint256 baseReserve, uint256 quoteReserve) = _VAULT_.getVaultReserve();
+        uint256 B0 = calculateBase0(baseReserve, quoteReserve);
+        uint256 B2 = baseReserve.sub(validReceiveBaseAmount);
+        payQuoteAmount = DODOMath._GeneralIntegrate(B0, baseReserve, B2, _I_, _K_);
+        return payQuoteAmount;
+    }
+
     function querySellQuote(address trader, uint256 payQuoteAmount)
         public
         view
@@ -111,19 +131,42 @@ contract DVMTrader is DVMStorage {
         uint256 B0 = calculateBase0(baseReserve, quoteReserve);
 
         uint256 fairAmount = DecimalMath.divFloor(payQuoteAmount, _I_);
-        uint256 newBaseReserve = DODOMath._SolveQuadraticFunctionForTrade(
+        uint256 deltaBase = DODOMath._SolveQuadraticFunctionForTrade(
             B0,
             baseReserve,
             fairAmount,
             false,
             _K_
         );
-        uint256 deltaBase = baseReserve.sub(newBaseReserve);
         uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(trader);
         uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(trader);
         mtFee = DecimalMath.mulCeil(deltaBase, mtFeeRate);
         receiveBaseAmount = deltaBase.sub(mtFee).sub(DecimalMath.mulCeil(deltaBase, lpFeeRate));
         return (receiveBaseAmount, mtFee);
+    }
+
+    function queryBuyQuote(address trader, uint256 receiveQuoteAmount)
+        public
+        view
+        returns (uint256 payBaseAmount)
+    {
+        uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(trader);
+        uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(trader);
+        uint256 validReceiveQuoteAmount = DecimalMath.divCeil(
+            receiveQuoteAmount,
+            DecimalMath.ONE.sub(mtFeeRate).sub(lpFeeRate)
+        );
+        (uint256 baseReserve, uint256 quoteReserve) = _VAULT_.getVaultReserve();
+        uint256 B0 = calculateBase0(baseReserve, quoteReserve);
+        uint256 fairAmount = DecimalMath.divFloor(validReceiveQuoteAmount, _I_);
+        payBaseAmount = DODOMath._SolveQuadraticFunctionForTrade(
+            B0,
+            baseReserve,
+            fairAmount,
+            true,
+            _K_
+        );
+        return payBaseAmount;
     }
 
     function getMidPrice() public view returns (uint256 midPrice) {

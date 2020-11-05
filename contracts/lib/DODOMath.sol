@@ -96,9 +96,9 @@ library DODOMath {
         }
 
         if (deltaBSig) {
-            return DecimalMath.divFloor(numerator, denominator);
+            return DecimalMath.divFloor(numerator, denominator).sub(Q1);
         } else {
-            return DecimalMath.divCeil(numerator, denominator);
+            return Q1.sub(DecimalMath.divCeil(numerator, denominator));
         }
     }
 
