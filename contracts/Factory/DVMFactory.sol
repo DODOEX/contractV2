@@ -59,7 +59,6 @@ contract DVMFactory is Ownable {
             createConstFeeRateModel(msg.sender, lpFeeRate),
             createConstFeeRateModel(msg.sender, mtFeeRate),
             createPermissionManager(msg.sender),
-            createPermissionManager(msg.sender),
             i,
             k
         );
