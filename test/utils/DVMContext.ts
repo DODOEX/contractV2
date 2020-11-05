@@ -10,7 +10,7 @@ import Web3 from 'web3';
 import { Contract } from 'web3-eth-contract';
 
 import * as contracts from './Contracts';
-import { decimalStr, gweiStr, MAX_UINT256 } from './Converter';
+import { decimalStr, MAX_UINT256 } from './Converter';
 import { EVM, getDefaultWeb3 } from './EVM';
 import * as log from './Log';
 
@@ -24,7 +24,6 @@ export interface DVMContextInitConfig {
   mtFeeRate: string;
   k: string;
   i: string;
-  gasPriceLimit: string;
 }
 
 /*
@@ -45,7 +44,6 @@ export let DefaultDVMContextInitConfig = {
   mtFeeRate: decimalStr("0.001"),
   k: decimalStr("0.1"),
   i: decimalStr("100"),
-  gasPriceLimit: gweiStr("100"),
 };
 
 export class DVMContext {
@@ -72,9 +70,16 @@ export class DVMContext {
       contracts.CLONE_FACTORY_CONTRACT_NAME
     );
     var vaultTemplate = await contracts.newContract(contracts.DVM_VAULT_NAME)
-    var controllerTemplate = await contracts.newContract(contracts.DVM_CONTROLLER_NAME)
+    var dvmTemplate = await contracts.newContract(contracts.DVM_NAME)
+    var feeRateModelTemplate = await contracts.newContract(contracts.CONST_FEE_RATE_MODEL_NAME)
+    var permissionManagerTemplate = await contracts.newContract(contracts.PERMISSION_MANAGER_NAME)
 
-    this.DVMFactory = await contracts.newContract(contracts.DVM_FACTORY_NAME, [cloneFactory.options.address, vaultTemplate.options.address, controllerTemplate.options.address])
+    this.DVMFactory = await contracts.newContract(contracts.DVM_FACTORY_NAME,
+      [cloneFactory.options.address,
+      vaultTemplate.options.address,
+      dvmTemplate.options.address,
+      feeRateModelTemplate.options.address,
+      permissionManagerTemplate.options.address])
 
     this.BASE = await contracts.newContract(
       contracts.MINTABLE_ERC20_CONTRACT_NAME,
@@ -90,22 +95,20 @@ export class DVMContext {
     this.Maintainer = allAccounts[1];
     this.SpareAccounts = allAccounts.slice(2, 10);
 
-    var lpFeeRateModel = await contracts.newContract(contracts.NAIVE_FEE_RATE_MODEL_NAME, [config.lpFeeRate])
-    var mtFeeRateModel = await contracts.newContract(contracts.NAIVE_FEE_RATE_MODEL_NAME, [config.mtFeeRate])
-    await this.DVMFactory.methods.createDODOVendorMachine(
-      this.Maintainer,
+    await this.DVMFactory.methods.createStandardDODOVendorMachine(
       this.BASE.options.address,
       this.QUOTE.options.address,
-      lpFeeRateModel.options.address,
-      mtFeeRateModel.options.address,
+      config.lpFeeRate,
+      config.mtFeeRate,
       config.i,
-      config.k,
-      config.gasPriceLimit).send(this.sendParam(this.Deployer))
+      config.k
+    ).send(this.sendParam(this.Deployer))
 
     var vendorMachines = await this.DVMFactory.methods.getVendorMachine(this.BASE.options.address, this.QUOTE.options.address).call()
-    this.DVM = contracts.getContractWithAddress(contracts.DVM_CONTROLLER_NAME, vendorMachines[0])
-
+    this.DVM = contracts.getContractWithAddress(contracts.DVM_NAME, vendorMachines[0])
     this.Vault = contracts.getContractWithAddress(contracts.DVM_VAULT_NAME, await this.DVM.methods._VAULT_().call())
+
+    await this.DVM.methods.setMaintainer(this.Maintainer).send(this.sendParam(this.Deployer))
 
     console.log(log.blueText("[Init DVM context]"));
   }

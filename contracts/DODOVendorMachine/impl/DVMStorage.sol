@@ -58,7 +58,13 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
 
     // ============ Helper Functions ============
 
-    function getBase0(uint256 baseAmount, uint256 quoteAmount) public view returns (uint256) {
+    function calculateBase0(uint256 baseAmount, uint256 quoteAmount) public view returns (uint256) {
+        uint256 fairAmount = DecimalMath.divFloor(quoteAmount, _I_);
+        return DODOMath._SolveQuadraticFunctionForTarget(baseAmount, _K_, fairAmount);
+    }
+
+    function getBase0() public view returns (uint256) {
+        (uint256 baseAmount, uint256 quoteAmount) = _VAULT_.getVaultReserve();
         uint256 fairAmount = DecimalMath.divFloor(quoteAmount, _I_);
         return DODOMath._SolveQuadraticFunctionForTarget(baseAmount, _K_, fairAmount);
     }

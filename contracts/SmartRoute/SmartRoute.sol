@@ -95,6 +95,8 @@ contract SmartRoute is Ownable {
             adjustedQuoteAmount
         );
 
-        return DVM(DVMAddress).buyShares(to);
+        shares = DVM(DVMAddress).buyShares(to);
+
+        return shares;
     }
 }

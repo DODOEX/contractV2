@@ -141,4 +141,17 @@ describe("Funding", () => {
       assert.equal(await ctx.Vault.methods.balanceOf(trader).call(), "499999999999999990")
     })
   });
+
+  describe("sell shares", () => {
+    it("sell shares", async () => {
+      await ctx.Route.methods
+        .depositToDVM(ctx.DVM.options.address, lp, decimalStr("10"), decimalStr("100"))
+        .send(ctx.sendParam(lp));
+      var vaultShares = await ctx.Vault.methods.balanceOf(lp).call()
+      var bob = ctx.SpareAccounts[0]
+      await ctx.DVM.methods.sellShares(bob, vaultShares).send(ctx.sendParam(lp))
+      assert.equal(await ctx.BASE.methods.balanceOf(bob).call(), decimalStr("10"))
+      assert.equal(await ctx.QUOTE.methods.balanceOf(bob).call(), decimalStr("100"))
+    })
+  })
 });

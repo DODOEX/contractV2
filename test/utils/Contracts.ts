@@ -29,10 +29,11 @@ export const LOCKED_TOKEN_VAULT_CONTRACT_NAME = "LockedTokenVault"
 export const DODO_MINE_NAME = "DODOMine"
 export const DODO_MINE_READER_NAME = "DODOMineReader"
 export const DVM_VAULT_NAME = "DVMVault"
-export const DVM_CONTROLLER_NAME = "DVMController"
+export const DVM_NAME = "DVM"
 export const DVM_FACTORY_NAME = "DVMFactory"
 export const SMART_ROUTE_NAME = "SmartRoute"
-export const NAIVE_FEE_RATE_MODEL_NAME = "NaiveFeeRateModel"
+export const CONST_FEE_RATE_MODEL_NAME = "ConstFeeRateModel"
+export const PERMISSION_MANAGER_NAME = "PermissionManager"
 
 interface ContractJson {
   abi: any;
