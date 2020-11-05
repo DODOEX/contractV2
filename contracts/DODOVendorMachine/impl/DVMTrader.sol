@@ -17,7 +17,7 @@ import {IExternalCall} from "../intf/IExternalCall.sol";
 contract DVMTrader is DVMStorage {
     using SafeMath for uint256;
 
-    function sellBase(address to) external returns (uint256 receiveQuoteAmount) {
+    function sellBase(address to) external isSellAllow(to) returns (uint256 receiveQuoteAmount) {
         uint256 baseInput = _VAULT_.getBaseInput();
         uint256 mtFee;
         (receiveQuoteAmount, mtFee) = querySellBase(to, baseInput);
@@ -29,7 +29,7 @@ contract DVMTrader is DVMStorage {
         return receiveQuoteAmount;
     }
 
-    function sellQuote(address to) external returns (uint256 receiveBaseAmount) {
+    function sellQuote(address to) external isBuyAllow(to) returns (uint256 receiveBaseAmount) {
         uint256 quoteInput = _VAULT_.getQuoteInput();
         uint256 mtFee;
         (receiveBaseAmount, mtFee) = querySellQuote(to, quoteInput);
@@ -48,23 +48,37 @@ contract DVMTrader is DVMStorage {
         address call,
         bytes calldata data
     ) external {
-        (uint256 baseReserve, uint256 quoteReserve) = _VAULT_.getVaultReserve();
-        uint256 B0 = calculateBase0(baseReserve, quoteReserve);
-
-        uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(assetTo, quoteAmount);
-        uint256 baseMtFee = DecimalMath.mulCeil(baseAmount, mtFeeRate);
-        uint256 quoteMtFee = DecimalMath.mulCeil(quoteAmount, mtFeeRate);
-
-        _VAULT_.transferBaseOut(_MAINTAINER_, baseMtFee);
-        _VAULT_.transferQuoteOut(_MAINTAINER_, quoteMtFee);
         _VAULT_.transferBaseOut(assetTo, baseAmount);
         _VAULT_.transferQuoteOut(assetTo, quoteAmount);
-
         IExternalCall(call).DVMCall(data);
 
+        (uint256 baseReserve, uint256 quoteReserve) = _VAULT_.getVaultReserve();
         (uint256 baseBalance, uint256 quoteBalance) = _VAULT_.getVaultBalance();
-        uint256 newB0 = calculateBase0(baseBalance, quoteBalance);
-        require(newB0 >= B0, "FLASH_LOAN_FAILED");
+
+        uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(assetTo);
+        uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(assetTo);
+        if (baseBalance < baseReserve) {
+            uint256 validBaseOut = DecimalMath.divCeil(
+                baseReserve - baseBalance,
+                DecimalMath.ONE.sub(mtFeeRate).sub(lpFeeRate)
+            );
+            baseBalance = baseReserve.sub(validBaseOut);
+            _VAULT_.transferBaseOut(_MAINTAINER_, DecimalMath.mulCeil(validBaseOut, mtFeeRate));
+        }
+        if (quoteBalance < quoteReserve) {
+            uint256 validQuoteOut = DecimalMath.divCeil(
+                quoteReserve - quoteBalance,
+                DecimalMath.ONE.sub(mtFeeRate).sub(lpFeeRate)
+            );
+            quoteBalance = quoteReserve.sub(validQuoteOut);
+            _VAULT_.transferQuoteOut(_MAINTAINER_, DecimalMath.mulCeil(validQuoteOut, mtFeeRate));
+        }
+
+        require(
+            calculateBase0(baseBalance, quoteBalance) >= calculateBase0(baseReserve, quoteReserve),
+            "FLASH_LOAN_FAILED"
+        );
+
         _VAULT_.sync();
     }
 
@@ -80,8 +94,8 @@ contract DVMTrader is DVMStorage {
         require(B0 >= B1, "DODO_BASE_BALANCE_NOT_ENOUGH");
         uint256 Q = DODOMath._GeneralIntegrate(B0, B1, baseReserve, _I_, _K_);
 
-        uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(trader, Q);
-        uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(trader, Q);
+        uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(trader);
+        uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(trader);
         mtFee = DecimalMath.mulCeil(Q, mtFeeRate);
         receiveQuoteAmount = Q.sub(mtFee).sub(DecimalMath.mulCeil(Q, lpFeeRate));
 
@@ -105,8 +119,8 @@ contract DVMTrader is DVMStorage {
             _K_
         );
         uint256 deltaBase = baseReserve.sub(newBaseReserve);
-        uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(trader, payQuoteAmount);
-        uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(trader, payQuoteAmount);
+        uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(trader);
+        uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(trader);
         mtFee = DecimalMath.mulCeil(deltaBase, mtFeeRate);
         receiveBaseAmount = deltaBase.sub(mtFee).sub(DecimalMath.mulCeil(deltaBase, lpFeeRate));
         return (receiveBaseAmount, mtFee);

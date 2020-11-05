@@ -22,16 +22,14 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
 
     // ============ Variables for Control ============
 
-    bool public _CLOSED_;
     uint256 public _GAS_PRICE_LIMIT_;
 
     // ============ Advanced Controls ============
 
-    bool public _BUYING_ALLOWED_;
-    bool public _SELLING_ALLOWED_;
+    bool public _BUYING_CLOSE_;
+    bool public _SELLING_CLOSE_;
 
     IPermissionManager public _TRADE_PERMISSION_;
-    IPermissionManager public _FUNDING_PERMISSION_;
 
     // ============ Core Address ============
 
@@ -51,8 +49,16 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
 
     // ============ Modifiers ============
 
-    modifier notClosed() {
-        require(!_CLOSED_, "DODO_CLOSED");
+    modifier isBuyAllow(address trader) {
+        require(!_BUYING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(trader), "TRADER_BUY_NOT_ALLOWED");
+        _;
+    }
+
+    modifier isSellAllow(address trader) {
+        require(
+            !_SELLING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(trader),
+            "TRADER_SELL_NOT_ALLOWED"
+        );
         _;
     }
 
@@ -83,11 +89,19 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
         _TRADE_PERMISSION_ = IPermissionManager(newTradePermissionManager);
     }
 
-    function setFundingPermissionManager(address newFundingPermissionManager) external onlyOwner {
-        _FUNDING_PERMISSION_ = IPermissionManager(newFundingPermissionManager);
-    }
-
     function setMaintainer(address newMaintainer) external onlyOwner {
         _MAINTAINER_ = newMaintainer;
+    }
+
+    function setGasPriceLimit(uint256 newGasPriceLimit) external onlyOwner {
+        _GAS_PRICE_LIMIT_ = newGasPriceLimit;
+    }
+
+    function setBuy(bool open) external onlyOwner {
+        _BUYING_CLOSE_ = !open;
+    }
+
+    function setSell(bool open) external onlyOwner {
+        _SELLING_CLOSE_ = !open;
     }
 }

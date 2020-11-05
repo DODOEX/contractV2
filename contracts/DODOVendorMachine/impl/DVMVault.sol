@@ -110,11 +110,15 @@ contract DVMVault is InitializableOwnable {
     }
 
     function transferBaseOut(address to, uint256 amount) public onlyOwner {
-        IERC20(_BASE_TOKEN_).safeTransfer(to, amount);
+        if (amount > 0) {
+            IERC20(_BASE_TOKEN_).safeTransfer(to, amount);
+        }
     }
 
     function transferQuoteOut(address to, uint256 amount) public onlyOwner {
-        IERC20(_QUOTE_TOKEN_).safeTransfer(to, amount);
+        if (amount > 0) {
+            IERC20(_QUOTE_TOKEN_).safeTransfer(to, amount);
+        }
     }
 
     // Shares related

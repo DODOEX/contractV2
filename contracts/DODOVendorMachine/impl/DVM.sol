@@ -22,7 +22,6 @@ contract DVM is DVMTrader, DVMFunding {
         address lpFeeRateModel,
         address mtFeeRateModel,
         address tradePermissionManager,
-        address fundingPermissionManager,
         uint256 i,
         uint256 k
     ) external {
@@ -33,7 +32,6 @@ contract DVM is DVMTrader, DVMFunding {
         _LP_FEE_RATE_MODEL_ = IFeeRateModel(lpFeeRateModel);
         _MT_FEE_RATE_MODEL_ = IFeeRateModel(mtFeeRateModel);
         _TRADE_PERMISSION_ = IPermissionManager(tradePermissionManager);
-        _FUNDING_PERMISSION_ = IPermissionManager(fundingPermissionManager);
         _MAINTAINER_ = maintainer;
         _I_ = i;
         _K_ = k;

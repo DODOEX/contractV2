@@ -12,12 +12,10 @@ import {IFeeRateModel} from "../intf/IFeeRateModel.sol";
 import {Ownable} from "../lib/Ownable.sol";
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 
-interface IConstFeeRateModel {
+interface IConstFeeRateModel is IFeeRateModel {
     function init(address owner, uint256 feeRate) external;
 
     function setFeeRate(uint256 newFeeRate) external;
-
-    function getFeeRate(address, uint256) external view returns (uint256);
 }
 
 contract ConstFeeRateModel is InitializableOwnable, IFeeRateModel {
@@ -32,7 +30,7 @@ contract ConstFeeRateModel is InitializableOwnable, IFeeRateModel {
         _FEE_RATE_ = newFeeRate;
     }
 
-    function getFeeRate(address, uint256) external override view returns (uint256) {
+    function getFeeRate(address) external override view returns (uint256) {
         return _FEE_RATE_;
     }
 }
