@@ -12,7 +12,7 @@ import {DVMStorage} from "./DVMStorage.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
 
 contract DVMFunding is DVMStorage {
-    function buyShares(address account) external returns (uint256) {
+    function buyShares(address to) external returns (uint256) {
         uint256 baseInput = _VAULT_.getBaseInput();
         uint256 quoteInput = _VAULT_.getQuoteInput();
         require(baseInput > 0, "NO_BASE_INPUT");
@@ -42,22 +42,28 @@ contract DVMFunding is DVMStorage {
                 mintAmount = baseInput;
             }
         }
-        _VAULT_.mint(account, mintAmount);
+        _VAULT_.mint(to, mintAmount);
         _VAULT_.sync();
     }
 
-    function sellShares(
-        address account,
-        address to,
-        uint256 amount
-    ) external returns (uint256) {
-        require(msg.sender == account, "PERMISSION_DENY");
-        require(_VAULT_.balanceOf(account) >= amount, "SHARES_NOT_ENOUGH");
+    function sellShares(address to, uint256 amount) external returns (uint256) {
+        require(_VAULT_.balanceOf(msg.sender) >= amount, "SHARES_NOT_ENOUGH");
         (uint256 baseBalance, uint256 quoteBalance) = _VAULT_.getVaultBalance();
         uint256 totalShares = _VAULT_.totalSupply();
-        _VAULT_.burn(account, amount);
+        _VAULT_.burn(msg.sender, amount);
         _VAULT_.transferBaseOut(to, baseBalance.mul(amount).div(totalShares));
         _VAULT_.transferQuoteOut(to, quoteBalance.mul(amount).div(totalShares));
         _VAULT_.sync();
+    }
+
+    function retrieve(address to) external {
+        (uint256 baseBalance, uint256 quoteBalance) = _VAULT_.getVaultBalance();
+        (uint256 baseReserve, uint256 quoteReserve) = _VAULT_.getVaultReserve();
+        if (baseBalance.sub(baseReserve) > 0) {
+            _VAULT_.transferBaseOut(to, baseBalance.sub(baseReserve));
+        }
+        if (quoteBalance.sub(quoteReserve) > 0) {
+            _VAULT_.transferQuoteOut(to, quoteBalance.sub(quoteReserve));
+        }
     }
 }

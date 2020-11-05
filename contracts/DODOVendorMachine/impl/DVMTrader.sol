@@ -49,7 +49,7 @@ contract DVMTrader is DVMStorage {
         bytes calldata data
     ) external {
         (uint256 baseReserve, uint256 quoteReserve) = _VAULT_.getVaultReserve();
-        uint256 B0 = getBase0(baseReserve, quoteReserve);
+        uint256 B0 = calculateBase0(baseReserve, quoteReserve);
 
         uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(assetTo, quoteAmount);
         uint256 baseMtFee = DecimalMath.mulCeil(baseAmount, mtFeeRate);
@@ -63,7 +63,7 @@ contract DVMTrader is DVMStorage {
         IExternalCall(call).DVMCall(data);
 
         (uint256 baseBalance, uint256 quoteBalance) = _VAULT_.getVaultBalance();
-        uint256 newB0 = getBase0(baseBalance, quoteBalance);
+        uint256 newB0 = calculateBase0(baseBalance, quoteBalance);
         require(newB0 >= B0, "FLASH_LOAN_FAILED");
         _VAULT_.sync();
     }
@@ -74,7 +74,7 @@ contract DVMTrader is DVMStorage {
         returns (uint256 receiveQuoteAmount, uint256 mtFee)
     {
         (uint256 baseReserve, uint256 quoteReserve) = _VAULT_.getVaultReserve();
-        uint256 B0 = getBase0(baseReserve, quoteReserve);
+        uint256 B0 = calculateBase0(baseReserve, quoteReserve);
 
         uint256 B1 = baseReserve.add(payBaseAmount);
         require(B0 >= B1, "DODO_BASE_BALANCE_NOT_ENOUGH");
@@ -94,7 +94,7 @@ contract DVMTrader is DVMStorage {
         returns (uint256 receiveBaseAmount, uint256 mtFee)
     {
         (uint256 baseReserve, uint256 quoteReserve) = _VAULT_.getVaultReserve();
-        uint256 B0 = getBase0(baseReserve, quoteReserve);
+        uint256 B0 = calculateBase0(baseReserve, quoteReserve);
 
         uint256 fairAmount = DecimalMath.divFloor(payQuoteAmount, _I_);
         uint256 newBaseReserve = DODOMath._SolveQuadraticFunctionForTrade(
@@ -114,7 +114,7 @@ contract DVMTrader is DVMStorage {
 
     function getMidPrice() public view returns (uint256 midPrice) {
         (uint256 baseReserve, uint256 quoteReserve) = _VAULT_.getVaultReserve();
-        uint256 B0 = getBase0(baseReserve, quoteReserve);
+        uint256 B0 = calculateBase0(baseReserve, quoteReserve);
 
         uint256 offsetRatio = DecimalMath.ONE.mul(B0).div(baseReserve).mul(B0).div(baseReserve);
         uint256 offset = DecimalMath.ONE.sub(_K_).add(DecimalMath.mulFloor(offsetRatio, _K_));

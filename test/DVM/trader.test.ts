@@ -53,11 +53,11 @@ describe("Trader", () => {
   describe("trade", () => {
     it("buy & sell", async () => {
 
-      console.log("BASE0 before buy", await ctx.DVM.methods._BASE0_().call())
+      console.log("BASE0 before buy", await ctx.DVM.methods.getBase0().call())
 
       // buy
       await logGas(ctx.Route.methods.sellQuoteOnDVM(ctx.DVM.options.address, trader, decimalStr("200"), decimalStr("1")), ctx.sendParam(trader), "buy base token")
-      console.log("BASE0 after buy", await ctx.DVM.methods._BASE0_().call())
+      console.log("BASE0 after buy", await ctx.DVM.methods.getBase0().call())
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
@@ -88,7 +88,7 @@ describe("Trader", () => {
 
       // sell
       await logGas(ctx.Route.methods.sellBaseOnDVM(ctx.DVM.options.address, trader, decimalStr("1"), decimalStr("100")), ctx.sendParam(trader), "sell base token")
-      console.log("BASE0 after sell", await ctx.DVM.methods._BASE0_().call())
+      console.log("BASE0 after sell", await ctx.DVM.methods.getBase0().call())
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
