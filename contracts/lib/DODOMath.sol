@@ -53,6 +53,7 @@ library DODOMath {
         note: another root is negative, abondan
         if deltaBSig=true, then Q2>Q1
         if deltaBSig=false, then Q2<Q1
+        return |Q1-Q2|
     */
     function _SolveQuadraticFunctionForTrade(
         uint256 Q0,

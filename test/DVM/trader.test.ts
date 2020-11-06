@@ -51,6 +51,9 @@ describe("Trader", () => {
   });
 
   describe("trade", () => {
+    // it.only("gas cost", async () => {
+    //   await logGas(ctx.DVM.methods.calculateBase0(decimalStr("200"), decimalStr("1")), ctx.sendParam(trader), "calculate base0")
+    // })
     it("buy & sell", async () => {
 
       console.log("BASE0 before buy", await ctx.DVM.methods.getBase0().call())
