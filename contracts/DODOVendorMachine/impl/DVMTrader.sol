@@ -150,6 +150,8 @@ contract DVMTrader is DVMStorage {
             DecimalMath.ONE.sub(mtFeeRate).sub(lpFeeRate)
         );
         (uint256 baseReserve, uint256 quoteReserve) = _VAULT_.getVaultReserve();
+        require(baseReserve > validReceiveBaseAmount, "DODO_BASE_BALANCE_NOT_ENOUGH");
+
         uint256 B0 = calculateBase0(baseReserve, quoteReserve);
         uint256 B2 = baseReserve.sub(validReceiveBaseAmount);
         payQuoteAmount = DODOMath._GeneralIntegrate(B0, baseReserve, B2, _I_, _K_);
@@ -168,6 +170,8 @@ contract DVMTrader is DVMStorage {
             DecimalMath.ONE.sub(mtFeeRate).sub(lpFeeRate)
         );
         (uint256 baseReserve, uint256 quoteReserve) = _VAULT_.getVaultReserve();
+        require(quoteReserve > validReceiveQuoteAmount, "DODO_QUOTE_BALANCE_NOT_ENOUGH");
+
         uint256 B0 = calculateBase0(baseReserve, quoteReserve);
         uint256 fairAmount = DecimalMath.divFloor(validReceiveQuoteAmount, _I_);
         payBaseAmount = DODOMath._SolveQuadraticFunctionForTrade(
