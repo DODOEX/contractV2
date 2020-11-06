@@ -10,9 +10,10 @@ pragma experimental ABIEncoderV2;
 
 import {DVMStorage} from "./DVMStorage.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
+import {IDODOCallee} from "../../intf/IDODOCallee.sol";
 
 contract DVMFunding is DVMStorage {
-    function buyShares(address to) external returns (uint256) {
+    function buyShares(address to) external preventReentrant returns (uint256) {
         uint256 baseInput = _VAULT_.getBaseInput();
         uint256 quoteInput = _VAULT_.getQuoteInput();
         require(baseInput > 0, "NO_BASE_INPUT");
@@ -46,17 +47,24 @@ contract DVMFunding is DVMStorage {
         _VAULT_.sync();
     }
 
-    function sellShares(address to, uint256 amount) external returns (uint256) {
-        require(_VAULT_.balanceOf(msg.sender) >= amount, "SHARES_NOT_ENOUGH");
+    function sellShares(
+        address to,
+        uint256 shareAmount,
+        bytes calldata data
+    ) external preventReentrant returns (uint256) {
+        require(_VAULT_.balanceOf(msg.sender) >= shareAmount, "SHARES_NOT_ENOUGH");
         (uint256 baseBalance, uint256 quoteBalance) = _VAULT_.getVaultBalance();
         uint256 totalShares = _VAULT_.totalSupply();
-        _VAULT_.burn(msg.sender, amount);
-        _VAULT_.transferBaseOut(to, baseBalance.mul(amount).div(totalShares));
-        _VAULT_.transferQuoteOut(to, quoteBalance.mul(amount).div(totalShares));
+        _VAULT_.burn(msg.sender, shareAmount);
+        uint256 baseAmount = baseBalance.mul(shareAmount).div(totalShares);
+        uint256 quoteAmount = quoteBalance.mul(shareAmount).div(totalShares);
+        _VAULT_.transferBaseOut(to, baseAmount);
+        _VAULT_.transferQuoteOut(to, quoteAmount);
         _VAULT_.sync();
+        if (data.length > 0) IDODOCallee(to, shareAmount, baseAmount, quoteAmount, data);
     }
 
-    function retrieve(address to) external {
+    function retrieve(address to) external preventReentrant {
         (uint256 baseBalance, uint256 quoteBalance) = _VAULT_.getVaultBalance();
         (uint256 baseReserve, uint256 quoteReserve) = _VAULT_.getVaultReserve();
         if (baseBalance.sub(baseReserve) > 0) {

@@ -17,25 +17,25 @@ interface IPermissionManager {
 }
 
 contract PermissionManager is InitializableOwnable {
-    bool public _BLACKLIST_MODE_ON_;
+    bool public _WHITELIST_MODE_ON_;
 
     mapping(address => bool) internal _whitelist_;
     mapping(address => bool) internal _blacklist_;
 
     function isAllowed(address account) external view returns (bool) {
-        if (_BLACKLIST_MODE_ON_) {
-            return !_blacklist_[account];
-        } else {
+        if (_WHITELIST_MODE_ON_) {
             return _whitelist_[account];
+        } else {
+            return !_blacklist_[account];
         }
     }
 
-    function openBlacklist() external onlyOwner {
-        _BLACKLIST_MODE_ON_ = true;
+    function openBlacklistMode() external onlyOwner {
+        _WHITELIST_MODE_ON_ = false;
     }
 
-    function openWhitelist() external onlyOwner {
-        _BLACKLIST_MODE_ON_ = true;
+    function openWhitelistMode() external onlyOwner {
+        _WHITELIST_MODE_ON_ = true;
     }
 
     function addToWhitelist(address account) external onlyOwner {
