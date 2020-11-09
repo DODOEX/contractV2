@@ -1,0 +1,835 @@
+{
+  "contractName": "NaiveOracle",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferPrepared",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "_NEW_OWNER_",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "_OWNER_",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "claimOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "tokenPrice",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "newPrice",
+          "type": "uint256"
+        }
+      ],
+      "name": "setPrice",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getPrice",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.6.9+commit.3e3065ac\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferPrepared\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"_NEW_OWNER_\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"_OWNER_\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"claimOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"newPrice\",\"type\":\"uint256\"}],\"name\":\"setPrice\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"tokenPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/Users/owen/Desktop/dodo/dodo-smart-contract/contracts/helper/NaiveOracle.sol\":\"NaiveOracle\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/owen/Desktop/dodo/dodo-smart-contract/contracts/helper/NaiveOracle.sol\":{\"keccak256\":\"0x32518fb42af0c68be8e7473f8afe6f6528e3ae7dfd232ba45d64f44d4bcaaf3e\",\"license\":\"Apache-2.0\",\"urls\":[\"bzz-raw://e921f3e064f4c641a93a266d398434a9956b8a93f92d3465117fc30051424077\",\"dweb:/ipfs/QmPCsEvxRdXh1wpAdhKdmq5Qk4i1JKoQbxt6g2p89iBHw1\"]},\"/Users/owen/Desktop/dodo/dodo-smart-contract/contracts/lib/Ownable.sol\":{\"keccak256\":\"0xb7a2ca6570834e4784e86d19fd5a4b6b1eff22a4586dc240659943396a365aa5\",\"license\":\"Apache-2.0\",\"urls\":[\"bzz-raw://5855a493c78e787d7effd87d9c661acbcd19ca1e1ba72dbeaa91c3c8db29cbb4\",\"dweb:/ipfs/QmSddEexZ5okMatgoQ5JZRoJqe7BwsJwwWA2o1kKx7vbTH\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50600080546001600160a01b03191633178082556040516001600160a01b039190911691907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908290a361039a806100696000396000f3fe608060405234801561001057600080fd5b506004361061007d5760003560e01c80638456db151161005b5780638456db15146100bf57806391b7f5ed146100c757806398d5fdca146100da578063f2fde38b146100e25761007d565b806316048bc4146100825780634e71e0c8146100a05780637ff9b596146100aa575b600080fd5b61008a6100f5565b60405161009791906102d6565b60405180910390f35b6100a8610104565b005b6100b261019b565b604051610097919061035b565b61008a6101a1565b6100a86100d53660046102be565b6101b0565b6100b26101df565b6100a86100f0366004610290565b6101e5565b6000546001600160a01b031681565b6001546001600160a01b031633146101375760405162461bcd60e51b815260040161012e906102ea565b60405180910390fd5b600154600080546040516001600160a01b0393841693909116917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a360018054600080546001600160a01b03199081166001600160a01b03841617909155169055565b60025481565b6001546001600160a01b031681565b6000546001600160a01b031633146101da5760405162461bcd60e51b815260040161012e90610338565b600255565b60025490565b6000546001600160a01b0316331461020f5760405162461bcd60e51b815260040161012e90610338565b6001600160a01b0381166102355760405162461bcd60e51b815260040161012e90610311565b600080546040516001600160a01b03808516939216917fdcf55418cee3220104fef63f979ff3c4097ad240c0c43dcb33ce837748983e6291a3600180546001600160a01b0319166001600160a01b0392909216919091179055565b6000602082840312156102a1578081fd5b81356001600160a01b03811681146102b7578182fd5b9392505050565b6000602082840312156102cf578081fd5b5035919050565b6001600160a01b0391909116815260200190565b6020808252600d908201526c494e56414c49445f434c41494d60981b604082015260600190565b6020808252600d908201526c24a72b20a624a22fa7aba722a960991b604082015260600190565b6020808252600990820152682727aa2fa7aba722a960b91b604082015260600190565b9081526020019056fea2646970667358221220e2351ef8fdb9b0d64fa4d0ceb202d1c149b0081b555f4c9e3d8b25d28074b54664736f6c63430006090033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061007d5760003560e01c80638456db151161005b5780638456db15146100bf57806391b7f5ed146100c757806398d5fdca146100da578063f2fde38b146100e25761007d565b806316048bc4146100825780634e71e0c8146100a05780637ff9b596146100aa575b600080fd5b61008a6100f5565b60405161009791906102d6565b60405180910390f35b6100a8610104565b005b6100b261019b565b604051610097919061035b565b61008a6101a1565b6100a86100d53660046102be565b6101b0565b6100b26101df565b6100a86100f0366004610290565b6101e5565b6000546001600160a01b031681565b6001546001600160a01b031633146101375760405162461bcd60e51b815260040161012e906102ea565b60405180910390fd5b600154600080546040516001600160a01b0393841693909116917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a360018054600080546001600160a01b03199081166001600160a01b03841617909155169055565b60025481565b6001546001600160a01b031681565b6000546001600160a01b031633146101da5760405162461bcd60e51b815260040161012e90610338565b600255565b60025490565b6000546001600160a01b0316331461020f5760405162461bcd60e51b815260040161012e90610338565b6001600160a01b0381166102355760405162461bcd60e51b815260040161012e90610311565b600080546040516001600160a01b03808516939216917fdcf55418cee3220104fef63f979ff3c4097ad240c0c43dcb33ce837748983e6291a3600180546001600160a01b0319166001600160a01b0392909216919091179055565b6000602082840312156102a1578081fd5b81356001600160a01b03811681146102b7578182fd5b9392505050565b6000602082840312156102cf578081fd5b5035919050565b6001600160a01b0391909116815260200190565b6020808252600d908201526c494e56414c49445f434c41494d60981b604082015260600190565b6020808252600d908201526c24a72b20a624a22fa7aba722a960991b604082015260600190565b6020808252600990820152682727aa2fa7aba722a960b91b604082015260600190565b9081526020019056fea2646970667358221220e2351ef8fdb9b0d64fa4d0ceb202d1c149b0081b555f4c9e3d8b25d28074b54664736f6c63430006090033",
+  "immutableReferences": {},
+  "sourceMap": "206:257:17:-:0;;;;;;;;;;;;-1:-1:-1;757:7:38;:20;;-1:-1:-1;;;;;;757:20:38;767:10;757:20;;;;792:41;;-1:-1:-1;;;;;825:7:38;;;;;757;792:41;;757:7;;792:41;206:257:17;;;;;;",
+  "deployedSourceMap": "206:257:17:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;251:22:38;;;:::i;:::-;;;;;;;;;;;;;;;;1072:225;;;:::i;:::-;;244:25:17;;;:::i;:::-;;;;;;;;279:26:38;;;:::i;276:93:17:-;;;;;;;;;:::i;375:86::-;;;:::i;846:220:38:-;;;;;;;;;:::i;251:22::-;;;-1:-1:-1;;;;;251:22:38;;:::o;1072:225::-;1139:11;;-1:-1:-1;;;;;1139:11:38;1125:10;:25;1117:51;;;;-1:-1:-1;;;1117:51:38;;;;;;;;;;;;;;;;;1213:11;;;1204:7;;1183:42;;-1:-1:-1;;;;;1213:11:38;;;;1204:7;;;;1183:42;;;1245:11;;;;1235:21;;-1:-1:-1;;;;;;1235:21:38;;;-1:-1:-1;;;;;1245:11:38;;1235:21;;;;1266:24;;;1072:225::o;244:25:17:-;;;;:::o;279:26:38:-;;;-1:-1:-1;;;;;279:26:38;;:::o;276:93:17:-;635:7:38;;-1:-1:-1;;;;;635:7:38;621:10;:21;613:43;;;;-1:-1:-1;;;613:43:38;;;;;;;;;341:10:17::1;:21:::0;276:93::o;375:86::-;444:10;;375:86;:::o;846:220:38:-;635:7;;-1:-1:-1;;;;;635:7:38;621:10;:21;613:43;;;;-1:-1:-1;;;613:43:38;;;;;;;;;-1:-1:-1;;;;;928:22:38;::::1;920:48;;;;-1:-1:-1::0;;;920:48:38::1;;;;;;;;;1009:7;::::0;;983:44:::1;::::0;-1:-1:-1;;;;;983:44:38;;::::1;::::0;1009:7;::::1;::::0;983:44:::1;::::0;::::1;1037:11;:22:::0;;-1:-1:-1;;;;;;1037:22:38::1;-1:-1:-1::0;;;;;1037:22:38;;;::::1;::::0;;;::::1;::::0;;846:220::o;279:241:-1:-;;383:2;371:9;362:7;358:23;354:32;351:2;;;-1:-1;;389:12;351:2;72:20;;-1:-1;;;;;4035:54;;4239:35;;4229:2;;-1:-1;;4278:12;4229:2;441:63;345:175;-1:-1;;;345:175;527:241;;631:2;619:9;610:7;606:23;602:32;599:2;;;-1:-1;;637:12;599:2;-1:-1;209:20;;593:175;-1:-1;593:175;1976:222;-1:-1;;;;;4035:54;;;;846:37;;2103:2;2088:18;;2074:124;2205:416;2405:2;2419:47;;;1120:2;2390:18;;;3807:19;-1:-1;;;3847:14;;;1136:36;1191:12;;;2376:245;2628:416;2828:2;2842:47;;;1442:2;2813:18;;;3807:19;-1:-1;;;3847:14;;;1458:36;1513:12;;;2799:245;3051:416;3251:2;3265:47;;;1764:1;3236:18;;;3807:19;-1:-1;;;3847:14;;;1779:32;1830:12;;;3222:245;3474:222;1927:37;;;3601:2;3586:18;;3572:124",
+  "source": "/*\n\n    Copyright 2020 DODO ZOO.\n    SPDX-License-Identifier: Apache-2.0\n\n*/\n\npragma solidity 0.6.9;\npragma experimental ABIEncoderV2;\n\nimport {Ownable} from \"../lib/Ownable.sol\";\n\n\n// Oracle only for test\ncontract NaiveOracle is Ownable {\n    uint256 public tokenPrice;\n\n    function setPrice(uint256 newPrice) external onlyOwner {\n        tokenPrice = newPrice;\n    }\n\n    function getPrice() external view returns (uint256) {\n        return tokenPrice;\n    }\n}\n",
+  "sourcePath": "/Users/owen/Desktop/dodo/dodo-smart-contract/contracts/helper/NaiveOracle.sol",
+  "ast": {
+    "absolutePath": "/Users/owen/Desktop/dodo/dodo-smart-contract/contracts/helper/NaiveOracle.sol",
+    "exportedSymbols": {
+      "NaiveOracle": [
+        3415
+      ]
+    },
+    "id": 3416,
+    "license": "Apache-2.0",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 3387,
+        "literals": [
+          "solidity",
+          "0.6",
+          ".9"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "78:22:17"
+      },
+      {
+        "id": 3388,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "101:33:17"
+      },
+      {
+        "absolutePath": "/Users/owen/Desktop/dodo/dodo-smart-contract/contracts/lib/Ownable.sol",
+        "file": "../lib/Ownable.sol",
+        "id": 3390,
+        "nodeType": "ImportDirective",
+        "scope": 3416,
+        "sourceUnit": 11272,
+        "src": "136:43:17",
+        "symbolAliases": [
+          {
+            "foreign": {
+              "argumentTypes": null,
+              "id": 3389,
+              "name": "Ownable",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "referencedDeclaration": null,
+              "src": "144:7:17",
+              "typeDescriptions": {
+                "typeIdentifier": null,
+                "typeString": null
+              }
+            },
+            "local": null
+          }
+        ],
+        "unitAlias": ""
+      },
+      {
+        "abstract": false,
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 3391,
+              "name": "Ownable",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 11271,
+              "src": "230:7:17",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_Ownable_$11271",
+                "typeString": "contract Ownable"
+              }
+            },
+            "id": 3392,
+            "nodeType": "InheritanceSpecifier",
+            "src": "230:7:17"
+          }
+        ],
+        "contractDependencies": [
+          11271
+        ],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 3415,
+        "linearizedBaseContracts": [
+          3415,
+          11271
+        ],
+        "name": "NaiveOracle",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "functionSelector": "7ff9b596",
+            "id": 3394,
+            "mutability": "mutable",
+            "name": "tokenPrice",
+            "nodeType": "VariableDeclaration",
+            "overrides": null,
+            "scope": 3415,
+            "src": "244:25:17",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 3393,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "244:7:17",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 3405,
+              "nodeType": "Block",
+              "src": "331:38:17",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 3403,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 3401,
+                      "name": "tokenPrice",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 3394,
+                      "src": "341:10:17",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 3402,
+                      "name": "newPrice",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 3396,
+                      "src": "354:8:17",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "341:21:17",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 3404,
+                  "nodeType": "ExpressionStatement",
+                  "src": "341:21:17"
+                }
+              ]
+            },
+            "documentation": null,
+            "functionSelector": "91b7f5ed",
+            "id": 3406,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [
+              {
+                "arguments": null,
+                "id": 3399,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 3398,
+                  "name": "onlyOwner",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 11198,
+                  "src": "321:9:17",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_modifier$__$",
+                    "typeString": "modifier ()"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "321:9:17"
+              }
+            ],
+            "name": "setPrice",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 3397,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3396,
+                  "mutability": "mutable",
+                  "name": "newPrice",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 3406,
+                  "src": "294:16:17",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3395,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "294:7:17",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "293:18:17"
+            },
+            "returnParameters": {
+              "id": 3400,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "331:0:17"
+            },
+            "scope": 3415,
+            "src": "276:93:17",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "body": {
+              "id": 3413,
+              "nodeType": "Block",
+              "src": "427:34:17",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 3411,
+                    "name": "tokenPrice",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 3394,
+                    "src": "444:10:17",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 3410,
+                  "id": 3412,
+                  "nodeType": "Return",
+                  "src": "437:17:17"
+                }
+              ]
+            },
+            "documentation": null,
+            "functionSelector": "98d5fdca",
+            "id": 3414,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getPrice",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 3407,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "392:2:17"
+            },
+            "returnParameters": {
+              "id": 3410,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3409,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 3414,
+                  "src": "418:7:17",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3408,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "418:7:17",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "417:9:17"
+            },
+            "scope": 3415,
+            "src": "375:86:17",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 3416,
+        "src": "206:257:17"
+      }
+    ],
+    "src": "78:386:17"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/owen/Desktop/dodo/dodo-smart-contract/contracts/helper/NaiveOracle.sol",
+    "exportedSymbols": {
+      "NaiveOracle": [
+        3415
+      ]
+    },
+    "id": 3416,
+    "license": "Apache-2.0",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 3387,
+        "literals": [
+          "solidity",
+          "0.6",
+          ".9"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "78:22:17"
+      },
+      {
+        "id": 3388,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "101:33:17"
+      },
+      {
+        "absolutePath": "/Users/owen/Desktop/dodo/dodo-smart-contract/contracts/lib/Ownable.sol",
+        "file": "../lib/Ownable.sol",
+        "id": 3390,
+        "nodeType": "ImportDirective",
+        "scope": 3416,
+        "sourceUnit": 11272,
+        "src": "136:43:17",
+        "symbolAliases": [
+          {
+            "foreign": {
+              "argumentTypes": null,
+              "id": 3389,
+              "name": "Ownable",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "referencedDeclaration": null,
+              "src": "144:7:17",
+              "typeDescriptions": {
+                "typeIdentifier": null,
+                "typeString": null
+              }
+            },
+            "local": null
+          }
+        ],
+        "unitAlias": ""
+      },
+      {
+        "abstract": false,
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 3391,
+              "name": "Ownable",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 11271,
+              "src": "230:7:17",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_Ownable_$11271",
+                "typeString": "contract Ownable"
+              }
+            },
+            "id": 3392,
+            "nodeType": "InheritanceSpecifier",
+            "src": "230:7:17"
+          }
+        ],
+        "contractDependencies": [
+          11271
+        ],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 3415,
+        "linearizedBaseContracts": [
+          3415,
+          11271
+        ],
+        "name": "NaiveOracle",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "functionSelector": "7ff9b596",
+            "id": 3394,
+            "mutability": "mutable",
+            "name": "tokenPrice",
+            "nodeType": "VariableDeclaration",
+            "overrides": null,
+            "scope": 3415,
+            "src": "244:25:17",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 3393,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "244:7:17",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 3405,
+              "nodeType": "Block",
+              "src": "331:38:17",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 3403,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 3401,
+                      "name": "tokenPrice",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 3394,
+                      "src": "341:10:17",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 3402,
+                      "name": "newPrice",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 3396,
+                      "src": "354:8:17",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "341:21:17",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 3404,
+                  "nodeType": "ExpressionStatement",
+                  "src": "341:21:17"
+                }
+              ]
+            },
+            "documentation": null,
+            "functionSelector": "91b7f5ed",
+            "id": 3406,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [
+              {
+                "arguments": null,
+                "id": 3399,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 3398,
+                  "name": "onlyOwner",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 11198,
+                  "src": "321:9:17",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_modifier$__$",
+                    "typeString": "modifier ()"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "321:9:17"
+              }
+            ],
+            "name": "setPrice",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 3397,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3396,
+                  "mutability": "mutable",
+                  "name": "newPrice",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 3406,
+                  "src": "294:16:17",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3395,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "294:7:17",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "293:18:17"
+            },
+            "returnParameters": {
+              "id": 3400,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "331:0:17"
+            },
+            "scope": 3415,
+            "src": "276:93:17",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "body": {
+              "id": 3413,
+              "nodeType": "Block",
+              "src": "427:34:17",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 3411,
+                    "name": "tokenPrice",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 3394,
+                    "src": "444:10:17",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 3410,
+                  "id": 3412,
+                  "nodeType": "Return",
+                  "src": "437:17:17"
+                }
+              ]
+            },
+            "documentation": null,
+            "functionSelector": "98d5fdca",
+            "id": 3414,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getPrice",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 3407,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "392:2:17"
+            },
+            "returnParameters": {
+              "id": 3410,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3409,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 3414,
+                  "src": "418:7:17",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3408,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "418:7:17",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "417:9:17"
+            },
+            "scope": 3415,
+            "src": "375:86:17",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 3416,
+        "src": "206:257:17"
+      }
+    ],
+    "src": "78:386:17"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.6.9+commit.3e3065ac.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.2.3",
+  "updatedAt": "2020-11-06T08:03:35.522Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}

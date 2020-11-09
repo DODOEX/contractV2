@@ -1,0 +1,1047 @@
+{
+  "contractName": "BandBNBBUSDPriceOracleProxy",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract IBandOracleAggregator",
+          "name": "_aggregator",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "aggregator",
+      "outputs": [
+        {
+          "internalType": "contract IBandOracleAggregator",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getPrice",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.6.9+commit.3e3065ac\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract IBandOracleAggregator\",\"name\":\"_aggregator\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"aggregator\",\"outputs\":[{\"internalType\":\"contract IBandOracleAggregator\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/Users/owen/Desktop/dodo/dodo-smart-contract/contracts/helper/BandBNBBUSDPriceOracleProxy.sol\":\"BandBNBBUSDPriceOracleProxy\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/owen/Desktop/dodo/dodo-smart-contract/contracts/helper/BandBNBBUSDPriceOracleProxy.sol\":{\"keccak256\":\"0x3fb4b23899bd5ce681ec2f80d5ba228c9a3a86c86ee877010280286ac0a4e650\",\"license\":\"Apache-2.0\",\"urls\":[\"bzz-raw://426b50755f7de3b9ad1eccf29c8940c859a64d4b8092a0255d6c19456198f582\",\"dweb:/ipfs/Qmc5H2rEQLz92yvPJFtiYi9RdsJsCoxtu27udHEzk66kkc\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5060405161023438038061023483398101604081905261002f91610054565b600080546001600160a01b0319166001600160a01b0392909216919091179055610082565b600060208284031215610065578081fd5b81516001600160a01b038116811461007b578182fd5b9392505050565b6101a3806100916000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c8063245a7bfc1461003b57806398d5fdca14610059575b600080fd5b61004361006e565b6040516100509190610119565b60405180910390f35b61006161007d565b6040516100509190610164565b6000546001600160a01b031681565b6000805460405163195556f360e21b81526001600160a01b03909116906365555bcc906100ac9060040161012d565b60206040518083038186803b1580156100c457600080fd5b505afa1580156100d8573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906100fc9190610101565b905090565b600060208284031215610112578081fd5b5051919050565b6001600160a01b0391909116815260200190565b604080825260039082018190526221272160e91b6060830152608060208301819052820152621554d160ea1b60a082015260c00190565b9081526020019056fea26469706673582212203679565ead7c9ba3798f21b1c8a9c7453826485a4329737309557af60365c16564736f6c63430006090033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100365760003560e01c8063245a7bfc1461003b57806398d5fdca14610059575b600080fd5b61004361006e565b6040516100509190610119565b60405180910390f35b61006161007d565b6040516100509190610164565b6000546001600160a01b031681565b6000805460405163195556f360e21b81526001600160a01b03909116906365555bcc906100ac9060040161012d565b60206040518083038186803b1580156100c457600080fd5b505afa1580156100d8573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906100fc9190610101565b905090565b600060208284031215610112578081fd5b5051919050565b6001600160a01b0391909116815260200190565b604080825260039082018190526221272160e91b6060830152608060208301819052820152621554d160ea1b60a082015260c00190565b9081526020019056fea26469706673582212203679565ead7c9ba3798f21b1c8a9c7453826485a4329737309557af60365c16564736f6c63430006090033",
+  "immutableReferences": {},
+  "sourceMap": "303:307:3:-:0;;;392:95;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;456:10;:24;;-1:-1:-1;;;;;;456:24:3;-1:-1:-1;;;;;456:24:3;;;;;;;;;;303:307;;206:323:-1;;351:2;339:9;330:7;326:23;322:32;319:2;;;-1:-1;;357:12;319:2;113:13;;-1:-1;;;;;824:54;;979:65;;969:2;;-1:-1;;1048:12;969:2;409:104;313:216;-1:-1;;;313:216;;303:307:3;;;;;;",
+  "deployedSourceMap": "303:307:3:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;346:39;;;:::i;:::-;;;;;;;;;;;;;;;;493:115;;;:::i;:::-;;;;;;;;346:39;;;-1:-1:-1;;;;;346:39:3;;:::o;493:115::-;534:7;560:10;;:41;;-1:-1:-1;;;560:41:3;;-1:-1:-1;;;;;560:10:3;;;;:27;;:41;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;553:48;;493:115;:::o;146:263:-1:-;;261:2;249:9;240:7;236:23;232:32;229:2;;;-1:-1;;267:12;229:2;-1:-1;83:13;;223:186;-1:-1;223:186;1351:282;-1:-1;;;;;2831:54;;;;517:80;;1508:2;1493:18;;1479:154;1640:721;1941:2;1955:47;;;834:1;1926:18;;;2701:19;;;-1:-1;;;2741:14;;;849:26;894:12;2750:4;2165:18;;2158:48;;;894:12;;2701:19;-1:-1;;;2741:14;;;1160:26;1205:12;;;1912:449;2368:222;1302:37;;;2495:2;2480:18;;2466:124",
+  "source": "/*\n\n    Copyright 2020 DODO ZOO.\n    SPDX-License-Identifier: Apache-2.0\n\n*/\n\npragma solidity 0.6.9;\npragma experimental ABIEncoderV2;\n\n\ninterface IBandOracleAggregator {\n    function getReferenceData(string memory base, string memory quote)\n        external\n        view\n        returns (uint256);\n}\n\n\ncontract BandBNBBUSDPriceOracleProxy {\n    IBandOracleAggregator public aggregator;\n\n    constructor(IBandOracleAggregator _aggregator) public {\n        aggregator = _aggregator;\n    }\n\n    function getPrice() public view returns (uint256) {\n        return aggregator.getReferenceData(\"BNB\", \"USD\");\n    }\n}\n",
+  "sourcePath": "/Users/owen/Desktop/dodo/dodo-smart-contract/contracts/helper/BandBNBBUSDPriceOracleProxy.sol",
+  "ast": {
+    "absolutePath": "/Users/owen/Desktop/dodo/dodo-smart-contract/contracts/helper/BandBNBBUSDPriceOracleProxy.sol",
+    "exportedSymbols": {
+      "BandBNBBUSDPriceOracleProxy": [
+        1728
+      ],
+      "IBandOracleAggregator": [
+        1703
+      ]
+    },
+    "id": 1729,
+    "license": "Apache-2.0",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1692,
+        "literals": [
+          "solidity",
+          "0.6",
+          ".9"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "78:22:3"
+      },
+      {
+        "id": 1693,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "101:33:3"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 1703,
+        "linearizedBaseContracts": [
+          1703
+        ],
+        "name": "IBandOracleAggregator",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": null,
+            "functionSelector": "65555bcc",
+            "id": 1702,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getReferenceData",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1698,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1695,
+                  "mutability": "mutable",
+                  "name": "base",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1702,
+                  "src": "201:18:3",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 1694,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "201:6:3",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1697,
+                  "mutability": "mutable",
+                  "name": "quote",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1702,
+                  "src": "221:19:3",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 1696,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "221:6:3",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "200:41:3"
+            },
+            "returnParameters": {
+              "id": 1701,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1700,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1702,
+                  "src": "289:7:3",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1699,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "289:7:3",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "288:9:3"
+            },
+            "scope": 1703,
+            "src": "175:123:3",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 1729,
+        "src": "137:163:3"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 1728,
+        "linearizedBaseContracts": [
+          1728
+        ],
+        "name": "BandBNBBUSDPriceOracleProxy",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "functionSelector": "245a7bfc",
+            "id": 1705,
+            "mutability": "mutable",
+            "name": "aggregator",
+            "nodeType": "VariableDeclaration",
+            "overrides": null,
+            "scope": 1728,
+            "src": "346:39:3",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_IBandOracleAggregator_$1703",
+              "typeString": "contract IBandOracleAggregator"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 1704,
+              "name": "IBandOracleAggregator",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 1703,
+              "src": "346:21:3",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_IBandOracleAggregator_$1703",
+                "typeString": "contract IBandOracleAggregator"
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 1714,
+              "nodeType": "Block",
+              "src": "446:41:3",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 1712,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 1710,
+                      "name": "aggregator",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 1705,
+                      "src": "456:10:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_IBandOracleAggregator_$1703",
+                        "typeString": "contract IBandOracleAggregator"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 1711,
+                      "name": "_aggregator",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 1707,
+                      "src": "469:11:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_IBandOracleAggregator_$1703",
+                        "typeString": "contract IBandOracleAggregator"
+                      }
+                    },
+                    "src": "456:24:3",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_IBandOracleAggregator_$1703",
+                      "typeString": "contract IBandOracleAggregator"
+                    }
+                  },
+                  "id": 1713,
+                  "nodeType": "ExpressionStatement",
+                  "src": "456:24:3"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 1715,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1708,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1707,
+                  "mutability": "mutable",
+                  "name": "_aggregator",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1715,
+                  "src": "404:33:3",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IBandOracleAggregator_$1703",
+                    "typeString": "contract IBandOracleAggregator"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 1706,
+                    "name": "IBandOracleAggregator",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 1703,
+                    "src": "404:21:3",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_IBandOracleAggregator_$1703",
+                      "typeString": "contract IBandOracleAggregator"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "403:35:3"
+            },
+            "returnParameters": {
+              "id": 1709,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "446:0:3"
+            },
+            "scope": 1728,
+            "src": "392:95:3",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 1726,
+              "nodeType": "Block",
+              "src": "543:65:3",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "424e42",
+                        "id": 1722,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "588:5:3",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_3ed03c38e59dc60c7b69c2a4bf68f9214acd953252b5a90e8f5f59583e9bc3ae",
+                          "typeString": "literal_string \"BNB\""
+                        },
+                        "value": "BNB"
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "555344",
+                        "id": 1723,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "595:5:3",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_c4ae21aac0c6549d71dd96035b7e0bdb6c79ebdba8891b666115bc976d16a29e",
+                          "typeString": "literal_string \"USD\""
+                        },
+                        "value": "USD"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_stringliteral_3ed03c38e59dc60c7b69c2a4bf68f9214acd953252b5a90e8f5f59583e9bc3ae",
+                          "typeString": "literal_string \"BNB\""
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_c4ae21aac0c6549d71dd96035b7e0bdb6c79ebdba8891b666115bc976d16a29e",
+                          "typeString": "literal_string \"USD\""
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 1720,
+                        "name": "aggregator",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1705,
+                        "src": "560:10:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_IBandOracleAggregator_$1703",
+                          "typeString": "contract IBandOracleAggregator"
+                        }
+                      },
+                      "id": 1721,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "getReferenceData",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 1702,
+                      "src": "560:27:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_view$_t_string_memory_ptr_$_t_string_memory_ptr_$returns$_t_uint256_$",
+                        "typeString": "function (string memory,string memory) view external returns (uint256)"
+                      }
+                    },
+                    "id": 1724,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "560:41:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 1719,
+                  "id": 1725,
+                  "nodeType": "Return",
+                  "src": "553:48:3"
+                }
+              ]
+            },
+            "documentation": null,
+            "functionSelector": "98d5fdca",
+            "id": 1727,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getPrice",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1716,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "510:2:3"
+            },
+            "returnParameters": {
+              "id": 1719,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1718,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1727,
+                  "src": "534:7:3",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1717,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "534:7:3",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "533:9:3"
+            },
+            "scope": 1728,
+            "src": "493:115:3",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "public"
+          }
+        ],
+        "scope": 1729,
+        "src": "303:307:3"
+      }
+    ],
+    "src": "78:533:3"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/owen/Desktop/dodo/dodo-smart-contract/contracts/helper/BandBNBBUSDPriceOracleProxy.sol",
+    "exportedSymbols": {
+      "BandBNBBUSDPriceOracleProxy": [
+        1728
+      ],
+      "IBandOracleAggregator": [
+        1703
+      ]
+    },
+    "id": 1729,
+    "license": "Apache-2.0",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1692,
+        "literals": [
+          "solidity",
+          "0.6",
+          ".9"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "78:22:3"
+      },
+      {
+        "id": 1693,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "101:33:3"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 1703,
+        "linearizedBaseContracts": [
+          1703
+        ],
+        "name": "IBandOracleAggregator",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": null,
+            "functionSelector": "65555bcc",
+            "id": 1702,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getReferenceData",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1698,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1695,
+                  "mutability": "mutable",
+                  "name": "base",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1702,
+                  "src": "201:18:3",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 1694,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "201:6:3",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1697,
+                  "mutability": "mutable",
+                  "name": "quote",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1702,
+                  "src": "221:19:3",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 1696,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "221:6:3",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "200:41:3"
+            },
+            "returnParameters": {
+              "id": 1701,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1700,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1702,
+                  "src": "289:7:3",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1699,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "289:7:3",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "288:9:3"
+            },
+            "scope": 1703,
+            "src": "175:123:3",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 1729,
+        "src": "137:163:3"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 1728,
+        "linearizedBaseContracts": [
+          1728
+        ],
+        "name": "BandBNBBUSDPriceOracleProxy",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "functionSelector": "245a7bfc",
+            "id": 1705,
+            "mutability": "mutable",
+            "name": "aggregator",
+            "nodeType": "VariableDeclaration",
+            "overrides": null,
+            "scope": 1728,
+            "src": "346:39:3",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_IBandOracleAggregator_$1703",
+              "typeString": "contract IBandOracleAggregator"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 1704,
+              "name": "IBandOracleAggregator",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 1703,
+              "src": "346:21:3",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_IBandOracleAggregator_$1703",
+                "typeString": "contract IBandOracleAggregator"
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 1714,
+              "nodeType": "Block",
+              "src": "446:41:3",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 1712,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 1710,
+                      "name": "aggregator",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 1705,
+                      "src": "456:10:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_IBandOracleAggregator_$1703",
+                        "typeString": "contract IBandOracleAggregator"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 1711,
+                      "name": "_aggregator",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 1707,
+                      "src": "469:11:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_IBandOracleAggregator_$1703",
+                        "typeString": "contract IBandOracleAggregator"
+                      }
+                    },
+                    "src": "456:24:3",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_IBandOracleAggregator_$1703",
+                      "typeString": "contract IBandOracleAggregator"
+                    }
+                  },
+                  "id": 1713,
+                  "nodeType": "ExpressionStatement",
+                  "src": "456:24:3"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 1715,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1708,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1707,
+                  "mutability": "mutable",
+                  "name": "_aggregator",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1715,
+                  "src": "404:33:3",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IBandOracleAggregator_$1703",
+                    "typeString": "contract IBandOracleAggregator"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 1706,
+                    "name": "IBandOracleAggregator",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 1703,
+                    "src": "404:21:3",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_IBandOracleAggregator_$1703",
+                      "typeString": "contract IBandOracleAggregator"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "403:35:3"
+            },
+            "returnParameters": {
+              "id": 1709,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "446:0:3"
+            },
+            "scope": 1728,
+            "src": "392:95:3",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 1726,
+              "nodeType": "Block",
+              "src": "543:65:3",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "424e42",
+                        "id": 1722,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "588:5:3",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_3ed03c38e59dc60c7b69c2a4bf68f9214acd953252b5a90e8f5f59583e9bc3ae",
+                          "typeString": "literal_string \"BNB\""
+                        },
+                        "value": "BNB"
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "555344",
+                        "id": 1723,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "595:5:3",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_c4ae21aac0c6549d71dd96035b7e0bdb6c79ebdba8891b666115bc976d16a29e",
+                          "typeString": "literal_string \"USD\""
+                        },
+                        "value": "USD"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_stringliteral_3ed03c38e59dc60c7b69c2a4bf68f9214acd953252b5a90e8f5f59583e9bc3ae",
+                          "typeString": "literal_string \"BNB\""
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_c4ae21aac0c6549d71dd96035b7e0bdb6c79ebdba8891b666115bc976d16a29e",
+                          "typeString": "literal_string \"USD\""
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 1720,
+                        "name": "aggregator",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1705,
+                        "src": "560:10:3",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_IBandOracleAggregator_$1703",
+                          "typeString": "contract IBandOracleAggregator"
+                        }
+                      },
+                      "id": 1721,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "getReferenceData",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 1702,
+                      "src": "560:27:3",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_view$_t_string_memory_ptr_$_t_string_memory_ptr_$returns$_t_uint256_$",
+                        "typeString": "function (string memory,string memory) view external returns (uint256)"
+                      }
+                    },
+                    "id": 1724,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "560:41:3",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 1719,
+                  "id": 1725,
+                  "nodeType": "Return",
+                  "src": "553:48:3"
+                }
+              ]
+            },
+            "documentation": null,
+            "functionSelector": "98d5fdca",
+            "id": 1727,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getPrice",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1716,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "510:2:3"
+            },
+            "returnParameters": {
+              "id": 1719,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1718,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1727,
+                  "src": "534:7:3",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1717,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "534:7:3",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "533:9:3"
+            },
+            "scope": 1728,
+            "src": "493:115:3",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "public"
+          }
+        ],
+        "scope": 1729,
+        "src": "303:307:3"
+      }
+    ],
+    "src": "78:533:3"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.6.9+commit.3e3065ac.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.2.3",
+  "updatedAt": "2020-11-06T08:03:35.491Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}
