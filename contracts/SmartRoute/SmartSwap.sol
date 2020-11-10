@@ -30,7 +30,7 @@ contract SmartSwap is Ownable {
         IERC20 indexed toToken,
         address indexed sender,
         uint256 fromAmount,
-        uint256 toAmount
+        uint256 returnAmount
     );
 
     event ExternalRecord(address indexed to, address indexed sender);
@@ -38,7 +38,6 @@ contract SmartSwap is Ownable {
     constructor(address _smartApprove) public {
         smartApprove = ISmartApprove(_smartApprove);
     }
-
 
     function dodoSwap(
         IERC20 fromToken,
@@ -50,37 +49,35 @@ contract SmartSwap is Ownable {
         uint256[] memory starts,
         uint256[] memory gasLimitsAndValues
     ) public payable returns (uint256 returnAmount) {
-        require(minReturnAmount > 0, "haha hihi Min return should be bigger then 0.");
+        require(minReturnAmount > 0, "Min return should be bigger then 0.");
         require(callPairs.length > 0, "pairs should exists.");
 
-        // if (fromToken != ETH_ADDRESS) {
-        //     // smartApprove.claimTokens(fromToken, msg.sender, address(this), fromTokenAmount);
-        // }
+        if (fromToken != ETH_ADDRESS) {
+            smartApprove.claimTokens(fromToken, msg.sender, address(this), fromTokenAmount);
+        }
 
-        // for (uint256 i = 0; i < callPairs.length; i++) {
-        //     require(callPairs[i] != address(smartApprove), "Access denied");
-        //     require(
-        //         callPairs[i].externalCall(
-        //             gasLimitsAndValues[i] & ((1 << 128) - 1),
-        //             callDataConcat,
-        //             starts[i],
-        //             starts[i + 1] - starts[i],
-        //             gasLimitsAndValues[i] >> 128
-        //         )
-        //     );
-        // }
+        for (uint256 i = 0; i < callPairs.length; i++) {
+            require(callPairs[i] != address(smartApprove), "Access denied");
+            require(
+                callPairs[i].externalCall(
+                    gasLimitsAndValues[i] & ((1 << 128) - 1),
+                    callDataConcat,
+                    starts[i],
+                    starts[i + 1] - starts[i],
+                    gasLimitsAndValues[i] >> 128
+                ),"Swap Transaction Error!"
+            );
+        }
 
-        // // Return back all unswapped
-        // fromToken.universalTransfer(msg.sender, fromToken.universalBalanceOf(address(this)));
+        fromToken.universalTransfer(msg.sender, fromToken.universalBalanceOf(address(this)));
+        returnAmount = toToken.universalBalanceOf(address(this));
 
-        // returnAmount = toToken.universalBalanceOf(address(this));
-
-        // require(returnAmount >= minReturnAmount, "Return amount is not enough");
-        // toToken.universalTransfer(msg.sender, returnAmount);
-        emit Swapped(fromToken, toToken, msg.sender, fromTokenAmount, fromTokenAmount);
-        // emit Swapped(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount);
+        require(returnAmount >= minReturnAmount, "Return amount is not enough");
+        toToken.universalTransfer(msg.sender, returnAmount);
+        emit Swapped(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount);
     }
 
+    //TODO:change
     function externalSwap(
         IERC20 fromToken,
         IERC20 toToken,

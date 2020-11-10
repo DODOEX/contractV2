@@ -11,7 +11,6 @@ import {IERC20} from "../intf/IERC20.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
 import {Ownable} from "../lib/Ownable.sol";
 
-
 contract SmartApprove is Ownable {
     using SafeERC20 for IERC20;
     address public smartSwap;
@@ -20,9 +19,6 @@ contract SmartApprove is Ownable {
         smartSwap = _smartSwap;
     }
 
-    
-    event Test1(uint256 amount);
-
     function claimTokens(
         IERC20 token,
         address who,
@@ -30,7 +26,6 @@ contract SmartApprove is Ownable {
         uint256 amount
     ) external {
         require(msg.sender == smartSwap, "Not SmartSwap Address, Access restricted");
-        emit Test1(amount);
-        // token.safeTransferFrom(who, dest, amount);
+        token.safeTransferFrom(who, dest, amount);
     }
 }

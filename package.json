@@ -32,7 +32,6 @@
     "babel-cli": "^6.26.0",
     "babel-eslint": "^10.1.0",
     "bignumber.js": "^9.0.0",
-    "chai": "^4.2.0",
     "chai-bignumber": "^3.0.0",
     "debug": "^4.1.1",
     "dotenv-flow": "^3.1.0",
@@ -50,6 +49,7 @@
   },
   "devDependencies": {
     "@truffle/hdwallet-provider": "^1.0.36",
+    "chai": "^4.2.0",
     "ganache-cli": "^6.9.1",
     "prettier": "^2.0.5",
     "prettier-plugin-solidity": "^1.0.0-alpha.52",
