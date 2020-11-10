@@ -48,6 +48,7 @@ async function initUSDT_USDC(ctx: DODOContext): Promise<void> {
 
   await ctx.approvePair(USDT,USDC,USDT_USDC.options.address,lp);
   await ctx.mintToken(USDT,USDC,lp, mweiStr("1000"), mweiStr("1000"));
+  await ctx.mintToken(USDT,USDC,trader, mweiStr("0"), mweiStr("0"));
 
   await USDT_USDC.methods
     .depositBaseTo(lp, mweiStr("1000"))
@@ -106,7 +107,6 @@ async function calcRoute(ctx: DODOContext,fromTokenAmount:string,slippage:number
       swapAmount = await curContact.methods.querySellBaseToken(swapAmount).call();
       console.log(i + ":a-for-swapAmount:",swapAmount);
     } else {
-      //TODO: approve的逻辑？
       curApproveData = await pairs[i].quoteContract.methods.approve(curPair.pair,swapAmount).encodeABI()
       curApproveData = curApproveData.substring(2,curApproveData.length)
       datas += curApproveData
@@ -128,9 +128,11 @@ async function calcRoute(ctx: DODOContext,fromTokenAmount:string,slippage:number
         lpFeeRate: new BigNumber(parseInt(ctx.lpFeeRate) / 1e18)
       }
       let dodoHelper = new DODOHelper(curPairDetail)
-      let tmpamount = dodoHelper.queryBuyQuote(new BigNumber(fromWei(swapAmount,'mwei'))).toString();
-      swapAmount = decimalStr(tmpamount);
-      curData = await curContact.methods.buyBaseToken(swapAmount, 0, "0x").encodeABI()
+      //TODO:2倍？
+      let tmpQuoteAmount = new BigNumber(swapAmount).multipliedBy(1-0.006).toFixed(0, BigNumber.ROUND_DOWN)
+      let tmpBaseAmount = dodoHelper.queryBuyQuote(new BigNumber(fromWei(tmpQuoteAmount,'mwei'))).toString();
+      curData = await curContact.methods.buyBaseToken(decimalStr(tmpBaseAmount), swapAmount, "0x").encodeABI()
+      swapAmount = decimalStr(tmpBaseAmount);
       console.log(i + ":a-for-swapAmount:",swapAmount);
     }
     curData = curData.substring(2,curData.length)
@@ -204,6 +206,10 @@ describe("Trader", () => {
       var a_DODO = await ctx.DODO.methods.balanceOf(trader).call()
       var a_USDT = await ctx.USDT.methods.balanceOf(trader).call()
       console.log("After DODO:" + fromWei(a_DODO,'ether') + "; USDT:" + fromWei(a_USDT,'mwei'));
+      console.log("===============================================")
+      var c_DODO = await ctx.DODO.methods.balanceOf(ctx.SmartSwap.options.address).call()
+      var c_USDT = await ctx.USDT.methods.balanceOf(ctx.SmartSwap.options.address).call()
+      console.log("Contract DODO:" + fromWei(c_DODO,'ether') + "; USDT:" + fromWei(c_USDT,'mwei'));
     });
 
 
@@ -248,9 +254,12 @@ describe("Trader", () => {
       var a_DODO = await ctx.DODO.methods.balanceOf(trader).call()
       var a_USDC = await ctx.USDC.methods.balanceOf(trader).call()
       console.log("After DODO:" + fromWei(a_DODO,'ether') + "; USDC:" + fromWei(a_USDC,'mwei'));
+      console.log("===============================================")
+      var c_DODO = await ctx.DODO.methods.balanceOf(ctx.SmartSwap.options.address).call()
+      var c_USDT = await ctx.USDT.methods.balanceOf(ctx.SmartSwap.options.address).call()
+      var c_USDC = await ctx.USDC.methods.balanceOf(ctx.SmartSwap.options.address).call()
+      console.log("Contract DODO:" + fromWei(c_DODO,'ether') + "; USDT:" + fromWei(c_USDT,'mwei') + "; USDC:" + fromWei(c_USDC,'mwei'));
     });
-
-
 
     it("DODO to WETH three hops swap", async () => {
       var b_DODO = await ctx.DODO.methods.balanceOf(trader).call()
@@ -304,6 +313,12 @@ describe("Trader", () => {
       var a_DODO = await ctx.DODO.methods.balanceOf(trader).call()
       var a_WETH = await ctx.WETH.methods.balanceOf(trader).call()
       console.log("After DODO:" + fromWei(a_DODO,'ether') + "; WETH:" + fromWei(a_WETH,'ether'));
+      console.log("===============================================")
+      var c_DODO = await ctx.DODO.methods.balanceOf(ctx.SmartSwap.options.address).call()
+      var c_USDT = await ctx.USDT.methods.balanceOf(ctx.SmartSwap.options.address).call()
+      var c_USDC = await ctx.USDC.methods.balanceOf(ctx.SmartSwap.options.address).call()
+      var c_WETH = await ctx.WETH.methods.balanceOf(ctx.SmartSwap.options.address).call()
+      console.log("Contract DODO:" + fromWei(c_DODO,'ether') + "; USDT:" + fromWei(c_USDT,'mwei') + "; USDC:" + fromWei(c_USDC,'mwei') + "; WETH:" + fromWei(c_WETH,'ether'));
     });
   });
 });

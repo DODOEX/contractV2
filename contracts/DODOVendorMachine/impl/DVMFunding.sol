@@ -61,7 +61,7 @@ contract DVMFunding is DVMStorage {
         _VAULT_.transferBaseOut(to, baseAmount);
         _VAULT_.transferQuoteOut(to, quoteAmount);
         _VAULT_.sync();
-        if (data.length > 0) IDODOCallee(to, shareAmount, baseAmount, quoteAmount, data);
+        if (data.length > 0) IDODOCallee(msg.sender).DVMSellShareCall(to, shareAmount, baseAmount, quoteAmount, data);
     }
 
     function retrieve(address to) external preventReentrant {
