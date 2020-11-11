@@ -16,7 +16,7 @@ import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {IPermissionManager} from "../../lib/PermissionManager.sol";
 import {IGasPriceSource} from "../../lib/GasPriceSource.sol";
 import {IFeeRateModel} from "../../intf/IFeeRateModel.sol";
-import {DVMVault} from "./DVMVault.sol";
+import {IDVMVault} from "../intf/IDVMVault.sol";
 
 contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
@@ -46,7 +46,7 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     uint256 public _K_;
     uint256 public _I_;
 
-    DVMVault public _VAULT_;
+    IDVMVault public _VAULT_;
 
     // ============ Modifiers ============
 
