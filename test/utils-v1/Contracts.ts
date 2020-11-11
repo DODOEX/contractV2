@@ -30,6 +30,7 @@ const LockedTokenVault = require(`${jsonPath}LockedTokenVault.json`)
 /*v1.5*/
 const SmartSwap = require(`${jsonPath2}SmartSwap.json`)
 const SmartApprove = require(`${jsonPath2}SmartApprove.json`)
+const DODOSellHelper = require(`${jsonPath2}DODOSellHelper.json`)
 /******/
 
 import { getDefaultWeb3 } from './EVM';
@@ -53,6 +54,7 @@ export const DODO_MINE_READER_NAME = "DODOMineReader"
 /*v1.5*/
 export const SMART_SWAP = "SmartSwap"
 export const SMART_APPROVE = "SmartApprove"
+export const DODO_SELL_HELPER = "DODOSellHelper"
 /******/
 
 var contractMap: { [name: string]: any } = {}
@@ -73,6 +75,7 @@ contractMap[DODO_MINE_READER_NAME] = DODOMineReader
 /*v1.5*/
 contractMap[SMART_SWAP] = SmartSwap
 contractMap[SMART_APPROVE] = SmartApprove
+contractMap[DODO_SELL_HELPER] = DODOSellHelper
 /******/
 
 interface ContractJson {

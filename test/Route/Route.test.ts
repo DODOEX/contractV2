@@ -48,7 +48,6 @@ async function initUSDT_USDC(ctx: DODOContext): Promise<void> {
 
   await ctx.approvePair(USDT,USDC,USDT_USDC.options.address,lp);
   await ctx.mintToken(USDT,USDC,lp, mweiStr("1000"), mweiStr("1000"));
-  await ctx.mintToken(USDT,USDC,trader, mweiStr("0"), mweiStr("0"));
 
   await USDT_USDC.methods
     .depositBaseTo(lp, mweiStr("1000"))
@@ -57,6 +56,7 @@ async function initUSDT_USDC(ctx: DODOContext): Promise<void> {
     .depositQuoteTo(lp, mweiStr("1000"))
     .send(ctx.sendParam(lp));
 }
+
 
 async function initWETH_USDC(ctx: DODOContext): Promise<void> {
   await ctx.setOraclePrice(ctx.WETH_USDC_ORACLE,mweiStr("450"));
@@ -81,77 +81,38 @@ async function initWETH_USDC(ctx: DODOContext): Promise<void> {
 //mock sdk logic
 async function calcRoute(ctx: DODOContext,fromTokenAmount:string,slippage:number,routes:any[],pairs:any[]) {
   let swapAmount = fromTokenAmount
+  let directions:number[] = []
+  let dodoPairs:string[] = []
 
-  let callPairs: string[] = []
-  let datas: string = ""
-  let starts: number[] = []
-  let gAndV: number[] = []
+
   for (let i = 0; i < pairs.length; i++) {
-    if(i == 0){
-      starts.push(0);
-    }
     let curPair = pairs[i]
-    let curContact =pairs[i].pairContract;
-    let curData = '';
-    let curApproveData = '';
-
+    dodoPairs.push(curPair.pair)
+    let curContact = pairs[i].pairContract
     if (curPair.base === routes[i].address) {
-      curApproveData = await pairs[i].baseContract.methods.approve(curPair.pair,swapAmount).encodeABI()
-      curApproveData = curApproveData.substring(2,curApproveData.length)
-      datas += curApproveData
-      starts.push(datas.length/2)
-      gAndV.push(0)
-      callPairs.push(pairs[i].baseContract.options.address);
-      curData = await curContact.methods.sellBaseToken(swapAmount, 0, "0x").encodeABI()
-      console.log(i + ":b-for-swapAmount:",swapAmount);
+      directions[i] = 0;
       swapAmount = await curContact.methods.querySellBaseToken(swapAmount).call();
-      console.log(i + ":a-for-swapAmount:",swapAmount);
+      console.log(i + "-swapAmount:",swapAmount);
     } else {
-      curApproveData = await pairs[i].quoteContract.methods.approve(curPair.pair,swapAmount).encodeABI()
-      curApproveData = curApproveData.substring(2,curApproveData.length)
-      datas += curApproveData
-      starts.push(datas.length/2)
-      gAndV.push(0)
-      callPairs.push(pairs[i].quoteContract.options.address);
-      console.log(i + ":b-for-swapAmount:",swapAmount);
-      let baseDecimal = await pairs[i].baseContract.methods.decimals().call();
-      let quoteDecimal = await pairs[i].quoteContract.methods.decimals().call();
-      let curPairDetail = {
-        B: new BigNumber(await curContact.methods._BASE_BALANCE_().call() / 10 ** baseDecimal),
-        Q: new BigNumber(await curContact.methods._QUOTE_BALANCE_().call() / 10 ** quoteDecimal),
-        B0: new BigNumber(await curContact.methods._TARGET_BASE_TOKEN_AMOUNT_().call() / 10 ** baseDecimal),
-        Q0: new BigNumber(await curContact.methods._TARGET_QUOTE_TOKEN_AMOUNT_().call() / 10 ** quoteDecimal),
-        RStatus: await curContact.methods._R_STATUS_().call(),
-        OraclePrice: new BigNumber(await curContact.methods.getOraclePrice().call() / 10 ** (18-baseDecimal + quoteDecimal)),
-        k: new BigNumber(parseInt(ctx.k) / 1e18),
-        mtFeeRate: new BigNumber(parseInt(ctx.mtFeeRate) / 1e18),
-        lpFeeRate: new BigNumber(parseInt(ctx.lpFeeRate) / 1e18)
-      }
-      let dodoHelper = new DODOHelper(curPairDetail)
-      //TODO:2倍？
-      let tmpQuoteAmount = new BigNumber(swapAmount).multipliedBy(1-0.006).toFixed(0, BigNumber.ROUND_DOWN)
-      let tmpBaseAmount = dodoHelper.queryBuyQuote(new BigNumber(fromWei(tmpQuoteAmount,'mwei'))).toString();
-      curData = await curContact.methods.buyBaseToken(decimalStr(tmpBaseAmount), swapAmount, "0x").encodeABI()
-      swapAmount = decimalStr(tmpBaseAmount);
-      console.log(i + ":a-for-swapAmount:",swapAmount);
+      directions[i] = 1;
+      swapAmount = await ctx.DODOSellHelper.methods.querySellQuoteToken(curPair.pair,swapAmount).call();
+      console.log(i + "-swapAmount:",swapAmount);
     }
-    curData = curData.substring(2,curData.length)
-    datas += curData
-    starts.push(datas.length/2)
-    gAndV.push(0)
-    callPairs.push(curPair.pair)
   }
-  datas = "0x" + datas;
+
   let toAmount  = new BigNumber(swapAmount).multipliedBy(1-slippage).toFixed(0, BigNumber.ROUND_DOWN)
+  
+  console.log("minAmount:",toAmount);
+  // console.log("dodoPairs",dodoPairs);
+  // console.log("directions",directions);
+
   return ctx.SmartSwap.methods.dodoSwap(
     routes[0].address,
     routes[routes.length-1].address,
     fromTokenAmount,
     toAmount,
-    callPairs,
-    datas,
-    starts,
-    gAndV
+    dodoPairs,
+    directions
   )
 }
 
@@ -195,14 +156,12 @@ describe("Trader", () => {
         pair: ctx.DODO_USDT.options.address,
         base: ctx.DODO.options.address,
         /*only for test*/
-        pairContract: ctx.DODO_USDT,
-        baseContract: ctx.DODO,
-        quoteContract: ctx.USDT
+        pairContract: ctx.DODO_USDT
         /**************/
       }];
 
-      var tx = await logGas(await calcRoute(ctx,decimalStr('10'),0.1,routes,pairs), ctx.sendParam(trader), "route swap")
-      // console.log(tx.events['Swapped']);
+      var tx = await logGas(await calcRoute(ctx,decimalStr('10'),0.1,routes,pairs), ctx.sendParam(trader), "directly swap")
+      // console.log(tx.events['OrderHistory']);
       var a_DODO = await ctx.DODO.methods.balanceOf(trader).call()
       var a_USDT = await ctx.USDT.methods.balanceOf(trader).call()
       console.log("After DODO:" + fromWei(a_DODO,'ether') + "; USDT:" + fromWei(a_USDT,'mwei'));
@@ -235,21 +194,17 @@ describe("Trader", () => {
         pair: ctx.DODO_USDT.options.address,
         base: ctx.DODO.options.address,
         /*only for test*/
-        pairContract: ctx.DODO_USDT,
-        baseContract: ctx.DODO,
-        quoteContract: ctx.USDT
+        pairContract: ctx.DODO_USDT
         /**************/
       },{
         pair: ctx.USDT_USDC.options.address,
         base: ctx.USDT.options.address,
         /*only for test*/
-        pairContract: ctx.USDT_USDC,
-        baseContract: ctx.USDT,
-        quoteContract: ctx.USDC
+        pairContract: ctx.USDT_USDC
         /**************/
       }];
 
-      var tx = await logGas(await calcRoute(ctx,decimalStr('10'),0.1,routes,pairs), ctx.sendParam(trader), "route swap")
+      var tx = await logGas(await calcRoute(ctx,decimalStr('10'),0.1,routes,pairs), ctx.sendParam(trader), "tow hops swap")
       // console.log(tx.events['Swapped']);
       var a_DODO = await ctx.DODO.methods.balanceOf(trader).call()
       var a_USDC = await ctx.USDC.methods.balanceOf(trader).call()
@@ -286,30 +241,24 @@ describe("Trader", () => {
         pair: ctx.DODO_USDT.options.address,
         base: ctx.DODO.options.address,
         /*only for test*/
-        pairContract: ctx.DODO_USDT,
-        baseContract: ctx.DODO,
-        quoteContract: ctx.USDT
+        pairContract: ctx.DODO_USDT
         /**************/
       },{
         pair: ctx.USDT_USDC.options.address,
         base: ctx.USDT.options.address,
         /*only for test*/
-        pairContract: ctx.USDT_USDC,
-        baseContract: ctx.USDT,
-        quoteContract: ctx.USDC
+        pairContract: ctx.USDT_USDC
         /**************/
       },{
         pair: ctx.WETH_USDC.options.address,
         base: ctx.WETH.options.address,
         /*only for test*/
-        pairContract: ctx.WETH_USDC,
-        baseContract: ctx.WETH,
-        quoteContract: ctx.USDC
+        pairContract: ctx.WETH_USDC
         /**************/
       }];
 
-      var tx = await logGas(await calcRoute(ctx,decimalStr('10'),0.1,routes,pairs), ctx.sendParam(trader), "route swap")
-      // console.log(tx.events['Swapped']);
+      var tx = await logGas(await calcRoute(ctx,decimalStr('10'),0.1,routes,pairs), ctx.sendParam(trader), "three hops swap")
+      console.log(tx.events['TestAmount']);
       var a_DODO = await ctx.DODO.methods.balanceOf(trader).call()
       var a_WETH = await ctx.WETH.methods.balanceOf(trader).call()
       console.log("After DODO:" + fromWei(a_DODO,'ether') + "; WETH:" + fromWei(a_WETH,'ether'));
