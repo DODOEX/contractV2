@@ -57,7 +57,6 @@ export class DODOContext {
   lpFeeRate: string;
   mtFeeRate: string;
   k: string;
-  
   //token
   DODO:Contract;
   USDT:Contract;
@@ -73,6 +72,7 @@ export class DODOContext {
   //SmartRoute
   SmartSwap: Contract;
   SmartApprove: Contract;
+  DODOSellHelper: Contract;
 
   constructor() {}
 
@@ -213,13 +213,17 @@ export class DODOContext {
       .send(this.sendParam(this.Deployer));
     await this.WETH_USDC.methods.enableTrading().send(this.sendParam(this.Deployer));
 
+    this.DODOSellHelper = await contracts.newContract(
+      contracts.DODO_SELL_HELPER
+    );
+
     this.SmartApprove = await contracts.newContract(
       contracts.SMART_APPROVE
     );
 
     this.SmartSwap = await contracts.newContract(
       contracts.SMART_SWAP,
-      [this.SmartApprove.options.address]
+      [this.SmartApprove.options.address,this.DODOSellHelper.options.address]
     );
 
     await this.SmartApprove.methods.setSmartSwap(this.SmartSwap.options.address).send(this.sendParam(this.Deployer));
