@@ -51,9 +51,6 @@ describe("Trader", () => {
   });
 
   describe("trade", () => {
-    // it.only("gas cost", async () => {
-    //   await logGas(ctx.DVM.methods.calculateBase0(decimalStr("200"), decimalStr("1")), ctx.sendParam(trader), "calculate base0")
-    // })
     it("buy & sell", async () => {
 
       console.log("BASE0 before buy", await ctx.DVM.methods.getBase0().call())
@@ -116,6 +113,37 @@ describe("Trader", () => {
         "1952621458756350"
       );
       assert.equal(
+        await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
+        "103733009669408099"
+      );
+
+      // buy when quoet is not 0
+      await logGas(ctx.Route.methods.sellQuoteOnDVM(ctx.DVM.options.address, trader, decimalStr("200"), decimalStr("1")), ctx.sendParam(trader), "buy base token")
+      console.log("BASE0 after second buy", await ctx.DVM.methods.getBase0().call())
+      // trader balances
+      console.log(
+        await ctx.BASE.methods.balanceOf(trader).call(),
+        "12837528824326616018"
+      );
+      console.log(
+        await ctx.QUOTE.methods.balanceOf(trader).call(),
+        "703421810640399874603"
+      );
+      // vault balances
+      console.log(
+        await ctx.BASE.methods.balanceOf(ctx.Vault.options.address).call(),
+        "7158622099620899913"
+      );
+      console.log(
+        await ctx.QUOTE.methods.balanceOf(ctx.Vault.options.address).call(),
+        "296474456349930717298"
+      );
+      // maintainer balances
+      console.log(
+        await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(),
+        "3849076052484069"
+      );
+      console.log(
         await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
         "103733009669408099"
       );
