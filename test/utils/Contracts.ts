@@ -34,6 +34,7 @@ export const DVM_FACTORY_NAME = "DVMFactory"
 export const SMART_ROUTE_NAME = "SmartRoute"
 export const CONST_FEE_RATE_MODEL_NAME = "ConstFeeRateModel"
 export const PERMISSION_MANAGER_NAME = "PermissionManager"
+export const GAS_PRICE_SOURCE_NAME = "GasPriceSource"
 
 interface ContractJson {
   abi: any;

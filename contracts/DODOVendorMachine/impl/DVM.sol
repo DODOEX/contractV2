@@ -10,6 +10,7 @@ pragma experimental ABIEncoderV2;
 
 import {IFeeRateModel} from "../../intf/IFeeRateModel.sol";
 import {IPermissionManager} from "../../lib/PermissionManager.sol";
+import {IGasPriceSource} from "../../lib/GasPriceSource.sol";
 import {DVMTrader} from "./DVMTrader.sol";
 import {DVMFunding} from "./DVMFunding.sol";
 import {DVMVault} from "./DVMVault.sol";
@@ -22,6 +23,7 @@ contract DVM is DVMTrader, DVMFunding {
         address lpFeeRateModel,
         address mtFeeRateModel,
         address tradePermissionManager,
+        address gasPriceSource,
         uint256 i,
         uint256 k
     ) external {
@@ -32,10 +34,10 @@ contract DVM is DVMTrader, DVMFunding {
         _LP_FEE_RATE_MODEL_ = IFeeRateModel(lpFeeRateModel);
         _MT_FEE_RATE_MODEL_ = IFeeRateModel(mtFeeRateModel);
         _TRADE_PERMISSION_ = IPermissionManager(tradePermissionManager);
+        _GAS_PRICE_LIMIT_ = IGasPriceSource(gasPriceSource);
         _MAINTAINER_ = maintainer;
         _I_ = i;
         _K_ = k;
-        _GAS_PRICE_LIMIT_ = uint256(-1);
     }
 
     // ============ Version Control ============

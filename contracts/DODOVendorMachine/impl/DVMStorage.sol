@@ -14,6 +14,7 @@ import {SafeMath} from "../../lib/SafeMath.sol";
 import {DODOMath} from "../../lib/DODOMath.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {IPermissionManager} from "../../lib/PermissionManager.sol";
+import {IGasPriceSource} from "../../lib/GasPriceSource.sol";
 import {IFeeRateModel} from "../../intf/IFeeRateModel.sol";
 import {DVMVault} from "./DVMVault.sol";
 
@@ -22,7 +23,7 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
 
     // ============ Variables for Control ============
 
-    uint256 public _GAS_PRICE_LIMIT_;
+    IGasPriceSource public _GAS_PRICE_LIMIT_;
 
     // ============ Advanced Controls ============
 
@@ -62,6 +63,11 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
         _;
     }
 
+    modifier limitGasPrice() {
+        require(tx.gasprice <= _GAS_PRICE_LIMIT_.getGasPrice(), "GAS_PRICE_EXCEED");
+        _;
+    }
+
     // ============ Helper Functions ============
 
     function calculateBase0(uint256 baseAmount, uint256 quoteAmount) public view returns (uint256) {
@@ -93,8 +99,8 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
         _MAINTAINER_ = newMaintainer;
     }
 
-    function setGasPriceLimit(uint256 newGasPriceLimit) external onlyOwner {
-        _GAS_PRICE_LIMIT_ = newGasPriceLimit;
+    function setGasPriceSource(address newGasPriceLimitSource) external onlyOwner {
+        _GAS_PRICE_LIMIT_ = IGasPriceSource(newGasPriceLimitSource);
     }
 
     function setBuy(bool open) external onlyOwner {
