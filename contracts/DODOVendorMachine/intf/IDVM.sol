@@ -16,6 +16,7 @@ interface IDVM {
         address lpFeeRateModel,
         address mtFeeRateModel,
         address tradePermissionManager,
+        address gasPriceSource,
         uint256 i,
         uint256 k
     ) external;

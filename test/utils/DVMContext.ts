@@ -73,13 +73,16 @@ export class DVMContext {
     var dvmTemplate = await contracts.newContract(contracts.DVM_NAME)
     var feeRateModelTemplate = await contracts.newContract(contracts.CONST_FEE_RATE_MODEL_NAME)
     var permissionManagerTemplate = await contracts.newContract(contracts.PERMISSION_MANAGER_NAME)
+    var gasPriceSource = await contracts.newContract(contracts.GAS_PRICE_SOURCE_NAME)
 
     this.DVMFactory = await contracts.newContract(contracts.DVM_FACTORY_NAME,
       [cloneFactory.options.address,
       vaultTemplate.options.address,
       dvmTemplate.options.address,
       feeRateModelTemplate.options.address,
-      permissionManagerTemplate.options.address])
+      permissionManagerTemplate.options.address,
+      gasPriceSource.options.address,
+      ])
 
     this.BASE = await contracts.newContract(
       contracts.MINTABLE_ERC20_CONTRACT_NAME,
@@ -109,6 +112,7 @@ export class DVMContext {
     this.Vault = contracts.getContractWithAddress(contracts.DVM_VAULT_NAME, await this.DVM.methods._VAULT_().call())
 
     await this.DVM.methods.setMaintainer(this.Maintainer).send(this.sendParam(this.Deployer))
+    await gasPriceSource.methods.setGasPrice(MAX_UINT256).send(this.sendParam(this.Deployer))
 
     console.log(log.blueText("[Init DVM context]"));
   }

@@ -20,6 +20,7 @@ contract DVMTrader is DVMStorage {
     function sellBase(address to)
         external
         preventReentrant
+        limitGasPrice
         isSellAllow(to)
         returns (uint256 receiveQuoteAmount)
     {
@@ -37,6 +38,7 @@ contract DVMTrader is DVMStorage {
     function sellQuote(address to)
         external
         preventReentrant
+        limitGasPrice
         isBuyAllow(to)
         returns (uint256 receiveBaseAmount)
     {

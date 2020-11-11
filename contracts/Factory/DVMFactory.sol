@@ -22,6 +22,8 @@ contract DVMFactory is Ownable {
     address public _FEE_RATE_MODEL_TEMPLATE_;
     address public _PERMISSION_MANAGER_TEMPLATE_;
 
+    address public _DEFAULT_GAS_PRICE_SOURCE_;
+
     // base -> quote -> DVM address list
     mapping(address => mapping(address => address[])) _REGISTRY_;
 
@@ -30,13 +32,15 @@ contract DVMFactory is Ownable {
         address vaultTemplate,
         address dvmTemplate,
         address feeRateModelTemplate,
-        address permissionManagerTemplate
+        address permissionManagerTemplate,
+        address defaultGasPriceSource
     ) public {
         _CLONE_FACTORY_ = cloneFactory;
         _VAULT_TEMPLATE_ = vaultTemplate;
         _DVM_TEMPLATE_ = dvmTemplate;
         _FEE_RATE_MODEL_TEMPLATE_ = feeRateModelTemplate;
         _PERMISSION_MANAGER_TEMPLATE_ = permissionManagerTemplate;
+        _DEFAULT_GAS_PRICE_SOURCE_ = defaultGasPriceSource;
     }
 
     function createStandardDODOVendorMachine(
@@ -59,6 +63,7 @@ contract DVMFactory is Ownable {
             createConstFeeRateModel(msg.sender, lpFeeRate),
             createConstFeeRateModel(msg.sender, mtFeeRate),
             createPermissionManager(msg.sender),
+            _DEFAULT_GAS_PRICE_SOURCE_,
             i,
             k
         );
