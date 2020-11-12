@@ -155,9 +155,7 @@ describe("Trader", () => {
       var pairs = [{
         pair: ctx.DODO_USDT.options.address,
         base: ctx.DODO.options.address,
-        /*only for test*/
         pairContract: ctx.DODO_USDT
-        /**************/
       }];
 
       var tx = await logGas(await calcRoute(ctx,decimalStr('10'),0.1,routes,pairs), ctx.sendParam(trader), "directly swap")
@@ -193,15 +191,11 @@ describe("Trader", () => {
       var pairs = [{
         pair: ctx.DODO_USDT.options.address,
         base: ctx.DODO.options.address,
-        /*only for test*/
         pairContract: ctx.DODO_USDT
-        /**************/
       },{
         pair: ctx.USDT_USDC.options.address,
         base: ctx.USDT.options.address,
-        /*only for test*/
         pairContract: ctx.USDT_USDC
-        /**************/
       }];
 
       var tx = await logGas(await calcRoute(ctx,decimalStr('10'),0.1,routes,pairs), ctx.sendParam(trader), "tow hops swap")
@@ -240,21 +234,15 @@ describe("Trader", () => {
       var pairs = [{
         pair: ctx.DODO_USDT.options.address,
         base: ctx.DODO.options.address,
-        /*only for test*/
         pairContract: ctx.DODO_USDT
-        /**************/
       },{
         pair: ctx.USDT_USDC.options.address,
         base: ctx.USDT.options.address,
-        /*only for test*/
         pairContract: ctx.USDT_USDC
-        /**************/
       },{
         pair: ctx.WETH_USDC.options.address,
         base: ctx.WETH.options.address,
-        /*only for test*/
         pairContract: ctx.WETH_USDC
-        /**************/
       }];
 
       var tx = await logGas(await calcRoute(ctx,decimalStr('10'),0.1,routes,pairs), ctx.sendParam(trader), "three hops swap")
