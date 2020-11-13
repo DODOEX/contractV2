@@ -1,8 +1,3 @@
 ====================================================
-network type: kovan
-Deploy time: 2020/11/12 上午9:38:54
-Deploy type: Smart Route
-SmartApprove Address:  0x8D2625d0f1ed3C7E1E506Bf86b4660c1781Fd7C0
-DODOSellHelper Address:  0xbdEae617F2616b45DCB69B287D52940a76035Fe3
-SmartSwap Address:  0xC1632dD29D5c4ac1Cd7b9B7d1e23E91bB092acAC
-SmartApprovce setSmartSwap tx:  0x2e641cd363b3c42579308502dbca07e45377032fb52ae5f1acbd0d865d0ce7e3
+network type: development
+Deploy time: 2020/11/13 下午3:47:21

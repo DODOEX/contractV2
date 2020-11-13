@@ -17,7 +17,6 @@ const CloneFactory = require(`${jsonPath}CloneFactory.json`)
 const DODO = require(`${jsonPath}DODO.json`)
 const DODOZoo = require(`${jsonPath}DODOZoo.json`)
 const DODOEthProxy = require(`${jsonPath}DODOEthProxy.json`)
-const WETH = require(`${jsonPath}WETH9.json`)
 const TestERC20 = require(`${jsonPath}TestERC20.json`)
 const NaiveOracle = require(`${jsonPath}NaiveOracle.json`)
 const DODOLpToken = require(`${jsonPath}DODOLpToken.json`)
@@ -31,6 +30,7 @@ const LockedTokenVault = require(`${jsonPath}LockedTokenVault.json`)
 const SmartSwap = require(`${jsonPath2}SmartSwap.json`)
 const SmartApprove = require(`${jsonPath2}SmartApprove.json`)
 const DODOSellHelper = require(`${jsonPath2}DODOSellHelper.json`)
+const WETH = require(`${jsonPath2}WETH9.json`)
 /******/
 
 import { getDefaultWeb3 } from './EVM';

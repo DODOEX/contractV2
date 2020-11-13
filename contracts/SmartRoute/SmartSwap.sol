@@ -15,6 +15,7 @@ import {SafeMath} from "../lib/SafeMath.sol";
 import {IDODOSellHelper} from "../intf/IDODOSellHelper.sol";
 import {ISmartApprove} from "../intf/ISmartApprove.sol";
 import {IDODO} from "../intf/IDODO.sol";
+import {IWETH} from "../intf/IWETH.sol";
 
 
 contract SmartSwap is Ownable {
@@ -25,6 +26,7 @@ contract SmartSwap is Ownable {
     IERC20 constant ETH_ADDRESS = IERC20(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
     ISmartApprove public smartApprove;
     IDODOSellHelper public dodoSellHelper;
+    address payable public _WETH_;
 
     event OrderHistory(
         IERC20 indexed fromToken,
@@ -36,9 +38,15 @@ contract SmartSwap is Ownable {
 
     event ExternalRecord(address indexed to, address indexed sender);
 
-    constructor(address _smartApprove,address _dodoSellHelper) public {
+    constructor(address _smartApprove,address _dodoSellHelper,address payable _weth) public {
         smartApprove = ISmartApprove(_smartApprove);
         dodoSellHelper = IDODOSellHelper(_dodoSellHelper);
+        _WETH_ = _weth;
+    }
+
+
+    fallback() external payable {
+        require(msg.sender == _WETH_, "WE_CAN_NOT_SAVED_YOUR_ETH");
     }
 
     function dodoSwap(
@@ -54,6 +62,9 @@ contract SmartSwap is Ownable {
 
         if (fromToken != ETH_ADDRESS) {
             smartApprove.claimTokens(fromToken, msg.sender, address(this), fromTokenAmount);
+        } else {
+            require(msg.value == fromTokenAmount, "ETH_AMOUNT_NOT_MATCH");
+            IWETH(_WETH_).deposit{value: fromTokenAmount}();
         }
 
         for (uint256 i = 0; i < dodoPairs.length; i++) {
@@ -73,6 +84,12 @@ contract SmartSwap is Ownable {
             }
         }
         fromToken.universalTransfer(msg.sender, fromToken.universalBalanceOf(address(this)));
+
+        if (toToken == ETH_ADDRESS) {
+            uint256 wethAmount = IWETH(_WETH_).balanceOf(address(this));
+            IWETH(_WETH_).withdraw(wethAmount);
+        }
+
         returnAmount = toToken.universalBalanceOf(address(this));
 
         require(returnAmount >= minReturnAmount, "Return amount is not enough");

@@ -116,9 +116,10 @@ export class DODOContext {
       ["USDC", 6]
     );
     this.WETH = await contracts.newContract(
-      contracts.TEST_ERC20_CONTRACT_NAME,
-      ["WETH", 18]
+      contracts.WETH_CONTRACT_NAME
     );
+
+
     //创建交易对
     //DODO-USDT
     this.DODO_USDT_ORACLE = await contracts.newContract(
@@ -223,7 +224,7 @@ export class DODOContext {
 
     this.SmartSwap = await contracts.newContract(
       contracts.SMART_SWAP,
-      [this.SmartApprove.options.address,this.DODOSellHelper.options.address]
+      [this.SmartApprove.options.address,this.DODOSellHelper.options.address,this.WETH.options.address]
     );
 
     await this.SmartApprove.methods.setSmartSwap(this.SmartSwap.options.address).send(this.sendParam(this.Deployer));
@@ -247,11 +248,12 @@ export class DODOContext {
   }
 
   async mintToken(tokenBase:Contract,tokenQuote:Contract,to: string, base: string, quote: string) {
-    await tokenBase.methods.mint(to, base).send(this.sendParam(this.Deployer));
-    await tokenQuote.methods
-      .mint(to,  quote)
-      .send(this.sendParam(this.Deployer));
+    if(tokenBase != null)
+      await tokenBase.methods.mint(to, base).send(this.sendParam(this.Deployer));
+    if(tokenQuote != null)
+      await tokenQuote.methods.mint(to,  quote).send(this.sendParam(this.Deployer));
   }
+
 
   async approvePair(tokenBase:Contract,tokenQuote:Contract, approveTarget:string,account: string) {
     await tokenBase.methods

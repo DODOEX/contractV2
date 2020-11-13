@@ -19,9 +19,9 @@ interface IDVMVault {
 
     function _QUOTE_TOKEN_() external returns (address);
 
-    function _BASE_RESERVE_() external returns (address);
+    function _BASE_RESERVE_() external returns (uint256);
 
-    function _QUOTE_RESERVE_() external returns (address);
+    function _QUOTE_RESERVE_() external returns (uint256);
 
     function symbol() external returns (string memory);
 

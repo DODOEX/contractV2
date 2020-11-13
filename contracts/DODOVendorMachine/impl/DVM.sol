@@ -13,7 +13,7 @@ import {IPermissionManager} from "../../lib/PermissionManager.sol";
 import {IGasPriceSource} from "../../lib/GasPriceSource.sol";
 import {DVMTrader} from "./DVMTrader.sol";
 import {DVMFunding} from "./DVMFunding.sol";
-import {DVMVault} from "./DVMVault.sol";
+import {IDVMVault} from "../intf/IDVMVault.sol";
 
 contract DVM is DVMTrader, DVMFunding {
     function init(
@@ -28,7 +28,7 @@ contract DVM is DVMTrader, DVMFunding {
         uint256 k
     ) external {
         initOwner(owner);
-        _VAULT_ = DVMVault(vault);
+        _VAULT_ = IDVMVault(vault);
         _BASE_TOKEN_ = _VAULT_._BASE_TOKEN_();
         _QUOTE_TOKEN_ = _VAULT_._QUOTE_TOKEN_();
         _LP_FEE_RATE_MODEL_ = IFeeRateModel(lpFeeRateModel);
