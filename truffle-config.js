@@ -64,6 +64,15 @@ module.exports = {
       network_id: 42,
       skipDryRun: true
     },
+    live: {
+      provider: function() {
+        return new HDWalletProvider(privKey, "https://mainnet.infura.io/v3/" + infuraId);
+      },
+      gas: 4000000,
+      gasPrice: 50000000000,
+      network_id: 1,
+      skipDryRun: true
+    },
     coverage: {
       host: "127.0.0.1",
       port: 6545,

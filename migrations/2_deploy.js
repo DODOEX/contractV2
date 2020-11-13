@@ -9,7 +9,7 @@ const TestERC20 = artifacts.require("TestERC20");
 const NaiveOracle = artifacts.require("NaiveOracle");
 const DODOZoo = artifacts.require("DODOZoo");
 
-const DEPLOY_ROUTE = false;
+const DEPLOY_ROUTE = true;
 const DEPLOY_KOVAN_TOKEN = false;
 
 module.exports = async (deployer, network,accounts) => {
@@ -20,11 +20,12 @@ module.exports = async (deployer, network,accounts) => {
     DODOSellHelperAddress = "0xbdEae617F2616b45DCB69B287D52940a76035Fe3";
     DODOZooAddress = "0x92230e929a2226b29ed3441ae5524886347c60c8";
     WETHAddress = "0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b";
-  }else {
+  }else if(network == 'live'){
     DODOSellHelperAddress = "0x533da777aedce766ceae696bf90f8541a4ba80eb";
     DODOZooAddress = "0x3a97247df274a17c59a3bd12735ea3fcdfb49950";
     WETHAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
-  }
+  }else 
+    return;
 
   logger.log("====================================================");
   logger.log("network type: " + network);
@@ -40,7 +41,7 @@ module.exports = async (deployer, network,accounts) => {
     logger.log("SmartApprove Address: ",SmartApprove.address);
     logger.log("DODOSellHelper Address: ",DODOSellHelperAddress);
 
-    await deployer.deploy(SmartSwap,SmartApprove.address,DODOSellHelperAddress);
+    await deployer.deploy(SmartSwap,SmartApprove.address,DODOSellHelperAddress,WETHAddress);
     logger.log("SmartSwap Address: ",SmartSwap.address);
 
     const SmartApproveInstance = await SmartApprove.deployed();
