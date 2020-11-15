@@ -44,10 +44,9 @@ contract SmartSwap is Ownable {
         _WETH_ = _weth;
     }
 
+    fallback() external payable {}
 
-    fallback() external payable {
-        require(msg.sender == _WETH_, "WE_CAN_NOT_SAVED_YOUR_ETH");
-    }
+    receive() external payable {}
 
     function dodoSwap(
         IERC20 fromToken,

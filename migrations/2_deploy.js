@@ -16,14 +16,17 @@ module.exports = async (deployer, network,accounts) => {
   let DODOSellHelperAddress = ""
   let DODOZooAddress = ""
   let WETHAddress = ""
+  let SmartApproveAddress = ""
   if(network == 'kovan'){
     DODOSellHelperAddress = "0xbdEae617F2616b45DCB69B287D52940a76035Fe3";
     DODOZooAddress = "0x92230e929a2226b29ed3441ae5524886347c60c8";
     WETHAddress = "0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b";
+    SmartApproveAddress = "0x5627b7DEb3055e1e899003FDca0716b32C382084";
   }else if(network == 'live'){
     DODOSellHelperAddress = "0x533da777aedce766ceae696bf90f8541a4ba80eb";
     DODOZooAddress = "0x3a97247df274a17c59a3bd12735ea3fcdfb49950";
     WETHAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
+    SmartApproveAddress = "0xe380Ad3181A69BF92133D2feb609867c4adC61eA";
   }else 
     return;
 
@@ -33,18 +36,21 @@ module.exports = async (deployer, network,accounts) => {
 
   if (DEPLOY_ROUTE) {
     logger.log("Deploy type: Smart Route");
-    await deployer.deploy(SmartApprove);
+    if(SmartApprove == ""){
+      await deployer.deploy(SmartApprove);
+      SmartApproveAddress = SmartApprove.address;
+    }
     if(DODOSellHelperAddress == "") {
       await deployer.deploy(DODOSellHelper);
       DODOSellHelperAddress = DODOSellHelper.address;
     }
-    logger.log("SmartApprove Address: ",SmartApprove.address);
+    logger.log("SmartApprove Address: ",SmartApproveAddress);
     logger.log("DODOSellHelper Address: ",DODOSellHelperAddress);
 
-    await deployer.deploy(SmartSwap,SmartApprove.address,DODOSellHelperAddress,WETHAddress);
+    await deployer.deploy(SmartSwap,SmartApproveAddress,DODOSellHelperAddress,WETHAddress);
     logger.log("SmartSwap Address: ",SmartSwap.address);
 
-    const SmartApproveInstance = await SmartApprove.deployed();
+    const SmartApproveInstance = await SmartApprove.at(SmartApproveAddress);
     var tx = await SmartApproveInstance.setSmartSwap(SmartSwap.address);
     logger.log("SmartApprovce setSmartSwap tx: ",tx.tx);
   }

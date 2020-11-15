@@ -65,11 +65,12 @@ module.exports = {
       skipDryRun: true
     },
     live: {
+      networkCheckTimeout: 100000,
       provider: function() {
         return new HDWalletProvider(privKey, "https://mainnet.infura.io/v3/" + infuraId);
       },
       gas: 4000000,
-      gasPrice: 50000000000,
+      gasPrice: 20000000000,
       network_id: 1,
       skipDryRun: true
     },
