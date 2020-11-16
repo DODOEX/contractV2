@@ -72,12 +72,12 @@ contract SmartSwap is Ownable {
             if(curDirection == 0){
                 address curDodoBase = IDODO(curDodoPair)._BASE_TOKEN_();
                 uint256 curAmountIn = IERC20(curDodoBase).balanceOf(address(this));
-                IERC20(curDodoBase).approve(curDodoPair,curAmountIn);
+                IERC20(curDodoBase).universalApprove(curDodoPair,curAmountIn);
                 IDODO(curDodoPair).sellBaseToken(curAmountIn, 0, "");
             }else {
                 address curDodoQuote = IDODO(curDodoPair)._QUOTE_TOKEN_();
                 uint256 curAmountIn = IERC20(curDodoQuote).balanceOf(address(this));
-                IERC20(curDodoQuote).approve(curDodoPair,curAmountIn);
+                IERC20(curDodoQuote).universalApprove(curDodoPair,curAmountIn);
                 uint256 canBuyBaseAmount = dodoSellHelper.querySellQuoteToken(curDodoPair,curAmountIn);
                 IDODO(curDodoPair).buyBaseToken(canBuyBaseAmount, curAmountIn, "");
             }
@@ -112,10 +112,10 @@ contract SmartSwap is Ownable {
 
         if (fromToken != ETH_ADDRESS) {
             smartApprove.claimTokens(fromToken, msg.sender, address(this), fromTokenAmount);
-            fromToken.approve(approveTarget, fromTokenAmount);
+            fromToken.universalApprove(approveTarget, fromTokenAmount);
         }
 
-        (bool success, ) = to.call{value: msg.value, gas: gasSwap}(callDataConcat);
+        (bool success, ) = to.call{value: fromToken == ETH_ADDRESS ? msg.value : 0, gas: gasSwap}(callDataConcat);
 
         require(success, "Contract Swap execution Failed");
 
