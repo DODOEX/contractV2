@@ -4,6 +4,7 @@
 .idea
 
 build/
+build-v1/
 dist/
 node_modules/
 coverage/

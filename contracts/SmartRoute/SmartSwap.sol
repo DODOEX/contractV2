@@ -15,7 +15,7 @@ import {SafeMath} from "../lib/SafeMath.sol";
 import {IDODOSellHelper} from "../intf/IDODOSellHelper.sol";
 import {ISmartApprove} from "../intf/ISmartApprove.sol";
 import {IDODO} from "../intf/IDODO.sol";
-
+import {IWETH} from "../intf/IWETH.sol";
 
 contract SmartSwap is Ownable {
     using SafeMath for uint256;
@@ -25,6 +25,7 @@ contract SmartSwap is Ownable {
     IERC20 constant ETH_ADDRESS = IERC20(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
     ISmartApprove public smartApprove;
     IDODOSellHelper public dodoSellHelper;
+    address payable public _WETH_;
 
     event OrderHistory(
         IERC20 indexed fromToken,
@@ -36,10 +37,19 @@ contract SmartSwap is Ownable {
 
     event ExternalRecord(address indexed to, address indexed sender);
 
-    constructor(address _smartApprove,address _dodoSellHelper) public {
+    constructor(
+        address _smartApprove,
+        address _dodoSellHelper,
+        address payable _weth
+    ) public {
         smartApprove = ISmartApprove(_smartApprove);
         dodoSellHelper = IDODOSellHelper(_dodoSellHelper);
+        _WETH_ = _weth;
     }
+
+    fallback() external payable {}
+
+    receive() external payable {}
 
     function dodoSwap(
         IERC20 fromToken,
@@ -54,32 +64,43 @@ contract SmartSwap is Ownable {
 
         if (fromToken != ETH_ADDRESS) {
             smartApprove.claimTokens(fromToken, msg.sender, address(this), fromTokenAmount);
+        } else {
+            require(msg.value == fromTokenAmount, "ETH_AMOUNT_NOT_MATCH");
+            IWETH(_WETH_).deposit{value: fromTokenAmount}();
         }
 
         for (uint256 i = 0; i < dodoPairs.length; i++) {
             uint256 curDirection = directions[i];
             address curDodoPair = dodoPairs[i];
-            if(curDirection == 0){
+            if (curDirection == 0) {
                 address curDodoBase = IDODO(curDodoPair)._BASE_TOKEN_();
                 uint256 curAmountIn = IERC20(curDodoBase).balanceOf(address(this));
-                IERC20(curDodoBase).approve(curDodoPair,curAmountIn);
+                IERC20(curDodoBase).universalApprove(curDodoPair, curAmountIn);
                 IDODO(curDodoPair).sellBaseToken(curAmountIn, 0, "");
-            }else {
+            } else {
                 address curDodoQuote = IDODO(curDodoPair)._QUOTE_TOKEN_();
                 uint256 curAmountIn = IERC20(curDodoQuote).balanceOf(address(this));
-                IERC20(curDodoQuote).approve(curDodoPair,curAmountIn);
-                uint256 canBuyBaseAmount = dodoSellHelper.querySellQuoteToken(curDodoPair,curAmountIn);
+                IERC20(curDodoQuote).universalApprove(curDodoPair, curAmountIn);
+                uint256 canBuyBaseAmount = dodoSellHelper.querySellQuoteToken(
+                    curDodoPair,
+                    curAmountIn
+                );
                 IDODO(curDodoPair).buyBaseToken(canBuyBaseAmount, curAmountIn, "");
             }
         }
         fromToken.universalTransfer(msg.sender, fromToken.universalBalanceOf(address(this)));
+
+        if (toToken == ETH_ADDRESS) {
+            uint256 wethAmount = IWETH(_WETH_).balanceOf(address(this));
+            IWETH(_WETH_).withdraw(wethAmount);
+        }
+
         returnAmount = toToken.universalBalanceOf(address(this));
 
         require(returnAmount >= minReturnAmount, "Return amount is not enough");
         toToken.universalTransfer(msg.sender, returnAmount);
         emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount);
     }
-
 
     function externalSwap(
         IERC20 fromToken,
@@ -91,15 +112,16 @@ contract SmartSwap is Ownable {
         uint256 minReturnAmount,
         bytes memory callDataConcat
     ) public payable returns (uint256 returnAmount) {
-        
         require(minReturnAmount > 0, "Min return should be bigger then 0.");
 
         if (fromToken != ETH_ADDRESS) {
             smartApprove.claimTokens(fromToken, msg.sender, address(this), fromTokenAmount);
-            fromToken.approve(approveTarget, fromTokenAmount);
+            fromToken.universalApprove(approveTarget, fromTokenAmount);
         }
 
-        (bool success, ) = to.call{value: msg.value, gas: gasSwap}(callDataConcat);
+        (bool success, ) = to.call{value: fromToken == ETH_ADDRESS ? msg.value : 0, gas: gasSwap}(
+            callDataConcat
+        );
 
         require(success, "Contract Swap execution Failed");
 
