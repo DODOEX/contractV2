@@ -27,6 +27,12 @@ contract SmartSwap is Ownable {
     IDODOSellHelper public dodoSellHelper;
     address payable public _WETH_;
 
+
+    modifier judgeExpired(uint256 deadline) {
+        require(deadline >= block.timestamp, 'DODO SmartSwap: EXPIRED');
+        _;
+    }
+
     event OrderHistory(
         IERC20 indexed fromToken,
         IERC20 indexed toToken,
@@ -57,15 +63,16 @@ contract SmartSwap is Ownable {
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
         address[] memory dodoPairs,
-        uint256[] memory directions
-    ) public payable returns (uint256 returnAmount) {
-        require(minReturnAmount > 0, "Min return should be bigger then 0.");
-        require(dodoPairs.length > 0, "pairs should exists.");
+        uint256[] memory directions,
+        uint256 deadline
+    ) public payable judgeExpired(deadline) returns (uint256 returnAmount) {
+        require(minReturnAmount > 0, "DODO SmartSwap: Min return should be bigger then 0.");
+        require(dodoPairs.length > 0, "DODO SmartSwap: pairs should exists.");
 
         if (fromToken != ETH_ADDRESS) {
-            smartApprove.claimTokens(fromToken, msg.sender, address(this), fromTokenAmount);
+            smartApprove.claimTokens(fromToken, msg.sender, address(this),fromTokenAmount);
         } else {
-            require(msg.value == fromTokenAmount, "ETH_AMOUNT_NOT_MATCH");
+            require(msg.value == fromTokenAmount, "DODO SmartSwap: ETH_AMOUNT_NOT_MATCH");
             IWETH(_WETH_).deposit{value: fromTokenAmount}();
         }
 
@@ -97,7 +104,7 @@ contract SmartSwap is Ownable {
 
         returnAmount = toToken.universalBalanceOf(address(this));
 
-        require(returnAmount >= minReturnAmount, "Return amount is not enough");
+        require(returnAmount >= minReturnAmount, "DODO SmartSwap: Return amount is not enough");
         toToken.universalTransfer(msg.sender, returnAmount);
         emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount);
     }
@@ -110,9 +117,11 @@ contract SmartSwap is Ownable {
         uint256 gasSwap,
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
-        bytes memory callDataConcat
-    ) public payable returns (uint256 returnAmount) {
-        require(minReturnAmount > 0, "Min return should be bigger then 0.");
+        bytes memory callDataConcat,
+        uint256 deadline
+    ) public payable judgeExpired(deadline) returns (uint256 returnAmount) {
+        
+        require(minReturnAmount > 0, "DODO SmartSwap: Min return should be bigger then 0.");
 
         if (fromToken != ETH_ADDRESS) {
             smartApprove.claimTokens(fromToken, msg.sender, address(this), fromTokenAmount);
@@ -123,12 +132,12 @@ contract SmartSwap is Ownable {
             callDataConcat
         );
 
-        require(success, "Contract Swap execution Failed");
+        require(success, "DODO SmartSwap: Contract Swap execution Failed");
 
         fromToken.universalTransfer(msg.sender, fromToken.universalBalanceOf(address(this)));
         returnAmount = toToken.universalBalanceOf(address(this));
 
-        require(returnAmount >= minReturnAmount, "Return amount is not enough");
+        require(returnAmount >= minReturnAmount, "DODO SmartSwap: Return amount is not enough");
         toToken.universalTransfer(msg.sender, returnAmount);
         emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount);
         emit ExternalRecord(to, msg.sender);

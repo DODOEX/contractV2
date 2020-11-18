@@ -105,11 +105,10 @@ async function calcRoute(ctx: DODOContext, fromTokenAmount: string, slippage: nu
     }
   }
 
-  let toAmount = new BigNumber(swapAmount).multipliedBy(1 - slippage).toFixed(0, BigNumber.ROUND_DOWN)
 
-  console.log("minAmount:", toAmount);
-  // console.log("dodoPairs",dodoPairs);
-  // console.log("directions",directions);
+  let toAmount = new BigNumber(swapAmount).multipliedBy(1 - slippage).toFixed(0, BigNumber.ROUND_DOWN)
+  console.log("minAmount:",toAmount);
+  let deadline = Math.floor(new Date().getTime()/1000 + 60 * 10);
 
   return ctx.SmartSwap.methods.dodoSwap(
     routes[0].address,
@@ -117,7 +116,8 @@ async function calcRoute(ctx: DODOContext, fromTokenAmount: string, slippage: nu
     fromTokenAmount,
     toAmount,
     dodoPairs,
-    directions
+    directions,
+    deadline
   )
 }
 

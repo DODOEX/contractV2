@@ -51,6 +51,25 @@ module.exports = {
       gas: 0xfffffffffff,
       gasPrice: 1,
     },
+    kovan: {
+      provider: function() {
+        return new HDWalletProvider(privKey, "https://kovan.infura.io/v3/" + infuraId);
+      },
+      gas: 8000000,
+      gasPrice: 1000000000,
+      network_id: 42,
+      skipDryRun: true
+    },
+    live: {
+      networkCheckTimeout: 100000,
+      provider: function() {
+        return new HDWalletProvider(privKey, "https://mainnet.infura.io/v3/" + infuraId);
+      },
+      gas: 4000000,
+      gasPrice: 22000000000,
+      network_id: 1,
+      skipDryRun: true
+    },
     coverage: {
       host: "127.0.0.1",
       port: 6545,
