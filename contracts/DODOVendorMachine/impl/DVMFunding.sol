@@ -70,16 +70,4 @@ contract DVMFunding is DVMVault {
                 data
             );
     }
-
-    // 高级功能，需要讨论加不加
-    // function retrieve(address to) external preventReentrant {
-    //     (uint256 baseBalance, uint256 quoteBalance) = getVaultBalance();
-    //     (uint256 baseReserve, uint256 quoteReserve) = getVaultReserve();
-    //     if (baseBalance.sub(baseReserve) > 0) {
-    //         transferBaseOut(to, baseBalance.sub(baseReserve));
-    //     }
-    //     if (quoteBalance.sub(quoteReserve) > 0) {
-    //         transferQuoteOut(to, quoteBalance.sub(quoteReserve));
-    //     }
-    // }
 }

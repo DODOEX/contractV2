@@ -12,6 +12,7 @@ import {DPPVault} from "./DPPVault.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {RState, PMMState, PMMPricing} from "../../lib/PMMPricing.sol";
+import {IDODOCallee} from "../../intf/IDODOCallee.sol";
 
 contract DPPTrader is DPPVault {
     using SafeMath for uint256;
@@ -37,8 +38,6 @@ contract DPPTrader is DPPVault {
     }
 
     // ============ Trade Functions ============
-
-    // todo 看看怎么能加上flash loan
 
     function sellBase(address to)
         external
@@ -78,7 +77,7 @@ contract DPPTrader is DPPVault {
         uint256 mtFee;
         uint256 newQuoteTarget;
         RState newRState;
-        (receiveBaseAmount, mtFee, newRState, newQuoteTarget) = querySellBase(
+        (receiveBaseAmount, mtFee, newRState, newQuoteTarget) = querySellQuote(
             tx.origin,
             quoteInput
         );
@@ -95,6 +94,72 @@ contract DPPTrader is DPPVault {
         _syncReserve();
 
         return receiveBaseAmount;
+    }
+
+    function flashLoan(
+        uint256 baseAmount,
+        uint256 quoteAmount,
+        address assetTo,
+        bytes calldata data
+    ) external preventReentrant {
+        _transferBaseOut(assetTo, baseAmount);
+        _transferQuoteOut(assetTo, quoteAmount);
+        if (data.length > 0)
+            IDODOCallee(assetTo).DPPFlashLoanCall(msg.sender, baseAmount, quoteAmount, data);
+
+        uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
+        uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
+
+        // no output -> pure profit
+        if (baseBalance >= _BASE_RESERVE_ && quoteBalance >= _QUOTE_RESERVE_) return;
+
+        // no input -> pure loss
+        require(
+            baseBalance >= _BASE_RESERVE_ || quoteBalance >= _QUOTE_RESERVE_,
+            "FLASH_LOAN_FAILED"
+        );
+
+        // sell quote case
+        // quote input + base output
+        if (baseBalance < _BASE_RESERVE_) {
+            (
+                uint256 receiveBaseAmount,
+                uint256 mtFee,
+                RState newRState,
+                uint256 newQuoteTarget
+            ) = querySellQuote(tx.origin, quoteBalance.sub(_QUOTE_RESERVE_)); // revert if quoteBalance<quoteReserve
+
+            require(_BASE_RESERVE_.sub(baseBalance) <= receiveBaseAmount, "FLASH_LOAN_FAILED");
+
+            _transferBaseOut(_MAINTAINER_, mtFee);
+            if (_RState_ != newRState) {
+                _RState_ = newRState;
+                _QUOTE_TARGET_ = newQuoteTarget;
+            }
+
+            _syncReserve();
+        }
+
+        // sell base case
+        // base input + quote output
+        if (quoteBalance < _QUOTE_RESERVE_) {
+            (
+                uint256 receiveQuoteAmount,
+                uint256 mtFee,
+                RState newRState,
+                uint256 newBaseTarget
+            ) = querySellBase(tx.origin, baseBalance.sub(_BASE_RESERVE_)); // revert if baseBalance<baseReserve
+
+            require(_QUOTE_RESERVE_.sub(quoteBalance) <= receiveQuoteAmount, "FLASH_LOAN_FAILED");
+
+            _transferQuoteOut(_MAINTAINER_, mtFee);
+            if (_RState_ != newRState) {
+                _RState_ = newRState;
+                _BASE_TARGET_ = newBaseTarget;
+            }
+
+            _syncReserve();
+        }
     }
 
     // ============ Query Functions ============
