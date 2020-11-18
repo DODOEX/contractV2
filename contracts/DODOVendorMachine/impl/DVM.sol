@@ -10,7 +10,8 @@ pragma experimental ABIEncoderV2;
 
 import {IFeeRateModel} from "../../intf/IFeeRateModel.sol";
 import {IPermissionManager} from "../../lib/PermissionManager.sol";
-import {IGasPriceSource} from "../../lib/GasPriceSource.sol";
+import {IExternalValue} from "../../lib/ExternalValue.sol";
+import {IERC20} from "../../intf/IERC20.sol";
 import {DVMTrader} from "./DVMTrader.sol";
 import {DVMFunding} from "./DVMFunding.sol";
 import {DVMVault} from "./DVMVault.sol";
@@ -19,7 +20,8 @@ contract DVM is DVMTrader, DVMFunding {
     function init(
         address owner,
         address maintainer,
-        address vault,
+        address baseTokenAddress,
+        address quoteTokenAddress,
         address lpFeeRateModel,
         address mtFeeRateModel,
         address tradePermissionManager,
@@ -28,16 +30,32 @@ contract DVM is DVMTrader, DVMFunding {
         uint256 k
     ) external {
         initOwner(owner);
-        _VAULT_ = DVMVault(vault);
-        _BASE_TOKEN_ = _VAULT_._BASE_TOKEN_();
-        _QUOTE_TOKEN_ = _VAULT_._QUOTE_TOKEN_();
+        _BASE_TOKEN_ = IERC20(baseTokenAddress);
+        _QUOTE_TOKEN_ = IERC20(quoteTokenAddress);
         _LP_FEE_RATE_MODEL_ = IFeeRateModel(lpFeeRateModel);
         _MT_FEE_RATE_MODEL_ = IFeeRateModel(mtFeeRateModel);
         _TRADE_PERMISSION_ = IPermissionManager(tradePermissionManager);
-        _GAS_PRICE_LIMIT_ = IGasPriceSource(gasPriceSource);
+        _GAS_PRICE_LIMIT_ = IExternalValue(gasPriceSource);
         _MAINTAINER_ = maintainer;
         _I_ = i;
         _K_ = k;
+
+        string memory connect = "_";
+        string memory suffix = "DLP";
+        string memory uid = string(abi.encodePacked(address(this)));
+        name = string(
+            abi.encodePacked(
+                suffix,
+                connect,
+                _BASE_TOKEN_.symbol(),
+                connect,
+                _QUOTE_TOKEN_.symbol(),
+                connect,
+                uid
+            )
+        );
+        symbol = "DLP";
+        decimals = _BASE_TOKEN_.decimals();
     }
 
     // ============ Version Control ============

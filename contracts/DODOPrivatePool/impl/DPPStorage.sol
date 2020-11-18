@@ -9,16 +9,22 @@ pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
-import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
-import {DODOMath} from "../../lib/DODOMath.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
+import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 import {IPermissionManager} from "../../lib/PermissionManager.sol";
 import {IExternalValue} from "../../lib/ExternalValue.sol";
 import {IFeeRateModel} from "../../intf/IFeeRateModel.sol";
 import {IERC20} from "../../intf/IERC20.sol";
+import {RState} from "../../lib/PMMPricing.sol";
 
-contract DVMStorage is InitializableOwnable, ReentrancyGuard {
+/**
+ * @title Storage
+ * @author DODO Breeder
+ *
+ * @notice Local Variables
+ */
+contract DPPStorage is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
 
     // ============ Variables for Control ============
@@ -41,23 +47,16 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
 
     uint256 public _BASE_RESERVE_;
     uint256 public _QUOTE_RESERVE_;
-
-    // ============ Shares ============
-
-    string public symbol;
-    uint256 public decimals;
-    string public name;
-
-    uint256 public totalSupply;
-    mapping(address => uint256) internal _SHARES_;
-    mapping(address => mapping(address => uint256)) internal _ALLOWED_;
+    uint256 public _BASE_TARGET_;
+    uint256 public _QUOTE_TARGET_;
+    RState public _RState_;
 
     // ============ Variables for Pricing ============
 
     IFeeRateModel public _LP_FEE_RATE_MODEL_;
     IFeeRateModel public _MT_FEE_RATE_MODEL_;
-    uint256 public _K_;
-    uint256 public _I_;
+    IExternalValue public _K_;
+    IExternalValue public _I_;
 
     // ============ Setting Functions ============
 

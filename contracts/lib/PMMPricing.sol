@@ -213,6 +213,7 @@ library PMMPricing {
 
     // ============ Helper functions ============
 
+    // todo 我不确定这个函数是不是能改state的状态
     function adjustedTarget(PMMState memory state) public pure {
         if (state.R == RState.BELOW_ONE) {
             uint256 fairAmount = DecimalMath.mulFloor(state.B.sub(state.B0), state.i);

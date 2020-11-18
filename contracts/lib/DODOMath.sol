@@ -34,6 +34,7 @@ library DODOMath {
         uint256 i,
         uint256 k
     ) internal pure returns (uint256) {
+        require(V0 > 0, "TARGET_IS_ZERO");
         uint256 fairAmount = DecimalMath.mul(i, V1.sub(V2)); // i*delta
         uint256 V0V0V1V2 = DecimalMath.divCeil(V0.mul(V0).div(V1), V2);
         uint256 penalty = DecimalMath.mul(k, V0V0V1V2); // k(V0^2/V1/V2)
@@ -62,6 +63,7 @@ library DODOMath {
         bool deltaBSig,
         uint256 k
     ) internal pure returns (uint256) {
+        require(Q0 > 0, "TARGET_IS_ZERO");
         // calculate -b value and sig
         // -b = (1-k)Q1-kQ0^2/Q1+i*deltaB
         uint256 kQ02Q1 = DecimalMath.mul(k, Q0).mul(Q0).div(Q1); // kQ0^2/Q1

@@ -12,7 +12,8 @@ interface IDVM {
     function init(
         address owner,
         address maintainer,
-        address vault,
+        address baseTokenAddress,
+        address quoteTokenAddress,
         address lpFeeRateModel,
         address mtFeeRateModel,
         address tradePermissionManager,

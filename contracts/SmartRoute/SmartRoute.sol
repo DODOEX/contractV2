@@ -25,11 +25,7 @@ contract SmartRoute is Ownable {
         uint256 baseAmount,
         uint256 minReceive
     ) public returns (uint256 receiveAmount) {
-        IERC20(DVM(DVMAddress)._BASE_TOKEN_()).safeTransferFrom(
-            msg.sender,
-            address(DVM(DVMAddress)._VAULT_()),
-            baseAmount
-        );
+        IERC20(DVM(DVMAddress)._BASE_TOKEN_()).safeTransferFrom(msg.sender, DVMAddress, baseAmount);
         receiveAmount = DVM(DVMAddress).sellBase(to);
         require(receiveAmount >= minReceive, "RECEIVE_NOT_ENOUGH");
         return receiveAmount;
@@ -43,7 +39,7 @@ contract SmartRoute is Ownable {
     ) public returns (uint256 receiveAmount) {
         IERC20(DVM(DVMAddress)._QUOTE_TOKEN_()).safeTransferFrom(
             msg.sender,
-            address(DVM(DVMAddress)._VAULT_()),
+            DVMAddress,
             quoteAmount
         );
         receiveAmount = DVM(DVMAddress).sellQuote(to);
@@ -57,10 +53,10 @@ contract SmartRoute is Ownable {
         uint256 baseAmount,
         uint256 quoteAmount
     ) public returns (uint256 shares) {
-        address vault = address(DVM(DVMAddress)._VAULT_());
+        address vault = DVMAddress;
         uint256 adjustedBaseAmount;
         uint256 adjustedQuoteAmount;
-        (uint256 baseReserve, uint256 quoteReserve) = DVM(DVMAddress)._VAULT_().getVaultReserve();
+        (uint256 baseReserve, uint256 quoteReserve) = DVM(DVMAddress).getVaultReserve();
 
         if (quoteReserve == 0 && baseReserve == 0) {
             adjustedBaseAmount = baseAmount;
