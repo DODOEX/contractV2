@@ -14,26 +14,16 @@ import {SafeMath} from "../../lib/SafeMath.sol";
 import {DODOMath} from "../../lib/DODOMath.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {IPermissionManager} from "../../lib/PermissionManager.sol";
-<<<<<<< HEAD
 import {IExternalValue} from "../../lib/ExternalValue.sol";
 import {IFeeRateModel} from "../../intf/IFeeRateModel.sol";
 import {IERC20} from "../../intf/IERC20.sol";
-=======
-import {IGasPriceSource} from "../../lib/GasPriceSource.sol";
-import {IFeeRateModel} from "../../intf/IFeeRateModel.sol";
-import {IDVMVault} from "../intf/IDVMVault.sol";
->>>>>>> bd21a14b5398693ec5ad47e52fed6a8ea1193e9b
 
 contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
 
     // ============ Variables for Control ============
 
-<<<<<<< HEAD
     IExternalValue public _GAS_PRICE_LIMIT_;
-=======
-    IGasPriceSource public _GAS_PRICE_LIMIT_;
->>>>>>> bd21a14b5398693ec5ad47e52fed6a8ea1193e9b
 
     // ============ Advanced Controls ============
 
@@ -46,7 +36,6 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
 
     address public _MAINTAINER_; // collect maintainer fee
 
-<<<<<<< HEAD
     IERC20 public _BASE_TOKEN_;
     IERC20 public _QUOTE_TOKEN_;
 
@@ -62,10 +51,6 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     uint256 public totalSupply;
     mapping(address => uint256) internal _SHARES_;
     mapping(address => mapping(address => uint256)) internal _ALLOWED_;
-=======
-    address public _BASE_TOKEN_;
-    address public _QUOTE_TOKEN_;
->>>>>>> bd21a14b5398693ec5ad47e52fed6a8ea1193e9b
 
     // ============ Variables for Pricing ============
 
@@ -74,44 +59,6 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     uint256 public _K_;
     uint256 public _I_;
 
-<<<<<<< HEAD
-=======
-    IDVMVault public _VAULT_;
-
-    // ============ Modifiers ============
-
-    modifier isBuyAllow(address trader) {
-        require(!_BUYING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(trader), "TRADER_BUY_NOT_ALLOWED");
-        _;
-    }
-
-    modifier isSellAllow(address trader) {
-        require(
-            !_SELLING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(trader),
-            "TRADER_SELL_NOT_ALLOWED"
-        );
-        _;
-    }
-
-    modifier limitGasPrice() {
-        require(tx.gasprice <= _GAS_PRICE_LIMIT_.getGasPrice(), "GAS_PRICE_EXCEED");
-        _;
-    }
-
-    // ============ Helper Functions ============
-
-    function calculateBase0(uint256 baseAmount, uint256 quoteAmount) public view returns (uint256) {
-        uint256 fairAmount = DecimalMath.divFloor(quoteAmount, _I_);
-        return DODOMath._SolveQuadraticFunctionForTarget(baseAmount, _K_, fairAmount);
-    }
-
-    function getBase0() public view returns (uint256) {
-        (uint256 baseAmount, uint256 quoteAmount) = _VAULT_.getVaultReserve();
-        uint256 fairAmount = DecimalMath.divFloor(quoteAmount, _I_);
-        return DODOMath._SolveQuadraticFunctionForTarget(baseAmount, _K_, fairAmount);
-    }
-
->>>>>>> bd21a14b5398693ec5ad47e52fed6a8ea1193e9b
     // ============ Setting Functions ============
 
     function setLpFeeRateModel(address newLpFeeRateModel) external onlyOwner {
@@ -131,11 +78,7 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     }
 
     function setGasPriceSource(address newGasPriceLimitSource) external onlyOwner {
-<<<<<<< HEAD
         _GAS_PRICE_LIMIT_ = IExternalValue(newGasPriceLimitSource);
-=======
-        _GAS_PRICE_LIMIT_ = IGasPriceSource(newGasPriceLimitSource);
->>>>>>> bd21a14b5398693ec5ad47e52fed6a8ea1193e9b
     }
 
     function setBuy(bool open) external onlyOwner {
