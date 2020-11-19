@@ -8,7 +8,6 @@
 pragma solidity 0.6.9;
 
 import {Ownable} from "../lib/Ownable.sol";
-import {ExternalCall} from "../lib/ExternalCall.sol";
 import {IERC20} from "../intf/IERC20.sol";
 import {UniversalERC20} from "../lib/UniversalERC20.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
@@ -20,7 +19,6 @@ import {IWETH} from "../intf/IWETH.sol";
 contract SmartSwap is Ownable {
     using SafeMath for uint256;
     using UniversalERC20 for IERC20;
-    using ExternalCall for address;
 
     IERC20 constant ETH_ADDRESS = IERC20(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
     ISmartApprove public smartApprove;
