@@ -224,4 +224,8 @@ contract DPPTrader is DPPVault {
         PMMPricing.adjustedTarget(state);
         return state;
     }
+
+    function getMidPrice() public view returns (uint256 midPrice) {
+        return PMMPricing.getMidPrice(getPMMState());
+    }
 }
