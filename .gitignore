@@ -22,3 +22,4 @@ node_modules
 #Hardhat files
 cache
 artifacts
+deploy-detail.txt

@@ -11,7 +11,7 @@ pragma experimental ABIEncoderV2;
 import {DPPVault} from "./DPPVault.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
-import {RState, PMMState, PMMPricing} from "../../lib/PMMPricing.sol";
+import {PMMPricing} from "../../lib/PMMPricing.sol";
 import {IDODOCallee} from "../../intf/IDODOCallee.sol";
 
 contract DPPTrader is DPPVault {
@@ -49,7 +49,7 @@ contract DPPTrader is DPPVault {
         uint256 baseInput = getBaseInput();
         uint256 mtFee;
         uint256 newBaseTarget;
-        RState newRState;
+        PMMPricing.RState newRState;
         (receiveQuoteAmount, mtFee, newRState, newBaseTarget) = querySellBase(tx.origin, baseInput);
 
         _transferQuoteOut(to, receiveQuoteAmount);
@@ -76,7 +76,7 @@ contract DPPTrader is DPPVault {
         uint256 quoteInput = getQuoteInput();
         uint256 mtFee;
         uint256 newQuoteTarget;
-        RState newRState;
+        PMMPricing.RState newRState;
         (receiveBaseAmount, mtFee, newRState, newQuoteTarget) = querySellQuote(
             tx.origin,
             quoteInput
@@ -125,7 +125,7 @@ contract DPPTrader is DPPVault {
             (
                 uint256 receiveBaseAmount,
                 uint256 mtFee,
-                RState newRState,
+                PMMPricing.RState newRState,
                 uint256 newQuoteTarget
             ) = querySellQuote(tx.origin, quoteBalance.sub(_QUOTE_RESERVE_)); // revert if quoteBalance<quoteReserve
 
@@ -146,7 +146,7 @@ contract DPPTrader is DPPVault {
             (
                 uint256 receiveQuoteAmount,
                 uint256 mtFee,
-                RState newRState,
+                PMMPricing.RState newRState,
                 uint256 newBaseTarget
             ) = querySellBase(tx.origin, baseBalance.sub(_BASE_RESERVE_)); // revert if baseBalance<baseReserve
 
@@ -170,11 +170,11 @@ contract DPPTrader is DPPVault {
         returns (
             uint256 receiveQuoteAmount,
             uint256 mtFee,
-            RState newRState,
+            PMMPricing.RState newRState,
             uint256 newBaseTarget
         )
     {
-        PMMState memory state = getPMMState();
+        PMMPricing.PMMState memory state = getPMMState();
         (receiveQuoteAmount, newRState) = PMMPricing.sellBaseToken(state, payBaseAmount);
 
         uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(trader);
@@ -194,11 +194,11 @@ contract DPPTrader is DPPVault {
         returns (
             uint256 receiveBaseAmount,
             uint256 mtFee,
-            RState newRState,
+            PMMPricing.RState newRState,
             uint256 newQuoteTarget
         )
     {
-        PMMState memory state = getPMMState();
+        PMMPricing.PMMState memory state = getPMMState();
         (receiveBaseAmount, newRState) = PMMPricing.sellQuoteToken(state, payQuoteAmount);
 
         uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(trader);
@@ -213,7 +213,7 @@ contract DPPTrader is DPPVault {
 
     // ============ Helper Functions ============
 
-    function getPMMState() public view returns (PMMState memory state) {
+    function getPMMState() public view returns (PMMPricing.PMMState memory state) {
         state.i = _I_.get();
         state.K = _K_.get();
         state.B = _BASE_RESERVE_;

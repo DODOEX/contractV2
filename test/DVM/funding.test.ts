@@ -19,8 +19,8 @@ let trader: string;
 async function init(ctx: DVMContext): Promise<void> {
   lp = ctx.SpareAccounts[0];
   trader = ctx.SpareAccounts[1];
-  await ctx.approveRoute(lp);
-  await ctx.approveRoute(trader);
+  await ctx.approveProxy(lp);
+  await ctx.approveProxy(trader);
 
   await ctx.mintTestToken(lp, decimalStr("10"), decimalStr("1000"));
   await ctx.mintTestToken(trader, decimalStr("10"), decimalStr("1000"));
@@ -47,7 +47,7 @@ describe("Funding", () => {
 
     it("buy shares from init states", async () => {
 
-      await logGas(ctx.Route.methods
+      await logGas(ctx.DVMProxy.methods
         .depositToDVM(ctx.DVM.options.address, lp, decimalStr("10"), decimalStr("0"))
         , ctx.sendParam(lp), "buy shares");
 
@@ -74,7 +74,7 @@ describe("Funding", () => {
     });
 
     it("buy shares from init states with quote != 0", async () => {
-      await ctx.Route.methods
+      await ctx.DVMProxy.methods
         .depositToDVM(ctx.DVM.options.address, lp, decimalStr("10"), decimalStr("100"))
         .send(ctx.sendParam(lp));
       assert.equal(await ctx.Vault.methods.balanceOf(lp).call(), decimalStr("10"))
@@ -82,16 +82,16 @@ describe("Funding", () => {
     })
 
     it("buy shares with balanced input", async () => {
-      await ctx.Route.methods
+      await ctx.DVMProxy.methods
         .depositToDVM(ctx.DVM.options.address, lp, decimalStr("10"), decimalStr("0"))
         .send(ctx.sendParam(lp));
-      await ctx.Route.methods.sellQuoteOnDVM(ctx.DVM.options.address, trader, decimalStr("200"), decimalStr("1")).send(ctx.sendParam(trader))
+      await ctx.DVMProxy.methods.sellQuoteOnDVM(ctx.DVM.options.address, trader, decimalStr("200"), decimalStr("1")).send(ctx.sendParam(trader))
 
       var vaultBaseBalance = new BigNumber(await ctx.BASE.methods.balanceOf(ctx.Vault.options.address).call())
       var vaultQuoteBalance = new BigNumber(await ctx.QUOTE.methods.balanceOf(ctx.Vault.options.address).call())
       var increaseRatio = new BigNumber("0.1")
 
-      await ctx.Route.methods.depositToDVM(ctx.DVM.options.address, trader, vaultBaseBalance.multipliedBy(increaseRatio).toFixed(0), vaultQuoteBalance.multipliedBy(increaseRatio).toFixed(0)).send(ctx.sendParam(trader))
+      await ctx.DVMProxy.methods.depositToDVM(ctx.DVM.options.address, trader, vaultBaseBalance.multipliedBy(increaseRatio).toFixed(0), vaultQuoteBalance.multipliedBy(increaseRatio).toFixed(0)).send(ctx.sendParam(trader))
 
       assert.equal(
         await ctx.BASE.methods.balanceOf(ctx.Vault.options.address).call(),
@@ -106,15 +106,15 @@ describe("Funding", () => {
     })
 
     it("buy shares with unbalanced input (less quote)", async () => {
-      await ctx.Route.methods
+      await ctx.DVMProxy.methods
         .depositToDVM(ctx.DVM.options.address, lp, decimalStr("10"), decimalStr("0"))
         .send(ctx.sendParam(lp));
-      await ctx.Route.methods.sellQuoteOnDVM(ctx.DVM.options.address, trader, decimalStr("200"), decimalStr("1")).send(ctx.sendParam(trader))
+      await ctx.DVMProxy.methods.sellQuoteOnDVM(ctx.DVM.options.address, trader, decimalStr("200"), decimalStr("1")).send(ctx.sendParam(trader))
 
       var vaultBaseBalance = new BigNumber(await ctx.BASE.methods.balanceOf(ctx.Vault.options.address).call())
       var vaultQuoteBalance = new BigNumber(await ctx.QUOTE.methods.balanceOf(ctx.Vault.options.address).call())
       var increaseRatio = new BigNumber("0.1")
-      await ctx.Route.methods.depositToDVM(
+      await ctx.DVMProxy.methods.depositToDVM(
         ctx.DVM.options.address,
         trader,
         vaultBaseBalance.multipliedBy(increaseRatio).toFixed(0),
@@ -124,15 +124,15 @@ describe("Funding", () => {
     })
 
     it("buy shares with unbalanced input (less base)", async () => {
-      await ctx.Route.methods
+      await ctx.DVMProxy.methods
         .depositToDVM(ctx.DVM.options.address, lp, decimalStr("10"), decimalStr("0"))
         .send(ctx.sendParam(lp));
-      await ctx.Route.methods.sellQuoteOnDVM(ctx.DVM.options.address, trader, decimalStr("200"), decimalStr("1")).send(ctx.sendParam(trader))
+      await ctx.DVMProxy.methods.sellQuoteOnDVM(ctx.DVM.options.address, trader, decimalStr("200"), decimalStr("1")).send(ctx.sendParam(trader))
 
       var vaultBaseBalance = new BigNumber(await ctx.BASE.methods.balanceOf(ctx.Vault.options.address).call())
       var vaultQuoteBalance = new BigNumber(await ctx.QUOTE.methods.balanceOf(ctx.Vault.options.address).call())
       var increaseRatio = new BigNumber("0.1")
-      await ctx.Route.methods.depositToDVM(
+      await ctx.DVMProxy.methods.depositToDVM(
         ctx.DVM.options.address,
         trader,
         vaultBaseBalance.multipliedBy(increaseRatio).div(2).toFixed(0),
@@ -144,7 +144,7 @@ describe("Funding", () => {
 
   describe("sell shares", () => {
     it.only("sell shares", async () => {
-      await ctx.Route.methods
+      await ctx.DVMProxy.methods
         .depositToDVM(ctx.DVM.options.address, lp, decimalStr("10"), decimalStr("100"))
         .send(ctx.sendParam(lp));
       var vaultShares = await ctx.Vault.methods.balanceOf(lp).call()

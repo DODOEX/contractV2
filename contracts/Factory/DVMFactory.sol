@@ -11,7 +11,7 @@ pragma experimental ABIEncoderV2;
 import {Ownable} from "../lib/Ownable.sol";
 import {ICloneFactory} from "../lib/CloneFactory.sol";
 import {IConstFeeRateModel} from "../lib/ConstFeeRateModel.sol";
-import {IDVM} from "../DODOVendorMachine/intf/IDVM.sol";
+import {IDVM} from "../DODOVendingMachine/intf/IDVM.sol";
 import {IPermissionManager} from "../lib/PermissionManager.sol";
 
 contract DVMFactory is Ownable {
@@ -39,7 +39,7 @@ contract DVMFactory is Ownable {
         _DEFAULT_GAS_PRICE_SOURCE_ = defaultGasPriceSource;
     }
 
-    function createStandardDODOVendorMachine(
+    function createStandardDODOVendingMachine(
         address baseToken,
         address quoteToken,
         uint256 lpFeeRate,

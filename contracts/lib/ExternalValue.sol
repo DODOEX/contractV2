@@ -9,6 +9,7 @@ pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
 import {Ownable} from "./Ownable.sol";
+import {InitializableOwnable} from "./InitializableOwnable.sol";
 
 interface IExternalValue {
     function set(uint256) external;
@@ -16,10 +17,10 @@ interface IExternalValue {
     function get() external view returns (uint256);
 }
 
-contract ExternalValue is IExternalValue, Ownable {
+contract ExternalValue is IExternalValue, InitializableOwnable {
     uint256 public _VALUE_;
 
-    function set(uint256 value) external override {
+    function set(uint256 value) external override onlyOwner {
         _VALUE_ = value;
     }
 

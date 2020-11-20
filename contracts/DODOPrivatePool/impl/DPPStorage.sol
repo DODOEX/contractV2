@@ -16,7 +16,7 @@ import {IPermissionManager} from "../../lib/PermissionManager.sol";
 import {IExternalValue} from "../../lib/ExternalValue.sol";
 import {IFeeRateModel} from "../../intf/IFeeRateModel.sol";
 import {IERC20} from "../../intf/IERC20.sol";
-import {RState} from "../../lib/PMMPricing.sol";
+import {PMMPricing} from "../../lib/PMMPricing.sol";
 
 /**
  * @title Storage
@@ -49,7 +49,7 @@ contract DPPStorage is InitializableOwnable, ReentrancyGuard {
     uint256 public _QUOTE_RESERVE_;
     uint256 public _BASE_TARGET_;
     uint256 public _QUOTE_TARGET_;
-    RState public _RState_;
+    PMMPricing.RState public _RState_;
 
     // ============ Variables for Pricing ============
 

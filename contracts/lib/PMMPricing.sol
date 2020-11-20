@@ -19,23 +19,23 @@ import {DODOMath} from "../lib/DODOMath.sol";
  * @notice DODO Pricing model
  */
 
-enum RState {ONE, ABOVE_ONE, BELOW_ONE}
-
-struct PMMState {
-    uint256 i;
-    uint256 K;
-    uint256 B;
-    uint256 Q;
-    uint256 B0;
-    uint256 Q0;
-    RState R;
-}
-
 library PMMPricing {
     using SafeMath for uint256;
 
+    enum RState {ONE, ABOVE_ONE, BELOW_ONE}
+
+    struct PMMState {
+        uint256 i;
+        uint256 K;
+        uint256 B;
+        uint256 Q;
+        uint256 B0;
+        uint256 Q0;
+        RState R;
+    }
+
     function sellBaseToken(PMMState memory state, uint256 payBaseAmount)
-        public
+        internal
         pure
         returns (uint256 receiveQuoteAmount, RState newR)
     {
@@ -80,7 +80,7 @@ library PMMPricing {
     }
 
     function sellQuoteToken(PMMState memory state, uint256 payQuoteAmount)
-        public
+        internal
         pure
         returns (uint256 receiveBaseAmount, RState newR)
     {
@@ -214,7 +214,7 @@ library PMMPricing {
     // ============ Helper functions ============
 
     // todo 我不确定这个函数是不是能改state的状态
-    function adjustedTarget(PMMState memory state) public pure {
+    function adjustedTarget(PMMState memory state) internal pure {
         if (state.R == RState.BELOW_ONE) {
             uint256 fairAmount = DecimalMath.mulFloor(state.B.sub(state.B0), state.i);
             state.Q0 = DODOMath._SolveQuadraticFunctionForTarget(state.B, state.K, fairAmount);
@@ -224,7 +224,7 @@ library PMMPricing {
         }
     }
 
-    function getMidPrice(PMMState memory state) public pure returns (uint256 midPrice) {
+    function getMidPrice(PMMState memory state) internal pure returns (uint256 midPrice) {
         if (state.R == RState.BELOW_ONE) {
             uint256 R = DecimalMath.divFloor(state.Q0.mul(state.Q0).div(state.Q), state.Q);
             R = DecimalMath.ONE.sub(state.K).add(DecimalMath.mul(state.K, R));

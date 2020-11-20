@@ -49,10 +49,9 @@ export let DefaultDVMContextInitConfig = {
 export class DVMContext {
   EVM: EVM;
   Web3: Web3;
-  Route: Contract;
+  DVMProxy: Contract;
   DVMFactory: Contract;
   DVM: Contract;
-  Vault: Contract;
   BASE: Contract;
   QUOTE: Contract;
   Deployer: string;
@@ -64,20 +63,18 @@ export class DVMContext {
   async init(config: DVMContextInitConfig) {
     this.EVM = new EVM();
     this.Web3 = getDefaultWeb3();
-    this.Route = await contracts.newContract(contracts.SMART_ROUTE_NAME)
+    this.DVMProxy = await contracts.newContract(contracts.DVM_PROXY_NAME)
 
     var cloneFactory = await contracts.newContract(
       contracts.CLONE_FACTORY_CONTRACT_NAME
     );
-    var vaultTemplate = await contracts.newContract(contracts.DVM_VAULT_NAME)
     var dvmTemplate = await contracts.newContract(contracts.DVM_NAME)
     var feeRateModelTemplate = await contracts.newContract(contracts.CONST_FEE_RATE_MODEL_NAME)
     var permissionManagerTemplate = await contracts.newContract(contracts.PERMISSION_MANAGER_NAME)
-    var gasPriceSource = await contracts.newContract(contracts.GAS_PRICE_SOURCE_NAME)
+    var gasPriceSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME)
 
     this.DVMFactory = await contracts.newContract(contracts.DVM_FACTORY_NAME,
       [cloneFactory.options.address,
-      vaultTemplate.options.address,
       dvmTemplate.options.address,
       feeRateModelTemplate.options.address,
       permissionManagerTemplate.options.address,
@@ -98,7 +95,7 @@ export class DVMContext {
     this.Maintainer = allAccounts[1];
     this.SpareAccounts = allAccounts.slice(2, 10);
 
-    await this.DVMFactory.methods.createStandardDODOVendorMachine(
+    await this.DVMFactory.methods.createStandardDODOVendingMachine(
       this.BASE.options.address,
       this.QUOTE.options.address,
       config.lpFeeRate,
@@ -109,10 +106,10 @@ export class DVMContext {
 
     var vendorMachines = await this.DVMFactory.methods.getVendorMachine(this.BASE.options.address, this.QUOTE.options.address).call()
     this.DVM = contracts.getContractWithAddress(contracts.DVM_NAME, vendorMachines[0])
-    this.Vault = contracts.getContractWithAddress(contracts.DVM_VAULT_NAME, await this.DVM.methods._VAULT_().call())
 
     await this.DVM.methods.setMaintainer(this.Maintainer).send(this.sendParam(this.Deployer))
-    await gasPriceSource.methods.setGasPrice(MAX_UINT256).send(this.sendParam(this.Deployer))
+    await gasPriceSource.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer))
+    await gasPriceSource.methods.set(MAX_UINT256).send(this.sendParam(this.Deployer))
 
     console.log(log.blueText("[Init DVM context]"));
   }
@@ -133,12 +130,12 @@ export class DVMContext {
       .send(this.sendParam(this.Deployer));
   }
 
-  async approveRoute(account: string) {
+  async approveProxy(account: string) {
     await this.BASE.methods
-      .approve(this.Route.options.address, MAX_UINT256)
+      .approve(this.DVMProxy.options.address, MAX_UINT256)
       .send(this.sendParam(account));
     await this.QUOTE.methods
-      .approve(this.Route.options.address, MAX_UINT256)
+      .approve(this.DVMProxy.options.address, MAX_UINT256)
       .send(this.sendParam(account));
   }
 }

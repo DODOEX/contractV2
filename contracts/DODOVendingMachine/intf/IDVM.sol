@@ -21,4 +21,16 @@ interface IDVM {
         uint256 i,
         uint256 k
     ) external;
+
+    function _BASE_TOKEN_() external returns (address);
+
+    function _QUOTE_TOKEN_() external returns (address);
+
+    function getVaultReserve() external returns (uint256 baseReserve, uint256 quoteReserve);
+
+    function sellBase(address to) external returns (uint256);
+
+    function sellQuote(address to) external returns (uint256);
+
+    function buyShares(address to) external returns (uint256);
 }

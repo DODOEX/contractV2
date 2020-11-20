@@ -1,8 +1,0 @@
-====================================================
-network type: live
-Deploy time: 2020/11/16 上午10:26:34
-Deploy type: Smart Route
-SmartApprove Address:  0xe380Ad3181A69BF92133D2feb609867c4adC61eA
-DODOSellHelper Address:  0x533da777aedce766ceae696bf90f8541a4ba80eb
-SmartSwap Address:  0xcD8392A57ED2fBD6440037E52F176c26dEFc0ba4
-SmartApprovce setSmartSwap tx:  0x35eccc657ee0d473b6e58324123d3da568ce12389fedff914a8dada563b35b3a

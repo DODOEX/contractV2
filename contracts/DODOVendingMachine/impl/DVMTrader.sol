@@ -13,7 +13,7 @@ import {SafeMath} from "../../lib/SafeMath.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {DODOMath} from "../../lib/DODOMath.sol";
 import {IDODOCallee} from "../../intf/IDODOCallee.sol";
-import {RState, PMMState, PMMPricing} from "../../lib/PMMPricing.sol";
+import {PMMPricing} from "../../lib/PMMPricing.sol";
 
 contract DVMTrader is DVMVault {
     using SafeMath for uint256;
@@ -210,14 +210,14 @@ contract DVMTrader is DVMVault {
 
     // ============ Helper Functions ============
 
-    function getPMMState() public view returns (PMMState memory state) {
+    function getPMMState() public view returns (PMMPricing.PMMState memory state) {
         state.i = _I_;
         state.K = _K_;
         state.B = _BASE_RESERVE_;
         state.Q = _QUOTE_RESERVE_;
         state.B0 = calculateBase0(state.B, state.Q);
         state.Q0 = 0;
-        state.R = RState.ABOVE_ONE;
+        state.R = PMMPricing.RState.ABOVE_ONE;
         return state;
     }
 

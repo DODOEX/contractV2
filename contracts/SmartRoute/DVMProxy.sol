@@ -7,15 +7,13 @@
 
 pragma solidity 0.6.9;
 
-import {Ownable} from "../lib/Ownable.sol";
-import {DVM} from "../DODOVendorMachine/impl/DVM.sol";
-import {DVMVault} from "../DODOVendorMachine/impl/DVMVault.sol";
+import {IDVM} from "../DODOVendingMachine/intf/IDVM.sol";
 import {IERC20} from "../intf/IERC20.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
 
-contract SmartRoute is Ownable {
+contract DVMProxy {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
@@ -25,8 +23,12 @@ contract SmartRoute is Ownable {
         uint256 baseAmount,
         uint256 minReceive
     ) public returns (uint256 receiveAmount) {
-        IERC20(DVM(DVMAddress)._BASE_TOKEN_()).safeTransferFrom(msg.sender, DVMAddress, baseAmount);
-        receiveAmount = DVM(DVMAddress).sellBase(to);
+        IERC20(IDVM(DVMAddress)._BASE_TOKEN_()).safeTransferFrom(
+            msg.sender,
+            DVMAddress,
+            baseAmount
+        );
+        receiveAmount = IDVM(DVMAddress).sellBase(to);
         require(receiveAmount >= minReceive, "RECEIVE_NOT_ENOUGH");
         return receiveAmount;
     }
@@ -37,12 +39,12 @@ contract SmartRoute is Ownable {
         uint256 quoteAmount,
         uint256 minReceive
     ) public returns (uint256 receiveAmount) {
-        IERC20(DVM(DVMAddress)._QUOTE_TOKEN_()).safeTransferFrom(
+        IERC20(IDVM(DVMAddress)._QUOTE_TOKEN_()).safeTransferFrom(
             msg.sender,
             DVMAddress,
             quoteAmount
         );
-        receiveAmount = DVM(DVMAddress).sellQuote(to);
+        receiveAmount = IDVM(DVMAddress).sellQuote(to);
         require(receiveAmount >= minReceive, "RECEIVE_NOT_ENOUGU");
         return receiveAmount;
     }
@@ -53,10 +55,9 @@ contract SmartRoute is Ownable {
         uint256 baseAmount,
         uint256 quoteAmount
     ) public returns (uint256 shares) {
-        address vault = DVMAddress;
         uint256 adjustedBaseAmount;
         uint256 adjustedQuoteAmount;
-        (uint256 baseReserve, uint256 quoteReserve) = DVM(DVMAddress).getVaultReserve();
+        (uint256 baseReserve, uint256 quoteReserve) = IDVM(DVMAddress).getVaultReserve();
 
         if (quoteReserve == 0 && baseReserve == 0) {
             adjustedBaseAmount = baseAmount;
@@ -80,18 +81,18 @@ contract SmartRoute is Ownable {
             }
         }
 
-        IERC20(DVM(DVMAddress)._BASE_TOKEN_()).safeTransferFrom(
+        IERC20(IDVM(DVMAddress)._BASE_TOKEN_()).safeTransferFrom(
             msg.sender,
-            vault,
+            DVMAddress,
             adjustedBaseAmount
         );
-        IERC20(DVM(DVMAddress)._QUOTE_TOKEN_()).safeTransferFrom(
+        IERC20(IDVM(DVMAddress)._QUOTE_TOKEN_()).safeTransferFrom(
             msg.sender,
-            vault,
+            DVMAddress,
             adjustedQuoteAmount
         );
 
-        shares = DVM(DVMAddress).buyShares(to);
+        shares = IDVM(DVMAddress).buyShares(to);
 
         return shares;
     }

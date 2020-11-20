@@ -31,10 +31,10 @@ export const DODO_MINE_READER_NAME = "DODOMineReader"
 export const DVM_VAULT_NAME = "DVMVault"
 export const DVM_NAME = "DVM"
 export const DVM_FACTORY_NAME = "DVMFactory"
-export const SMART_ROUTE_NAME = "SmartRoute"
+export const DVM_PROXY_NAME = "DVMProxy"
 export const CONST_FEE_RATE_MODEL_NAME = "ConstFeeRateModel"
 export const PERMISSION_MANAGER_NAME = "PermissionManager"
-export const GAS_PRICE_SOURCE_NAME = "GasPriceSource"
+export const EXTERNAL_VALUE_NAME = "ExternalValue"
 
 interface ContractJson {
   abi: any;

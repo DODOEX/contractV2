@@ -18,17 +18,15 @@ let trader: string;
 async function init(ctx: DVMContext): Promise<void> {
   lp = ctx.SpareAccounts[0];
   trader = ctx.SpareAccounts[1];
-  await ctx.approveRoute(lp);
-  await ctx.approveRoute(trader);
+  await ctx.approveProxy(lp);
+  await ctx.approveProxy(trader);
 
   await ctx.mintTestToken(lp, decimalStr("10"), decimalStr("1000"));
   await ctx.mintTestToken(trader, decimalStr("10"), decimalStr("1000"));
 
-  await ctx.Route.methods
+  await ctx.DVMProxy.methods
     .depositToDVM(ctx.DVM.options.address, lp, decimalStr("10"), decimalStr("0"))
     .send(ctx.sendParam(lp));
-
-  console.log(await ctx.Vault.methods.getVaultBalance().call())
 
   console.log("deposit")
 }
@@ -51,12 +49,16 @@ describe("Trader", () => {
   });
 
   describe("trade", () => {
+    it.only("basic check", async () => {
+      console.log(await ctx.DVM.methods.getPMMState().call())
+      console.log(await ctx.DVM.methods.querySellQuote(ctx.Deployer, decimalStr("200")).call())
+    })
     it("buy & sell", async () => {
 
       console.log("BASE0 before buy", await ctx.DVM.methods.getBase0().call())
 
       // buy
-      await logGas(ctx.Route.methods.sellQuoteOnDVM(ctx.DVM.options.address, trader, decimalStr("200"), decimalStr("1")), ctx.sendParam(trader), "buy base token")
+      await logGas(ctx.DVMProxy.methods.sellQuoteOnDVM(ctx.DVM.options.address, trader, decimalStr("200"), decimalStr("1")), ctx.sendParam(trader), "buy base token")
       console.log("BASE0 after buy", await ctx.DVM.methods.getBase0().call())
       // trader balances
       assert.equal(
@@ -69,11 +71,11 @@ describe("Trader", () => {
       );
       // vault balances
       assert.equal(
-        await ctx.BASE.methods.balanceOf(ctx.Vault.options.address).call(),
+        await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
         "8051283784161162863"
       );
       assert.equal(
-        await ctx.QUOTE.methods.balanceOf(ctx.Vault.options.address).call(),
+        await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
         decimalStr("200")
       );
       // maintainer balances
@@ -87,7 +89,7 @@ describe("Trader", () => {
       );
 
       // sell
-      await logGas(ctx.Route.methods.sellBaseOnDVM(ctx.DVM.options.address, trader, decimalStr("1"), decimalStr("100")), ctx.sendParam(trader), "sell base token")
+      await logGas(ctx.DVMProxy.methods.sellBaseOnDVM(ctx.DVM.options.address, trader, decimalStr("1"), decimalStr("100")), ctx.sendParam(trader), "sell base token")
       console.log("BASE0 after sell", await ctx.DVM.methods.getBase0().call())
       // trader balances
       assert.equal(
@@ -100,11 +102,11 @@ describe("Trader", () => {
       );
       // vault balances
       assert.equal(
-        await ctx.BASE.methods.balanceOf(ctx.Vault.options.address).call(),
+        await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
         "9051283784161162863"
       );
       assert.equal(
-        await ctx.QUOTE.methods.balanceOf(ctx.Vault.options.address).call(),
+        await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
         "96474456349930717298"
       );
       // maintainer balances
@@ -118,7 +120,7 @@ describe("Trader", () => {
       );
 
       // buy when quoet is not 0
-      await logGas(ctx.Route.methods.sellQuoteOnDVM(ctx.DVM.options.address, trader, decimalStr("200"), decimalStr("1")), ctx.sendParam(trader), "buy base token")
+      await logGas(ctx.DVMProxy.methods.sellQuoteOnDVM(ctx.DVM.options.address, trader, decimalStr("200"), decimalStr("1")), ctx.sendParam(trader), "buy base token")
       console.log("BASE0 after second buy", await ctx.DVM.methods.getBase0().call())
       // trader balances
       console.log(
@@ -131,11 +133,11 @@ describe("Trader", () => {
       );
       // vault balances
       console.log(
-        await ctx.BASE.methods.balanceOf(ctx.Vault.options.address).call(),
+        await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
         "7158622099620899913"
       );
       console.log(
-        await ctx.QUOTE.methods.balanceOf(ctx.Vault.options.address).call(),
+        await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
         "296474456349930717298"
       );
       // maintainer balances
