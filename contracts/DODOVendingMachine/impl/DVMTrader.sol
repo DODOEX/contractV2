@@ -200,12 +200,7 @@ contract DVMTrader is DVMVault {
     // }
 
     function getMidPrice() public view returns (uint256 midPrice) {
-        (uint256 baseReserve, uint256 quoteReserve) = getVaultReserve();
-        uint256 B0 = calculateBase0(baseReserve, quoteReserve);
-
-        uint256 offsetRatio = DecimalMath.ONE.mul(B0).div(baseReserve).mul(B0).div(baseReserve);
-        uint256 offset = DecimalMath.ONE.sub(_K_).add(DecimalMath.mulFloor(offsetRatio, _K_));
-        return DecimalMath.mulFloor(_I_, offset);
+        return PMMPricing.getMidPrice(getPMMState());
     }
 
     // ============ Helper Functions ============
