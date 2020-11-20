@@ -127,7 +127,6 @@ library PMMPricing {
                 state.Q0,
                 state.Q0,
                 DecimalMath.mulFloor(state.i, payBaseAmount),
-                false,
                 state.K
             );
     }
@@ -142,7 +141,6 @@ library PMMPricing {
                 state.B0,
                 state.B0,
                 DecimalMath.divFloor(payQuoteAmount, state.i),
-                false,
                 state.K
             );
     }
@@ -174,7 +172,6 @@ library PMMPricing {
                 state.Q0,
                 state.Q,
                 DecimalMath.mul(state.i, payBaseAmount),
-                false,
                 state.K
             );
     }
@@ -206,7 +203,6 @@ library PMMPricing {
                 state.B0,
                 state.B,
                 DecimalMath.divFloor(payQuoteAmount, state.i),
-                false,
                 state.K
             );
     }

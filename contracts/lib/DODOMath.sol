@@ -55,25 +55,31 @@ library DODOMath {
         if deltaBSig=true, then Q2>Q1, user sell Q and receive B
         if deltaBSig=false, then Q2<Q1, user sell B and receive Q
         return |Q1-Q2|
+
+        if k==1 
+        Q2 = -c/b
+
+        if k==0
     */
     function _SolveQuadraticFunctionForTrade(
         uint256 Q0,
         uint256 Q1,
         uint256 ideltaB,
-        bool deltaBSig,
+        // bool deltaBSig, deltaBSig is always false
         uint256 k
     ) internal pure returns (uint256) {
         require(Q0 > 0, "TARGET_IS_ZERO");
+        if (k == DecimalMath.ONE) {
+            // Q2=Q1/(1-ideltaBQ1/Q0/Q0)
+            uint256 temp = ideltaB.mul(Q1).mul(DecimalMath.ONE).div(Q0.mul(Q0));
+            return Q1.sub(DecimalMath.divFloor(DecimalMath.ONE, DecimalMath.ONE.add(temp)));
+        }
         // calculate -b value and sig
         // -b = (1-k)Q1-kQ0^2/Q1+i*deltaB
         uint256 kQ02Q1 = DecimalMath.mul(k, Q0).mul(Q0).div(Q1); // kQ0^2/Q1
         uint256 b = DecimalMath.mul(DecimalMath.ONE.sub(k), Q1); // (1-k)Q1
         bool minusbSig = true;
-        if (deltaBSig) {
-            b = b.add(ideltaB); // (1-k)Q1+i*deltaB
-        } else {
-            kQ02Q1 = kQ02Q1.add(ideltaB); // i*deltaB+kQ0^2/Q1
-        }
+        kQ02Q1 = kQ02Q1.add(ideltaB); // i*deltaB+kQ0^2/Q1
         if (b >= kQ02Q1) {
             b = b.sub(kQ02Q1);
             minusbSig = true;
@@ -98,11 +104,7 @@ library DODOMath {
             numerator = squareRoot.sub(b);
         }
 
-        if (deltaBSig) {
-            return DecimalMath.divFloor(numerator, denominator).sub(Q1);
-        } else {
-            return Q1.sub(DecimalMath.divCeil(numerator, denominator));
-        }
+        return Q1.sub(DecimalMath.divCeil(numerator, denominator));
     }
 
     /*
