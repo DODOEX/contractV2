@@ -61,6 +61,7 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
 
     // ============ Setting Functions ============
 
+    //TODO: owner权限问题论证
     function setLpFeeRateModel(address newLpFeeRateModel) external onlyOwner {
         _LP_FEE_RATE_MODEL_ = IFeeRateModel(newLpFeeRateModel);
     }

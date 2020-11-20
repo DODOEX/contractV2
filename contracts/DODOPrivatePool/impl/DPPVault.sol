@@ -50,7 +50,9 @@ contract DPPVault is DPPStorage {
         _checkStatus();
     }
 
+    //TODO: Route queryfunc 以及 withdraw and reset
     // todo 这里需要考虑，怎么一个tx同时更新k i 和 fee并reset
+    //TODO: 修改feerate等
     function reset() public onlyOwner {
         _BASE_TARGET_ = _BASE_TOKEN_.balanceOf(address(this));
         _QUOTE_TARGET_ = _QUOTE_TOKEN_.balanceOf(address(this));
@@ -67,6 +69,7 @@ contract DPPVault is DPPStorage {
 
     // ============ Assets Transfer ============
 
+    //TODO：确定Amount后，内部调用
     function withdraw(
         address to,
         uint256 baseAmount,

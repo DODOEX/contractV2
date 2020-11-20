@@ -36,7 +36,8 @@ contract SmartSwap is Ownable {
         IERC20 indexed toToken,
         address indexed sender,
         uint256 fromAmount,
-        uint256 returnAmount
+        uint256 returnAmount,
+        uint256 timeStamp
     );
 
     event ExternalRecord(address indexed to, address indexed sender);
@@ -104,7 +105,7 @@ contract SmartSwap is Ownable {
 
         require(returnAmount >= minReturnAmount, "DODO SmartSwap: Return amount is not enough");
         toToken.universalTransfer(msg.sender, returnAmount);
-        emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount);
+        emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount, block.timestamp);
     }
 
     function externalSwap(
@@ -137,7 +138,7 @@ contract SmartSwap is Ownable {
 
         require(returnAmount >= minReturnAmount, "DODO SmartSwap: Return amount is not enough");
         toToken.universalTransfer(msg.sender, returnAmount);
-        emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount);
+        emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount, block.timestamp);
         emit ExternalRecord(to, msg.sender);
     }
 }

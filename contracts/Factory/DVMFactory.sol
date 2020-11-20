@@ -39,6 +39,7 @@ contract DVMFactory is Ownable {
         _DEFAULT_GAS_PRICE_SOURCE_ = defaultGasPriceSource;
     }
 
+
     function createStandardDODOVendingMachine(
         address baseToken,
         address quoteToken,
@@ -62,6 +63,9 @@ contract DVMFactory is Ownable {
             k
         );
 
+        //TODO: Create2
+        //TODO: DVM作为Mapping的字段，维护自身属性
+        //TODO: 创建者索引，便于my pool查询
         _REGISTRY_[baseToken][quoteToken].push(newVendorMachine);
         return newVendorMachine;
     }
