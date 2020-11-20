@@ -89,8 +89,8 @@ contract DVMTrader is DVMVault {
         (uint256 baseReserve, uint256 quoteReserve) = getVaultReserve();
         (uint256 baseBalance, uint256 quoteBalance) = getVaultBalance();
 
-        uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(assetTo);
-        uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(assetTo);
+        uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(tx.origin);
+        uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(tx.origin);
         if (baseBalance < baseReserve) {
             uint256 validBaseOut = DecimalMath.divCeil(
                 baseReserve - baseBalance,
