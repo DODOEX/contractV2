@@ -207,7 +207,7 @@ library PMMPricing {
                 state.B,
                 DecimalMath.divFloor(payQuoteAmount, state.i),
                 false,
-                state.i
+                state.K
             );
     }
 

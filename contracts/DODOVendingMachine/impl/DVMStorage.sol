@@ -88,4 +88,14 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     function setSell(bool open) external onlyOwner {
         _SELLING_CLOSE_ = !open;
     }
+
+    // ============ View Functions ============
+
+    function getLpFeeRate(address trader) external view returns (uint256 feeRate) {
+        return _LP_FEE_RATE_MODEL_.getFeeRate(trader);
+    }
+
+    function getMtFeeRate(address trader) external view returns (uint256 feeRate) {
+        return _MT_FEE_RATE_MODEL_.getFeeRate(trader);
+    }
 }

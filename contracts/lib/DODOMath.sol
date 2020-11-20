@@ -52,8 +52,8 @@ library DODOMath {
         c=-kQ0^2
         and Q2=(-b+sqrt(b^2+4(1-k)kQ0^2))/2(1-k)
         note: another root is negative, abondan
-        if deltaBSig=true, then Q2>Q1
-        if deltaBSig=false, then Q2<Q1
+        if deltaBSig=true, then Q2>Q1, user sell Q and receive B
+        if deltaBSig=false, then Q2<Q1, user sell B and receive Q
         return |Q1-Q2|
     */
     function _SolveQuadraticFunctionForTrade(

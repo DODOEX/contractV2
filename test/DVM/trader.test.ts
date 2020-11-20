@@ -49,10 +49,12 @@ describe("Trader", () => {
   });
 
   describe("trade", () => {
-    it.only("basic check", async () => {
-      console.log(await ctx.DVM.methods.getPMMState().call())
-      console.log(await ctx.DVM.methods.querySellQuote(ctx.Deployer, decimalStr("200")).call())
-    })
+    // it.only("basic check", async () => {
+    //   console.log(await ctx.DVM.methods.getPMMState().call())
+    //   console.log(await ctx.DVM.methods.getLpFeeRate(ctx.Deployer).call())
+    //   console.log(await ctx.DVM.methods.getMtFeeRate(ctx.Deployer).call())
+    //   console.log(await ctx.DVM.methods.querySellQuote(ctx.Deployer, decimalStr("200")).call())
+    // })
     it("buy & sell", async () => {
 
       console.log("BASE0 before buy", await ctx.DVM.methods.getBase0().call())
@@ -121,31 +123,31 @@ describe("Trader", () => {
 
       // buy when quoet is not 0
       await logGas(ctx.DVMProxy.methods.sellQuoteOnDVM(ctx.DVM.options.address, trader, decimalStr("200"), decimalStr("1")), ctx.sendParam(trader), "buy base token")
-      console.log("BASE0 after second buy", await ctx.DVM.methods.getBase0().call())
+      assert.equal("BASE0 after second buy", await ctx.DVM.methods.getBase0().call())
       // trader balances
-      console.log(
+      assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
         "12837528824326616018"
       );
-      console.log(
+      assert.equal(
         await ctx.QUOTE.methods.balanceOf(trader).call(),
         "703421810640399874603"
       );
       // vault balances
-      console.log(
+      assert.equal(
         await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
         "7158622099620899913"
       );
-      console.log(
+      assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
         "296474456349930717298"
       );
       // maintainer balances
-      console.log(
+      assert.equal(
         await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(),
         "3849076052484069"
       );
-      console.log(
+      assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
         "103733009669408099"
       );
