@@ -126,7 +126,8 @@ library PMMPricing {
             DODOMath._SolveQuadraticFunctionForTrade(
                 state.Q0,
                 state.Q0,
-                DecimalMath.mulFloor(state.i, payBaseAmount),
+                payBaseAmount,
+                state.i,
                 state.K
             );
     }
@@ -140,7 +141,8 @@ library PMMPricing {
             DODOMath._SolveQuadraticFunctionForTrade(
                 state.B0,
                 state.B0,
-                DecimalMath.divFloor(payQuoteAmount, state.i),
+                payQuoteAmount,
+                DecimalMath.reciprocalFloor(state.i),
                 state.K
             );
     }
@@ -157,7 +159,7 @@ library PMMPricing {
                 state.Q0,
                 state.Q.add(payQuoteAmount),
                 state.Q,
-                DecimalMath.divFloor(DecimalMath.ONE, state.i),
+                DecimalMath.reciprocalFloor(state.i),
                 state.K
             );
     }
@@ -171,7 +173,8 @@ library PMMPricing {
             DODOMath._SolveQuadraticFunctionForTrade(
                 state.Q0,
                 state.Q,
-                DecimalMath.mul(state.i, payBaseAmount),
+                payBaseAmount,
+                state.i,
                 state.K
             );
     }
@@ -202,7 +205,8 @@ library PMMPricing {
             DODOMath._SolveQuadraticFunctionForTrade(
                 state.B0,
                 state.B,
-                DecimalMath.divFloor(payQuoteAmount, state.i),
+                payQuoteAmount,
+                DecimalMath.reciprocalFloor(state.i),
                 state.K
             );
     }
@@ -212,11 +216,19 @@ library PMMPricing {
     // todo 我不确定这个函数是不是能改state的状态
     function adjustedTarget(PMMState memory state) internal pure {
         if (state.R == RState.BELOW_ONE) {
-            uint256 fairAmount = DecimalMath.mulFloor(state.B.sub(state.B0), state.i);
-            state.Q0 = DODOMath._SolveQuadraticFunctionForTarget(state.B, state.K, fairAmount);
+            state.Q0 = DODOMath._SolveQuadraticFunctionForTarget(
+                state.B,
+                state.B.sub(state.B0),
+                state.i,
+                state.K
+            );
         } else if (state.R == RState.ABOVE_ONE) {
-            uint256 fairAmount = DecimalMath.divFloor(state.Q.sub(state.Q0), state.i);
-            state.B0 = DODOMath._SolveQuadraticFunctionForTarget(state.Q, state.K, fairAmount);
+            state.B0 = DODOMath._SolveQuadraticFunctionForTarget(
+                state.Q,
+                state.Q.sub(state.Q0),
+                DecimalMath.reciprocalFloor(state.i),
+                state.K
+            );
         }
     }
 

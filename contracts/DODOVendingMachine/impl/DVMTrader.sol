@@ -151,54 +151,6 @@ contract DVMTrader is DVMVault {
         return (receiveBaseAmount, mtFee);
     }
 
-    // // 这是一个仅供查询的合约，所有交易都是基于先给input，再输出output的
-    // // 所以想要买10ETH，这个函数可以给你一个大概的成本，你用这个成本输入，最后能否得到10ETH是要看情况的
-    // function queryBuyBase(address trader, uint256 receiveBaseAmount)
-    //     public
-    //     view
-    //     returns (uint256 payQuoteAmount)
-    // {
-    //     uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(trader);
-    //     uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(trader);
-    //     uint256 validReceiveBaseAmount = DecimalMath.divCeil(
-    //         receiveBaseAmount,
-    //         DecimalMath.ONE.sub(mtFeeRate).sub(lpFeeRate)
-    //     );
-    //     (uint256 baseReserve, uint256 quoteReserve) = getVaultReserve();
-    //     require(baseReserve > validReceiveBaseAmount, "DODO_BASE_BALANCE_NOT_ENOUGH");
-
-    //     uint256 B0 = calculateBase0(baseReserve, quoteReserve);
-    //     uint256 B2 = baseReserve.sub(validReceiveBaseAmount);
-    //     payQuoteAmount = DODOMath._GeneralIntegrate(B0, baseReserve, B2, _I_, _K_);
-    //     return payQuoteAmount;
-    // }
-
-    // function queryBuyQuote(address trader, uint256 receiveQuoteAmount)
-    //     public
-    //     view
-    //     returns (uint256 payBaseAmount)
-    // {
-    //     uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(trader);
-    //     uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(trader);
-    //     uint256 validReceiveQuoteAmount = DecimalMath.divCeil(
-    //         receiveQuoteAmount,
-    //         DecimalMath.ONE.sub(mtFeeRate).sub(lpFeeRate)
-    //     );
-    //     (uint256 baseReserve, uint256 quoteReserve) = getVaultReserve();
-    //     require(quoteReserve > validReceiveQuoteAmount, "DODO_QUOTE_BALANCE_NOT_ENOUGH");
-
-    //     uint256 B0 = calculateBase0(baseReserve, quoteReserve);
-    //     uint256 fairAmount = DecimalMath.divFloor(validReceiveQuoteAmount, _I_);
-    //     payBaseAmount = DODOMath._SolveQuadraticFunctionForTrade(
-    //         B0,
-    //         baseReserve,
-    //         fairAmount,
-    //         true,
-    //         _K_
-    //     );
-    //     return payBaseAmount;
-    // }
-
     function getMidPrice() public view returns (uint256 midPrice) {
         return PMMPricing.getMidPrice(getPMMState());
     }
@@ -217,13 +169,23 @@ contract DVMTrader is DVMVault {
     }
 
     function calculateBase0(uint256 baseAmount, uint256 quoteAmount) public view returns (uint256) {
-        uint256 fairAmount = DecimalMath.divFloor(quoteAmount, _I_);
-        return DODOMath._SolveQuadraticFunctionForTarget(baseAmount, _K_, fairAmount);
+        return
+            DODOMath._SolveQuadraticFunctionForTarget(
+                baseAmount,
+                quoteAmount,
+                DecimalMath.reciprocalFloor(_I_),
+                _K_
+            );
     }
 
     function getBase0() public view returns (uint256) {
         (uint256 baseAmount, uint256 quoteAmount) = getVaultReserve();
-        uint256 fairAmount = DecimalMath.divFloor(quoteAmount, _I_);
-        return DODOMath._SolveQuadraticFunctionForTarget(baseAmount, _K_, fairAmount);
+        return
+            DODOMath._SolveQuadraticFunctionForTarget(
+                baseAmount,
+                quoteAmount,
+                DecimalMath.reciprocalFloor(_I_),
+                _K_
+            );
     }
 }

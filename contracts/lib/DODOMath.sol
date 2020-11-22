@@ -26,6 +26,10 @@ library DODOMath {
         res = (1-k)i(V1-V2)+ikV0*V0(1/V2-1/V1)
         let V1-V2=delta
         res = i*delta*(1-k+k(V0^2/V1/V2))
+
+        i is the price of res-V trading pair
+
+        [round down]
     */
     function _GeneralIntegrate(
         uint256 V0,
@@ -35,94 +39,114 @@ library DODOMath {
         uint256 k
     ) internal pure returns (uint256) {
         require(V0 > 0, "TARGET_IS_ZERO");
-        uint256 fairAmount = DecimalMath.mul(i, V1.sub(V2)); // i*delta
-        uint256 V0V0V1V2 = DecimalMath.divCeil(V0.mul(V0).div(V1), V2);
-        uint256 penalty = DecimalMath.mul(k, V0V0V1V2); // k(V0^2/V1/V2)
-        return DecimalMath.mul(fairAmount, DecimalMath.ONE.sub(k).add(penalty));
+        uint256 fairAmount = i.mul(V1.sub(V2)); // i*delta
+        uint256 V0V0V1V2 = DecimalMath.divFloor(V0.mul(V0).div(V1), V2);
+        uint256 penalty = DecimalMath.mulFloor(k, V0V0V1V2); // k(V0^2/V1/V2)
+        return DecimalMath.ONE.sub(k).add(penalty).mul(fairAmount).div(DecimalMath.ONE2);
     }
 
     /*
-        The same with integration expression above, we have:
+        Follow the integration function above
+        i*deltaB = (Q2-Q1)*(1-k+kQ0^2/Q1/Q2)
+        Assume Q2=Q0, Given Q1 and deltaB, solve Q0
+
+        i is the price of delta-V trading pair
+
+        [round down]
+    */
+    function _SolveQuadraticFunctionForTarget(
+        uint256 V1,
+        uint256 delta,
+        uint256 i,
+        uint256 k
+    ) internal pure returns (uint256 V0) {
+        // V0 = V1*(1+(sqrt-1)/2k)
+        // sqrt = √(1+4kidelta/V1)
+        // premium = 1+(sqrt-1)/2k
+        uint256 sqrt = (4 * k).mul(i).mul(delta).div(V1).add(DecimalMath.ONE2).sqrt();
+        uint256 premium = DecimalMath.divFloor(sqrt.sub(DecimalMath.ONE), k * 2).add(
+            DecimalMath.ONE
+        );
+        // V0 is greater than or equal to V1 according to the solution
+        return DecimalMath.mul(V1, DecimalMath.ONE.add(premium));
+    }
+
+    /*
+        Follow the integration expression above, we have:
         i*deltaB = (Q2-Q1)*(1-k+kQ0^2/Q1/Q2)
         Given Q1 and deltaB, solve Q2
         This is a quadratic function and the standard version is
         aQ2^2 + bQ2 + c = 0, where
         a=1-k
         -b=(1-k)Q1-kQ0^2/Q1+i*deltaB
-        c=-kQ0^2
+        c=-kQ0^2 
         and Q2=(-b+sqrt(b^2+4(1-k)kQ0^2))/2(1-k)
         note: another root is negative, abondan
+
         if deltaBSig=true, then Q2>Q1, user sell Q and receive B
         if deltaBSig=false, then Q2<Q1, user sell B and receive Q
         return |Q1-Q2|
 
-        if k==1 
-        Q2 = -c/b
+        as we only support sell amount as delta, the deltaB is always negative
+        the input ideltaB is actually -ideltaB in the equation
 
-        if k==0
+        i is the price of delta-V trading pair
+
+        [round down]
     */
     function _SolveQuadraticFunctionForTrade(
-        uint256 Q0,
-        uint256 Q1,
-        uint256 ideltaB,
-        // bool deltaBSig, deltaBSig is always false
+        uint256 V0,
+        uint256 V1,
+        uint256 delta,
+        uint256 i,
         uint256 k
     ) internal pure returns (uint256) {
-        require(Q0 > 0, "TARGET_IS_ZERO");
+        require(V0 > 0, "TARGET_IS_ZERO");
         if (k == DecimalMath.ONE) {
-            // Q2=Q1/(1-ideltaBQ1/Q0/Q0)
-            uint256 temp = ideltaB.mul(Q1).mul(DecimalMath.ONE).div(Q0.mul(Q0));
-            return Q1.sub(DecimalMath.divFloor(DecimalMath.ONE, DecimalMath.ONE.add(temp)));
+            // if k==1
+            // Q2=Q1/(1+ideltaBQ1/Q0/Q0)
+            // temp = (1+ideltaBQ1/Q0/Q0)
+            // Q1-Q2 = Q1*(temp/(1+temp))
+            uint256 temp = i.mul(delta).mul(V1).div(V0.mul(V0));
+            return V1.mul(temp).div(temp.add(DecimalMath.ONE));
         }
+
         // calculate -b value and sig
         // -b = (1-k)Q1-kQ0^2/Q1+i*deltaB
-        uint256 kQ02Q1 = DecimalMath.mul(k, Q0).mul(Q0).div(Q1); // kQ0^2/Q1
-        uint256 b = DecimalMath.mul(DecimalMath.ONE.sub(k), Q1); // (1-k)Q1
-        bool minusbSig = true;
-        kQ02Q1 = kQ02Q1.add(ideltaB); // i*deltaB+kQ0^2/Q1
-        if (b >= kQ02Q1) {
-            b = b.sub(kQ02Q1);
-            minusbSig = true;
+        // part1 = (1-k)Q1 >=0
+        // part2 = -i*deltaB+kQ0^2/Q1 >=0
+        // bAbs = abs(part1-part2)
+        // if part1>part2 => b is negative => bSig is false
+        // if part2>part1 => b is positive => bSig is true
+        uint256 part2 = k.mul(V0).div(V1).mul(V0).add(i.mul(delta)); // kQ0^2/Q1-i*deltaB
+        uint256 bAbs = DecimalMath.ONE.sub(k).mul(V1); // (1-k)Q1
+
+        bool bSig;
+        if (bAbs >= part2) {
+            bAbs = bAbs.sub(part2);
+            bSig = false;
         } else {
-            b = kQ02Q1.sub(b);
-            minusbSig = false;
+            bAbs = part2.sub(bAbs);
+            bSig = true;
         }
+        bAbs = bAbs.div(DecimalMath.ONE);
 
         // calculate sqrt
         uint256 squareRoot = DecimalMath.mul(
             DecimalMath.ONE.sub(k).mul(4),
-            DecimalMath.mul(k, Q0).mul(Q0)
+            DecimalMath.mul(k, V0).mul(V0)
         ); // 4(1-k)kQ0^2
-        squareRoot = b.mul(b).add(squareRoot).sqrt(); // sqrt(b*b+4(1-k)kQ0*Q0)
+        squareRoot = bAbs.mul(bAbs).add(squareRoot).sqrt(); // sqrt(b*b+4(1-k)kQ0*Q0)
 
         // final res
         uint256 denominator = DecimalMath.ONE.sub(k).mul(2); // 2(1-k)
         uint256 numerator;
-        if (minusbSig) {
-            numerator = b.add(squareRoot);
+        if (bSig) {
+            numerator = squareRoot.sub(bAbs);
         } else {
-            numerator = squareRoot.sub(b);
+            numerator = bAbs.add(squareRoot);
         }
 
-        return Q1.sub(DecimalMath.divCeil(numerator, denominator));
-    }
-
-    /*
-        Start from the integration function
-        i*deltaB = (Q2-Q1)*(1-k+kQ0^2/Q1/Q2)
-        Assume Q2=Q0, Given Q1 and deltaB, solve Q0
-        let fairAmount = i*deltaB
-    */
-    function _SolveQuadraticFunctionForTarget(
-        uint256 V1,
-        uint256 k,
-        uint256 fairAmount
-    ) internal pure returns (uint256 V0) {
-        // V0 = V1+V1*(sqrt-1)/2k
-        uint256 sqrt = DecimalMath.divCeil(DecimalMath.mul(k, fairAmount).mul(4), V1);
-        sqrt = sqrt.add(DecimalMath.ONE).mul(DecimalMath.ONE).sqrt();
-        uint256 premium = DecimalMath.divCeil(sqrt.sub(DecimalMath.ONE), k.mul(2));
-        // V0 is greater than or equal to V1 according to the solution
-        return DecimalMath.mul(V1, DecimalMath.ONE.add(premium));
+        return V1.sub(DecimalMath.divCeil(numerator, denominator));
     }
 }
