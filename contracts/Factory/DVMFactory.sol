@@ -39,7 +39,6 @@ contract DVMFactory is Ownable {
         _DEFAULT_GAS_PRICE_SOURCE_ = defaultGasPriceSource;
     }
 
-
     function createStandardDODOVendingMachine(
         address baseToken,
         address quoteToken,

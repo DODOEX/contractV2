@@ -19,6 +19,10 @@ contract SmartApprove is Ownable {
         smartSwap = _smartSwap;
     }
 
+    function getSmartSwap() public view returns (address) {
+        return smartSwap;
+    }
+
     function claimTokens(
         IERC20 token,
         address who,

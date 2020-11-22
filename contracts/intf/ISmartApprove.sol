@@ -12,4 +12,5 @@ import {IERC20} from "./IERC20.sol";
 
 interface ISmartApprove {
     function claimTokens(IERC20 token,address who,address dest,uint256 amount) external;
+    function getSmartSwap() external view returns (address);
 }

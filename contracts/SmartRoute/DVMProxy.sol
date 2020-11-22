@@ -17,6 +17,24 @@ contract DVMProxy {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
+    //TODO: dodoSwap
+
+    //TODO: externalSwap
+
+    //TODO: createDVM
+
+    //TODO: addLiquidityToDVM
+
+    //TODO: removeLiquidityToDVM
+
+    //TODO: createDPP
+
+    //TODO: resetDPP
+
+    //TODO: addLiquidityToClassical
+
+    //TODO: removeLiquidityToClassical
+
     function sellBaseOnDVM(
         address DVMAddress,
         address to,

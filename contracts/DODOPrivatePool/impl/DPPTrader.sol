@@ -25,10 +25,7 @@ contract DPPTrader is DPPVault {
     }
 
     modifier isSellAllow(address trader) {
-        require(
-            !_SELLING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(trader),
-            "TRADER_SELL_NOT_ALLOWED"
-        );
+        require(!_SELLING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(trader),"TRADER_SELL_NOT_ALLOWED");
         _;
     }
 
@@ -50,7 +47,8 @@ contract DPPTrader is DPPVault {
         uint256 mtFee;
         uint256 newBaseTarget;
         PMMPricing.RState newRState;
-        (receiveQuoteAmount, mtFee, newRState, newBaseTarget) = querySellBase(tx.origin, baseInput);
+        //TODO: confirm
+        (receiveQuoteAmount, mtFee, newRState, newBaseTarget) = querySellBase(to, baseInput);
 
         _transferQuoteOut(to, receiveQuoteAmount);
         _transferQuoteOut(_MAINTAINER_, mtFee);
@@ -76,11 +74,9 @@ contract DPPTrader is DPPVault {
         uint256 quoteInput = getQuoteInput();
         uint256 mtFee;
         uint256 newQuoteTarget;
+
         PMMPricing.RState newRState;
-        (receiveBaseAmount, mtFee, newRState, newQuoteTarget) = querySellQuote(
-            tx.origin,
-            quoteInput
-        );
+        (receiveBaseAmount, mtFee, newRState, newQuoteTarget) = querySellQuote(to,quoteInput);
 
         _transferBaseOut(to, receiveBaseAmount);
         _transferBaseOut(_MAINTAINER_, mtFee);
