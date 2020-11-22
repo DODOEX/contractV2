@@ -7,8 +7,8 @@
 
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
-
-import {IFeeRateModel} from "../../intf/IFeeRateModel.sol";
+//TODO:讨论 是否应使用FeeRateModel
+import {IConstFeeRateModel} from "../../lib/ConstFeeRateModel.sol";
 import {IPermissionManager} from "../../lib/PermissionManager.sol";
 import {IExternalValue} from "../../lib/ExternalValue.sol";
 import {IERC20} from "../../intf/IERC20.sol";
@@ -32,8 +32,8 @@ contract DVM is DVMTrader, DVMFunding {
         initOwner(owner);
         _BASE_TOKEN_ = IERC20(baseTokenAddress);
         _QUOTE_TOKEN_ = IERC20(quoteTokenAddress);
-        _LP_FEE_RATE_MODEL_ = IFeeRateModel(lpFeeRateModel);
-        _MT_FEE_RATE_MODEL_ = IFeeRateModel(mtFeeRateModel);
+        _LP_FEE_RATE_MODEL_ = IConstFeeRateModel(lpFeeRateModel);
+        _MT_FEE_RATE_MODEL_ = IConstFeeRateModel(mtFeeRateModel);
         _TRADE_PERMISSION_ = IPermissionManager(tradePermissionManager);
         _GAS_PRICE_LIMIT_ = IExternalValue(gasPriceSource);
         _MAINTAINER_ = maintainer;

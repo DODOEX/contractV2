@@ -49,6 +49,7 @@ contract DVMTrader is DVMVault {
     {
         uint256 baseInput = getBaseInput();
         uint256 mtFee;
+        //TODO:tx.origin 的潜在风险,直接写to
         (receiveQuoteAmount, mtFee) = querySellBase(tx.origin, baseInput);
         _transferQuoteOut(to, receiveQuoteAmount);
         _transferQuoteOut(_MAINTAINER_, mtFee);

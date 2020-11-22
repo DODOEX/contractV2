@@ -31,6 +31,7 @@ contract DVMFunding is DVMVault {
         }
         // case 3. normal case
         if (baseReserve > 0 && quoteReserve > 0) {
+            //TODO: (Route合约配合实现)
             uint256 baseInputRatio = DecimalMath.divFloor(baseInput, baseReserve);
             uint256 quoteInputRatio = DecimalMath.divFloor(quoteInput, quoteReserve);
             uint256 mintRatio = baseInputRatio > quoteInputRatio ? quoteInputRatio : baseInputRatio;

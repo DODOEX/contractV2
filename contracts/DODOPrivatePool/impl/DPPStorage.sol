@@ -14,7 +14,8 @@ import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 import {IPermissionManager} from "../../lib/PermissionManager.sol";
 import {IExternalValue} from "../../lib/ExternalValue.sol";
-import {IFeeRateModel} from "../../intf/IFeeRateModel.sol";
+import {IFeeRateModel} from "../../lib/FeeRateModel.sol";
+import {ISmartApprove} from "../../intf/ISmartApprove.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {PMMPricing} from "../../lib/PMMPricing.sol";
 
@@ -26,6 +27,9 @@ import {PMMPricing} from "../../lib/PMMPricing.sol";
  */
 contract DPPStorage is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
+
+    address public _FACTORY_;
+    ISmartApprove public _DODO_SMART_APPROVE_;
 
     // ============ Variables for Control ============
 
@@ -78,6 +82,14 @@ contract DPPStorage is InitializableOwnable, ReentrancyGuard {
 
     function setGasPriceSource(address newGasPriceLimitSource) external onlyOwner {
         _GAS_PRICE_LIMIT_ = IExternalValue(newGasPriceLimitSource);
+    }
+
+    function setISource(address newISource) external onlyOwner {
+        _I_ = IExternalValue(newISource);
+    }
+
+    function setKSource(address newKSource) external onlyOwner {
+        _K_ = IExternalValue(newKSource);
     }
 
     function setBuy(bool open) external onlyOwner {

@@ -10,7 +10,7 @@ pragma experimental ABIEncoderV2;
 
 import {Ownable} from "./lib/Ownable.sol";
 import {IDODO} from "./intf/IDODO.sol";
-import {ICloneFactory} from "./helper/CloneFactory.sol";
+import {ICloneFactory} from "./lib/CloneFactory.sol";
 
 
 /**

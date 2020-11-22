@@ -20,7 +20,7 @@ contract DPPVault is DPPStorage {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    // input
+    // ============ Get Input ============
 
     function getInput() public view returns (uint256 baseInput, uint256 quoteInput) {
         return (
@@ -39,23 +39,39 @@ contract DPPVault is DPPStorage {
 
     // ============ Set Status ============
 
-    function _syncReserve() internal {
-        _BASE_RESERVE_ = _BASE_TOKEN_.balanceOf(address(this));
-        _QUOTE_RESERVE_ = _QUOTE_TOKEN_.balanceOf(address(this));
-    }
-
+    //TODO:对应前端哪个操作?
     function setTarget(uint256 baseTarget, uint256 quoteTarget) public onlyOwner {
         _BASE_TARGET_ = baseTarget;
         _QUOTE_TARGET_ = quoteTarget;
         _checkStatus();
     }
+    
+    function _syncReserve() internal {
+        _BASE_RESERVE_ = _BASE_TOKEN_.balanceOf(address(this));
+        _QUOTE_RESERVE_ = _QUOTE_TOKEN_.balanceOf(address(this));
+    }
 
-    // todo 这里需要考虑，怎么一个tx同时更新k i 和 fee并reset
-    function reset() public onlyOwner {
+    function _resetTargetAndReserve() internal {
         _BASE_TARGET_ = _BASE_TOKEN_.balanceOf(address(this));
         _QUOTE_TARGET_ = _QUOTE_TOKEN_.balanceOf(address(this));
         _BASE_RESERVE_ = _BASE_TARGET_;
         _QUOTE_RESERVE_ = _QUOTE_TARGET_;
+    }
+
+    function reset(
+        uint256 newLpFeeRate,
+        uint256 newMtFeeRate,
+        uint256 newI,
+        uint256 newK
+    ) public {
+        //TODO: 讨论
+        require(msg.sender == _DODO_SMART_APPROVE_.getSmartSwap() || msg.sender == _OWNER_, "RESET FORBIDDEN！");
+        require(newK > 0 && newK <= 10**18, "K OUT OF RANGE!");
+        _resetTargetAndReserve();
+        _LP_FEE_RATE_MODEL_.setFeeRate(newLpFeeRate);
+        _MT_FEE_RATE_MODEL_.setFeeRate(newMtFeeRate);
+        _I_.set(newI);
+        _K_.set(newK);
     }
 
     function _checkStatus() internal view {
@@ -67,20 +83,21 @@ contract DPPVault is DPPStorage {
 
     // ============ Assets Transfer ============
 
-    function withdraw(
-        address to,
-        uint256 baseAmount,
-        uint256 quoteAmount,
-        bytes calldata data
-    ) public onlyOwner {
-        _transferBaseOut(to, baseAmount);
-        _transferQuoteOut(to, quoteAmount);
-        _BASE_TARGET_ = _BASE_TARGET_.sub(baseAmount);
-        _QUOTE_TARGET_ = _QUOTE_TARGET_.sub(quoteAmount);
-        if (data.length > 0) {
-            IDODOCallee(to).DPPWithdrawCall(msg.sender, baseAmount, quoteAmount, data);
-        }
-    }
+    // function withdraw(
+    //     address to,
+    //     uint256 baseAmount,
+    //     uint256 quoteAmount,
+    //     bytes calldata data
+    // ) public onlyOwner {
+    //     _transferBaseOut(to, baseAmount);
+    //     _transferQuoteOut(to, quoteAmount);
+    //     _BASE_TARGET_ = _BASE_TARGET_.sub(baseAmount);
+    //     _QUOTE_TARGET_ = _QUOTE_TARGET_.sub(quoteAmount);
+    //     _syncReserve();
+    //     if (data.length > 0) {
+    //         IDODOCallee(to).DPPWithdrawCall(msg.sender, baseAmount, quoteAmount, data);
+    //     }
+    // }
 
     function _transferBaseOut(address to, uint256 amount) internal {
         if (amount > 0) {
@@ -94,15 +111,13 @@ contract DPPVault is DPPStorage {
         }
     }
 
-    // todo 高级功能，需要讨论
-    // 如果单独执行这个功能会导致状态失衡
     function retrieve(
         address payable to,
         address token,
         uint256 amount
     ) external onlyOwner {
         require(to != address(_BASE_TOKEN_) && to != address(_QUOTE_TOKEN_), "USE_WITHDRAW");
-        if (token == 0x000000000000000000000000000000000000000E) {
+        if (token == 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE) {
             to.transfer(amount);
         } else {
             IERC20(token).safeTransfer(msg.sender, amount);

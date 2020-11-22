@@ -15,7 +15,7 @@ import {DODOMath} from "../../lib/DODOMath.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {IPermissionManager} from "../../lib/PermissionManager.sol";
 import {IExternalValue} from "../../lib/ExternalValue.sol";
-import {IFeeRateModel} from "../../intf/IFeeRateModel.sol";
+import {IConstFeeRateModel} from "../../lib/ConstFeeRateModel.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 
 contract DVMStorage is InitializableOwnable, ReentrancyGuard {
@@ -54,19 +54,20 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
 
     // ============ Variables for Pricing ============
 
-    IFeeRateModel public _LP_FEE_RATE_MODEL_;
-    IFeeRateModel public _MT_FEE_RATE_MODEL_;
+    IConstFeeRateModel public _LP_FEE_RATE_MODEL_;
+    IConstFeeRateModel public _MT_FEE_RATE_MODEL_;
     uint256 public _K_;
     uint256 public _I_;
 
     // ============ Setting Functions ============
 
+    //TODO: owner权限问题论证
     function setLpFeeRateModel(address newLpFeeRateModel) external onlyOwner {
-        _LP_FEE_RATE_MODEL_ = IFeeRateModel(newLpFeeRateModel);
+        _LP_FEE_RATE_MODEL_ = IConstFeeRateModel(newLpFeeRateModel);
     }
 
     function setMtFeeRateModel(address newMtFeeRateModel) external onlyOwner {
-        _MT_FEE_RATE_MODEL_ = IFeeRateModel(newMtFeeRateModel);
+        _MT_FEE_RATE_MODEL_ = IConstFeeRateModel(newMtFeeRateModel);
     }
 
     function setTradePermissionManager(address newTradePermissionManager) external onlyOwner {
