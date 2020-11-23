@@ -68,7 +68,7 @@ library DODOMath {
             DecimalMath.ONE
         );
         // V0 is greater than or equal to V1 according to the solution
-        return DecimalMath.mul(V1, DecimalMath.ONE.add(premium));
+        return DecimalMath.mul(V1, premium);
     }
 
     /*

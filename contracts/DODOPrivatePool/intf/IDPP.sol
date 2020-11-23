@@ -19,7 +19,6 @@ interface IDPP {
         address kSource,
         address iSource,
         address gasPriceSource,
-        address tradePermissionManager,
-        address iSmartApprove
+        address tradePermissionManager
     ) external;
 }
