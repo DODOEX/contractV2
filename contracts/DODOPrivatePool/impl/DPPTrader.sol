@@ -47,8 +47,7 @@ contract DPPTrader is DPPVault {
         uint256 mtFee;
         uint256 newBaseTarget;
         PMMPricing.RState newRState;
-        //TODO: confirm
-        (receiveQuoteAmount, mtFee, newRState, newBaseTarget) = querySellBase(to, baseInput);
+        (receiveQuoteAmount, mtFee, newRState, newBaseTarget) = querySellBase(tx.origin, baseInput);
 
         _transferQuoteOut(to, receiveQuoteAmount);
         _transferQuoteOut(_MAINTAINER_, mtFee);
@@ -76,7 +75,7 @@ contract DPPTrader is DPPVault {
         uint256 newQuoteTarget;
 
         PMMPricing.RState newRState;
-        (receiveBaseAmount, mtFee, newRState, newQuoteTarget) = querySellQuote(to,quoteInput);
+        (receiveBaseAmount, mtFee, newRState, newQuoteTarget) = querySellQuote(tx.origin,quoteInput);
 
         _transferBaseOut(to, receiveBaseAmount);
         _transferBaseOut(_MAINTAINER_, mtFee);

@@ -23,11 +23,14 @@ contract DPPFactory is Ownable {
     address public _PERMISSION_MANAGER_TEMPLATE_;
     address public _VALUE_SOURCE_;
 
-    struct DPPInfo{
+    //TODO: 平台修改tag的权限
+    struct DPPInfo {
         address creator;
         uint256 createTimeStamp;
-        //TODO:other tags
+        //TODO:池子类型
     }
+
+    //TODO:tags filter event
 
     // base -> quote -> DPP address list
     mapping(address => mapping(address => address[])) _REGISTRY_;
@@ -57,31 +60,27 @@ contract DPPFactory is Ownable {
     function createStandardDODOPrivatePool(
         address baseToken,
         address quoteToken,
-        address[] memory valueTemplates, //feeeRateAddr,mtRateAddr,gasPriceAddr,kAddr,iAddr
-        uint256[] memory values // feeRate,mtRate,gasPrice,k,i
+        //TODO: tag 粒度
+        address[] memory valueTemplates, //feeRateAddr,mtRateAddr,kAddr,iAddr
+        uint256[] memory values // feeRate,mtRate,k,i
     ) external returns (address newPrivatePool) {
-        require(valueTemplates.length == 5 && values.length == 5, "Incorrect number of initialization parameters");
-
+        require(valueTemplates.length == 4 && values.length == 4, "Incorrect number of initialization parameters");
         (address token0, address token1) = baseToken < quoteToken ? (baseToken, quoteToken) : (quoteToken, baseToken);
-        uint256 len = _SORT_REGISTRY_[token0][token1].length;
-        bytes32 salt = keccak256(abi.encodePacked(token0, token1, len));
-        newPrivatePool = ICloneFactory(_CLONE_FACTORY_).clone2(_DPP_TEMPLATE_,salt);
-
-        address[] memory configAddresses = new address[](6);
-        configAddresses[0] = (valueTemplates[0] == address(0) ? createFeeRateModel(newPrivatePool, values[0]) : valueTemplates[0]);
-        configAddresses[1] = (valueTemplates[1] == address(0) ? createFeeRateModel(newPrivatePool, values[1]) : valueTemplates[1]);
-        configAddresses[2] = (valueTemplates[2] == address(0) ? createExternalValueModel(newPrivatePool, values[2]) : valueTemplates[2]);
-        configAddresses[3] = (valueTemplates[3] == address(0) ? createExternalValueModel(newPrivatePool, values[3]) : valueTemplates[3]);
-        configAddresses[4] = (valueTemplates[4] == address(0) ? createExternalValueModel(newPrivatePool, values[4]) : valueTemplates[4]);
-        configAddresses[5] = createPermissionManager(msg.sender);
+        newPrivatePool = ICloneFactory(_CLONE_FACTORY_).clone(_DPP_TEMPLATE_);
 
         IDPP(newPrivatePool).init(
             msg.sender,
             msg.sender,
             baseToken,
             quoteToken,
-            _DODO_SMART_APPROVE_,
-            configAddresses            
+            (valueTemplates[0] == address(0) ? createFeeRateModel(newPrivatePool, values[0]) : valueTemplates[0]),
+            (valueTemplates[1] == address(0) ? createFeeRateModel(newPrivatePool, values[1]) : valueTemplates[1]),
+            (valueTemplates[2] == address(0) ? createExternalValueModel(newPrivatePool, values[2]) : valueTemplates[2]),
+            (valueTemplates[3] == address(0) ? createExternalValueModel(newPrivatePool, values[3]) : valueTemplates[3]),
+            //hardcode
+            createExternalValueModel(msg.sender, 10**22),
+            createPermissionManager(msg.sender),
+            _DODO_SMART_APPROVE_            
         );
 
         _REGISTRY_[baseToken][quoteToken].push(newPrivatePool);
