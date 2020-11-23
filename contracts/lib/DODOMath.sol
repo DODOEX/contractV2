@@ -51,6 +51,7 @@ library DODOMath {
         Assume Q2=Q0, Given Q1 and deltaB, solve Q0
 
         i is the price of delta-V trading pair
+        give out target of V
 
         [round down]
     */
@@ -68,7 +69,7 @@ library DODOMath {
             DecimalMath.ONE
         );
         // V0 is greater than or equal to V1 according to the solution
-        return DecimalMath.mul(V1, DecimalMath.ONE.add(premium));
+        return DecimalMath.mul(V1, premium);
     }
 
     /*
@@ -112,9 +113,9 @@ library DODOMath {
         }
 
         // calculate -b value and sig
-        // -b = (1-k)Q1-kQ0^2/Q1+i*deltaB
+        // b = kQ0^2/Q1-i*deltaB-(1-k)Q1
         // part1 = (1-k)Q1 >=0
-        // part2 = -i*deltaB+kQ0^2/Q1 >=0
+        // part2 = kQ0^2/Q1-i*deltaB >=0
         // bAbs = abs(part1-part2)
         // if part1>part2 => b is negative => bSig is false
         // if part2>part1 => b is positive => bSig is true
