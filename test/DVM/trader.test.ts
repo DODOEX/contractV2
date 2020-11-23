@@ -7,7 +7,7 @@
 
 // import * as assert from 'assert';
 
-import { decimalStr } from '../utils/Converter';
+import { decimalStr, gweiStr } from '../utils/Converter';
 import { logGas } from '../utils/Log';
 import { DVMContext, getDVMContext } from '../utils/DVMContext';
 import { assert } from 'chai';
@@ -49,12 +49,13 @@ describe("Trader", () => {
   });
 
   describe("trade", () => {
-    // it.only("basic check", async () => {
-    //   console.log(await ctx.DVM.methods.getPMMState().call())
-    //   console.log(await ctx.DVM.methods.getLpFeeRate(ctx.Deployer).call())
-    //   console.log(await ctx.DVM.methods.getMtFeeRate(ctx.Deployer).call())
-    //   console.log(await ctx.DVM.methods.querySellQuote(ctx.Deployer, decimalStr("200")).call())
-    // })
+    it.only("basic check", async () => {
+      console.log(await ctx.DVM.methods.getVaultReserve().call())
+      console.log(await ctx.DVM.methods.getPMMState().call())
+      console.log(await ctx.DVM.methods.getMidPrice().call())
+      console.log(await ctx.DVM.methods.querySellQuote(ctx.Deployer, decimalStr("200")).call())
+    })
+
     it("buy & sell", async () => {
 
       console.log("BASE0 before buy", await ctx.DVM.methods.getBase0().call())
@@ -123,7 +124,7 @@ describe("Trader", () => {
 
       // buy when quoet is not 0
       await logGas(ctx.DVMProxy.methods.sellQuoteOnDVM(ctx.DVM.options.address, trader, decimalStr("200"), decimalStr("1")), ctx.sendParam(trader), "buy base token")
-      assert.equal("BASE0 after second buy", await ctx.DVM.methods.getBase0().call())
+      console.log("BASE0 after second buy", await ctx.DVM.methods.getBase0().call())
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
@@ -152,5 +153,15 @@ describe("Trader", () => {
         "103733009669408099"
       );
     });
+
+    it("flash loan", async () => {
+
+    })
+
+    it("revert cases", async () => {
+      await assert.fail(
+        ctx.DVMProxy.methods.sellQuoteOnDVM(ctx.DVM.options.address, trader, decimalStr("200"), decimalStr("1")).send({ from: trader, gas: 300000, gasPrice: gweiStr("200") }), /GAS_PRICE_EXCEED/
+      )
+    })
   });
 });

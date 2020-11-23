@@ -38,6 +38,8 @@ contract DVM is DVMTrader, DVMFunding {
         _GAS_PRICE_LIMIT_ = IExternalValue(gasPriceSource);
         _MAINTAINER_ = maintainer;
         _I_ = i;
+
+        require(k > 0 && k <= 10**18);
         _K_ = k;
 
         string memory connect = "_";
