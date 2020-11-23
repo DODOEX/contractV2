@@ -104,8 +104,8 @@ export class DVMContext {
       config.k
     ).send(this.sendParam(this.Deployer))
 
-    var vendorMachines = await this.DVMFactory.methods.getVendorMachine(this.BASE.options.address, this.QUOTE.options.address).call()
-    this.DVM = contracts.getContractWithAddress(contracts.DVM_NAME, vendorMachines[0])
+    var vendingMachines = await this.DVMFactory.methods.getVendingMachine(this.BASE.options.address, this.QUOTE.options.address).call()
+    this.DVM = contracts.getContractWithAddress(contracts.DVM_NAME, vendingMachines[0])
 
     await this.DVM.methods.setMaintainer(this.Maintainer).send(this.sendParam(this.Deployer))
     await gasPriceSource.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer))

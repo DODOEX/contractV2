@@ -11,6 +11,8 @@ import { decimalStr, gweiStr } from '../utils/Converter';
 import { logGas } from '../utils/Log';
 import { DVMContext, getDVMContext } from '../utils/DVMContext';
 import { assert } from 'chai';
+import { EXTERNAL_VALUE_NAME, getContractWithAddress } from '../utils/Contracts';
+const truffleAssert = require('truffle-assertions');
 
 let lp: string;
 let trader: string;
@@ -49,12 +51,23 @@ describe("Trader", () => {
   });
 
   describe("trade", () => {
-    it.only("basic check", async () => {
-      console.log(await ctx.DVM.methods.getVaultReserve().call())
-      console.log(await ctx.DVM.methods.getPMMState().call())
-      console.log(await ctx.DVM.methods.getMidPrice().call())
-      console.log(await ctx.DVM.methods.querySellQuote(ctx.Deployer, decimalStr("200")).call())
-    })
+    // it.only("basic check", async () => {
+    //   console.log(await ctx.DVM.methods.getVaultReserve().call())
+    //   console.log(await ctx.DVM.methods.getPMMState().call())
+    //   console.log(await ctx.DVM.methods.getMidPrice().call())
+    //   console.log(await ctx.DVM.methods.querySellQuote(ctx.Deployer, decimalStr("200")).call())     
+    //   console.log(ctx.BASE.options.address)
+    //   console.log(await ctx.DVM.methods._BASE_TOKEN_().call())
+    //   console.log(ctx.QUOTE.options.address)
+    //   console.log(await ctx.DVM.methods._QUOTE_TOKEN_().call())
+    // })
+
+    // it.only("mannually buy", async () => {
+    //   await ctx.QUOTE.methods.transfer(ctx.DVM.options.address, decimalStr("100")).send(ctx.sendParam(lp))
+    //   console.log(await ctx.DVM.methods.getQuoteInput().call())
+    //   console.log(await ctx.DVM.methods.querySellQuote(lp, decimalStr("100")).call())
+    //   await ctx.DVM.methods.sellQuote(lp).send(ctx.sendParam(lp))
+    // })
 
     it("buy & sell", async () => {
 
@@ -128,7 +141,7 @@ describe("Trader", () => {
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
-        "12837528824326616018"
+        "12837528824326616010"
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(trader).call(),
@@ -137,7 +150,7 @@ describe("Trader", () => {
       // vault balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
-        "7158622099620899913"
+        "7158622099620899921"
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
@@ -158,9 +171,13 @@ describe("Trader", () => {
 
     })
 
-    it("revert cases", async () => {
-      await assert.fail(
-        ctx.DVMProxy.methods.sellQuoteOnDVM(ctx.DVM.options.address, trader, decimalStr("200"), decimalStr("1")).send({ from: trader, gas: 300000, gasPrice: gweiStr("200") }), /GAS_PRICE_EXCEED/
+    it.only("revert cases", async () => {
+      var gasPriceLimitContract = getContractWithAddress(EXTERNAL_VALUE_NAME, await ctx.DVM.methods._GAS_PRICE_LIMIT_().call())
+      await gasPriceLimitContract.methods.set(gweiStr("10")).send(ctx.sendParam(ctx.Deployer))
+
+
+      await truffleAssert.reverts(
+        ctx.DVMProxy.methods.sellQuoteOnDVM(ctx.DVM.options.address, trader, decimalStr("200"), decimalStr("1")).send({ from: trader, gas: 300000, gasPrice: gweiStr("200") }), "GAS_PRICE_EXCEED"
       )
     })
   });

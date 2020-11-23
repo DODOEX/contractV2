@@ -12,8 +12,10 @@ import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 
 interface IConstFeeRateModel {
     function init(address owner, uint256 feeRate) external;
+
     function setFeeRate(uint256 newFeeRate) external;
-    function getFeeRate() external view returns (uint256);
+
+    function getFeeRate(address trader) external view returns (uint256);
 }
 
 contract ConstFeeRateModel is InitializableOwnable {
@@ -28,7 +30,7 @@ contract ConstFeeRateModel is InitializableOwnable {
         _FEE_RATE_ = newFeeRate;
     }
 
-    function getFeeRate() external view returns (uint256) {
+    function getFeeRate(address trader) external view returns (uint256) {
         return _FEE_RATE_;
     }
 }

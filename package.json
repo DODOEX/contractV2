@@ -53,6 +53,7 @@
     "ganache-cli": "^6.9.1",
     "prettier": "^2.0.5",
     "prettier-plugin-solidity": "^1.0.0-alpha.52",
-    "solidity-coverage": "^0.7.7"
+    "solidity-coverage": "^0.7.7",
+    "truffle-assertions": "^0.9.2"
   }
 }
