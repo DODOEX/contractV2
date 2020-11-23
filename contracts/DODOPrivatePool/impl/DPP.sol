@@ -26,8 +26,13 @@ contract DPP is DPPTrader {
         address maintainer,
         address baseTokenAddress,
         address quoteTokenAddress,
-        address iSmartApprove,
-        address[] memory configAddresses
+        address lpFeeRateModel,
+        address mtFeeRateModel,
+        address kSource,
+        address iSource,
+        address gasPriceSource,
+        address tradePermissionManager,
+        address iSmartApprove
     ) external {
         require(msg.sender == _FACTORY_, 'INIT FORBIDDEN');
         initOwner(owner);
@@ -35,12 +40,12 @@ contract DPP is DPPTrader {
         _BASE_TOKEN_ = IERC20(baseTokenAddress);
         _QUOTE_TOKEN_ = IERC20(quoteTokenAddress);
         _DODO_SMART_APPROVE_ = ISmartApprove(iSmartApprove);
-        _LP_FEE_RATE_MODEL_ = IFeeRateModel(configAddresses[0]);
-        _MT_FEE_RATE_MODEL_ = IFeeRateModel(configAddresses[1]);
-        _GAS_PRICE_LIMIT_ = IExternalValue(configAddresses[2]);
-        _I_ = IExternalValue(configAddresses[3]);
-        _K_ = IExternalValue(configAddresses[4]);
-        _TRADE_PERMISSION_ = IPermissionManager(configAddresses[5]);
+        _LP_FEE_RATE_MODEL_ = IFeeRateModel(lpFeeRateModel);
+        _MT_FEE_RATE_MODEL_ = IFeeRateModel(mtFeeRateModel);
+        _I_ = IExternalValue(iSource);
+        _K_ = IExternalValue(kSource);
+        _GAS_PRICE_LIMIT_ = IExternalValue(gasPriceSource);
+        _TRADE_PERMISSION_ = IPermissionManager(tradePermissionManager);
         _resetTargetAndReserve();
     }
 

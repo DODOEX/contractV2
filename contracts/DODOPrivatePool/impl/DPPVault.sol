@@ -39,7 +39,6 @@ contract DPPVault is DPPStorage {
 
     // ============ Set Status ============
 
-    //TODO:对应前端哪个操作?
     function setTarget(uint256 baseTarget, uint256 quoteTarget) public onlyOwner {
         _BASE_TARGET_ = baseTarget;
         _QUOTE_TARGET_ = quoteTarget;
@@ -62,11 +61,16 @@ contract DPPVault is DPPStorage {
         uint256 newLpFeeRate,
         uint256 newMtFeeRate,
         uint256 newI,
-        uint256 newK
+        uint256 newK,
+        uint256 baseOutAmount,
+        uint256 quoteOutAmount,
+        address to
     ) public {
-        //TODO: 讨论
+        //TODO: owner 权限可以是operator
         require(msg.sender == _DODO_SMART_APPROVE_.getSmartSwap() || msg.sender == _OWNER_, "RESET FORBIDDEN！");
         require(newK > 0 && newK <= 10**18, "K OUT OF RANGE!");
+        if(baseOutAmount > 0)  _transferBaseOut(to, baseOutAmount);
+        if(quoteOutAmount > 0) _transferQuoteOut(to, quoteOutAmount);
         _resetTargetAndReserve();
         _LP_FEE_RATE_MODEL_.setFeeRate(newLpFeeRate);
         _MT_FEE_RATE_MODEL_.setFeeRate(newMtFeeRate);
@@ -82,22 +86,6 @@ contract DPPVault is DPPStorage {
     }
 
     // ============ Assets Transfer ============
-
-    // function withdraw(
-    //     address to,
-    //     uint256 baseAmount,
-    //     uint256 quoteAmount,
-    //     bytes calldata data
-    // ) public onlyOwner {
-    //     _transferBaseOut(to, baseAmount);
-    //     _transferQuoteOut(to, quoteAmount);
-    //     _BASE_TARGET_ = _BASE_TARGET_.sub(baseAmount);
-    //     _QUOTE_TARGET_ = _QUOTE_TARGET_.sub(quoteAmount);
-    //     _syncReserve();
-    //     if (data.length > 0) {
-    //         IDODOCallee(to).DPPWithdrawCall(msg.sender, baseAmount, quoteAmount, data);
-    //     }
-    // }
 
     function _transferBaseOut(address to, uint256 amount) internal {
         if (amount > 0) {

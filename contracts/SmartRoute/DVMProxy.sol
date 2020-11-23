@@ -25,7 +25,7 @@ contract DVMProxy {
 
     //TODO: addLiquidityToDVM
 
-    //TODO: removeLiquidityToDVM
+    //TODO: removeLiquidityToDVM（待定）
 
     //TODO: createDPP
 

@@ -19,11 +19,22 @@ contract DVMFactory is Ownable {
     address public _DVM_TEMPLATE_;
     address public _FEE_RATE_MODEL_TEMPLATE_;
     address public _PERMISSION_MANAGER_TEMPLATE_;
-
     address public _DEFAULT_GAS_PRICE_SOURCE_;
+
+    struct DVMInfo {
+        address creator;
+        uint256 createTimeStamp;
+        //TODO:other tags
+    }
 
     // base -> quote -> DVM address list
     mapping(address => mapping(address => address[])) _REGISTRY_;
+    // token0 -> token1 -> DVM address list
+    mapping(address => mapping(address => address[])) _SORT_REGISTRY_;
+    // creator -> DVM address list
+    mapping(address => address[]) _USER_REGISTRY_;
+    // DVM address -> info
+    mapping(address => DVMInfo) _DVM_INFO_;
 
     constructor(
         address cloneFactory,
@@ -46,27 +57,33 @@ contract DVMFactory is Ownable {
         uint256 mtFeeRate,
         uint256 i,
         uint256 k
-    ) external returns (address newVendorMachine) {
-        newVendorMachine = ICloneFactory(_CLONE_FACTORY_).clone(_DVM_TEMPLATE_);
+    ) external returns (address newVendingMachine) {
+        (address token0, address token1) = baseToken < quoteToken ? (baseToken, quoteToken) : (quoteToken, baseToken);
+        newVendingMachine = ICloneFactory(_CLONE_FACTORY_).clone(_DVM_TEMPLATE_);
 
-        IDVM(newVendorMachine).init(
+        IDVM(newVendingMachine).init(
             msg.sender,
             msg.sender,
             baseToken,
             quoteToken,
-            createConstFeeRateModel(msg.sender, lpFeeRate),
-            createConstFeeRateModel(msg.sender, mtFeeRate),
+            createConstFeeRateModel(newVendingMachine, lpFeeRate),
+            createConstFeeRateModel(newVendingMachine, mtFeeRate),
             createPermissionManager(msg.sender),
             _DEFAULT_GAS_PRICE_SOURCE_,
             i,
             k
         );
 
-        //TODO: Create2
-        //TODO: DVM作为Mapping的字段，维护自身属性
-        //TODO: 创建者索引，便于my pool查询
-        _REGISTRY_[baseToken][quoteToken].push(newVendorMachine);
-        return newVendorMachine;
+        _REGISTRY_[baseToken][quoteToken].push(newVendingMachine);
+        _SORT_REGISTRY_[token0][token1].push(newVendingMachine);
+        _USER_REGISTRY_[msg.sender].push(newVendingMachine);
+        _DVM_INFO_[newVendingMachine] = (
+            DVMInfo({
+                creator: msg.sender,
+                createTimeStamp: block.timestamp
+            })
+        );
+        return newVendingMachine;
     }
 
     function createConstFeeRateModel(address owner, uint256 feeRate)
@@ -84,7 +101,7 @@ contract DVMFactory is Ownable {
         return permissionManager;
     }
 
-    function getVendorMachine(address baseToken, address quoteToken)
+    function getVendingMachine(address baseToken, address quoteToken)
         external
         view
         returns (address[] memory machines)

@@ -48,8 +48,8 @@ contract DVMTrader is DVMVault {
         returns (uint256 receiveQuoteAmount)
     {
         uint256 baseInput = getBaseInput();
+        require(baseInput > 0, 'INSUFFICIENT_BASE_INPUT');
         uint256 mtFee;
-        //TODO:tx.origin 的潜在风险,直接写to
         (receiveQuoteAmount, mtFee) = querySellBase(tx.origin, baseInput);
         _transferQuoteOut(to, receiveQuoteAmount);
         _transferQuoteOut(_MAINTAINER_, mtFee);
@@ -65,6 +65,7 @@ contract DVMTrader is DVMVault {
         returns (uint256 receiveBaseAmount)
     {
         uint256 quoteInput = getQuoteInput();
+        require(quoteInput > 0, 'INSUFFICIENT_QUOTE_INPUT');
         uint256 mtFee;
         (receiveBaseAmount, mtFee) = querySellQuote(tx.origin, quoteInput);
         _transferBaseOut(to, receiveBaseAmount);
@@ -98,7 +99,7 @@ contract DVMTrader is DVMVault {
                 DecimalMath.ONE.sub(mtFeeRate).sub(lpFeeRate)
             );
             baseBalance = baseReserve.sub(validBaseOut);
-            _transferBaseOut(_MAINTAINER_, DecimalMath.mulCeil(validBaseOut, mtFeeRate));
+            _transferBaseOut(_MAINTAINER_, DecimalMath.mulFloor(validBaseOut, mtFeeRate));
         }
         if (quoteBalance < quoteReserve) {
             uint256 validQuoteOut = DecimalMath.divCeil(
@@ -106,7 +107,7 @@ contract DVMTrader is DVMVault {
                 DecimalMath.ONE.sub(mtFeeRate).sub(lpFeeRate)
             );
             quoteBalance = quoteReserve.sub(validQuoteOut);
-            _transferQuoteOut(_MAINTAINER_, DecimalMath.mulCeil(validQuoteOut, mtFeeRate));
+            _transferQuoteOut(_MAINTAINER_, DecimalMath.mulFloor(validQuoteOut, mtFeeRate));
         }
 
         require(
