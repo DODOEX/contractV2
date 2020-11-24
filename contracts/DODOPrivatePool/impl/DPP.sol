@@ -15,7 +15,6 @@ import {IERC20} from "../../intf/IERC20.sol";
 import {DPPTrader} from "./DPPTrader.sol";
 
 contract DPP is DPPTrader {
-
     constructor() public {
         _FACTORY_ = msg.sender;
     }
@@ -34,6 +33,7 @@ contract DPP is DPPTrader {
     ) external {
         require(msg.sender == _FACTORY_, 'INIT FORBIDDEN');
         initOwner(owner);
+        _ADMIN_ = owner;
         _MAINTAINER_ = maintainer;
         _BASE_TOKEN_ = IERC20(baseTokenAddress);
         _QUOTE_TOKEN_ = IERC20(quoteTokenAddress);

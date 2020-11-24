@@ -17,6 +17,10 @@ import {DVMFunding} from "./DVMFunding.sol";
 import {DVMVault} from "./DVMVault.sol";
 
 contract DVM is DVMTrader, DVMFunding {
+    constructor() public {
+        _FACTORY_ = msg.sender;
+    }
+
     function init(
         address owner,
         address maintainer,
@@ -29,7 +33,9 @@ contract DVM is DVMTrader, DVMFunding {
         uint256 i,
         uint256 k
     ) external {
+        require(msg.sender == _FACTORY_, 'INIT FORBIDDEN');
         initOwner(owner);
+        _ADMIN_ = owner;
         _BASE_TOKEN_ = IERC20(baseTokenAddress);
         _QUOTE_TOKEN_ = IERC20(quoteTokenAddress);
         _LP_FEE_RATE_MODEL_ = IFeeRateModel(lpFeeRateModel);

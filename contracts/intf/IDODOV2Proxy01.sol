@@ -74,8 +74,10 @@ interface IDODOV2Proxy01 {
         address quoteToken,
         uint256 baseInAmount,
         uint256 quoteInAmount,
-        address[] memory valueTemplates, //feeRateAddr,mtRateAddr,kAddr,iAddr
-        uint256[] memory values, // feeRate,mtRate,k,i
+        uint256 lpFeeRate,
+        uint256 mtFeeRate,
+        uint256 i,
+        uint256 k,
 		uint256 deadline
     ) external payable returns (address newPrivatePool);
 

@@ -18,10 +18,6 @@ interface IDODOV2 {
 
     function sellQuote(address to) external returns (uint256 receiveBaseAmount);
 
-    function buyShares(address to) external returns (uint256,uint256,uint256);
-
-    function sellShares(address to) external returns (uint256,uint256);
-
     function getVaultReserve() external view returns (uint256 baseReserve, uint256 quoteReserve);
 
     function _BASE_TOKEN_() external returns (address);
@@ -39,6 +35,10 @@ interface IDODOV2 {
         uint256 k
     ) external returns (address newVendingMachine);
 
+    function buyShares(address to) external returns (uint256,uint256,uint256);
+
+    function sellShares(address to, uint256 amount, bytes calldata data) external returns (uint256,uint256);
+
     //========== DODOPrivatePool ===========
 
     function initTargetAndReserve() external;
@@ -46,8 +46,10 @@ interface IDODOV2 {
     function createDODOPrivatePool(
         address baseToken,
         address quoteToken,
-        address[] memory valueTemplates, //feeRateAddr,mtRateAddr,kAddr,iAddr
-        uint256[] memory values //feeRate,mtRate,k,i
+        uint256 lpFeeRate,
+        uint256 mtFeeRate,
+        uint256 i,
+        uint256 k
     ) external returns (address newPrivatePool);
 
     function reset(

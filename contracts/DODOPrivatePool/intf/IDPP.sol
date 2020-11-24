@@ -21,4 +21,25 @@ interface IDPP {
         address gasPriceSource,
         address tradePermissionManager
     ) external;
+
+    //=========== admin ==========
+    function setLpFeeRateModel(address newLpFeeRateModel) external;
+
+    function setMtFeeRateModel(address newMtFeeRateModel) external;
+
+    function setTradePermissionManager(address newTradePermissionManager) external;
+
+    function setMaintainer(address newMaintainer) external;
+
+    function setGasPriceSource(address newGasPriceLimitSource) external;
+
+    function setISource(address newISource) external;
+
+    function setKSource(address newKSource) external;
+
+    function setBuy(bool open) external;
+
+    function setSell(bool open) external;
+   //============================== 
+
 }

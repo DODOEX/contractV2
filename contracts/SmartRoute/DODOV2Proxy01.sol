@@ -130,7 +130,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         require(baseActualInAmount >= baseMinAmount && quoteActualInAmount >= quoteMinAmount, "DODOV2Proxy01: deposit amount is not enough");
     }
 
-    //TODO:ETH 
+    //TODO:ETH 构造data
     function removeDVMLiquidity(
         address DVMAddress,
         address to,
@@ -140,8 +140,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 deadline
     ) external virtual override payable judgeExpired(deadline) returns (uint256 baseOutAmount,uint256 quoteOutAmount) {
         require(shares > 0, "DODOV2Proxy01: Insufficient_Liquidity");
-        IDODOV2(smartApprove).claimTokens(DVMAddress, msg.sender, DVMAddress, shares);
-        (baseOutAmount,quoteOutAmount) = IDODOV2(DVMAddress).sellShares(to);
+        (baseOutAmount,quoteOutAmount) = IDODOV2(DVMAddress).sellShares(to, shares, "");
         require(baseOutAmount >= baseOutMinAmount && quoteOutAmount >= quoteOutMinAmount,"DODOV2Proxy01: withdraw amount is not enough");
     }
 
@@ -151,11 +150,13 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         address quoteToken,
         uint256 baseInAmount,
         uint256 quoteInAmount,
-        address[] memory valueTemplates, //feeRateAddr,mtRateAddr,kAddr,iAddr
-        uint256[] memory values, // feeRate,mtRate,k,i
+        uint256 lpFeeRate,
+        uint256 mtFeeRate,
+        uint256 i,
+        uint256 k,
         uint256 deadline
     ) external virtual override payable judgeExpired(deadline) returns (address newPrivatePool) {
-        newPrivatePool = IDODOV2(dppFactory).createDODOPrivatePool(baseToken,quoteToken,valueTemplates,values);
+        newPrivatePool = IDODOV2(dppFactory).createDODOPrivatePool(baseToken, quoteToken, lpFeeRate, mtFeeRate, i, k);
         if(baseInAmount > 0) 
             IDODOV2(smartApprove).claimTokens(baseToken, msg.sender, newPrivatePool, baseInAmount);
         if(quoteInAmount > 0)

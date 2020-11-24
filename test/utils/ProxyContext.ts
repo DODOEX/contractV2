@@ -52,6 +52,8 @@ export class ProxyContext {
     );
     var dvmTemplate = await contracts.newContract(contracts.DVM_NAME)
     var dppTemplate = await contracts.newContract(contracts.DPP_NAME)
+    var dvmAdminTemplate = await contracts.newContract(contracts.DVM_ADMIN_NAME)
+    var dppAdminTemplate = await contracts.newContract(contracts.DPP_ADMIN_NAME)
     var feeRateModelTemplate = await contracts.newContract(contracts.FEE_RATE_MODEL_NAME)
     var permissionManagerTemplate = await contracts.newContract(contracts.PERMISSION_MANAGER_NAME)
     var vauleSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME)
@@ -60,6 +62,7 @@ export class ProxyContext {
       [
         cloneFactory.options.address,
         dvmTemplate.options.address,
+        dvmAdminTemplate.options.address,
         feeRateModelTemplate.options.address,
         permissionManagerTemplate.options.address,
         vauleSource.options.address
@@ -70,6 +73,7 @@ export class ProxyContext {
       [
         cloneFactory.options.address,
         dppTemplate.options.address,
+        dppAdminTemplate.options.address,
         feeRateModelTemplate.options.address,
         permissionManagerTemplate.options.address,
         vauleSource.options.address
