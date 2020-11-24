@@ -33,4 +33,21 @@ interface IDVM {
     function sellQuote(address to) external returns (uint256);
 
     function buyShares(address to) external returns (uint256);
+
+
+    //=========== admin ==========
+    function setLpFeeRateModel(address newLpFeeRateModel) external;
+
+    function setMtFeeRateModel(address newMtFeeRateModel) external;
+
+    function setTradePermissionManager(address newTradePermissionManager) external;
+
+    function setMaintainer(address newMaintainer) external;
+
+    function setGasPriceSource(address newGasPriceLimitSource) external;
+
+    function setBuy(bool open) external;
+
+    function setSell(bool open) external;
+   //============================== 
 }

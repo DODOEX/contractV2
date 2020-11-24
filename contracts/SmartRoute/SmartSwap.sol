@@ -40,8 +40,6 @@ contract SmartSwap is Ownable {
         uint256 timeStamp
     );
 
-    event ExternalRecord(address indexed to, address indexed sender);
-
     constructor(
         address _smartApprove,
         address _dodoSellHelper,
@@ -76,9 +74,8 @@ contract SmartSwap is Ownable {
         }
 
         for (uint256 i = 0; i < dodoPairs.length; i++) {
-            uint256 curDirection = directions[i];
             address curDodoPair = dodoPairs[i];
-            if (curDirection == 0) {
+            if (directions[i] == 0) {
                 address curDodoBase = IDODO(curDodoPair)._BASE_TOKEN_();
                 uint256 curAmountIn = IERC20(curDodoBase).balanceOf(address(this));
                 IERC20(curDodoBase).universalApprove(curDodoPair, curAmountIn);
@@ -139,6 +136,5 @@ contract SmartSwap is Ownable {
         require(returnAmount >= minReturnAmount, "DODO SmartSwap: Return amount is not enough");
         IERC20(toToken).universalTransfer(msg.sender, returnAmount);
         emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount, block.timestamp);
-        emit ExternalRecord(to, msg.sender);
     }
 }

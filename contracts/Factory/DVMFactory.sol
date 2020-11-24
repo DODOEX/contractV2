@@ -12,19 +12,21 @@ import {Ownable} from "../lib/Ownable.sol";
 import {ICloneFactory} from "../lib/CloneFactory.sol";
 import {IConstFeeRateModel} from "../lib/ConstFeeRateModel.sol";
 import {IDVM} from "../DODOVendingMachine/intf/IDVM.sol";
+import {IDVMAdmin} from "../DODOVendingMachine/intf/IDVMAdmin.sol";
 import {IPermissionManager} from "../lib/PermissionManager.sol";
 
 contract DVMFactory is Ownable {
     address public _CLONE_FACTORY_;
     address public _DVM_TEMPLATE_;
+    address public _DVM_ADMIN_TEMPLATE_;
     address public _FEE_RATE_MODEL_TEMPLATE_;
     address public _PERMISSION_MANAGER_TEMPLATE_;
     address public _DEFAULT_GAS_PRICE_SOURCE_;
 
+    //TODO: 平台修改tag的权限 && 池子标签类型
     struct DVMInfo {
         address creator;
         uint256 createTimeStamp;
-        //TODO:other tags
     }
 
     // base -> quote -> DVM address list
@@ -39,12 +41,14 @@ contract DVMFactory is Ownable {
     constructor(
         address cloneFactory,
         address dvmTemplate,
+        address dvmAdminTemplate,
         address feeRateModelTemplate,
         address permissionManagerTemplate,
         address defaultGasPriceSource
     ) public {
         _CLONE_FACTORY_ = cloneFactory;
         _DVM_TEMPLATE_ = dvmTemplate;
+        _DVM_ADMIN_TEMPLATE_ = dvmAdminTemplate;
         _FEE_RATE_MODEL_TEMPLATE_ = feeRateModelTemplate;
         _PERMISSION_MANAGER_TEMPLATE_ = permissionManagerTemplate;
         _DEFAULT_GAS_PRICE_SOURCE_ = defaultGasPriceSource;
@@ -62,13 +66,12 @@ contract DVMFactory is Ownable {
         newVendingMachine = ICloneFactory(_CLONE_FACTORY_).clone(_DVM_TEMPLATE_);
 
         IDVM(newVendingMachine).init(
-            msg.sender,
+            _createDVMAdminModel(msg.sender,newVendingMachine),
             msg.sender,
             baseToken,
             quoteToken,
-            //TODO:标准库 统一的feeRateModel，owner归平台控制
-            _createConstFeeRateModel(newVendingMachine, lpFeeRate),
-            _createConstFeeRateModel(newVendingMachine, mtFeeRate),
+            _createFeeRateModel(newVendingMachine, lpFeeRate),
+            _createFeeRateModel(newVendingMachine, mtFeeRate),
             _createPermissionManager(msg.sender),
             _DEFAULT_GAS_PRICE_SOURCE_,
             i,
@@ -87,16 +90,24 @@ contract DVMFactory is Ownable {
         return newVendingMachine;
     }
 
-    function _createConstFeeRateModel(address owner, uint256 feeRate) internal returns (address feeRateModel) {
+    function _createFeeRateModel(address owner, uint256 feeRate) internal returns (address feeRateModel) {
         feeRateModel = ICloneFactory(_CLONE_FACTORY_).clone(_FEE_RATE_MODEL_TEMPLATE_);
         IConstFeeRateModel(feeRateModel).init(owner, feeRate);
-        return feeRateModel;
     }
 
     function _createPermissionManager(address owner) internal returns (address permissionManager) {
         permissionManager = ICloneFactory(_CLONE_FACTORY_).clone(_PERMISSION_MANAGER_TEMPLATE_);
         IPermissionManager(permissionManager).initOwner(owner);
-        return permissionManager;
+    }
+
+    function _createDVMAdminModel(address owner, address dvm) internal returns (address adminModel) {
+        adminModel = ICloneFactory(_CLONE_FACTORY_).clone(_DVM_ADMIN_TEMPLATE_);
+        IDVMAdmin(adminModel).init(owner,dvm);
+    }
+
+    //TODO: 讨论 or 升级整个Factory
+    function updateAdminTemplate(address _newDVMAdminTemplate) external onlyOwner {
+        _DVM_ADMIN_TEMPLATE_ = _newDVMAdminTemplate;
     }
 
     function getVendingMachine(address baseToken, address quoteToken)

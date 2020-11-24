@@ -21,6 +21,9 @@ import {IERC20} from "../../intf/IERC20.sol";
 contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
 
+    address public _FACTORY_;
+    address public _ADMIN_;
+
     // ============ Variables for Control ============
 
     IExternalValue public _GAS_PRICE_LIMIT_;

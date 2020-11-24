@@ -28,6 +28,7 @@ contract DPPStorage is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
 
     address public _FACTORY_;
+    address public _ADMIN_;
 
     // ============ Variables for Control ============
 
