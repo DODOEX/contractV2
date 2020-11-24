@@ -13,7 +13,6 @@ import {IPermissionManager} from "../../lib/PermissionManager.sol";
 import {IExternalValue} from "../../lib/ExternalValue.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {DPPTrader} from "./DPPTrader.sol";
-import {ISmartApprove} from "../../intf/ISmartApprove.sol";
 
 contract DPP is DPPTrader {
 
@@ -31,22 +30,19 @@ contract DPP is DPPTrader {
         address kSource,
         address iSource,
         address gasPriceSource,
-        address tradePermissionManager,
-        address iSmartApprove
+        address tradePermissionManager
     ) external {
         require(msg.sender == _FACTORY_, 'INIT FORBIDDEN');
         initOwner(owner);
         _MAINTAINER_ = maintainer;
         _BASE_TOKEN_ = IERC20(baseTokenAddress);
         _QUOTE_TOKEN_ = IERC20(quoteTokenAddress);
-        _DODO_SMART_APPROVE_ = ISmartApprove(iSmartApprove);
         _LP_FEE_RATE_MODEL_ = IFeeRateModel(lpFeeRateModel);
         _MT_FEE_RATE_MODEL_ = IFeeRateModel(mtFeeRateModel);
         _I_ = IExternalValue(iSource);
         _K_ = IExternalValue(kSource);
         _GAS_PRICE_LIMIT_ = IExternalValue(gasPriceSource);
         _TRADE_PERMISSION_ = IPermissionManager(tradePermissionManager);
-        _resetTargetAndReserve();
     }
 
     // ============ Version Control ============

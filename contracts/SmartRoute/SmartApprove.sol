@@ -24,12 +24,12 @@ contract SmartApprove is Ownable {
     }
 
     function claimTokens(
-        IERC20 token,
+        address token,
         address who,
         address dest,
         uint256 amount
     ) external {
         require(msg.sender == smartSwap, "Not SmartSwap Address, Access restricted");
-        token.safeTransferFrom(who, dest, amount);
+        IERC20(token).safeTransferFrom(who, dest, amount);
     }
 }

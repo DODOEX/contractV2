@@ -13,7 +13,7 @@ import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {IDODOCallee} from "../../intf/IDODOCallee.sol";
 
 contract DVMFunding is DVMVault {
-    function buyShares(address to) external preventReentrant returns (uint256) {
+    function buyShares(address to) external preventReentrant returns (uint256 shares,uint256 baseAmount,uint256 quoteAmount) {
         uint256 baseInput = getBaseInput();
         uint256 quoteInput = getQuoteInput();
         require(baseInput > 0, "NO_BASE_INPUT");
@@ -33,7 +33,14 @@ contract DVMFunding is DVMVault {
         if (baseReserve > 0 && quoteReserve > 0) {
             uint256 baseInputRatio = DecimalMath.divFloor(baseInput, baseReserve);
             uint256 quoteInputRatio = DecimalMath.divFloor(quoteInput, quoteReserve);
-            uint256 mintRatio = baseInputRatio > quoteInputRatio ? quoteInputRatio : baseInputRatio;
+            uint256 mintRatio;
+            if(baseInputRatio > quoteInputRatio){
+                mintRatio = quoteInputRatio;
+                baseInput = DecimalMath.mulFloor(baseInput, mintRatio);
+            }else {
+                mintRatio = baseInputRatio;
+                quoteInput = DecimalMath.mulFloor(quoteInput, mintRatio);
+            }
             // 在提币的时候向下取整。因此永远不会出现，balance为0但totalsupply不为0的情况
             // 但有可能出现，reserve>0但totalSupply=0的场景
             uint256 totalShare = totalSupply;
@@ -45,32 +52,19 @@ contract DVMFunding is DVMVault {
         }
         _mint(to, mintAmount);
         _sync();
+        return (mintAmount,baseInput,quoteInput);
     }
 
-    //TODO:Router unwrap WETH
-    function sellShares(
-        address to
-        // uint256 shareAmount,
-        // bytes calldata data
-    ) external preventReentrant returns (uint256) {
-        // require(_SHARES_[msg.sender] >= shareAmount, "SHARES_NOT_ENOUGH");
+    function sellShares(address to) external preventReentrant returns (uint256 baseAmount,uint256 quoteAmount) {
         (uint256 baseBalance, uint256 quoteBalance) = getVaultBalance();
         uint256 totalShares = totalSupply;
         uint256 shareAmount = _SHARES_[address(this)];
-        uint256 baseAmount = baseBalance.mul(shareAmount).div(totalShares);
-        uint256 quoteAmount = quoteBalance.mul(shareAmount).div(totalShares);
+        baseAmount = baseBalance.mul(shareAmount).div(totalShares);
+        quoteAmount = quoteBalance.mul(shareAmount).div(totalShares);
         require(baseAmount > 0 && quoteAmount > 0, 'NO_DLP_INPUT');
         _burn(address(this), shareAmount);
         _transferBaseOut(to, baseAmount);
         _transferQuoteOut(to, quoteAmount);
         _sync();
-        // if (data.length > 0)
-        //     IDODOCallee(msg.sender).DVMSellShareCall(
-        //         to,
-        //         shareAmount,
-        //         baseAmount,
-        //         quoteAmount,
-        //         data
-        //     );
     }
 }

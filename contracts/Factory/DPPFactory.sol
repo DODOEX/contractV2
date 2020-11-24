@@ -17,7 +17,6 @@ import {IPermissionManager} from "../lib/PermissionManager.sol";
 
 contract DPPFactory is Ownable {
     address public _CLONE_FACTORY_;
-    address public _DODO_SMART_APPROVE_;
     address public _DPP_TEMPLATE_;
     address public _FEE_RATE_MODEL_TEMPLATE_;
     address public _PERMISSION_MANAGER_TEMPLATE_;
@@ -43,21 +42,19 @@ contract DPPFactory is Ownable {
 
     constructor(
         address cloneFactory,
-        address dodoSmartApprove,
         address dppTemplate,
         address defautFeeRateModelTemplate,
         address defaultPermissionManagerTemplate,
         address defaultExternalValueTemplate
     ) public {
         _CLONE_FACTORY_ = cloneFactory;
-        _DODO_SMART_APPROVE_ = dodoSmartApprove;
         _DPP_TEMPLATE_ = dppTemplate;
         _FEE_RATE_MODEL_TEMPLATE_ = defautFeeRateModelTemplate;
         _PERMISSION_MANAGER_TEMPLATE_ = defaultPermissionManagerTemplate;
         _VALUE_SOURCE_ = defaultExternalValueTemplate;
     }
 
-    function createStandardDODOPrivatePool(
+    function createDODOPrivatePool(
         address baseToken,
         address quoteToken,
         //TODO: tag 粒度
@@ -73,14 +70,13 @@ contract DPPFactory is Ownable {
             msg.sender,
             baseToken,
             quoteToken,
-            (valueTemplates[0] == address(0) ? createFeeRateModel(newPrivatePool, values[0]) : valueTemplates[0]),
-            (valueTemplates[1] == address(0) ? createFeeRateModel(newPrivatePool, values[1]) : valueTemplates[1]),
-            (valueTemplates[2] == address(0) ? createExternalValueModel(newPrivatePool, values[2]) : valueTemplates[2]),
-            (valueTemplates[3] == address(0) ? createExternalValueModel(newPrivatePool, values[3]) : valueTemplates[3]),
+            (valueTemplates[0] == address(0) ? _createFeeRateModel(newPrivatePool, values[0]) : valueTemplates[0]),
+            (valueTemplates[1] == address(0) ? _createFeeRateModel(newPrivatePool, values[1]) : valueTemplates[1]),
+            (valueTemplates[2] == address(0) ? _createExternalValueModel(newPrivatePool, values[2]) : valueTemplates[2]),
+            (valueTemplates[3] == address(0) ? _createExternalValueModel(newPrivatePool, values[3]) : valueTemplates[3]),
             //hardcode
-            createExternalValueModel(msg.sender, 10**22),
-            createPermissionManager(msg.sender),
-            _DODO_SMART_APPROVE_            
+            _createExternalValueModel(msg.sender, 10**22),
+            _createPermissionManager(msg.sender)          
         );
 
         _REGISTRY_[baseToken][quoteToken].push(newPrivatePool);
@@ -95,25 +91,19 @@ contract DPPFactory is Ownable {
         return newPrivatePool;
     }
 
-    function createFeeRateModel(address owner, uint256 feeRate)
-        public
-        returns (address feeRateModel)
-    {
+    function _createFeeRateModel(address owner, uint256 feeRate) internal returns (address feeRateModel){
         feeRateModel = ICloneFactory(_CLONE_FACTORY_).clone(_FEE_RATE_MODEL_TEMPLATE_);
         IFeeRateModel(feeRateModel).init(owner, feeRate);
         return feeRateModel;
     }
 
-    function createPermissionManager(address owner) public returns (address permissionManager) {
+    function _createPermissionManager(address owner) internal returns (address permissionManager) {
         permissionManager = ICloneFactory(_CLONE_FACTORY_).clone(_PERMISSION_MANAGER_TEMPLATE_);
         IPermissionManager(permissionManager).initOwner(owner);
         return permissionManager;
     }
 
-    function createExternalValueModel(address owner, uint256 value)
-        public
-        returns (address valueModel)
-    {
+    function _createExternalValueModel(address owner, uint256 value) internal returns (address valueModel) {
         valueModel = ICloneFactory(_CLONE_FACTORY_).clone(_VALUE_SOURCE_);
         IExternalValue(valueModel).init(owner, value);
         return valueModel;

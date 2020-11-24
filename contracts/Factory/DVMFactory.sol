@@ -50,7 +50,7 @@ contract DVMFactory is Ownable {
         _DEFAULT_GAS_PRICE_SOURCE_ = defaultGasPriceSource;
     }
 
-    function createStandardDODOVendingMachine(
+    function createDODOVendingMachine(
         address baseToken,
         address quoteToken,
         uint256 lpFeeRate,
@@ -66,9 +66,10 @@ contract DVMFactory is Ownable {
             msg.sender,
             baseToken,
             quoteToken,
-            createConstFeeRateModel(newVendingMachine, lpFeeRate),
-            createConstFeeRateModel(newVendingMachine, mtFeeRate),
-            createPermissionManager(msg.sender),
+            //TODO:标准库 统一的feeRateModel，owner归平台控制
+            _createConstFeeRateModel(newVendingMachine, lpFeeRate),
+            _createConstFeeRateModel(newVendingMachine, mtFeeRate),
+            _createPermissionManager(msg.sender),
             _DEFAULT_GAS_PRICE_SOURCE_,
             i,
             k
@@ -86,16 +87,13 @@ contract DVMFactory is Ownable {
         return newVendingMachine;
     }
 
-    function createConstFeeRateModel(address owner, uint256 feeRate)
-        public
-        returns (address feeRateModel)
-    {
+    function _createConstFeeRateModel(address owner, uint256 feeRate) internal returns (address feeRateModel) {
         feeRateModel = ICloneFactory(_CLONE_FACTORY_).clone(_FEE_RATE_MODEL_TEMPLATE_);
         IConstFeeRateModel(feeRateModel).init(owner, feeRate);
         return feeRateModel;
     }
 
-    function createPermissionManager(address owner) public returns (address permissionManager) {
+    function _createPermissionManager(address owner) internal returns (address permissionManager) {
         permissionManager = ICloneFactory(_CLONE_FACTORY_).clone(_PERMISSION_MANAGER_TEMPLATE_);
         IPermissionManager(permissionManager).initOwner(owner);
         return permissionManager;

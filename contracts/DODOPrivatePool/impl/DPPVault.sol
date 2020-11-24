@@ -37,6 +37,11 @@ contract DPPVault is DPPStorage {
         return _QUOTE_TOKEN_.balanceOf(address(this)).sub(_QUOTE_RESERVE_);
     }
 
+    // ============ Vault Related
+    function getVaultReserve() public view returns (uint256 baseReserve, uint256 quoteReserve) {
+        return (_BASE_RESERVE_, _QUOTE_RESERVE_);
+    }
+
     // ============ Set Status ============
 
     function setTarget(uint256 baseTarget, uint256 quoteTarget) public onlyOwner {
@@ -48,6 +53,12 @@ contract DPPVault is DPPStorage {
     function _syncReserve() internal {
         _BASE_RESERVE_ = _BASE_TOKEN_.balanceOf(address(this));
         _QUOTE_RESERVE_ = _QUOTE_TOKEN_.balanceOf(address(this));
+    }
+
+    //TODO:
+    function initTargetAndReserve() public {
+        require(tx.origin == _OWNER_, "INIT FORBIDDEN！");
+        _resetTargetAndReserve();
     }
 
     function _resetTargetAndReserve() internal {
@@ -63,14 +74,13 @@ contract DPPVault is DPPStorage {
         uint256 newI,
         uint256 newK,
         uint256 baseOutAmount,
-        uint256 quoteOutAmount,
-        address to
+        uint256 quoteOutAmount
     ) public {
         //TODO: owner 权限可以是operator
-        require(msg.sender == _DODO_SMART_APPROVE_.getSmartSwap() || msg.sender == _OWNER_, "RESET FORBIDDEN！");
+        require(tx.origin == _OWNER_, "RESET FORBIDDEN！");
         require(newK > 0 && newK <= 10**18, "K OUT OF RANGE!");
-        if(baseOutAmount > 0)  _transferBaseOut(to, baseOutAmount);
-        if(quoteOutAmount > 0) _transferQuoteOut(to, quoteOutAmount);
+        if(baseOutAmount > 0)  _transferBaseOut(tx.origin, baseOutAmount);
+        if(quoteOutAmount > 0) _transferQuoteOut(tx.origin, quoteOutAmount);
         _resetTargetAndReserve();
         _LP_FEE_RATE_MODEL_.setFeeRate(newLpFeeRate);
         _MT_FEE_RATE_MODEL_.setFeeRate(newMtFeeRate);
