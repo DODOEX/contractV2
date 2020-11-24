@@ -13,7 +13,16 @@ import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {IDODOCallee} from "../../intf/IDODOCallee.sol";
 
 contract DVMFunding is DVMVault {
-    function buyShares(address to) external preventReentrant returns (uint256 shares,uint256 baseAmount,uint256 quoteAmount) {
+    // shares [round down]
+    function buyShares(address to)
+        external
+        preventReentrant
+        returns (
+            uint256 shares,
+            uint256 baseAmount,
+            uint256 quoteAmount
+        )
+    {
         uint256 baseInput = getBaseInput();
         uint256 quoteInput = getQuoteInput();
         require(baseInput > 0, "NO_BASE_INPUT");
@@ -21,50 +30,49 @@ contract DVMFunding is DVMVault {
         uint256 quoteReserve = _QUOTE_RESERVE_;
         uint256 mintAmount;
         // case 1. initial supply
-        if (baseReserve == 0 && quoteReserve == 0) {
-            mintAmount = baseInput;
-        }
-        // case 2. supply when quote reserve is 0
-        if (baseReserve > 0 && quoteReserve == 0) {
-            uint256 mintRatio = DecimalMath.divFloor(baseInput, baseReserve);
-            mintAmount = DecimalMath.mulFloor(totalSupply, mintRatio);
-        }
-        // case 3. normal case
-        if (baseReserve > 0 && quoteReserve > 0) {
+        // 包含了 baseReserve == 0 && quoteReserve == 0 的情况
+        // 在提币的时候向下取整。因此永远不会出现，balance为0但totalsupply不为0的情况
+        // 但有可能出现，reserve>0但totalSupply=0的场景
+        if (totalSupply == 0) {
+            mintAmount = getBaseBalance(); // 以免出现balance很大但shares很小的情况
+        } else if (baseReserve > 0 && quoteReserve == 0) {
+            // case 2. supply when quote reserve is 0
+            mintAmount = baseInput.mul(totalSupply).div(baseReserve);
+        } else if (baseReserve > 0 && quoteReserve > 0) {
+            // case 3. normal case
             uint256 baseInputRatio = DecimalMath.divFloor(baseInput, baseReserve);
             uint256 quoteInputRatio = DecimalMath.divFloor(quoteInput, quoteReserve);
-            uint256 mintRatio;
-            if(baseInputRatio > quoteInputRatio){
-                mintRatio = quoteInputRatio;
-                baseInput = DecimalMath.mulFloor(baseInput, mintRatio);
-            }else {
-                mintRatio = baseInputRatio;
-                quoteInput = DecimalMath.mulFloor(quoteInput, mintRatio);
-            }
-            // 在提币的时候向下取整。因此永远不会出现，balance为0但totalsupply不为0的情况
-            // 但有可能出现，reserve>0但totalSupply=0的场景
-            uint256 totalShare = totalSupply;
-            if (totalShare > 0) {
-                mintAmount = DecimalMath.mulFloor(totalShare, mintRatio);
-            } else {
-                mintAmount = baseInput;
-            }
+            uint256 mintRatio = quoteInputRatio < baseInputRatio ? quoteInputRatio : baseInputRatio;
+            mintAmount = DecimalMath.mulFloor(totalSupply, mintRatio);
         }
         _mint(to, mintAmount);
         _sync();
-        return (mintAmount,baseInput,quoteInput);
+        return (mintAmount, baseInput, quoteInput);
     }
 
-    function sellShares(address to) external preventReentrant returns (uint256 baseAmount,uint256 quoteAmount) {
+    // withdraw amount [round down]
+    function sellShares(
+        uint256 shareAmount,
+        address to,
+        bytes calldata data
+    ) external preventReentrant returns (uint256 baseAmount, uint256 quoteAmount) {
         (uint256 baseBalance, uint256 quoteBalance) = getVaultBalance();
         uint256 totalShares = totalSupply;
-        uint256 shareAmount = _SHARES_[address(this)];
+        require(shareAmount <= _SHARES_[msg.sender], "DLP_NOT_ENOUGH");
         baseAmount = baseBalance.mul(shareAmount).div(totalShares);
         quoteAmount = quoteBalance.mul(shareAmount).div(totalShares);
-        require(baseAmount > 0 && quoteAmount > 0, 'NO_DLP_INPUT');
-        _burn(address(this), shareAmount);
+        _burn(msg.sender, shareAmount);
         _transferBaseOut(to, baseAmount);
         _transferQuoteOut(to, quoteAmount);
+        if (data.length > 0) {
+            IDODOCallee(to).DVMSellShareCall(
+                msg.sender,
+                shareAmount,
+                baseAmount,
+                quoteAmount,
+                data
+            );
+        }
         _sync();
     }
 }
