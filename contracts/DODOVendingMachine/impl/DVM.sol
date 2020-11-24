@@ -37,6 +37,8 @@ contract DVM is DVMTrader, DVMFunding {
         _TRADE_PERMISSION_ = IPermissionManager(tradePermissionManager);
         _GAS_PRICE_LIMIT_ = IExternalValue(gasPriceSource);
         _MAINTAINER_ = maintainer;
+
+        require(i > 0 && i < 10**36);
         _I_ = i;
 
         require(k > 0 && k <= 10**18);
