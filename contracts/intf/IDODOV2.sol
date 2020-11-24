@@ -11,21 +11,8 @@ pragma experimental ABIEncoderV2;
 import {IERC20} from "./IERC20.sol";
 
 interface IDODOV2 {
-    function createDODOPrivatePool(
-        address baseToken,
-        address quoteToken,
-        address[] memory valueTemplates, //feeRateAddr,mtRateAddr,kAddr,iAddr
-        uint256[] memory values //feeRate,mtRate,k,i
-    ) external returns (address newPrivatePool);
 
-    function createDODOVendingMachine(
-        address baseToken,
-        address quoteToken,
-        uint256 lpFeeRate,
-        uint256 mtFeeRate,
-        uint256 i,
-        uint256 k
-    ) external returns (address newVendingMachine);
+    //========== Common ==================
 
     function sellBase(address to) external returns (uint256 receiveQuoteAmount);
 
@@ -35,15 +22,33 @@ interface IDODOV2 {
 
     function sellShares(address to) external returns (uint256,uint256);
 
-
     function getVaultReserve() external view returns (uint256 baseReserve, uint256 quoteReserve);
 
     function _BASE_TOKEN_() external returns (address);
 
     function _QUOTE_TOKEN_() external returns (address);
 
+    //========== DODOVendingMachine ========
+    
+    function createDODOVendingMachine(
+        address baseToken,
+        address quoteToken,
+        uint256 lpFeeRate,
+        uint256 mtFeeRate,
+        uint256 i,
+        uint256 k
+    ) external returns (address newVendingMachine);
+
     //========== DODOPrivatePool ===========
+
     function initTargetAndReserve() external;
+
+    function createDODOPrivatePool(
+        address baseToken,
+        address quoteToken,
+        address[] memory valueTemplates, //feeRateAddr,mtRateAddr,kAddr,iAddr
+        uint256[] memory values //feeRate,mtRate,k,i
+    ) external returns (address newPrivatePool);
 
     function reset(
         uint256 newLpFeeRate,

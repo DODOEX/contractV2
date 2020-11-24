@@ -35,6 +35,12 @@ export const DVM_PROXY_NAME = "DVMProxy"
 export const CONST_FEE_RATE_MODEL_NAME = "ConstFeeRateModel"
 export const PERMISSION_MANAGER_NAME = "PermissionManager"
 export const EXTERNAL_VALUE_NAME = "ExternalValue"
+export const DODO_PROXY_NAME = "DODOV2Proxy01"
+export const FEE_RATE_MODEL_NAME = "FeeRateModel"
+export const DPP_NAME = "DPP"
+export const DPP_FACTORY_NAME = "DPPFactory"
+export const SMART_APPROVE = "SmartApprove"
+export const DODO_SELL_HELPER = "DODOSellHelper"
 
 interface ContractJson {
   abi: any;
