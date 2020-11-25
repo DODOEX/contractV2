@@ -38,32 +38,14 @@ async function init(ctx: ProxyContext): Promise<void> {
   await ctx.mintTestToken(lp, ctx.USDT, mweiStr("100000"));
   await ctx.mintTestToken(project, ctx.USDT, mweiStr("100000"));
 
-  await ctx.mintTestToken(lp, ctx.WETH, decimalStr("70"));
-  await ctx.mintTestToken(project, ctx.WETH, decimalStr("70"));
+  // await ctx.WETH.methods.deposit().send(ctx.sendParam(lp, '80'));
+  // await ctx.WETH.methods.deposit().send(ctx.sendParam(project, '80'));
 }
 
-async function initCreateDVM(ctx: ProxyContext, token0: any, token1:any, token0Amount: string, token1Amount: string): Promise<void> {
-  let PROXY = ctx.DODOProxy;
-  let dvmAddress;
-  let shares;
-  (dvmAddress, shares) = await PROXY.methods.createDODOVendingMachine(
-    token0.options.address,
-    token1.options.address,
-    token0Amount,
-    token1Amount,
-    config.lpFeeRate,
-    config.mtFeeRate,
-    config.i,
-    config.k,
-    Math.floor(new Date().getTime()/1000 + 60 * 10);
-  ).send(ctx.sendParam(project));
-  console.log("create dvmAddress: ", dvmAddress);
-  console.log("create shares: ", shares);
-}
 
 async function initCreateDPP(ctx: ProxyContext, token0: any, token1:any, token0Amount: string, token1Amount: string): Promise<void> {
   let PROXY = ctx.DODOProxy;
-  let dppAddress = await PROXY.methods.createDODOPrivatePool(
+  await PROXY.methods.createDODOPrivatePool(
     token0.options.address,
     token1.options.address,
     token0Amount,
@@ -72,10 +54,8 @@ async function initCreateDPP(ctx: ProxyContext, token0: any, token1:any, token0A
     config.mtFeeRate,
     config.i,
     config.k,
-    Math.floor(new Date().getTime()/1000 + 60 * 10);
+    Math.floor(new Date().getTime()/1000 + 60 * 10)
   ).send(ctx.sendParam(project));
-  console.log("create dppAddress: ", dppAddress);
-  console.log("create shares: ", shares);
 }
 
 describe("DODOProxyV2.0", () => {
@@ -85,10 +65,8 @@ describe("DODOProxyV2.0", () => {
   before(async () => {
     ctx = await getProxyContext();
     await init(ctx);
-    await initCreateDVM(ctx,ctx.DODO,ctx.USDT,decimalStr("10000"),decimalStr("10000"));
-    await initCreateDVM(ctx,ctx.WETH,ctx.USDT,decimalStr("50"),decimalStr("10000"));
-    await initCreateDPP(ctx,ctx.DODO,ctx.USDT,decimalStr("10000"),decimalStr("10000"));
-    await initCreateDPP(ctx,ctx.WETH,ctx.USDT,decimalStr("50"),decimalStr("10000"));
+    // await initCreateDPP(ctx,ctx.DODO,ctx.USDT,decimalStr("10000"),decimalStr("10000"));
+    // await initCreateDPP(ctx,ctx.WETH,ctx.USDT,decimalStr("50"),decimalStr("10000"));
   });
 
   beforeEach(async () => {
@@ -102,54 +80,82 @@ describe("DODOProxyV2.0", () => {
   describe("DODOProxy", () => {
     /**
      * 1. 创建空池子
-     * 2. 创建ERC20 Token DVM
-     * 3. 创建ETH && ERC20 Token 
-     */
-    it("createDVM", async () => {
-
-    });
-
-    /**
-     * 1. 添加ERC20 Amount
-     * 2. 添加ERC20 + ETH 
-     */
-    it("addLiquidityToDVM", async () => {
-
-    });
-
-
-    /**
-     * 1. 移除ERC20 Amount
-     * 2. 移除ERC20 + ETH 
-     */
-    it("removeLiquidityToDVM", async () => {
-
-    });
-
-    /**
-     * 1. 创建空池子
      * 2. 创建ERC20 DPP
      * 3. 创建ETH && ERC20 Token 
      */
-    it("createDPP", async () => {
-
+    it("createDPP - empty", async () => {
+      var baseToken = ctx.DODO.options.address;
+      var quoteToken = ctx.USDT.options.address;
+      await ctx.DODOProxy.methods.createDODOPrivatePool(
+        baseToken,
+        quoteToken,
+        decimalStr("0"),
+        decimalStr("0"),
+        config.lpFeeRate,
+        config.mtFeeRate,
+        config.i,
+        config.k,
+        Math.floor(new Date().getTime()/1000 + 60 * 10)
+      ).send(ctx.sendParam(project));
+      var addrs = await ctx.DPPFactory.methods.getPrivatePool(baseToken,quoteToken).call();
+      var dppInfo = await ctx.DPPFactory.methods._DPP_INFO_(addrs[0]).call();
+      console.log("dppInfo:",dppInfo);
+      assert.equal(
+        dppInfo[0],
+        project
+      );
     });
 
 
-    /**
-     *
-     */
     it("resetDPP", async () => {
-
+        //需要存钱
+        //需要退钱
     });
 
 
     /**
-     *
+     * trade
      */
-    it("dodoSwap", async () => {
-
+    it("trade-sellQuote-R=1", async () => {
+        //R变号与不变号
     });
+
+    
+    it("trade-sellQuote-R>1", async () => {
+        //R变号与不变号
+    });
+
+
+    it("trade-sellQuote-R<1", async () => {
+        //R变号与不变号
+    });
+
+
+    it("trade-sellBase-R=1", async () => {
+        //R变号与不变号
+    });
+
+
+    it("trade-sellBase-R>1", async () => {
+        //R变号与不变号
+    });
+
+
+    it("trade-sellBase-R<1", async () => {
+        //R变号与不变号
+    });
+
+
+
+    it("retrieve", async () => {
+        //eth允许
+        //控制无法提取base && quote
+    });
+
+
+    /**
+     * 直接底层dpp操作测试
+     */
 
   });
 });

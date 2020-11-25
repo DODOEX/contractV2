@@ -36,6 +36,10 @@ contract DPPAdmin is InitializableOwnable {
         IDPP(dpp).setMaintainer(newMaintainer);
     }
 
+    function setOperator(address newOperator) external onlyOwner {
+        IDPP(dpp).setOperator(newOperator);
+    }
+
     function setGasPriceSource(address newGasPriceLimitSource) external onlyOwner {
         IDPP(dpp).setGasPriceSource(newGasPriceLimitSource);
     }
@@ -54,5 +58,14 @@ contract DPPAdmin is InitializableOwnable {
 
     function setSell(bool open) external onlyOwner {
         IDPP(dpp).setSell(open);
+    }
+
+    function retrieve(address payable to,address token,uint256 amount) external onlyOwner {
+        IDPP(dpp).retrieve(to,token,amount);
+    }
+
+    // ============ Admin Version Control ============
+    function version() external pure returns (uint256) {
+        return 100; // 1.0.0
     }
 }

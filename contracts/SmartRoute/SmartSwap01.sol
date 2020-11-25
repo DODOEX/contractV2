@@ -12,17 +12,22 @@ import {IERC20} from "../intf/IERC20.sol";
 import {UniversalERC20} from "../lib/UniversalERC20.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {IDODOSellHelper} from "../intf/IDODOSellHelper.sol";
-import {ISmartApprove} from "../intf/ISmartApprove.sol";
 import {IDODO} from "../intf/IDODO.sol";
 import {IWETH} from "../intf/IWETH.sol";
+
+interface ISmartApprove {
+    function claimTokens(IERC20 token,address who,address dest,uint256 amount) external;
+    function getSmartSwap() external view returns (address);
+}
+
 
 contract SmartSwap is Ownable {
     using SafeMath for uint256;
     using UniversalERC20 for IERC20;
 
-    address constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
-    address public smartApprove;
-    address public dodoSellHelper;
+    IERC20 constant ETH_ADDRESS = IERC20(0x000000000000000000000000000000000000000E);
+    ISmartApprove public smartApprove;
+    IDODOSellHelper public dodoSellHelper;
     address payable public _WETH_;
 
 
@@ -32,8 +37,8 @@ contract SmartSwap is Ownable {
     }
 
     event OrderHistory(
-        address indexed fromToken,
-        address indexed toToken,
+        IERC20 indexed fromToken,
+        IERC20 indexed toToken,
         address indexed sender,
         uint256 fromAmount,
         uint256 returnAmount,
@@ -45,8 +50,8 @@ contract SmartSwap is Ownable {
         address _dodoSellHelper,
         address payable _weth
     ) public {
-        smartApprove = _smartApprove;
-        dodoSellHelper = _dodoSellHelper;
+        smartApprove = ISmartApprove(_smartApprove);
+        dodoSellHelper = IDODOSellHelper(_dodoSellHelper);
         _WETH_ = _weth;
     }
 
@@ -55,8 +60,8 @@ contract SmartSwap is Ownable {
     receive() external payable {}
 
     function dodoSwap(
-        address fromToken,
-        address toToken,
+        IERC20 fromToken,
+        IERC20 toToken,
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
         address[] memory dodoPairs,
@@ -67,7 +72,7 @@ contract SmartSwap is Ownable {
         require(dodoPairs.length > 0, "DODO SmartSwap: pairs should exists.");
 
         if (fromToken != ETH_ADDRESS) {
-            ISmartApprove(smartApprove).claimTokens(fromToken, msg.sender, address(this),fromTokenAmount);
+            smartApprove.claimTokens(fromToken, msg.sender, address(this),fromTokenAmount);
         } else {
             require(msg.value == fromTokenAmount, "DODO SmartSwap: ETH_AMOUNT_NOT_MATCH");
             IWETH(_WETH_).deposit{value: fromTokenAmount}();
@@ -84,33 +89,32 @@ contract SmartSwap is Ownable {
                 address curDodoQuote = IDODO(curDodoPair)._QUOTE_TOKEN_();
                 uint256 curAmountIn = IERC20(curDodoQuote).balanceOf(address(this));
                 IERC20(curDodoQuote).universalApprove(curDodoPair, curAmountIn);
-                uint256 canBuyBaseAmount = IDODOSellHelper(dodoSellHelper).querySellQuoteToken(
+                uint256 canBuyBaseAmount = dodoSellHelper.querySellQuoteToken(
                     curDodoPair,
                     curAmountIn
                 );
                 IDODO(curDodoPair).buyBaseToken(canBuyBaseAmount, curAmountIn, "");
             }
         }
-        IERC20(fromToken).universalTransfer(msg.sender, IERC20(fromToken).universalBalanceOf(address(this)));
+        fromToken.universalTransfer(msg.sender, fromToken.universalBalanceOf(address(this)));
 
         if (toToken == ETH_ADDRESS) {
             uint256 wethAmount = IWETH(_WETH_).balanceOf(address(this));
             IWETH(_WETH_).withdraw(wethAmount);
         }
 
-        returnAmount = IERC20(toToken).universalBalanceOf(address(this));
+        returnAmount = toToken.universalBalanceOf(address(this));
 
         require(returnAmount >= minReturnAmount, "DODO SmartSwap: Return amount is not enough");
-        IERC20(toToken).universalTransfer(msg.sender, returnAmount);
+        toToken.universalTransfer(msg.sender, returnAmount);
         emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount, block.timestamp);
     }
 
     function externalSwap(
-        address fromToken,
-        address toToken,
+        IERC20 fromToken,
+        IERC20 toToken,
         address approveTarget,
         address to,
-        uint256 gasSwap,
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
         bytes memory callDataConcat,
@@ -120,21 +124,21 @@ contract SmartSwap is Ownable {
         require(minReturnAmount > 0, "DODO SmartSwap: Min return should be bigger then 0.");
 
         if (fromToken != ETH_ADDRESS) {
-            ISmartApprove(smartApprove).claimTokens(fromToken, msg.sender, address(this), fromTokenAmount);
-            IERC20(fromToken).universalApprove(approveTarget, fromTokenAmount);
+            smartApprove.claimTokens(fromToken, msg.sender, address(this), fromTokenAmount);
+            fromToken.universalApprove(approveTarget, fromTokenAmount);
         }
 
-        (bool success, ) = to.call{value: fromToken == ETH_ADDRESS ? msg.value : 0, gas: gasSwap}(
+        (bool success, ) = to.call{value: fromToken == ETH_ADDRESS ? msg.value : 0}(
             callDataConcat
         );
 
         require(success, "DODO SmartSwap: Contract Swap execution Failed");
 
-        IERC20(fromToken).universalTransfer(msg.sender, IERC20(fromToken).universalBalanceOf(address(this)));
-        returnAmount = IERC20(toToken).universalBalanceOf(address(this));
+        fromToken.universalTransfer(msg.sender, fromToken.universalBalanceOf(address(this)));
+        returnAmount = toToken.universalBalanceOf(address(this));
 
         require(returnAmount >= minReturnAmount, "DODO SmartSwap: Return amount is not enough");
-        IERC20(toToken).universalTransfer(msg.sender, returnAmount);
+        toToken.universalTransfer(msg.sender, returnAmount);
         emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount, block.timestamp);
     }
 }

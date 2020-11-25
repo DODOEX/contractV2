@@ -12,6 +12,7 @@ interface IDPP {
     function init(
         address owner,
         address maintainer,
+        address operator,
         address baseTokenAddress,
         address quoteTokenAddress,
         address lpFeeRateModel,
@@ -19,6 +20,7 @@ interface IDPP {
         address kSource,
         address iSource,
         address gasPriceSource,
+        address dodoSmartApprove,
         address tradePermissionManager
     ) external;
 
@@ -31,6 +33,8 @@ interface IDPP {
 
     function setMaintainer(address newMaintainer) external;
 
+    function setOperator(address newOperator) external;
+
     function setGasPriceSource(address newGasPriceLimitSource) external;
 
     function setISource(address newISource) external;
@@ -41,5 +45,7 @@ interface IDPP {
 
     function setSell(bool open) external;
    //============================== 
+
+    function retrieve(address payable to,address token,uint256 amount) external;
 
 }

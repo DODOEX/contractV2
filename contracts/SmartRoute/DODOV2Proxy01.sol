@@ -19,7 +19,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
     using SafeMath for uint256;
     using UniversalERC20 for IERC20;
 
-    address constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+    address constant ETH_ADDRESS = 0x000000000000000000000000000000000000000E;
     address payable public _WETH_;
     address public smartApprove;
     address public dodoSellHelper;
@@ -43,8 +43,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
 
     event ExternalRecord(address indexed to, address indexed sender);
     //========================================================================
-
-
 
     constructor(
         address _dvmFactory,
@@ -73,7 +71,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 deadline
     ) external virtual override payable judgeExpired(deadline) returns (address newVendingMachine,uint256 shares) {
         require(k > 0 && k<= 10**18, "DODOV2Proxy01: K OUT OF RANGE");
-        newVendingMachine = IDODOV2(dvmFactory).createDODOVendingMachine(baseToken,quoteToken,lpFeeRate,mtFeeRate,i,k);
+        newVendingMachine = IDODOV2(dvmFactory).createDODOVendingMachine(msg.sender, baseToken,quoteToken,lpFeeRate,mtFeeRate,i,k);
         if(baseInAmount > 0) 
             IDODOV2(smartApprove).claimTokens(baseToken, msg.sender, newVendingMachine, baseInAmount);
         if(quoteInAmount > 0)
@@ -156,12 +154,21 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 k,
         uint256 deadline
     ) external virtual override payable judgeExpired(deadline) returns (address newPrivatePool) {
-        newPrivatePool = IDODOV2(dppFactory).createDODOPrivatePool(baseToken, quoteToken, lpFeeRate, mtFeeRate, i, k);
+        newPrivatePool = IDODOV2(dppFactory).createDODOPrivatePool();
         if(baseInAmount > 0) 
             IDODOV2(smartApprove).claimTokens(baseToken, msg.sender, newPrivatePool, baseInAmount);
         if(quoteInAmount > 0)
             IDODOV2(smartApprove).claimTokens(quoteToken, msg.sender, newPrivatePool, quoteInAmount);
-        IDODOV2(newPrivatePool).initTargetAndReserve();
+        IDODOV2(dppFactory).initDODOPrivatePool(
+            newPrivatePool,
+            msg.sender,
+            baseToken,
+            quoteToken,
+            lpFeeRate,
+            mtFeeRate,
+            k,
+            i
+        );
     }
 
     //TODO:ETH

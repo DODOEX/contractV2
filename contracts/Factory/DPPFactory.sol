@@ -22,7 +22,9 @@ contract DPPFactory is Ownable {
     address public _DPP_ADMIN_TEMPLATE_;
     address public _FEE_RATE_MODEL_TEMPLATE_;
     address public _PERMISSION_MANAGER_TEMPLATE_;
+    address public _DEFAULT_GAS_PRICE_SOURCE_;
     address public _VALUE_SOURCE_;
+    address public _DODO_SMART_APPROVE_;
 
     //TODO: 平台修改tag的权限 && 池子标签类型
     struct DPPInfo {
@@ -31,13 +33,13 @@ contract DPPFactory is Ownable {
     }
 
     // base -> quote -> DPP address list
-    mapping(address => mapping(address => address[])) _REGISTRY_;
+    mapping(address => mapping(address => address[])) public _REGISTRY_;
     // token0 -> token1 -> DPP address list
-    mapping(address => mapping(address => address[])) _SORT_REGISTRY_;
+    mapping(address => mapping(address => address[])) public _SORT_REGISTRY_;
     // creator -> DPP address list
-    mapping(address => address[]) _USER_REGISTRY_;
+    mapping(address => address[]) public _USER_REGISTRY_;
     // DPP address -> info
-    mapping(address => DPPInfo) _DPP_INFO_;
+    mapping(address => DPPInfo) public _DPP_INFO_;
 
     constructor(
         address cloneFactory,
@@ -45,7 +47,9 @@ contract DPPFactory is Ownable {
         address dppAdminTemplate,
         address defautFeeRateModelTemplate,
         address defaultPermissionManagerTemplate,
-        address defaultExternalValueTemplate
+        address defaultExternalValueTemplate,
+        address defaultGasPriceSource,
+        address dodoSmartApprove
     ) public {
         _CLONE_FACTORY_ = cloneFactory;
         _DPP_TEMPLATE_ = dppTemplate;
@@ -53,40 +57,52 @@ contract DPPFactory is Ownable {
         _FEE_RATE_MODEL_TEMPLATE_ = defautFeeRateModelTemplate;
         _PERMISSION_MANAGER_TEMPLATE_ = defaultPermissionManagerTemplate;
         _VALUE_SOURCE_ = defaultExternalValueTemplate;
+        _DEFAULT_GAS_PRICE_SOURCE_ = defaultGasPriceSource;
+        _DODO_SMART_APPROVE_ = dodoSmartApprove;
     }
 
-    function createDODOPrivatePool(
+    function createDODOPrivatePool() external returns(address newPrivatePool) {
+        newPrivatePool = ICloneFactory(_CLONE_FACTORY_).clone(_DPP_TEMPLATE_);
+    }
+
+    function initDODOPrivatePool(
+        address dppAddress,
+        address from,
         address baseToken,
         address quoteToken,
         uint256 lpFeeRate,
         uint256 mtFeeRate,
-        uint256 i,
-        uint256 k
-    ) external returns (address newPrivatePool) {
-        (address token0, address token1) = baseToken < quoteToken ? (baseToken, quoteToken) : (quoteToken, baseToken);
-        newPrivatePool = ICloneFactory(_CLONE_FACTORY_).clone(_DPP_TEMPLATE_);
-
-        IDPP(newPrivatePool).init(
-            _createDPPAdminModel(msg.sender,newPrivatePool),
-            msg.sender,
+        uint256 k,
+        uint256 i
+    ) external {
+        { 
+        address _dppAddress = dppAddress;
+        address adminModel = _createDPPAdminModel(from,_dppAddress);
+        IDPP(_dppAddress).init(
+            adminModel,
+            from,
+            from,
             baseToken,
             quoteToken,
-            _createFeeRateModel(newPrivatePool, lpFeeRate),
-            _createFeeRateModel(newPrivatePool, mtFeeRate),
-            _createExternalValueModel(newPrivatePool, k),
-            _createExternalValueModel(newPrivatePool, i),
-            //TODO:hardcode
-            _createExternalValueModel(msg.sender, 10**22),
-            //TODO:讨论
-            _createPermissionManager(msg.sender)          
+            _createFeeRateModel(_dppAddress, lpFeeRate),
+            _createFeeRateModel(_dppAddress, mtFeeRate),
+            _createExternalValueModel(_dppAddress, k),
+            _createExternalValueModel(_dppAddress, i),
+            _DEFAULT_GAS_PRICE_SOURCE_,
+            _DODO_SMART_APPROVE_,
+            _createPermissionManager(adminModel)
         );
+        }
 
-        _REGISTRY_[baseToken][quoteToken].push(newPrivatePool);
-        _SORT_REGISTRY_[token0][token1].push(newPrivatePool);
-        _USER_REGISTRY_[msg.sender].push(newPrivatePool);
-        _DPP_INFO_[newPrivatePool] = (
+        {
+        (address token0, address token1) = baseToken < quoteToken ? (baseToken, quoteToken) : (quoteToken, baseToken);
+        _SORT_REGISTRY_[token0][token1].push(dppAddress);
+        }
+        _REGISTRY_[baseToken][quoteToken].push(dppAddress);
+        _USER_REGISTRY_[from].push(dppAddress); 
+        _DPP_INFO_[dppAddress] = (
             DPPInfo({
-                creator: msg.sender,
+                creator: from,
                 createTimeStamp: block.timestamp
             })
         );
@@ -112,8 +128,16 @@ contract DPPFactory is Ownable {
         IDPPAdmin(adminModel).init(owner,dpp);
     }
 
-    //TODO: 讨论 or 升级整个Factory
     function updateAdminTemplate(address _newDPPAdminTemplate) external onlyOwner {
         _DPP_ADMIN_TEMPLATE_ = _newDPPAdminTemplate;
+    }
+
+
+    function getPrivatePool(address baseToken, address quoteToken)
+        external
+        view
+        returns (address[] memory pools)
+    {
+        return _REGISTRY_[baseToken][quoteToken];
     }
 }

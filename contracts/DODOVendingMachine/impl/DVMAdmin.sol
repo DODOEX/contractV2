@@ -47,4 +47,9 @@ contract DVMAdmin is InitializableOwnable {
     function setSell(bool open) external onlyOwner {
         IDVM(dvm).setSell(open);
     }
+
+    // ============ Admin Version Control ============
+    function version() external pure returns (uint256) {
+        return 100; // 1.0.0
+    }
 }

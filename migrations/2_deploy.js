@@ -21,7 +21,7 @@ module.exports = async (deployer, network, accounts) => {
     DODOSellHelperAddress = "0xbdEae617F2616b45DCB69B287D52940a76035Fe3";
     DODOZooAddress = "0x92230e929a2226b29ed3441ae5524886347c60c8";
     WETHAddress = "0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b";
-    SmartApproveAddress = "";
+    SmartApproveAddress = "0x5627b7DEb3055e1e899003FDca0716b32C382084";
   } else if (network == "live") {
     DODOSellHelperAddress = "0x533da777aedce766ceae696bf90f8541a4ba80eb";
     DODOZooAddress = "0x3a97247df274a17c59a3bd12735ea3fcdfb49950";
@@ -53,9 +53,9 @@ module.exports = async (deployer, network, accounts) => {
     );
     logger.log("SmartSwap Address: ", SmartSwap.address);
 
-    const SmartApproveInstance = await SmartApprove.at(SmartApproveAddress);
-    var tx = await SmartApproveInstance.setSmartSwap(SmartSwap.address);
-    logger.log("SmartApprovce setSmartSwap tx: ", tx.tx);
+    // const SmartApproveInstance = await SmartApprove.at(SmartApproveAddress);
+    // var tx = await SmartApproveInstance.setSmartSwap(SmartSwap.address);
+    // logger.log("SmartApprovce setSmartSwap tx: ", tx.tx);
   }
 
   if (DEPLOY_KOVAN_TOKEN) {

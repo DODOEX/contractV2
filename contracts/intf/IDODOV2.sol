@@ -27,6 +27,7 @@ interface IDODOV2 {
     //========== DODOVendingMachine ========
     
     function createDODOVendingMachine(
+        address from,
         address baseToken,
         address quoteToken,
         uint256 lpFeeRate,
@@ -41,16 +42,18 @@ interface IDODOV2 {
 
     //========== DODOPrivatePool ===========
 
-    function initTargetAndReserve() external;
+    function createDODOPrivatePool() external returns (address newPrivatePool);
 
-    function createDODOPrivatePool(
+    function initDODOPrivatePool(
+        address dppAddress,
+        address from,
         address baseToken,
         address quoteToken,
         uint256 lpFeeRate,
         uint256 mtFeeRate,
-        uint256 i,
-        uint256 k
-    ) external returns (address newPrivatePool);
+        uint256 k,
+        uint256 i
+    ) external;
 
     function reset(
         uint256 newLpFeeRate,

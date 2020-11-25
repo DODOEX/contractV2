@@ -90,7 +90,7 @@ async function calcRoute(ctx: DODOContext, fromTokenAmount: string, slippage: nu
     let curPair = pairs[i]
     dodoPairs.push(curPair.pair)
     let curContact = pairs[i].pairContract
-    if (routes[i].address == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
+    if (routes[i].address == '0x000000000000000000000000000000000000000E') {
       directions[i] = 0;
       swapAmount = await curContact.methods.querySellBaseToken(swapAmount).call();
       console.log(i + "-swapAmount:", swapAmount);
@@ -273,7 +273,7 @@ describe("Trader", () => {
       console.log("weth contract Before:" + fromWei(b_w_eth, 'ether'))
       //set route path
       var routes = [{
-        address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        address: "0x000000000000000000000000000000000000000E",
         decimals: 18
       }, {
         address: ctx.USDC.options.address,
@@ -311,7 +311,7 @@ describe("Trader", () => {
       console.log("weth contract Before:" + fromWei(b_w_eth, 'ether'))
       //set route path
       var routes = [{
-        address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        address: "0x000000000000000000000000000000000000000E",
         decimals: 18
       }, {
         address: ctx.USDC.options.address,
@@ -368,7 +368,7 @@ describe("Trader", () => {
         address: ctx.USDC.options.address,
         decimals: 6
       }, {
-        address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        address: "0x000000000000000000000000000000000000000E",
         decimals: 18
       }];
 

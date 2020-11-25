@@ -21,7 +21,6 @@ import {IERC20} from "../../intf/IERC20.sol";
 contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
 
-    address public _FACTORY_;
     address public _ADMIN_;
 
     // ============ Variables for Control ============
@@ -63,8 +62,6 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     uint256 public _I_;
 
     // ============ Setting Functions ============
-
-    //TODO: owner权限问题论证
     function setLpFeeRateModel(address newLpFeeRateModel) external onlyOwner {
         _LP_FEE_RATE_MODEL_ = IFeeRateModel(newLpFeeRateModel);
     }

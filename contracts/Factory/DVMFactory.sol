@@ -30,13 +30,13 @@ contract DVMFactory is Ownable {
     }
 
     // base -> quote -> DVM address list
-    mapping(address => mapping(address => address[])) _REGISTRY_;
+    mapping(address => mapping(address => address[])) public _REGISTRY_;
     // token0 -> token1 -> DVM address list
-    mapping(address => mapping(address => address[])) _SORT_REGISTRY_;
+    mapping(address => mapping(address => address[])) public _SORT_REGISTRY_;
     // creator -> DVM address list
-    mapping(address => address[]) _USER_REGISTRY_;
+    mapping(address => address[]) public _USER_REGISTRY_;
     // DVM address -> info
-    mapping(address => DVMInfo) _DVM_INFO_;
+    mapping(address => DVMInfo) public _DVM_INFO_;
 
     constructor(
         address cloneFactory,
@@ -55,6 +55,7 @@ contract DVMFactory is Ownable {
     }
 
     function createDODOVendingMachine(
+        address from,
         address baseToken,
         address quoteToken,
         uint256 lpFeeRate,
@@ -62,32 +63,34 @@ contract DVMFactory is Ownable {
         uint256 i,
         uint256 k
     ) external returns (address newVendingMachine) {
-        (address token0, address token1) = baseToken < quoteToken ? (baseToken, quoteToken) : (quoteToken, baseToken);
         newVendingMachine = ICloneFactory(_CLONE_FACTORY_).clone(_DVM_TEMPLATE_);
-
+        {
+        address adminModel = _createDVMAdminModel(from,newVendingMachine);
         IDVM(newVendingMachine).init(
-            _createDVMAdminModel(msg.sender,newVendingMachine),
-            msg.sender,
+            adminModel,
+            from,
             baseToken,
             quoteToken,
             _createFeeRateModel(newVendingMachine, lpFeeRate),
             _createFeeRateModel(newVendingMachine, mtFeeRate),
-            _createPermissionManager(msg.sender),
+            _createPermissionManager(adminModel),
             _DEFAULT_GAS_PRICE_SOURCE_,
             i,
             k
         );
-
+        }
         _REGISTRY_[baseToken][quoteToken].push(newVendingMachine);
+        {
+        (address token0, address token1) = baseToken < quoteToken ? (baseToken, quoteToken) : (quoteToken, baseToken);
         _SORT_REGISTRY_[token0][token1].push(newVendingMachine);
-        _USER_REGISTRY_[msg.sender].push(newVendingMachine);
+        }
+        _USER_REGISTRY_[from].push(newVendingMachine);
         _DVM_INFO_[newVendingMachine] = (
             DVMInfo({
-                creator: msg.sender,
+                creator: from,
                 createTimeStamp: block.timestamp
             })
         );
-        return newVendingMachine;
     }
 
     function _createFeeRateModel(address owner, uint256 feeRate) internal returns (address feeRateModel) {
@@ -105,7 +108,6 @@ contract DVMFactory is Ownable {
         IDVMAdmin(adminModel).init(owner,dvm);
     }
 
-    //TODO: 讨论 or 升级整个Factory
     function updateAdminTemplate(address _newDVMAdminTemplate) external onlyOwner {
         _DVM_ADMIN_TEMPLATE_ = _newDVMAdminTemplate;
     }
