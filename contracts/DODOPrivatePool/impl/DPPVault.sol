@@ -15,6 +15,7 @@ import {SafeMath} from "../../lib/SafeMath.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 import {Ownable} from "../../lib/Ownable.sol";
+import {ISmartApprove} from '../../intf/ISmartApprove.sol';
 
 contract DPPVault is DPPStorage {
     using SafeMath for uint256;
@@ -55,12 +56,6 @@ contract DPPVault is DPPStorage {
         _QUOTE_RESERVE_ = _QUOTE_TOKEN_.balanceOf(address(this));
     }
 
-    //TODO:
-    function initTargetAndReserve() public {
-        require(tx.origin == _OWNER_, "INIT FORBIDDEN！");
-        _resetTargetAndReserve();
-    }
-
     function _resetTargetAndReserve() internal {
         _BASE_TARGET_ = _BASE_TOKEN_.balanceOf(address(this));
         _QUOTE_TARGET_ = _QUOTE_TOKEN_.balanceOf(address(this));
@@ -69,6 +64,7 @@ contract DPPVault is DPPStorage {
     }
 
     function reset(
+        address from,
         uint256 newLpFeeRate,
         uint256 newMtFeeRate,
         uint256 newI,
@@ -76,11 +72,10 @@ contract DPPVault is DPPStorage {
         uint256 baseOutAmount,
         uint256 quoteOutAmount
     ) public {
-        //TODO: owner 权限可以是operator
-        require(tx.origin == _OWNER_, "RESET FORBIDDEN！");
+        require(msg.sender == ISmartApprove(_DODO_SMART_APPROVE_).getSmartSwap() && from == _OPERATOR_, "RESET FORBIDDEN！");
         require(newK > 0 && newK <= 10**18, "K OUT OF RANGE!");
-        if(baseOutAmount > 0)  _transferBaseOut(tx.origin, baseOutAmount);
-        if(quoteOutAmount > 0) _transferQuoteOut(tx.origin, quoteOutAmount);
+        if(baseOutAmount > 0)  _transferBaseOut(from, baseOutAmount);
+        if(quoteOutAmount > 0) _transferQuoteOut(from, quoteOutAmount);
         _resetTargetAndReserve();
         _LP_FEE_RATE_MODEL_.setFeeRate(newLpFeeRate);
         _MT_FEE_RATE_MODEL_.setFeeRate(newMtFeeRate);
@@ -115,7 +110,7 @@ contract DPPVault is DPPStorage {
         uint256 amount
     ) external onlyOwner {
         require(to != address(_BASE_TOKEN_) && to != address(_QUOTE_TOKEN_), "USE_WITHDRAW");
-        if (token == 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE) {
+        if (token == 0x000000000000000000000000000000000000000E) {
             to.transfer(amount);
         } else {
             IERC20(token).safeTransfer(msg.sender, amount);

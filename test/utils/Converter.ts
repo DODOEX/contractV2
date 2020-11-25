@@ -12,4 +12,4 @@ export function gweiStr(gwei: string): string {
 
 export function mweiStr(gwei: string): string {
   return new BigNumber(gwei).multipliedBy(10 ** 6).toFixed(0, BigNumber.ROUND_DOWN)
-}s
+}

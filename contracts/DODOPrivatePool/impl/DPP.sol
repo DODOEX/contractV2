@@ -15,13 +15,10 @@ import {IERC20} from "../../intf/IERC20.sol";
 import {DPPTrader} from "./DPPTrader.sol";
 
 contract DPP is DPPTrader {
-    constructor() public {
-        _FACTORY_ = msg.sender;
-    }
-
     function init(
         address owner,
         address maintainer,
+        address operator,
         address baseTokenAddress,
         address quoteTokenAddress,
         address lpFeeRateModel,
@@ -29,12 +26,13 @@ contract DPP is DPPTrader {
         address kSource,
         address iSource,
         address gasPriceSource,
+        address dodoSmartApprove,
         address tradePermissionManager
     ) external {
-        require(msg.sender == _FACTORY_, 'INIT FORBIDDEN');
         initOwner(owner);
         _ADMIN_ = owner;
         _MAINTAINER_ = maintainer;
+        _OPERATOR_ = operator;
         _BASE_TOKEN_ = IERC20(baseTokenAddress);
         _QUOTE_TOKEN_ = IERC20(quoteTokenAddress);
         _LP_FEE_RATE_MODEL_ = IFeeRateModel(lpFeeRateModel);
@@ -43,6 +41,8 @@ contract DPP is DPPTrader {
         _K_ = IExternalValue(kSource);
         _GAS_PRICE_LIMIT_ = IExternalValue(gasPriceSource);
         _TRADE_PERMISSION_ = IPermissionManager(tradePermissionManager);
+        _DODO_SMART_APPROVE_ = dodoSmartApprove;
+        _resetTargetAndReserve();
     }
 
     // ============ Version Control ============

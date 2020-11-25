@@ -16,7 +16,7 @@ library UniversalERC20 {
     using SafeERC20 for IERC20;
 
     IERC20 private constant ZERO_ADDRESS = IERC20(0x0000000000000000000000000000000000000000);
-    IERC20 private constant ETH_ADDRESS = IERC20(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
+    IERC20 private constant ETH_ADDRESS = IERC20(0x000000000000000000000000000000000000000E);
 
     function isETH(IERC20 token) internal pure returns (bool) {
         return (token == ZERO_ADDRESS || token == ETH_ADDRESS);
