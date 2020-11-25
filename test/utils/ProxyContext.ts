@@ -48,7 +48,7 @@ export class ProxyContext {
     this.Maintainer = allAccounts[1];
     this.SpareAccounts = allAccounts.slice(2, 10);
 
-    var WETH = await contracts.newContract(
+    this.WETH = await contracts.newContract(
       contracts.WETH_CONTRACT_NAME
     );
 
@@ -101,7 +101,7 @@ export class ProxyContext {
       [
         this.DVMFactory.options.address,
         this.DPPFactory.options.address,
-        WETH.options.address,
+        this.WETH.options.address,
         this.SmartApprove.options.address,
         dodoSellHelper.options.address
       ]
@@ -116,9 +116,6 @@ export class ProxyContext {
     this.USDT = await contracts.newContract(
       contracts.MINTABLE_ERC20_CONTRACT_NAME,
       ["USDT Token", "USDT", 6]
-    );
-    this.WETH = await contracts.newContract(
-      contracts.WETH_CONTRACT_NAME
     );
 
     console.log(log.blueText("[Init DVM context]"));

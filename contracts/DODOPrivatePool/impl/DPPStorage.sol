@@ -27,7 +27,6 @@ import {PMMPricing} from "../../lib/PMMPricing.sol";
 contract DPPStorage is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
 
-    address public _ADMIN_;
     address public _DODO_SMART_APPROVE_;
 
     // ============ Variables for Control ============

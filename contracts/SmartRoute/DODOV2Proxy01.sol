@@ -142,7 +142,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         require(baseOutAmount >= baseOutMinAmount && quoteOutAmount >= quoteOutMinAmount,"DODOV2Proxy01: withdraw amount is not enough");
     }
 
-    //TODO:ETH 
     function createDODOPrivatePool(
         address baseToken,
         address quoteToken,
@@ -155,10 +154,26 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 deadline
     ) external virtual override payable judgeExpired(deadline) returns (address newPrivatePool) {
         newPrivatePool = IDODOV2(dppFactory).createDODOPrivatePool();
-        if(baseInAmount > 0) 
-            IDODOV2(smartApprove).claimTokens(baseToken, msg.sender, newPrivatePool, baseInAmount);
-        if(quoteInAmount > 0)
-            IDODOV2(smartApprove).claimTokens(quoteToken, msg.sender, newPrivatePool, quoteInAmount);
+        if(baseInAmount > 0){
+            if(baseToken != ETH_ADDRESS){
+                IDODOV2(smartApprove).claimTokens(baseToken, msg.sender, newPrivatePool, baseInAmount);
+            }else {
+                require(msg.value == baseInAmount, "DODOV2Proxy01: ETH_AMOUNT_NOT_MATCH");
+                IWETH(_WETH_).deposit{value: baseInAmount}();
+                assert(IWETH(_WETH_).transfer(newPrivatePool, baseInAmount));
+                baseToken = _WETH_;
+            }
+        }
+        if(quoteInAmount > 0){
+            if(quoteToken != ETH_ADDRESS){
+                IDODOV2(smartApprove).claimTokens(quoteToken, msg.sender, newPrivatePool, quoteInAmount);
+            }else {
+                require(msg.value == quoteInAmount, "DODOV2Proxy01: ETH_AMOUNT_NOT_MATCH");
+                IWETH(_WETH_).deposit{value: quoteInAmount}();
+                assert(IWETH(_WETH_).transfer(newPrivatePool, quoteInAmount));
+                quoteToken = _WETH_;
+            }
+        }
         IDODOV2(dppFactory).initDODOPrivatePool(
             newPrivatePool,
             msg.sender,
