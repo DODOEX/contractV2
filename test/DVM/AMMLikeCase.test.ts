@@ -18,15 +18,13 @@ let trader: string;
 async function init(ctx: DVMContext): Promise<void> {
   lp = ctx.SpareAccounts[0];
   trader = ctx.SpareAccounts[1];
-  await ctx.approveProxy(lp);
-  await ctx.approveProxy(trader);
 
   await ctx.mintTestToken(lp, decimalStr("10"), decimalStr("1000"));
   await ctx.mintTestToken(trader, decimalStr("10"), decimalStr("1000"));
 
-  await ctx.DVMProxy.methods
-    .depositToDVM(ctx.DVM.options.address, lp, decimalStr("10"), decimalStr("1000"))
-    .send(ctx.sendParam(lp));
+  await ctx.transferBaseToDVM(lp, decimalStr("10"))
+  await ctx.transferQuoteToDVM(lp, decimalStr("1000"))
+  await ctx.DVM.methods.buyShares(lp).send(ctx.sendParam(lp));
 
   console.log("deposit")
 }
@@ -66,7 +64,8 @@ describe("AMMLikeCase", () => {
       console.log("BASE0 before buy", await ctx.DVM.methods.getBase0().call())
 
       // buy
-      await logGas(ctx.DVMProxy.methods.sellQuoteOnDVM(ctx.DVM.options.address, trader, decimalStr("200"), decimalStr("1")), ctx.sendParam(trader), "buy base token")
+      await ctx.transferQuoteToDVM(trader, decimalStr("200"))
+      await ctx.DVM.methods.sellQuote(trader).send(ctx.sendParam(trader))
       console.log("BASE0 after buy", await ctx.DVM.methods.getBase0().call())
       // trader balances
       console.log(
