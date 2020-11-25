@@ -30,7 +30,6 @@ contract DPP is DPPTrader {
         address tradePermissionManager
     ) external {
         initOwner(owner);
-        _ADMIN_ = owner;
         _MAINTAINER_ = maintainer;
         _OPERATOR_ = operator;
         _BASE_TOKEN_ = IERC20(baseTokenAddress);
