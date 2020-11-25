@@ -43,7 +43,6 @@ contract DPPStorage is InitializableOwnable, ReentrancyGuard {
     // ============ Core Address ============
 
     address public _MAINTAINER_; // collect maintainer fee
-    address public _OPERATOR_; 
 
     IERC20 public _BASE_TOKEN_;
     IERC20 public _QUOTE_TOKEN_;

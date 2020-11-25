@@ -18,7 +18,6 @@ contract DPP is DPPTrader {
     function init(
         address owner,
         address maintainer,
-        address operator,
         address baseTokenAddress,
         address quoteTokenAddress,
         address lpFeeRateModel,
@@ -31,7 +30,6 @@ contract DPP is DPPTrader {
     ) external {
         initOwner(owner);
         _MAINTAINER_ = maintainer;
-        _OPERATOR_ = operator;
         _BASE_TOKEN_ = IERC20(baseTokenAddress);
         _QUOTE_TOKEN_ = IERC20(quoteTokenAddress);
         _LP_FEE_RATE_MODEL_ = IFeeRateModel(lpFeeRateModel);

@@ -67,6 +67,8 @@ export class DPPContext {
     var mtFeeRateModel = await contracts.newContract(contracts.CONST_FEE_RATE_MODEL_NAME)
     var permissionManager = await contracts.newContract(contracts.PERMISSION_MANAGER_NAME)
     var gasPriceSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME)
+    var iSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME)
+    var kSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME)
 
     this.BASE = await contracts.newContract(
       contracts.MINTABLE_ERC20_CONTRACT_NAME,
@@ -82,20 +84,22 @@ export class DPPContext {
     this.Maintainer = allAccounts[1];
     this.SpareAccounts = allAccounts.slice(2, 10);
 
-    await this.DVM.methods.init(
+    await this.DPP.methods.init(
       this.Deployer,
       this.Maintainer,
+      this.Deployer,
       this.BASE.options.address,
       this.QUOTE.options.address,
       lpFeeRateModel.options.address,
       mtFeeRateModel.options.address,
-      permissionManager.options.address,
+      kSource.options.address,
+      iSource.options.address,
       gasPriceSource.options.address,
-      config.i,
-      config.k
+      this.Maintainer,
+      permissionManager.options.address,
     ).send(this.sendParam(this.Deployer))
 
-    await gasPriceSource.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer))
+    await gasPriceSource.methods.initOwner(this.DPP.options.address).send(this.sendParam(this.Deployer))
     await gasPriceSource.methods.set(MAX_UINT256).send(this.sendParam(this.Deployer))
     await lpFeeRateModel.methods.init(this.Deployer, config.lpFeeRate).send(this.sendParam(this.Deployer))
     await mtFeeRateModel.methods.init(this.Deployer, config.mtFeeRate).send(this.sendParam(this.Deployer))

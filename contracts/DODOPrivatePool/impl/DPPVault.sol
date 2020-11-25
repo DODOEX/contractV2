@@ -71,13 +71,7 @@ contract DPPVault is DPPStorage {
         uint256 newK,
         uint256 baseOutAmount,
         uint256 quoteOutAmount
-    ) public {
-        require(
-            msg.sender == _OWNER_ ||
-                (msg.sender == ISmartApprove(_DODO_SMART_APPROVE_).getSmartSwap() &&
-                    from == _OPERATOR_),
-            "RESET FORBIDDEN！"
-        );
+    ) public onlyOwner {
         require(newK > 0 && newK <= 10**18, "K OUT OF RANGE!");
         if (baseOutAmount > 0) _transferBaseOut(from, baseOutAmount);
         if (quoteOutAmount > 0) _transferQuoteOut(from, quoteOutAmount);
