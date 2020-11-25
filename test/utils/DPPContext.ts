@@ -95,16 +95,16 @@ export class DPPContext {
       kSource.options.address,
       iSource.options.address,
       gasPriceSource.options.address,
-      this.Maintainer,
       permissionManager.options.address,
     ).send(this.sendParam(this.Deployer))
 
-    await gasPriceSource.methods.initOwner(this.DPP.options.address).send(this.sendParam(this.Deployer))
-    await gasPriceSource.methods.set(MAX_UINT256).send(this.sendParam(this.Deployer))
-    await lpFeeRateModel.methods.init(this.Deployer, config.lpFeeRate).send(this.sendParam(this.Deployer))
-    await mtFeeRateModel.methods.init(this.Deployer, config.mtFeeRate).send(this.sendParam(this.Deployer))
+    await gasPriceSource.methods.init(this.DPP.options.address, MAX_UINT256).send(this.sendParam(this.Deployer))
+    await lpFeeRateModel.methods.init(this.DPP.options.address, config.lpFeeRate).send(this.sendParam(this.Deployer))
+    await mtFeeRateModel.methods.init(this.DPP.options.address, config.mtFeeRate).send(this.sendParam(this.Deployer))
+    await kSource.methods.init(this.DPP.options.address, config.k).send(this.sendParam(this.Deployer))
+    await iSource.methods.init(this.DPP.options.address, config.i).send(this.sendParam(this.Deployer))
 
-    console.log(log.blueText("[Init DVM context]"));
+    console.log(log.blueText("[Init DPP context]"));
   }
 
   sendParam(sender, value = "0") {
@@ -123,19 +123,19 @@ export class DPPContext {
       .send(this.sendParam(this.Deployer));
   }
 
-  async transferBaseToDVM(account: string, amount: string) {
-    await this.BASE.methods.transfer(this.DVM.options.address, amount).send(this.sendParam(account))
+  async transferBaseToDPP(account: string, amount: string) {
+    await this.BASE.methods.transfer(this.DPP.options.address, amount).send(this.sendParam(account))
   }
 
-  async transferQuoteToDVM(account: string, amount: string) {
-    await this.QUOTE.methods.transfer(this.DVM.options.address, amount).send(this.sendParam(account))
+  async transferQuoteToDPP(account: string, amount: string) {
+    await this.QUOTE.methods.transfer(this.DPP.options.address, amount).send(this.sendParam(account))
   }
 }
 
-export async function getDVMContext(
-  config: DVMContextInitConfig = DefaultDVMContextInitConfig
-): Promise<DVMContext> {
-  var context = new DVMContext();
+export async function getDPPContext(
+  config: DPPContextInitConfig = DefaultDPPContextInitConfig
+): Promise<DPPContext> {
+  var context = new DPPContext();
   await context.init(config);
   return context;
 }
