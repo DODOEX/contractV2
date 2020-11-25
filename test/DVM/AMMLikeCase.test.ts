@@ -7,8 +7,7 @@
 
 // import * as assert from 'assert';
 
-import { decimalStr, gweiStr } from '../utils/Converter';
-import { logGas } from '../utils/Log';
+import { decimalStr } from '../utils/Converter';
 import { DVMContext, getDVMContext } from '../utils/DVMContext';
 import { assert } from 'chai';
 
@@ -59,7 +58,7 @@ describe("AMMLikeCase", () => {
       console.log(await ctx.DVM.methods.getBase0().call())
     })
 
-    it("buy & sell", async () => {
+    it("buy", async () => {
 
       console.log("BASE0 before buy", await ctx.DVM.methods.getBase0().call())
 
@@ -68,94 +67,70 @@ describe("AMMLikeCase", () => {
       await ctx.DVM.methods.sellQuote(trader).send(ctx.sendParam(trader))
       console.log("BASE0 after buy", await ctx.DVM.methods.getBase0().call())
       // trader balances
-      console.log(
+      assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
-        "11946763594380080787"
+        "11661666666528194443"
       );
-      console.log(
+      assert.equal(
         await ctx.QUOTE.methods.balanceOf(trader).call(),
         decimalStr("800")
       );
       // vault balances
-      console.log(
+      assert.equal(
         await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
-        "8051283784161162863"
+        "8336666666805277779"
       );
-      console.log(
+      assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
-        decimalStr("200")
+        decimalStr("1200")
       );
       // maintainer balances
-      console.log(
+      assert.equal(
         await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(),
-        "1952621458756350"
+        "1666666666527778"
       );
-      console.log(
+      assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
         decimalStr("0")
       );
+    });
 
-      // // sell
-      // await logGas(ctx.DVMProxy.methods.sellBaseOnDVM(ctx.DVM.options.address, trader, decimalStr("1"), decimalStr("100")), ctx.sendParam(trader), "sell base token")
-      // console.log("BASE0 after sell", await ctx.DVM.methods.getBase0().call())
-      // // trader balances
-      // assert.equal(
-      //   await ctx.BASE.methods.balanceOf(trader).call(),
-      //   "10946763594380080787"
-      // );
-      // assert.equal(
-      //   await ctx.QUOTE.methods.balanceOf(trader).call(),
-      //   "903421810640399874603"
-      // );
-      // // vault balances
-      // assert.equal(
-      //   await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
-      //   "9051283784161162863"
-      // );
-      // assert.equal(
-      //   await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
-      //   "96474456349930717298"
-      // );
-      // // maintainer balances
-      // assert.equal(
-      //   await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(),
-      //   "1952621458756350"
-      // );
-      // assert.equal(
-      //   await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
-      //   "103733009669408099"
-      // );
+    it("sell", async () => {
 
-      // // buy when quoet is not 0
-      // await logGas(ctx.DVMProxy.methods.sellQuoteOnDVM(ctx.DVM.options.address, trader, decimalStr("200"), decimalStr("1")), ctx.sendParam(trader), "buy base token")
-      // assert.equal("BASE0 after second buy", await ctx.DVM.methods.getBase0().call())
-      // // trader balances
-      // assert.equal(
-      //   await ctx.BASE.methods.balanceOf(trader).call(),
-      //   "12837528824326616018"
-      // );
-      // assert.equal(
-      //   await ctx.QUOTE.methods.balanceOf(trader).call(),
-      //   "703421810640399874603"
-      // );
-      // // vault balances
-      // assert.equal(
-      //   await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
-      //   "7158622099620899913"
-      // );
-      // assert.equal(
-      //   await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
-      //   "296474456349930717298"
-      // );
-      // // maintainer balances
-      // assert.equal(
-      //   await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(),
-      //   "3849076052484069"
-      // );
-      // assert.equal(
-      //   await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
-      //   "103733009669408099"
-      // );
+      console.log("BASE0 before sell", await ctx.DVM.methods.getBase0().call())
+
+      // sell
+      await ctx.transferBaseToDVM(trader, decimalStr("1"))
+      await ctx.DVM.methods.sellBase(trader).send(ctx.sendParam(trader))
+      console.log("BASE0 after sell", await ctx.DVM.methods.getBase0().call())
+
+      // trader balances
+      assert.equal(
+        await ctx.BASE.methods.balanceOf(trader).call(),
+        decimalStr("9")
+      );
+      assert.equal(
+        await ctx.QUOTE.methods.balanceOf(trader).call(),
+        "1090636363645427272727"
+      );
+      // vault balances
+      assert.equal(
+        await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
+        decimalStr("11")
+      );
+      assert.equal(
+        await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
+        "909272727263654545454"
+      );
+      // maintainer balances
+      assert.equal(
+        await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(),
+        "0"
+      );
+      assert.equal(
+        await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
+        "90909090918181819"
+      );
     });
   });
 });

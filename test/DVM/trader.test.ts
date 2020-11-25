@@ -179,6 +179,11 @@ describe("Trader", () => {
       await truffleAssert.reverts(
         ctx.DVM.methods.sellQuote(trader).send({ from: trader, gas: 300000, gasPrice: gweiStr("200") }), "GAS_PRICE_EXCEED"
       )
+
+      await ctx.transferBaseToDVM(trader, decimalStr("1"))
+      await truffleAssert.reverts(
+        ctx.DVM.methods.sellBase(trader).send(ctx.sendParam(trader)), "TARGET_IS_ZERO"
+      )
     })
   });
 });

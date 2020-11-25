@@ -143,7 +143,27 @@ describe("Funding", () => {
   });
 
   describe("sell shares", () => {
-    it("sell shares", async () => {
+    it("not the last one sell shares", async () => {
+      await ctx.transferBaseToDVM(lp, decimalStr("10"))
+      await ctx.transferQuoteToDVM(lp, decimalStr("100"))
+      await ctx.DVM.methods.buyShares(lp).send(ctx.sendParam(lp))
+
+      await ctx.transferBaseToDVM(trader, decimalStr("1"))
+      await ctx.transferQuoteToDVM(trader, decimalStr("10"))
+      await ctx.DVM.methods.buyShares(trader).send(ctx.sendParam(trader))
+
+      var vaultShares = new BigNumber(await ctx.DVM.methods.balanceOf(lp).call())
+      var bob = ctx.SpareAccounts[5]
+      await ctx.DVM.methods.sellShares(vaultShares.div(2).toFixed(0), bob, "0x").send(ctx.sendParam(lp))
+      assert.equal(await ctx.BASE.methods.balanceOf(bob).call(), decimalStr("5"))
+      assert.equal(await ctx.QUOTE.methods.balanceOf(bob).call(), decimalStr("50"))
+
+      await ctx.DVM.methods.sellShares(vaultShares.div(2).toFixed(0), bob, "0x").send(ctx.sendParam(lp))
+      assert.equal(await ctx.BASE.methods.balanceOf(bob).call(), decimalStr("10"))
+      assert.equal(await ctx.QUOTE.methods.balanceOf(bob).call(), decimalStr("100"))
+    })
+
+    it("the last one sell shares", async () => {
       await ctx.transferBaseToDVM(lp, decimalStr("10"))
       await ctx.transferQuoteToDVM(lp, decimalStr("100"))
       await ctx.DVM.methods.buyShares(lp).send(ctx.sendParam(lp))
