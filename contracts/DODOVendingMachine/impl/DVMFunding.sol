@@ -28,26 +28,25 @@ contract DVMFunding is DVMVault {
         require(baseInput > 0, "NO_BASE_INPUT");
         uint256 baseReserve = _BASE_RESERVE_;
         uint256 quoteReserve = _QUOTE_RESERVE_;
-        uint256 mintAmount;
         // case 1. initial supply
         // 包含了 baseReserve == 0 && quoteReserve == 0 的情况
         // 在提币的时候向下取整。因此永远不会出现，balance为0但totalsupply不为0的情况
         // 但有可能出现，reserve>0但totalSupply=0的场景
         if (totalSupply == 0) {
-            mintAmount = getBaseBalance(); // 以免出现balance很大但shares很小的情况
+            shares = getBaseBalance(); // 以免出现balance很大但shares很小的情况
         } else if (baseReserve > 0 && quoteReserve == 0) {
             // case 2. supply when quote reserve is 0
-            mintAmount = baseInput.mul(totalSupply).div(baseReserve);
+            shares = baseInput.mul(totalSupply).div(baseReserve);
         } else if (baseReserve > 0 && quoteReserve > 0) {
             // case 3. normal case
             uint256 baseInputRatio = DecimalMath.divFloor(baseInput, baseReserve);
             uint256 quoteInputRatio = DecimalMath.divFloor(quoteInput, quoteReserve);
             uint256 mintRatio = quoteInputRatio < baseInputRatio ? quoteInputRatio : baseInputRatio;
-            mintAmount = DecimalMath.mulFloor(totalSupply, mintRatio);
+            shares = DecimalMath.mulFloor(totalSupply, mintRatio);
         }
-        _mint(to, mintAmount);
+        _mint(to, shares);
         _sync();
-        return (mintAmount, baseInput, quoteInput);
+        return (shares, baseInput, quoteInput);
     }
 
     // withdraw amount [round down]

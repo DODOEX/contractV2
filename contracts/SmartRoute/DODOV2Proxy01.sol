@@ -44,8 +44,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 returnAmount,
         uint256 timeStamp
     );
-
-    event ExternalRecord(address indexed to, address indexed sender);
     //========================================================================
 
     constructor(
@@ -62,8 +60,8 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         dodoSellHelper = _dodoSellHelper;
     }
     
-    //TODO:ETH
     function createDODOVendingMachine(
+        address assetTo,
         address baseToken,
         address quoteToken,
         uint256 baseInAmount,
@@ -74,13 +72,30 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 k,
         uint256 deadline
     ) external virtual override payable judgeExpired(deadline) returns (address newVendingMachine,uint256 shares) {
-        require(k > 0 && k<= 10**18, 'DODOV2Proxy01: K OUT OF RANGE');
-        newVendingMachine = IDODOV2(dvmFactory).createDODOVendingMachine(msg.sender, baseToken,quoteToken,lpFeeRate,mtFeeRate,i,k);
-        if(baseInAmount > 0) 
-            IDODOV2(smartApprove).claimTokens(baseToken, msg.sender, newVendingMachine, baseInAmount);
-        if(quoteInAmount > 0)
-            IDODOV2(smartApprove).claimTokens(quoteToken, msg.sender, newVendingMachine, quoteInAmount);
-        (shares,,) = IDODOV2(newVendingMachine).buyShares(msg.sender);
+        {
+        address _baseToken = baseToken == ETH_ADDRESS ? _WETH_ : baseToken;
+        address _quoteToken = quoteToken == ETH_ADDRESS ? _WETH_ : quoteToken;
+        newVendingMachine = IDODOV2(dvmFactory).createDODOVendingMachine(msg.sender, _baseToken, _quoteToken, lpFeeRate, mtFeeRate, i, k);
+        }
+        if(baseInAmount > 0){
+            if(baseToken != ETH_ADDRESS){
+                IDODOV2(smartApprove).claimTokens(baseToken, msg.sender, newVendingMachine, baseInAmount);
+            }else {
+                require(msg.value == baseInAmount, 'DODOV2Proxy01: ETH_AMOUNT_NOT_MATCH');
+                IWETH(_WETH_).deposit{value: baseInAmount}();
+                assert(IWETH(_WETH_).transfer(newVendingMachine, baseInAmount));
+            }
+        }
+        if(quoteInAmount > 0){
+            if(quoteToken != ETH_ADDRESS){
+                IDODOV2(smartApprove).claimTokens(quoteToken, msg.sender, newVendingMachine, quoteInAmount);
+            }else {
+                require(msg.value == quoteInAmount, 'DODOV2Proxy01: ETH_AMOUNT_NOT_MATCH');
+                IWETH(_WETH_).deposit{value: quoteInAmount}();
+                assert(IWETH(_WETH_).transfer(newVendingMachine, quoteInAmount));
+            }
+        }
+        (shares,,) = IDODOV2(newVendingMachine).buyShares(assetTo);
     }
 
 
@@ -112,7 +127,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         }
     }
 
-    //TODO:ETH 
     function addDVMLiquidity(
         address DVMAddress,
         address to,
@@ -121,18 +135,52 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 baseMinAmount,
         uint256 quoteMinAmount,
         uint256 deadline
-    ) external virtual override payable judgeExpired(deadline) returns (uint256 shares,uint256 baseActualInAmount,uint256 quoteActualInAmount) {
+    ) external virtual override judgeExpired(deadline) returns (uint256 shares,uint256 baseActualInAmount,uint256 quoteActualInAmount) {
         (uint256 baseAdjustedInAmount, uint256 quoteAdjustedInAmount) = _addDVMLiquidity(DVMAddress,baseInAmount,quoteInAmount);
         address _dvm = DVMAddress;
-        if(baseAdjustedInAmount > 0)
+        if(baseAdjustedInAmount > 0) {
             IDODOV2(smartApprove).claimTokens(IDODOV2(_dvm)._BASE_TOKEN_(), msg.sender, _dvm, baseAdjustedInAmount);
+        }
         if(quoteAdjustedInAmount > 0)
             IDODOV2(smartApprove).claimTokens(IDODOV2(_dvm)._QUOTE_TOKEN_(), msg.sender, _dvm, quoteAdjustedInAmount);
         (shares,baseActualInAmount,quoteActualInAmount) = IDODOV2(_dvm).buyShares(to);
         require(baseActualInAmount >= baseMinAmount && quoteActualInAmount >= quoteMinAmount, 'DODOV2Proxy01: deposit amount is not enough');
     }
 
-    //TODO:ETH 构造data
+    function addDVMLiquidityETH(
+        address DVMAddress,
+        address to,
+        uint256 baseInAmount,
+        uint256 quoteInAmount,
+        uint256 baseMinAmount,
+        uint256 quoteMinAmount,
+        uint8 flag, // 1 - baseInETH, 2 - quoteInETH
+        uint256 deadline
+    ) external virtual override payable judgeExpired(deadline) returns (uint256 shares,uint256 baseActualInAmount,uint256 quoteActualInAmount) {
+        (uint256 baseAdjustedInAmount, uint256 quoteAdjustedInAmount) = _addDVMLiquidity(DVMAddress,baseInAmount,quoteInAmount);
+        address _dvm = DVMAddress;
+        if(baseAdjustedInAmount > 0) {
+            if(flag == 1) {
+                require(msg.value >= baseAdjustedInAmount, 'DODOV2Proxy01: ETH_AMOUNT_NOT_MATCH');
+                IWETH(_WETH_).deposit{value: baseAdjustedInAmount}();
+                assert(IWETH(_WETH_).transfer(_dvm, baseAdjustedInAmount));
+            }else {
+                IDODOV2(smartApprove).claimTokens(IDODOV2(_dvm)._BASE_TOKEN_(), msg.sender, _dvm, baseAdjustedInAmount);
+            }
+        }
+        if(quoteAdjustedInAmount > 0){
+            if(flag == 2) {
+                require(msg.value >= quoteAdjustedInAmount, 'DODOV2Proxy01: ETH_AMOUNT_NOT_MATCH');
+                IWETH(_WETH_).deposit{value: quoteAdjustedInAmount}();
+                assert(IWETH(_WETH_).transfer(_dvm, quoteAdjustedInAmount)); 
+            }else {
+              IDODOV2(smartApprove).claimTokens(IDODOV2(_dvm)._QUOTE_TOKEN_(), msg.sender, _dvm, quoteAdjustedInAmount);  
+            }
+        }
+        (shares,baseActualInAmount,quoteActualInAmount) = IDODOV2(_dvm).buyShares(to);
+        require(baseActualInAmount >= baseMinAmount && quoteActualInAmount >= quoteMinAmount, 'DODOV2Proxy01: deposit amount is not enough');
+    }
+
     function removeDVMLiquidity(
         address DVMAddress,
         address to,
@@ -140,9 +188,9 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 baseOutMinAmount,
         uint256 quoteOutMinAmount,
         uint256 deadline
-    ) external virtual override payable judgeExpired(deadline) returns (uint256 baseOutAmount,uint256 quoteOutAmount) {
+    ) external virtual override judgeExpired(deadline) returns (uint256 baseOutAmount,uint256 quoteOutAmount) {
         require(shares > 0, 'DODOV2Proxy01: Insufficient_Liquidity');
-        (baseOutAmount,quoteOutAmount) = IDODOV2(DVMAddress).sellShares(to, shares, "");
+        (baseOutAmount,quoteOutAmount) = IDODOV2(DVMAddress).sellShares(to);
         require(baseOutAmount >= baseOutMinAmount && quoteOutAmount >= quoteOutMinAmount,'DODOV2Proxy01: withdraw amount is not enough');
     }
 
@@ -292,8 +340,8 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         }
     }
 
-    function dodoSwap(
-        address fromToken,
+    function dodoSwapETHToToken(
+        address payable assetTo,
         address toToken,
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
@@ -301,42 +349,95 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256[] memory directions,
         uint256 deadline
     ) external virtual override payable judgeExpired(deadline) returns (uint256 returnAmount) {
-        require(minReturnAmount > 0, "DODOV2Proxy01: Min return should be bigger than 0.");
-        require(dodoPairs.length > 0, "DODOV2Proxy01: pairs should exists.");
-
-        if (fromToken != ETH_ADDRESS) {
-            IDODOV2(smartApprove).claimTokens(fromToken, msg.sender, dodoPairs[0], fromTokenAmount);
-        } else {
-            require(msg.value == fromTokenAmount, "DODOV2Proxy01: ETH_AMOUNT_NOT_MATCH");
-            IWETH(_WETH_).deposit{value: fromTokenAmount}();
-            IWETH(_WETH_).transfer(dodoPairs[0],IWETH(_WETH_).balanceOf(address(this)));
-        }
+        require(minReturnAmount > 0, 'DODOV2Proxy01: Min return should be bigger than 0.');
+        require(msg.value == fromTokenAmount, 'DODOV2Proxy01: ETH_AMOUNT_NOT_MATCH');
+        IWETH(_WETH_).deposit{value: fromTokenAmount}();
+        IWETH(_WETH_).transfer(dodoPairs[0],IWETH(_WETH_).balanceOf(address(this)));
 
         for (uint256 i = 0; i < dodoPairs.length; i++) {
-            address curTo;
             if(i == dodoPairs.length - 1){
-                curTo = address(this);
+                if (directions[i] == 0) {
+                    returnAmount = IDODOV2(dodoPairs[i]).sellBase(assetTo);
+                } else {
+                    returnAmount = IDODOV2(dodoPairs[i]).sellQuote(assetTo);
+                }
             } else {
-                curTo = dodoPairs[i+1];
-            }
-            if (directions[i] == 0) {
-                IDODOV2(dodoPairs[i]).sellBase(curTo);
-            } else {
-                IDODOV2(dodoPairs[i]).sellQuote(curTo);
+                if (directions[i] == 0) {
+                    IDODOV2(dodoPairs[i]).sellBase(dodoPairs[i+1]);
+                } else {
+                    IDODOV2(dodoPairs[i]).sellQuote(dodoPairs[i+1]);
+                }
             }
         }
-        IERC20(fromToken).universalTransfer(msg.sender, IERC20(fromToken).universalBalanceOf(address(this)));
+        require(returnAmount >= minReturnAmount, 'DODOV2Proxy01: Return amount is not enough');
+        emit OrderHistory(ETH_ADDRESS, toToken, assetTo, fromTokenAmount, returnAmount, block.timestamp);
+    }
 
-        if (toToken == ETH_ADDRESS) {
-            uint256 wethAmount = IWETH(_WETH_).balanceOf(address(this));
-            IWETH(_WETH_).withdraw(wethAmount);
+    function dodoSwapTokenToETH(
+        address payable assetTo,
+        address fromToken,
+        uint256 fromTokenAmount,
+        uint256 minReturnAmount,
+        address[] memory dodoPairs,
+        uint256[] memory directions,
+        uint256 deadline
+    ) external virtual override judgeExpired(deadline) returns (uint256 returnAmount) {
+        require(minReturnAmount > 0, 'DODOV2Proxy01: Min return should be bigger than 0.');
+        IDODOV2(smartApprove).claimTokens(fromToken, msg.sender, dodoPairs[0], fromTokenAmount);
+
+        for (uint256 i = 0; i < dodoPairs.length; i++) {
+            if(i == dodoPairs.length - 1){
+                if (directions[i] == 0) {
+                    IDODOV2(dodoPairs[i]).sellBase(address(this));
+                } else {
+                    IDODOV2(dodoPairs[i]).sellQuote(address(this));
+                }
+            } else {
+                if (directions[i] == 0) {
+                    IDODOV2(dodoPairs[i]).sellBase(dodoPairs[i+1]);
+                } else {
+                    IDODOV2(dodoPairs[i]).sellQuote(dodoPairs[i+1]);
+                }
+            }
         }
+        returnAmount = IWETH(_WETH_).balanceOf(address(this));
+        IWETH(_WETH_).withdraw(returnAmount);
+        require(returnAmount >= minReturnAmount, 'DODOV2Proxy01: Return amount is not enough');
+        IERC20(ETH_ADDRESS).universalTransfer(assetTo, returnAmount);
+        emit OrderHistory(fromToken, ETH_ADDRESS, assetTo, fromTokenAmount, returnAmount, block.timestamp);
+    }
 
-        returnAmount = IERC20(toToken).universalBalanceOf(address(this));
 
-        require(returnAmount >= minReturnAmount, "DODOV2Proxy01: Return amount is not enough");
-        IERC20(toToken).universalTransfer(msg.sender, returnAmount);
-        emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount, block.timestamp);
+    function dodoSwapTokenToToken(
+        address payable assetTo,
+        address fromToken,
+        address toToken,
+        uint256 fromTokenAmount,
+        uint256 minReturnAmount,
+        address[] memory dodoPairs,
+        uint256[] memory directions,
+        uint256 deadline
+    ) external virtual override judgeExpired(deadline) returns (uint256 returnAmount) {
+        require(minReturnAmount > 0, 'DODOV2Proxy01: Min return should be bigger than 0.');
+        IDODOV2(smartApprove).claimTokens(fromToken, msg.sender, dodoPairs[0], fromTokenAmount);
+
+        for (uint256 i = 0; i < dodoPairs.length; i++) {
+            if(i == dodoPairs.length - 1){
+                if (directions[i] == 0) {
+                    returnAmount = IDODOV2(dodoPairs[i]).sellBase(assetTo);
+                } else {
+                    returnAmount = IDODOV2(dodoPairs[i]).sellQuote(assetTo);
+                }
+            } else {
+                if (directions[i] == 0) {
+                    IDODOV2(dodoPairs[i]).sellBase(dodoPairs[i+1]);
+                } else {
+                    IDODOV2(dodoPairs[i]).sellQuote(dodoPairs[i+1]);
+                }
+            }
+        }
+        require(returnAmount >= minReturnAmount, 'DODOV2Proxy01: Return amount is not enough');
+        emit OrderHistory(fromToken, toToken, assetTo, fromTokenAmount, returnAmount, block.timestamp);
     }
 
     function externalSwap(
@@ -344,32 +445,26 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         address toToken,
         address approveTarget,
         address to,
-        uint256 gasSwap,
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
         bytes memory callDataConcat,
         uint256 deadline
     ) external virtual override payable judgeExpired(deadline) returns (uint256 returnAmount) {
-        
-        require(minReturnAmount > 0, "DODOV2Proxy01: Min return should be bigger then 0.");
-
+        require(minReturnAmount > 0, 'DODOV2Proxy01: Min return should be bigger then 0.');
         if (fromToken != ETH_ADDRESS) {
             IDODOV2(smartApprove).claimTokens(fromToken, msg.sender, address(this), fromTokenAmount);
             IERC20(fromToken).universalApprove(approveTarget, fromTokenAmount);
         }
 
-        (bool success, ) = to.call{value: fromToken == ETH_ADDRESS ? msg.value : 0, gas: gasSwap}(
-            callDataConcat
-        );
+        (bool success, ) = to.call{value: fromToken == ETH_ADDRESS ? msg.value : 0}(callDataConcat);
 
-        require(success, "DODOV2Proxy01: Contract Swap execution Failed");
+        require(success, 'DODOV2Proxy01: Contract Swap execution Failed');
 
         IERC20(fromToken).universalTransfer(msg.sender, IERC20(fromToken).universalBalanceOf(address(this)));
         returnAmount = IERC20(toToken).universalBalanceOf(address(this));
 
-        require(returnAmount >= minReturnAmount, "DODOV2Proxy01: Return amount is not enough");
+        require(returnAmount >= minReturnAmount, 'DODOV2Proxy01: Return amount is not enough');
         IERC20(toToken).universalTransfer(msg.sender, returnAmount);
         emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount, block.timestamp);
-        emit ExternalRecord(to, msg.sender);
     }
 }
