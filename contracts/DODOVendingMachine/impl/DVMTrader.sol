@@ -48,7 +48,7 @@ contract DVMTrader is DVMVault {
         returns (uint256 receiveQuoteAmount)
     {
         uint256 baseInput = getBaseInput();
-        require(baseInput > 0, 'INSUFFICIENT_BASE_INPUT');
+        require(baseInput > 0, "INSUFFICIENT_BASE_INPUT");
         uint256 mtFee;
         (receiveQuoteAmount, mtFee) = querySellBase(tx.origin, baseInput);
         _transferQuoteOut(to, receiveQuoteAmount);
@@ -65,7 +65,7 @@ contract DVMTrader is DVMVault {
         returns (uint256 receiveBaseAmount)
     {
         uint256 quoteInput = getQuoteInput();
-        require(quoteInput > 0, 'INSUFFICIENT_QUOTE_INPUT');
+        require(quoteInput > 0, "INSUFFICIENT_QUOTE_INPUT");
         uint256 mtFee;
         (receiveBaseAmount, mtFee) = querySellQuote(tx.origin, quoteInput);
         _transferBaseOut(to, receiveBaseAmount);
@@ -88,32 +88,34 @@ contract DVMTrader is DVMVault {
         if (data.length > 0)
             IDODOCallee(assetTo).DVMFlashLoanCall(msg.sender, baseAmount, quoteAmount, data);
 
-        (uint256 baseReserve, uint256 quoteReserve) = getVaultReserve();
         (uint256 baseBalance, uint256 quoteBalance) = getVaultBalance();
 
-        uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(tx.origin);
-        uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(tx.origin);
-        if (baseBalance < baseReserve) {
-            uint256 validBaseOut = DecimalMath.divCeil(
-                baseReserve - baseBalance,
-                DecimalMath.ONE.sub(mtFeeRate).sub(lpFeeRate)
-            );
-            baseBalance = baseReserve.sub(validBaseOut);
-            _transferBaseOut(_MAINTAINER_, DecimalMath.mulFloor(validBaseOut, mtFeeRate));
-        }
-        if (quoteBalance < quoteReserve) {
-            uint256 validQuoteOut = DecimalMath.divCeil(
-                quoteReserve - quoteBalance,
-                DecimalMath.ONE.sub(mtFeeRate).sub(lpFeeRate)
-            );
-            quoteBalance = quoteReserve.sub(validQuoteOut);
-            _transferQuoteOut(_MAINTAINER_, DecimalMath.mulFloor(validQuoteOut, mtFeeRate));
-        }
-
+        // no input -> pure loss
         require(
-            calculateBase0(baseBalance, quoteBalance) >= calculateBase0(baseReserve, quoteReserve),
+            baseBalance >= _BASE_RESERVE_ || quoteBalance >= _QUOTE_RESERVE_,
             "FLASH_LOAN_FAILED"
         );
+
+        // no output -> pure profit
+        if (baseBalance >= _BASE_RESERVE_ && quoteBalance >= _QUOTE_RESERVE_) return;
+
+        if (baseBalance < _BASE_RESERVE_) {
+            (uint256 receiveBaseAmount, uint256 mtFee) = querySellQuote(
+                tx.origin,
+                quoteBalance.sub(_QUOTE_RESERVE_)
+            );
+            require(_BASE_RESERVE_.sub(baseBalance) <= receiveBaseAmount, "FLASH_LOAN_FAILED");
+            _transferBaseOut(_MAINTAINER_, mtFee);
+        }
+
+        if (quoteBalance < _QUOTE_RESERVE_) {
+            (uint256 receiveQuoteAmount, uint256 mtFee) = querySellBase(
+                tx.origin,
+                baseBalance.sub(_BASE_RESERVE_)
+            );
+            require(_QUOTE_RESERVE_.sub(quoteBalance) <= receiveQuoteAmount, "FLASH_LOAN_FAILED");
+            _transferQuoteOut(_MAINTAINER_, mtFee);
+        }
 
         _sync();
     }

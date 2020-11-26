@@ -51,12 +51,6 @@ contract DPPVault is DPPStorage {
         _setRState();
     }
 
-    function _syncReserve() internal {
-        _BASE_RESERVE_ = _BASE_TOKEN_.balanceOf(address(this));
-        _QUOTE_RESERVE_ = _QUOTE_TOKEN_.balanceOf(address(this));
-        _setRState();
-    }
-
     function _resetTargetAndReserve() internal {
         _BASE_TARGET_ = _BASE_TOKEN_.balanceOf(address(this));
         _QUOTE_TARGET_ = _QUOTE_TOKEN_.balanceOf(address(this));

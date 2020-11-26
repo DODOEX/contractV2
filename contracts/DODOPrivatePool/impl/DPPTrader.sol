@@ -25,7 +25,10 @@ contract DPPTrader is DPPVault {
     }
 
     modifier isSellAllow(address trader) {
-        require(!_SELLING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(trader),"TRADER_SELL_NOT_ALLOWED");
+        require(
+            !_SELLING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(trader),
+            "TRADER_SELL_NOT_ALLOWED"
+        );
         _;
     }
 
@@ -75,7 +78,10 @@ contract DPPTrader is DPPVault {
         uint256 newQuoteTarget;
 
         PMMPricing.RState newRState;
-        (receiveBaseAmount, mtFee, newRState, newQuoteTarget) = querySellQuote(tx.origin,quoteInput);
+        (receiveBaseAmount, mtFee, newRState, newQuoteTarget) = querySellQuote(
+            tx.origin,
+            quoteInput
+        );
 
         _transferBaseOut(to, receiveBaseAmount);
         _transferBaseOut(_MAINTAINER_, mtFee);
@@ -105,14 +111,14 @@ contract DPPTrader is DPPVault {
         uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
         uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
 
-        // no output -> pure profit
-        if (baseBalance >= _BASE_RESERVE_ && quoteBalance >= _QUOTE_RESERVE_) return;
-
         // no input -> pure loss
         require(
             baseBalance >= _BASE_RESERVE_ || quoteBalance >= _QUOTE_RESERVE_,
             "FLASH_LOAN_FAILED"
         );
+
+        // no output -> pure profit
+        if (baseBalance >= _BASE_RESERVE_ && quoteBalance >= _QUOTE_RESERVE_) return;
 
         // sell quote case
         // quote input + base output
@@ -222,5 +228,10 @@ contract DPPTrader is DPPVault {
 
     function getMidPrice() public view returns (uint256 midPrice) {
         return PMMPricing.getMidPrice(getPMMState());
+    }
+
+    function _syncReserve() internal {
+        _BASE_RESERVE_ = _BASE_TOKEN_.balanceOf(address(this));
+        _QUOTE_RESERVE_ = _QUOTE_TOKEN_.balanceOf(address(this));
     }
 }

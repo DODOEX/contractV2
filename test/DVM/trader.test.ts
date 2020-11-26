@@ -168,6 +168,35 @@ describe("Trader", () => {
     });
 
     it("flash loan", async () => {
+      // buy
+      await ctx.transferQuoteToDVM(trader, decimalStr("200"))
+
+      // buy failed
+      await truffleAssert.reverts(ctx.DVM.methods.flashLoan("1946763594380080788", "0", trader, "0x").send(ctx.sendParam(trader)), "FLASH_LOAN_FAILED")
+
+      // buy succeed
+      await ctx.DVM.methods.flashLoan("1946763594380080787", "0", trader, "0x").send(ctx.sendParam(trader))
+
+      // trader balances
+      assert.equal(
+        await ctx.BASE.methods.balanceOf(trader).call(),
+        "11946763594380080787"
+      );
+
+      // sell
+      await ctx.transferBaseToDVM(trader, decimalStr("1"))
+
+      // sell failed
+      await truffleAssert.reverts(ctx.DVM.methods.flashLoan("0", "103421810640399874604", trader, "0x").send(ctx.sendParam(trader)), "FLASH_LOAN_FAILED")
+
+      // sell succeed
+      await ctx.DVM.methods.flashLoan("0", "103421810640399874603", trader, "0x").send(ctx.sendParam(trader))
+
+      // trader balances
+      assert.equal(
+        await ctx.QUOTE.methods.balanceOf(trader).call(),
+        "903421810640399874603"
+      );
 
     })
 
