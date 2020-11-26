@@ -19,6 +19,15 @@ BigNumber.config({
   DECIMAL_PLACES: 80,
 });
 
+export interface DPPContextBalances {
+  traderBase: string,
+  traderQuote: string,
+  DPPBase: string,
+  DPPQuote: string,
+  maintainerBase: string,
+  maintainerQuote: string
+}
+
 export interface DPPContextInitConfig {
   lpFeeRate: string;
   mtFeeRate: string;
@@ -69,7 +78,6 @@ export class DPPContext {
     var gasPriceSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME)
     var iSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME)
     var kSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME)
-
     this.BASE = await contracts.newContract(
       contracts.MINTABLE_ERC20_CONTRACT_NAME,
       ["TestBase", "BASE", 18]
@@ -87,7 +95,6 @@ export class DPPContext {
     await this.DPP.methods.init(
       this.Deployer,
       this.Maintainer,
-      this.Deployer,
       this.BASE.options.address,
       this.QUOTE.options.address,
       lpFeeRateModel.options.address,
@@ -98,9 +105,10 @@ export class DPPContext {
       permissionManager.options.address,
     ).send(this.sendParam(this.Deployer))
 
-    await gasPriceSource.methods.init(this.DPP.options.address, MAX_UINT256).send(this.sendParam(this.Deployer))
+    await gasPriceSource.methods.init(this.Deployer, MAX_UINT256).send(this.sendParam(this.Deployer))
     await lpFeeRateModel.methods.init(this.DPP.options.address, config.lpFeeRate).send(this.sendParam(this.Deployer))
     await mtFeeRateModel.methods.init(this.DPP.options.address, config.mtFeeRate).send(this.sendParam(this.Deployer))
+
     await kSource.methods.init(this.DPP.options.address, config.k).send(this.sendParam(this.Deployer))
     await iSource.methods.init(this.DPP.options.address, config.i).send(this.sendParam(this.Deployer))
 
@@ -129,6 +137,18 @@ export class DPPContext {
 
   async transferQuoteToDPP(account: string, amount: string) {
     await this.QUOTE.methods.transfer(this.DPP.options.address, amount).send(this.sendParam(account))
+  }
+
+  async getBalances(trader: string) {
+    var balances: DPPContextBalances = {
+      traderBase: await this.BASE.methods.balanceOf(trader).call(),
+      traderQuote: await this.QUOTE.methods.balanceOf(trader).call(),
+      DPPBase: await this.BASE.methods.balanceOf(this.DPP.options.address).call(),
+      DPPQuote: await this.QUOTE.methods.balanceOf(this.DPP.options.address).call(),
+      maintainerBase: await this.BASE.methods.balanceOf(this.Maintainer).call(),
+      maintainerQuote: await this.QUOTE.methods.balanceOf(this.Maintainer).call(),
+    }
+    return balances
   }
 }
 

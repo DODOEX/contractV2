@@ -25,7 +25,6 @@ contract DPP is DPPTrader {
         address kSource,
         address iSource,
         address gasPriceSource,
-        address dodoSmartApprove,
         address tradePermissionManager
     ) external {
         initOwner(owner);
@@ -38,7 +37,6 @@ contract DPP is DPPTrader {
         _K_ = IExternalValue(kSource);
         _GAS_PRICE_LIMIT_ = IExternalValue(gasPriceSource);
         _TRADE_PERMISSION_ = IPermissionManager(tradePermissionManager);
-        _DODO_SMART_APPROVE_ = dodoSmartApprove;
         _resetTargetAndReserve();
     }
 

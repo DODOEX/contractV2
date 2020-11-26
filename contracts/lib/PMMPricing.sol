@@ -213,18 +213,17 @@ library PMMPricing {
 
     // ============ Helper functions ============
 
-    // todo 我不确定这个函数是不是能改state的状态
     function adjustedTarget(PMMState memory state) internal pure {
         if (state.R == RState.BELOW_ONE) {
             state.Q0 = DODOMath._SolveQuadraticFunctionForTarget(
-                state.B,
+                state.Q,
                 state.B.sub(state.B0),
                 state.i,
                 state.K
             );
         } else if (state.R == RState.ABOVE_ONE) {
             state.B0 = DODOMath._SolveQuadraticFunctionForTarget(
-                state.Q,
+                state.B,
                 state.Q.sub(state.Q0),
                 DecimalMath.reciprocalFloor(state.i),
                 state.K

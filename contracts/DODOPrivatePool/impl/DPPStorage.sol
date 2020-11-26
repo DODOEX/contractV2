@@ -27,8 +27,6 @@ import {PMMPricing} from "../../lib/PMMPricing.sol";
 contract DPPStorage is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
 
-    address public _DODO_SMART_APPROVE_;
-
     // ============ Variables for Control ============
 
     IExternalValue public _GAS_PRICE_LIMIT_;
@@ -76,10 +74,6 @@ contract DPPStorage is InitializableOwnable, ReentrancyGuard {
 
     function setMaintainer(address newMaintainer) external onlyOwner {
         _MAINTAINER_ = newMaintainer;
-    }
-
-    function setOperator(address newOperator) external onlyOwner {
-        _OPERATOR_ = newOperator;
     }
 
     function setGasPriceSource(address newGasPriceLimitSource) external onlyOwner {

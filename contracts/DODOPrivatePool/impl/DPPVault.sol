@@ -64,7 +64,7 @@ contract DPPVault is DPPStorage {
     }
 
     function reset(
-        address from,
+        address assetTo,
         uint256 newLpFeeRate,
         uint256 newMtFeeRate,
         uint256 newI,
@@ -73,8 +73,8 @@ contract DPPVault is DPPStorage {
         uint256 quoteOutAmount
     ) public onlyOwner {
         require(newK > 0 && newK <= 10**18, "K OUT OF RANGE!");
-        if (baseOutAmount > 0) _transferBaseOut(from, baseOutAmount);
-        if (quoteOutAmount > 0) _transferQuoteOut(from, quoteOutAmount);
+        _transferBaseOut(assetTo, baseOutAmount);
+        _transferQuoteOut(assetTo, quoteOutAmount);
         _resetTargetAndReserve();
         _LP_FEE_RATE_MODEL_.setFeeRate(newLpFeeRate);
         _MT_FEE_RATE_MODEL_.setFeeRate(newMtFeeRate);
