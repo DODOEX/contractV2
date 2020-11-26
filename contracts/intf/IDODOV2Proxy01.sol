@@ -93,6 +93,21 @@ interface IDODOV2Proxy01 {
         uint256 baseOutAmount,
         uint256 quoteOutAmount,
         uint256 deadline
+    ) external;
+
+
+    function resetDODOPrivatePoolETH(
+        address DPPAddress,
+        uint256 newLpFeeRate,
+        uint256 newMtFeeRate,
+        uint256 newI,
+        uint256 newK,
+        uint256 baseInAmount,
+        uint256 quoteInAmount,
+        uint256 baseOutAmount,
+        uint256 quoteOutAmount,
+        uint8 flag,  // 1 - baseInETH, 2 - quoteInETH, 3 - baseOutETH, 4 - quoteOutETH
+        uint256 deadline
     ) external payable;
 
     //TODO: addLiquidityToClassical

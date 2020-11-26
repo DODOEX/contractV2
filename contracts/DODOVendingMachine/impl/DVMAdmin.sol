@@ -13,39 +13,39 @@ import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 
 contract DVMAdmin is InitializableOwnable {
 
-    address public dvm;
+    address public _DVM_;
 
-    function init(address owner, address _dvm) external {
+    function init(address owner, address dvm) external {
         initOwner(owner);
-        dvm = _dvm;
+        _DVM_ = dvm;
     }
 
     function setLpFeeRateModel(address newLpFeeRateModel) external onlyOwner {
-        IDVM(dvm).setLpFeeRateModel(newLpFeeRateModel);
+        IDVM(_DVM_).setLpFeeRateModel(newLpFeeRateModel);
     }
 
     function setMtFeeRateModel(address newMtFeeRateModel) external onlyOwner {
-        IDVM(dvm).setMtFeeRateModel(newMtFeeRateModel);
+        IDVM(_DVM_).setMtFeeRateModel(newMtFeeRateModel);
     }
 
     function setTradePermissionManager(address newTradePermissionManager) external onlyOwner {
-        IDVM(dvm).setTradePermissionManager(newTradePermissionManager);
+        IDVM(_DVM_).setTradePermissionManager(newTradePermissionManager);
     }
 
     function setMaintainer(address newMaintainer) external onlyOwner {
-        IDVM(dvm).setMaintainer(newMaintainer);
+        IDVM(_DVM_).setMaintainer(newMaintainer);
     }
 
     function setGasPriceSource(address newGasPriceLimitSource) external onlyOwner {
-        IDVM(dvm).setGasPriceSource(newGasPriceLimitSource);
+        IDVM(_DVM_).setGasPriceSource(newGasPriceLimitSource);
     }
 
     function setBuy(bool open) external onlyOwner {
-        IDVM(dvm).setBuy(open);
+        IDVM(_DVM_).setBuy(open);
     }
 
     function setSell(bool open) external onlyOwner {
-        IDVM(dvm).setSell(open);
+        IDVM(_DVM_).setSell(open);
     }
 
     // ============ Admin Version Control ============

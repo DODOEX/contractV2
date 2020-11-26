@@ -6,11 +6,13 @@
 */
 
 // import * as assert from 'assert';
-
+import BigNumber from "bignumber.js";
 import { decimalStr, mweiStr} from '../utils/Converter';
 import { logGas } from '../utils/Log';
 import { ProxyContext, getProxyContext } from '../utils/ProxyContext';
 import { assert } from 'chai';
+import * as contracts from '../utils/Contracts';
+import { Contract } from 'web3-eth-contract';
 
 let lp: string;
 let project: string;
@@ -68,12 +70,16 @@ describe("DODOProxyV2.0", () => {
   let ctx: ProxyContext;
   let dpp_DODO_USDT: string;
   let dpp_WETH_USDT: string;
+  let DPP_DODO_USDT: Contract;
+  let DPP_WETH_USDT: Contract;
 
   before(async () => {
     ctx = await getProxyContext();
     await init(ctx);
-    dpp_DODO_USDT = await initCreateDPP(ctx,ctx.DODO.options.address,ctx.USDT.options.address,decimalStr("10000"),mweiStr("10000"),"0");
-    dpp_WETH_USDT = await initCreateDPP(ctx,'0x000000000000000000000000000000000000000E',ctx.USDT.options.address,decimalStr("10"),mweiStr("10000"),"10");
+    dpp_DODO_USDT = await initCreateDPP(ctx,ctx.DODO.options.address,ctx.USDT.options.address,decimalStr("10000"),mweiStr("10000"), "0");
+    DPP_DODO_USDT = contracts.getContractWithAddress(contracts.DPP_NAME,dpp_DODO_USDT);
+    dpp_WETH_USDT = await initCreateDPP(ctx,'0x000000000000000000000000000000000000000E',ctx.USDT.options.address,decimalStr("5"),mweiStr("10000"),"5");
+    DPP_WETH_USDT = contracts.getContractWithAddress(contracts.DPP_NAME,dpp_WETH_USDT);
     console.log("dpp_DODO_USDT:",dpp_DODO_USDT);
     console.log("dpp_WETH_USDT:",dpp_WETH_USDT);
   });
@@ -92,7 +98,7 @@ describe("DODOProxyV2.0", () => {
       var quoteToken = ctx.USDT.options.address;
       var baseAmount = decimalStr("10000");
       var quoteAmount = mweiStr("10000");
-      await ctx.DODOProxy.methods.createDODOPrivatePool(
+      await logGas(await ctx.DODOProxy.methods.createDODOPrivatePool(
         baseToken,
         quoteToken,
         baseAmount,
@@ -102,7 +108,7 @@ describe("DODOProxyV2.0", () => {
         config.i,
         config.k,
         Math.floor(new Date().getTime()/1000 + 60 * 10)
-      ).send(ctx.sendParam(project));
+      ),ctx.sendParam(project),"createDPP");
       var addrs = await ctx.DPPFactory.methods.getPrivatePool(baseToken,quoteToken).call();
       var dppInfo = await ctx.DPPFactory.methods._DPP_INFO_(addrs[0]).call();
       assert.equal(
@@ -123,9 +129,9 @@ describe("DODOProxyV2.0", () => {
     it("createDPP - ETH", async () => {
       var baseToken = '0x000000000000000000000000000000000000000E';
       var quoteToken = ctx.USDT.options.address;
-      var baseAmount = decimalStr("10");
+      var baseAmount = decimalStr("5");
       var quoteAmount = mweiStr("10000");
-      await ctx.DODOProxy.methods.createDODOPrivatePool(
+      await logGas(await ctx.DODOProxy.methods.createDODOPrivatePool(
         baseToken,
         quoteToken,
         baseAmount,
@@ -135,7 +141,7 @@ describe("DODOProxyV2.0", () => {
         config.i,
         config.k,
         Math.floor(new Date().getTime()/1000 + 60 * 10)
-      ).send(ctx.sendParam(project, "10"));
+      ),ctx.sendParam(project, "5"),"createDPP - Wrap ETH");
       var addrs = await ctx.DPPFactory.methods.getPrivatePool(ctx.WETH.options.address,quoteToken).call();
       var dppInfo = await ctx.DPPFactory.methods._DPP_INFO_(addrs[0]).call();
       assert.equal(
@@ -153,61 +159,56 @@ describe("DODOProxyV2.0", () => {
     });
 
     it("resetDPP", async () => {
-      // await ctx.DODOProxy.methods.resetDODOPrivatePool(
-      //   dpp_DODO_USDT,
-      //   config.lpFeeRate,
-      //   config.mtFeeRate,
-      //   config.i,
-      //   config.k,
-        
-      //   Math.floor(new Date().getTime()/1000 + 60 * 10)
-      // ).send(ctx.sendParam(project, "10"));
+      var beforeState = await DPP_DODO_USDT.methods.getPMMState().call();
+      assert.equal(beforeState.K,config.k);
+      assert.equal(beforeState.B0,decimalStr("10000"));
+      assert.equal(beforeState.Q0,mweiStr("10000"));
+      await logGas(await ctx.DODOProxy.methods.resetDODOPrivatePool(
+        dpp_DODO_USDT,
+        config.lpFeeRate,
+        config.mtFeeRate,
+        config.i,
+        decimalStr("0.2"),
+        decimalStr("1000"),
+        mweiStr("1000"),
+        decimalStr("0"),
+        mweiStr("0"),
+        Math.floor(new Date().getTime()/1000 + 60 * 10)
+      ),ctx.sendParam(project),"resetDPP");
+      var afterState = await DPP_DODO_USDT.methods.getPMMState().call();
+      assert.equal(afterState.K,decimalStr("0.2"));
+      assert.equal(afterState.B0,decimalStr("11000"));
+      assert.equal(afterState.Q0,mweiStr("11000"));
     });
 
-
-    /**
-     * trade
-     */
-    it("trade-sellQuote-R=1", async () => {
-        //R变号与不变号
+    it("resetDPP - OutETH", async () => {
+      var beforeState = await DPP_WETH_USDT.methods.getPMMState().call();
+      assert.equal(beforeState.K,config.k);
+      assert.equal(beforeState.B0,decimalStr("5"));
+      assert.equal(beforeState.Q0,mweiStr("10000"));
+      var b_ETH = await ctx.Web3.eth.getBalance(project);
+      var tx = await logGas(await ctx.DODOProxy.methods.resetDODOPrivatePoolETH(
+        dpp_WETH_USDT,
+        config.lpFeeRate,
+        config.mtFeeRate,
+        config.i,
+        decimalStr("0.2"),
+        decimalStr("0"),
+        mweiStr("1000"),
+        decimalStr("1"),
+        mweiStr("0"),
+        3,
+        Math.floor(new Date().getTime()/1000 + 60 * 10)
+      ),ctx.sendParam(project),"resetDPP-ETH");
+      var afterState = await DPP_WETH_USDT.methods.getPMMState().call();
+      assert.equal(afterState.K,decimalStr("0.2"));
+      assert.equal(afterState.B0,decimalStr("4"));
+      assert.equal(afterState.Q0,mweiStr("11000"));
+      var a_ETH = await ctx.Web3.eth.getBalance(project);
+      console.log("b_ETH:",b_ETH);
+      console.log("a_ETH:",a_ETH);
+      assert.equal(new BigNumber(a_ETH).isGreaterThan(new BigNumber(b_ETH)),true);
     });
-
-    
-    it("trade-sellQuote-R>1", async () => {
-        //R变号与不变号
-    });
-
-
-    it("trade-sellQuote-R<1", async () => {
-        //R变号与不变号
-    });
-
-
-    it("trade-sellBase-R=1", async () => {
-        //R变号与不变号
-    });
-
-
-    it("trade-sellBase-R>1", async () => {
-        //R变号与不变号
-    });
-
-
-    it("trade-sellBase-R<1", async () => {
-        //R变号与不变号
-    });
-
-
-
-    it("retrieve", async () => {
-        //eth允许
-        //控制无法提取base && quote
-    });
-
-
-    /**
-     * 直接底层dpp操作测试
-     */
 
   });
 });

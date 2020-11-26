@@ -15,7 +15,6 @@ import {SafeMath} from "../../lib/SafeMath.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 import {Ownable} from "../../lib/Ownable.sol";
-import {ISmartApprove} from "../../intf/ISmartApprove.sol";
 
 contract DPPVault is DPPStorage {
     using SafeMath for uint256;
