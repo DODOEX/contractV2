@@ -30,11 +30,4 @@ interface IDODOCallee {
         uint256 quoteAmount,
         bytes calldata data
     ) external;
-
-    function DPPWithdrawCall(
-        address sender,
-        uint256 baseAmount,
-        uint256 quoteAmount,
-        bytes calldata data
-    ) external;
 }
