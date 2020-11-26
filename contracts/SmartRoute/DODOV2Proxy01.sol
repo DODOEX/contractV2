@@ -241,7 +241,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
             IDODOV2(smartApprove).claimTokens(IDODOV2(DPPAddress)._BASE_TOKEN_(), msg.sender, DPPAddress, baseInAmount);
         if(quoteInAmount > 0)
             IDODOV2(smartApprove).claimTokens(IDODOV2(DPPAddress)._QUOTE_TOKEN_(), msg.sender, DPPAddress, quoteInAmount);
-        IDODOV2(IDODOV2(DPPAddress).getOwner()).reset(
+        IDODOV2(IDODOV2(DPPAddress)._OWNER_()).reset(
             msg.sender,
             newLpFeeRate,
             newMtFeeRate,
@@ -284,7 +284,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
             }
         }
         if( (flag == 3 && baseOutAmount > 0) || (flag == 4 && quoteOutAmount > 0) ) {
-            IDODOV2(IDODOV2(DPPAddress).getOwner()).resetETH(
+            IDODOV2(IDODOV2(DPPAddress)._OWNER_()).resetETH(
                 msg.sender,
                 newLpFeeRate,
                 newMtFeeRate,
@@ -315,7 +315,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
                 }
             } 
         }else {
-            IDODOV2(IDODOV2(DPPAddress).getOwner()).reset(
+            IDODOV2(IDODOV2(DPPAddress)._OWNER_()).reset(
                 msg.sender,
                 newLpFeeRate,
                 newMtFeeRate,

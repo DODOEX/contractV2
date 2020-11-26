@@ -8,8 +8,6 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {IERC20} from "./IERC20.sol";
-
 interface IDODOV2 {
 
     //========== Common ==================
@@ -23,6 +21,8 @@ interface IDODOV2 {
     function _BASE_TOKEN_() external returns (address);
 
     function _QUOTE_TOKEN_() external returns (address);
+
+    function _OWNER_() external returns (address);
 
     function getOwner() external view returns (address);
 

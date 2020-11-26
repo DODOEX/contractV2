@@ -8,8 +8,6 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {IERC20} from "./IERC20.sol";
-
 interface IDODOV2Proxy01 {
 	function dodoSwapETHToToken(
         address payable assetTo,

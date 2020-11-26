@@ -97,9 +97,5 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     function getMtFeeRate(address trader) external view returns (uint256 feeRate) {
         return _MT_FEE_RATE_MODEL_.getFeeRate(trader);
     }
-
-    function getOwner() external view returns (address) {
-        return _OWNER_;
-    }
     
 }

@@ -106,8 +106,4 @@ contract DPPStorage is InitializableOwnable, ReentrancyGuard {
         return _MT_FEE_RATE_MODEL_.getFeeRate(trader);
     }
 
-    function getOwner() external view returns (address) {
-        return _OWNER_;
-    }
-
 }
