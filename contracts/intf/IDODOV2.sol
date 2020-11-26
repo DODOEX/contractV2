@@ -24,6 +24,8 @@ interface IDODOV2 {
 
     function _QUOTE_TOKEN_() external returns (address);
 
+    function getOwner() external view returns (address);
+
     //========== DODOVendingMachine ========
     
     function createDODOVendingMachine(
@@ -56,6 +58,17 @@ interface IDODOV2 {
     ) external;
 
     function reset(
+        address assetTo,
+        uint256 newLpFeeRate,
+        uint256 newMtFeeRate,
+        uint256 newI,
+        uint256 newK,
+        uint256 baseOutAmount,
+        uint256 quoteOutAmount
+    ) external; 
+
+    function resetETH(
+        address from,
         uint256 newLpFeeRate,
         uint256 newMtFeeRate,
         uint256 newI,

@@ -21,8 +21,6 @@ import {IERC20} from "../../intf/IERC20.sol";
 contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
 
-    address public _ADMIN_;
-
     // ============ Variables for Control ============
 
     IExternalValue public _GAS_PRICE_LIMIT_;
@@ -99,4 +97,9 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     function getMtFeeRate(address trader) external view returns (uint256 feeRate) {
         return _MT_FEE_RATE_MODEL_.getFeeRate(trader);
     }
+
+    function getOwner() external view returns (address) {
+        return _OWNER_;
+    }
+    
 }

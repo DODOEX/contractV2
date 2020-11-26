@@ -11,8 +11,8 @@ pragma experimental ABIEncoderV2;
 import {IERC20} from "./IERC20.sol";
 
 interface IDODOV2Proxy01 {
-	function dodoSwap(
-        address fromToken,
+	function dodoSwapETHToToken(
+        address payable assetTo,
         address toToken,
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
@@ -21,13 +21,32 @@ interface IDODOV2Proxy01 {
         uint256 deadline
     ) external payable returns (uint256 returnAmount);
 
-    
+    function dodoSwapTokenToETH(
+        address payable assetTo,
+        address fromToken,
+        uint256 fromTokenAmount,
+        uint256 minReturnAmount,
+        address[] memory dodoPairs,
+        uint256[] memory directions,
+        uint256 deadline
+    ) external returns (uint256 returnAmount);
+
+    function dodoSwapTokenToToken(
+        address payable assetTo,
+        address fromToken,
+        address toToken,
+        uint256 fromTokenAmount,
+        uint256 minReturnAmount,
+        address[] memory dodoPairs,
+        uint256[] memory directions,
+        uint256 deadline
+    ) external returns (uint256 returnAmount);
+
     function externalSwap(
         address fromToken,
         address toToken,
         address approveTarget,
         address to,
-        uint256 gasSwap,
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
         bytes memory callDataConcat,
@@ -36,6 +55,7 @@ interface IDODOV2Proxy01 {
 
     
     function createDODOVendingMachine(
+        address assetTo,
         address baseToken,
         address quoteToken,
         uint256 baseInAmount,
@@ -56,18 +76,18 @@ interface IDODOV2Proxy01 {
         uint256 baseMinAmount,
         uint256 quoteMinAmount,
         uint256 deadline
-    ) external payable returns (uint256 shares,uint256 baseActualInAmount,uint256 quoteActualInAmount);
+    ) external returns (uint256 shares,uint256 baseActualInAmount,uint256 quoteActualInAmount);
 
-    
-    function removeDVMLiquidity(
-    	address DVMAddress,
+    function addDVMLiquidityETH(
+        address DVMAddress,
         address to,
-        uint256 shares,
-        uint256 baseOutMinAmount,
-        uint256 quoteOutMinAmount,
+        uint256 baseInAmount,
+        uint256 quoteInAmount,
+        uint256 baseMinAmount,
+        uint256 quoteMinAmount,
+        uint8 flag, // 1 - baseInETH, 2 - quoteInETH
         uint256 deadline
-    ) external payable returns (uint256 baseOutAmount,uint256 quoteOutAmount);
-
+    ) external payable returns (uint256 shares,uint256 baseActualInAmount,uint256 quoteActualInAmount);
 
     function createDODOPrivatePool(
         address baseToken,
@@ -78,9 +98,8 @@ interface IDODOV2Proxy01 {
         uint256 mtFeeRate,
         uint256 i,
         uint256 k,
-		uint256 deadline
+        uint256 deadline
     ) external payable returns (address newPrivatePool);
-
 
     function resetDODOPrivatePool(
         address DPPAddress,
@@ -92,6 +111,21 @@ interface IDODOV2Proxy01 {
         uint256 quoteInAmount,
         uint256 baseOutAmount,
         uint256 quoteOutAmount,
+        uint256 deadline
+    ) external;
+
+
+    function resetDODOPrivatePoolETH(
+        address DPPAddress,
+        uint256 newLpFeeRate,
+        uint256 newMtFeeRate,
+        uint256 newI,
+        uint256 newK,
+        uint256 baseInAmount,
+        uint256 quoteInAmount,
+        uint256 baseOutAmount,
+        uint256 quoteOutAmount,
+        uint8 flag,  // 1 - baseInETH, 2 - quoteInETH, 3 - baseOutETH, 4 - quoteOutETH
         uint256 deadline
     ) external payable;
 

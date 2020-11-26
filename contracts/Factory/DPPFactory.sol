@@ -54,11 +54,11 @@ contract DPPFactory is Ownable {
         _CLONE_FACTORY_ = cloneFactory;
         _DPP_TEMPLATE_ = dppTemplate;
         _DPP_ADMIN_TEMPLATE_ = dppAdminTemplate;
+        _DODO_SMART_APPROVE_ = dodoSmartApprove;
         _FEE_RATE_MODEL_TEMPLATE_ = defautFeeRateModelTemplate;
         _PERMISSION_MANAGER_TEMPLATE_ = defaultPermissionManagerTemplate;
         _VALUE_SOURCE_ = defaultExternalValueTemplate;
         _DEFAULT_GAS_PRICE_SOURCE_ = defaultGasPriceSource;
-        _DODO_SMART_APPROVE_ = dodoSmartApprove;
     }
 
     function createDODOPrivatePool() external returns(address newPrivatePool) {
@@ -77,10 +77,9 @@ contract DPPFactory is Ownable {
     ) external {
         { 
         address _dppAddress = dppAddress;
-        address adminModel = _createDPPAdminModel(from,_dppAddress);
+        address adminModel = _createDPPAdminModel(from,_dppAddress,from,_DODO_SMART_APPROVE_);
         IDPP(_dppAddress).init(
             adminModel,
-            from,
             from,
             baseToken,
             quoteToken,
@@ -89,7 +88,6 @@ contract DPPFactory is Ownable {
             _createExternalValueModel(_dppAddress, k),
             _createExternalValueModel(_dppAddress, i),
             _DEFAULT_GAS_PRICE_SOURCE_,
-            _DODO_SMART_APPROVE_,
             _createPermissionManager(adminModel)
         );
         }
@@ -123,15 +121,14 @@ contract DPPFactory is Ownable {
         IExternalValue(valueModel).init(owner, value);
     }
 
-    function _createDPPAdminModel(address owner, address dpp) internal returns (address adminModel) {
+    function _createDPPAdminModel(address owner, address dpp,address operator, address dodoSmartApprove) internal returns (address adminModel) {
         adminModel = ICloneFactory(_CLONE_FACTORY_).clone(_DPP_ADMIN_TEMPLATE_);
-        IDPPAdmin(adminModel).init(owner,dpp);
+        IDPPAdmin(adminModel).init(owner,dpp,operator,dodoSmartApprove);
     }
 
     function updateAdminTemplate(address _newDPPAdminTemplate) external onlyOwner {
         _DPP_ADMIN_TEMPLATE_ = _newDPPAdminTemplate;
     }
-
 
     function getPrivatePool(address baseToken, address quoteToken)
         external

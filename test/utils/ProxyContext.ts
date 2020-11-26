@@ -10,7 +10,7 @@ import Web3 from 'web3';
 import { Contract } from 'web3-eth-contract';
 
 import * as contracts from './Contracts';
-import { decimalStr, MAX_UINT256 } from './Converter';
+import { decimalStr, mweiStr, MAX_UINT256 } from './Converter';
 import { EVM, getDefaultWeb3 } from './EVM';
 import * as log from './Log';
 
@@ -63,7 +63,7 @@ export class ProxyContext {
     var permissionManagerTemplate = await contracts.newContract(contracts.PERMISSION_MANAGER_NAME)
     var vauleSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME)
     var defaultGasSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME)
-    await defaultGasSource.methods.init(this.Deployer,decimalStr("1000000"));
+    await defaultGasSource.methods.init(this.Deployer,MAX_UINT256).send(this.sendParam(this.Deployer));
 
     this.DVMFactory = await contracts.newContract(contracts.DVM_FACTORY_NAME,
       [
@@ -125,7 +125,8 @@ export class ProxyContext {
     return {
       from: sender,
       gas: process.env["COVERAGE"] ? 10000000000 : 7000000,
-      gasPrice: process.env.GAS_PRICE,
+      // gasPrice: process.env.GAS_PRICE,
+      gasPrice: mweiStr("1000"),
       value: decimalStr(value),
     };
   }

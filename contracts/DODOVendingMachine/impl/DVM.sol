@@ -30,7 +30,6 @@ contract DVM is DVMTrader, DVMFunding {
         uint256 k
     ) external {
         initOwner(owner);
-        _ADMIN_ = owner;
         _BASE_TOKEN_ = IERC20(baseTokenAddress);
         _QUOTE_TOKEN_ = IERC20(quoteTokenAddress);
         _LP_FEE_RATE_MODEL_ = IFeeRateModel(lpFeeRateModel);
