@@ -211,40 +211,5 @@ describe("DODOProxyV2.0", () => {
       assert.equal(a_dlp,"1000000000000000000");
     });
 
-    //TODO:ing   
-    it("removeLiquidity", async () => {
-      var b_baseReserve = await DVM_DODO_USDT.methods._BASE_RESERVE_().call();
-      var b_quoteReserve = await DVM_DODO_USDT.methods._QUOTE_RESERVE_().call();
-      var b_dlp = await DVM_DODO_USDT.methods.balanceOf(project).call();
-      assert.equal(b_baseReserve,decimalStr("100000"));
-      assert.equal(b_quoteReserve,mweiStr("30000"));
-      console.log("b_dlp:" + b_dlp);
-      // assert.equal(b_dlp,decimalStr("0"));
-      await logGas(await ctx.DODOProxy.methods.removeDVMLiquidity(
-        dvm_DODO_USDT,
-        project,
-        decimalStr("100"),
-        decimalStr("0"),
-        mweiStr("0"),
-        Math.floor(new Date().getTime()/1000 + 60 * 10)
-      ),ctx.sendParam(project),"removeLiquidity");
-      var a_baseReserve = await DVM_DODO_USDT.methods._BASE_RESERVE_().call();
-      var a_quoteReserve = await DVM_DODO_USDT.methods._QUOTE_RESERVE_().call();
-      var a_dlp = await DVM_DODO_USDT.methods.balanceOf(project).call();
-      // assert.equal(a_baseReserve,decimalStr("6"));
-      // assert.equal(a_quoteReserve,mweiStr("36000"));
-      // assert.equal(a_dlp,"1000000000000000000");
-      console.log("b_dlp:" + b_dlp + " a_dlp:" + a_dlp);
-      console.log("a_baseReserve:" + a_baseReserve + " a_quoteReserve:" + a_quoteReserve);
-    });
-
-    /**
-     *
-     */
-    it("dodoSwap", async () => {
-
-    });
-
-
   });
 });

@@ -89,17 +89,6 @@ interface IDODOV2Proxy01 {
         uint256 deadline
     ) external payable returns (uint256 shares,uint256 baseActualInAmount,uint256 quoteActualInAmount);
 
-    
-    function removeDVMLiquidity(
-    	address DVMAddress,
-        address to,
-        uint256 shares,
-        uint256 baseOutMinAmount,
-        uint256 quoteOutMinAmount,
-        uint256 deadline
-    ) external returns (uint256 baseOutAmount,uint256 quoteOutAmount);
-
-
     function createDODOPrivatePool(
         address baseToken,
         address quoteToken,
@@ -109,9 +98,8 @@ interface IDODOV2Proxy01 {
         uint256 mtFeeRate,
         uint256 i,
         uint256 k,
-		uint256 deadline
+        uint256 deadline
     ) external payable returns (address newPrivatePool);
-
 
     function resetDODOPrivatePool(
         address DPPAddress,

@@ -181,19 +181,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         require(baseActualInAmount >= baseMinAmount && quoteActualInAmount >= quoteMinAmount, 'DODOV2Proxy01: deposit amount is not enough');
     }
 
-    function removeDVMLiquidity(
-        address DVMAddress,
-        address to,
-        uint256 shares,
-        uint256 baseOutMinAmount,
-        uint256 quoteOutMinAmount,
-        uint256 deadline
-    ) external virtual override judgeExpired(deadline) returns (uint256 baseOutAmount,uint256 quoteOutAmount) {
-        require(shares > 0, 'DODOV2Proxy01: Insufficient_Liquidity');
-        (baseOutAmount,quoteOutAmount) = IDODOV2(DVMAddress).sellShares(to);
-        require(baseOutAmount >= baseOutMinAmount && quoteOutAmount >= quoteOutMinAmount,'DODOV2Proxy01: withdraw amount is not enough');
-    }
-
     function createDODOPrivatePool(
         address baseToken,
         address quoteToken,
