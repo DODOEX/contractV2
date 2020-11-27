@@ -19,7 +19,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
     using SafeMath for uint256;
     using UniversalERC20 for IERC20;
 
-    address constant ETH_ADDRESS = 0x000000000000000000000000000000000000000E;
+    address constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     address payable public _WETH_;
     address public dodoApprove;
     address public dodoSellHelper;

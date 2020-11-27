@@ -53,6 +53,8 @@ contract DVMFunding is DVMVault {
     function sellShares(
         uint256 shareAmount,
         address to,
+        uint256 baseMinAmount,
+        uint256 quoteMinAmount,
         bytes calldata data
     ) external preventReentrant returns (uint256 baseAmount, uint256 quoteAmount) {
         (uint256 baseBalance, uint256 quoteBalance) = getVaultBalance();
@@ -60,6 +62,7 @@ contract DVMFunding is DVMVault {
         require(shareAmount <= _SHARES_[msg.sender], "DLP_NOT_ENOUGH");
         baseAmount = baseBalance.mul(shareAmount).div(totalShares);
         quoteAmount = quoteBalance.mul(shareAmount).div(totalShares);
+        require(baseAmount >= baseMinAmount && quoteAmount >= quoteMinAmount,'WITHDRAW_DLP_NOT_ENOUGH');
         _burn(msg.sender, shareAmount);
         _transferBaseOut(to, baseAmount);
         _transferQuoteOut(to, quoteAmount);

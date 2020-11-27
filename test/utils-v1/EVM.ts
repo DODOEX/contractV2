@@ -27,6 +27,7 @@ export class EVM {
     return this.snapshot();
   }
 
+
   public async snapshot(): Promise<string> {
     return this.callJsonrpcMethod('evm_snapshot');
   }

@@ -21,7 +21,7 @@ contract DODOV1Proxy01 is Ownable {
     using SafeMath for uint256;
     using UniversalERC20 for IERC20;
 
-    address constant ETH_ADDRESS = 0x000000000000000000000000000000000000000E;
+    address constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     address public dodoApprove;
     address public dodoSellHelper;
     address payable public _WETH_;
@@ -66,7 +66,7 @@ contract DODOV1Proxy01 is Ownable {
         require(minReturnAmount > 0, 'DODOV1Proxy01: Min return should be bigger then 0.');
 
         if (fromToken != ETH_ADDRESS) {
-            IDODOApprove(dodoApprove).claimTokens(fromToken, msg.sender, address(this),fromTokenAmount);
+            IDODOApprove(dodoApprove).claimTokens(fromToken, msg.sender, address(this), fromTokenAmount);
         } else {
             require(msg.value == fromTokenAmount, 'DODOV1Proxy01: ETH_AMOUNT_NOT_MATCH');
             IWETH(_WETH_).deposit{value: fromTokenAmount}();
@@ -77,12 +77,12 @@ contract DODOV1Proxy01 is Ownable {
             if (directions[i] == 0) {
                 address curDodoBase = IDODO(curDodoPair)._BASE_TOKEN_();
                 uint256 curAmountIn = IERC20(curDodoBase).balanceOf(address(this));
-                IERC20(curDodoBase).universalApprove(curDodoPair, curAmountIn);
+                IERC20(curDodoBase).universalApproveMax(curDodoPair, curAmountIn);
                 IDODO(curDodoPair).sellBaseToken(curAmountIn, 0, "");
             } else {
                 address curDodoQuote = IDODO(curDodoPair)._QUOTE_TOKEN_();
                 uint256 curAmountIn = IERC20(curDodoQuote).balanceOf(address(this));
-                IERC20(curDodoQuote).universalApprove(curDodoPair, curAmountIn);
+                IERC20(curDodoQuote).universalApproveMax(curDodoPair, curAmountIn);
                 uint256 canBuyBaseAmount = IDODOSellHelper(dodoSellHelper).querySellQuoteToken(
                     curDodoPair,
                     curAmountIn
@@ -90,7 +90,6 @@ contract DODOV1Proxy01 is Ownable {
                 IDODO(curDodoPair).buyBaseToken(canBuyBaseAmount, curAmountIn, "");
             }
         }
-        IERC20(fromToken).universalTransfer(msg.sender, IERC20(fromToken).universalBalanceOf(address(this)));
 
         if (toToken == ETH_ADDRESS) {
             uint256 wethAmount = IWETH(_WETH_).balanceOf(address(this));
@@ -127,7 +126,6 @@ contract DODOV1Proxy01 is Ownable {
 
         require(success, 'DODOV1Proxy01: Contract Swap execution Failed');
 
-        IERC20(fromToken).universalTransfer(msg.sender, IERC20(fromToken).universalBalanceOf(address(this)));
         returnAmount = IERC20(toToken).universalBalanceOf(address(this));
 
         require(returnAmount >= minReturnAmount, 'DODOV1Proxy01: Return amount is not enough');

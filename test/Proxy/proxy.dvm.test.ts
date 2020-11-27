@@ -58,8 +58,8 @@ async function initCreateDVM(ctx: ProxyContext, token0: string, token1:string, t
     config.k,
     Math.floor(new Date().getTime()/1000 + 60 * 10)
   ).send(ctx.sendParam(project,ethValue));
-  if(token0 == '0x000000000000000000000000000000000000000E') token0 = ctx.WETH.options.address;
-  if(token1 == '0x000000000000000000000000000000000000000E') token1 = ctx.WETH.options.address;
+  if(token0 == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') token0 = ctx.WETH.options.address;
+  if(token1 == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') token1 = ctx.WETH.options.address;
   var addr = await ctx.DVMFactory.methods._REGISTRY_(token0,token1,0).call();
   return addr;
 }
@@ -78,7 +78,7 @@ describe("DODOProxyV2.0", () => {
     await init(ctx);
     dvm_DODO_USDT = await initCreateDVM(ctx,ctx.DODO.options.address,ctx.USDT.options.address,decimalStr("100000"),mweiStr("30000"), "0",mweiStr("0.3"));
     DVM_DODO_USDT = contracts.getContractWithAddress(contracts.DVM_NAME,dvm_DODO_USDT);
-    dvm_WETH_USDT = await initCreateDVM(ctx,'0x000000000000000000000000000000000000000E',ctx.USDT.options.address,decimalStr("5"),mweiStr("30000"),"5",mweiStr("600"));
+    dvm_WETH_USDT = await initCreateDVM(ctx,'0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',ctx.USDT.options.address,decimalStr("5"),mweiStr("30000"),"5",mweiStr("600"));
     DVM_WETH_USDT = contracts.getContractWithAddress(contracts.DVM_NAME,dvm_WETH_USDT);
     console.log("dvm_DODO_USDT:",dvm_DODO_USDT);
     console.log("dvm_WETH_USDT:",dvm_WETH_USDT);
@@ -128,7 +128,7 @@ describe("DODOProxyV2.0", () => {
 
 
     it("createDVM - ETH", async () => {
-      var baseToken = '0x000000000000000000000000000000000000000E';
+      var baseToken = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
       var quoteToken = ctx.USDT.options.address;
       var baseAmount = decimalStr("5");
       var quoteAmount = mweiStr("10000");

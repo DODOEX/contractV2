@@ -16,7 +16,7 @@ library UniversalERC20 {
     using SafeERC20 for IERC20;
 
     IERC20 private constant ZERO_ADDRESS = IERC20(0x0000000000000000000000000000000000000000);
-    IERC20 private constant ETH_ADDRESS = IERC20(0x000000000000000000000000000000000000000E);
+    IERC20 private constant ETH_ADDRESS = IERC20(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
 
     function isETH(IERC20 token) internal pure returns (bool) {
         return (token == ZERO_ADDRESS || token == ETH_ADDRESS);
@@ -47,6 +47,17 @@ library UniversalERC20 {
             }
         }
     }
+
+    function universalApproveMax(IERC20 token, address to, uint256 amount) internal {
+        uint256 allowance = token.allowance(address(this), to);
+        if (allowance < amount) {
+            if (allowance > 0) {
+                token.safeApprove(to, 0);
+            }
+            token.safeApprove(to, uint(-1));
+        }
+    }
+
 
     function universalBalanceOf(IERC20 token, address who) internal view returns (uint256) {
         if (isETH(token)) {

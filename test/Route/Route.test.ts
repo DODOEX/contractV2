@@ -68,14 +68,14 @@ async function initWETH_USDC(ctx: DODOContext): Promise<void> {
   let WETH_USDC = ctx.WETH_USDC;
 
   await ctx.approvePair(WETH, USDC, WETH_USDC.options.address, lp);
-  await ctx.mintToken(null, USDC, lp, decimalStr("0"), mweiStr("36000"));
-  await WETH.methods.deposit().send(ctx.sendParam(lp, '80'));
+  await ctx.mintToken(null, USDC, lp, decimalStr("0"), mweiStr("3600"));
+  await WETH.methods.deposit().send(ctx.sendParam(lp, '8'));
 
   await WETH_USDC.methods
-    .depositBaseTo(lp, decimalStr("80"))
+    .depositBaseTo(lp, decimalStr("8"))
     .send(ctx.sendParam(lp));
   await WETH_USDC.methods
-    .depositQuoteTo(lp, mweiStr("36000"))
+    .depositQuoteTo(lp, mweiStr("3600"))
     .send(ctx.sendParam(lp));
 }
 
@@ -163,7 +163,8 @@ describe("Trader", () => {
         pairContract: ctx.DODO_USDT
       }];
 
-      var tx = await logGas(await calcRoute(ctx, decimalStr('10'), 0.1, routes, pairs), ctx.sendParam(trader), "directly swap")
+      await logGas(await calcRoute(ctx, decimalStr('10'), 0.1, routes, pairs), ctx.sendParam(trader), "directly swap")
+      await logGas(await calcRoute(ctx, decimalStr('10'), 0.1, routes, pairs), ctx.sendParam(trader), "directly swap")
       // console.log(tx.events['OrderHistory']);
       var a_DODO = await ctx.DODO.methods.balanceOf(trader).call()
       var a_USDT = await ctx.USDT.methods.balanceOf(trader).call()
@@ -203,7 +204,8 @@ describe("Trader", () => {
         pairContract: ctx.USDT_USDC
       }];
 
-      var tx = await logGas(await calcRoute(ctx, decimalStr('10'), 0.1, routes, pairs), ctx.sendParam(trader), "tow hops swap")
+      var tx = await logGas(await calcRoute(ctx, decimalStr('10'), 0.1, routes, pairs), ctx.sendParam(trader), "two hops swap")
+      var tx = await logGas(await calcRoute(ctx, decimalStr('10'), 0.1, routes, pairs), ctx.sendParam(trader), "two hops swap")
       // console.log(tx.events['Swapped']);
       var a_DODO = await ctx.DODO.methods.balanceOf(trader).call()
       var a_USDC = await ctx.USDC.methods.balanceOf(trader).call()
@@ -251,6 +253,7 @@ describe("Trader", () => {
       }];
 
       var tx = await logGas(await calcRoute(ctx, decimalStr('10'), 0.1, routes, pairs), ctx.sendParam(trader), "three hops swap")
+      var tx = await logGas(await calcRoute(ctx, decimalStr('10'), 0.1, routes, pairs), ctx.sendParam(trader), "three hops swap")
       console.log(tx.events['TestAmount']);
       var a_DODO = await ctx.DODO.methods.balanceOf(trader).call()
       var a_WETH = await ctx.WETH.methods.balanceOf(trader).call()
@@ -286,6 +289,7 @@ describe("Trader", () => {
         pairContract: ctx.WETH_USDC
       }];
 
+      var tx = await logGas(await calcRoute(ctx, decimalStr('1'), 0.1, routes, pairs), ctx.sendParam(trader, '1'), "wrap eth and directly swap")
       var tx = await logGas(await calcRoute(ctx, decimalStr('1'), 0.1, routes, pairs), ctx.sendParam(trader, '1'), "wrap eth and directly swap")
       var a_ETH = await ctx.Web3.eth.getBalance(trader)
       var a_WETH = await ctx.WETH.methods.balanceOf(trader).call()
@@ -331,7 +335,8 @@ describe("Trader", () => {
         pairContract: ctx.USDT_USDC
       }];
 
-      var tx = await logGas(await calcRoute(ctx, decimalStr('1'), 0.1, routes, pairs), ctx.sendParam(trader, '1'), "wrap eth and tow hops swap")
+      var tx = await logGas(await calcRoute(ctx, decimalStr('1'), 0.1, routes, pairs), ctx.sendParam(trader, '1'), "wrap eth and two hops swap")
+      var tx = await logGas(await calcRoute(ctx, decimalStr('1'), 0.1, routes, pairs), ctx.sendParam(trader, '1'), "wrap eth and two hops swap")
       var a_ETH = await ctx.Web3.eth.getBalance(trader)
       var a_WETH = await ctx.WETH.methods.balanceOf(trader).call()
       var a_USDT = await ctx.USDT.methods.balanceOf(trader).call()
@@ -386,7 +391,8 @@ describe("Trader", () => {
         pairContract: ctx.WETH_USDC
       }];
 
-      var tx = await logGas(await calcRoute(ctx, decimalStr('1000'), 0.1, routes, pairs), ctx.sendParam(trader), "unwrap eth and three hops swap")
+      var tx = await logGas(await calcRoute(ctx, decimalStr('100'), 0.1, routes, pairs), ctx.sendParam(trader), "unwrap eth and three hops swap")
+      var tx = await logGas(await calcRoute(ctx, decimalStr('100'), 0.1, routes, pairs), ctx.sendParam(trader), "unwrap eth and three hops swap")
       var a_ETH = await ctx.Web3.eth.getBalance(trader)
       var a_WETH = await ctx.WETH.methods.balanceOf(trader).call()
       var a_DODO = await ctx.DODO.methods.balanceOf(trader).call()

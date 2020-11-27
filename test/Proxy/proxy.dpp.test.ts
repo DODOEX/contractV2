@@ -58,8 +58,8 @@ async function initCreateDPP(ctx: ProxyContext, token0: string, token1:string, t
     config.k,
     Math.floor(new Date().getTime()/1000 + 60 * 10)
   ).send(ctx.sendParam(project,ethValue));
-  if(token0 == '0x000000000000000000000000000000000000000E') token0 = ctx.WETH.options.address;
-  if(token1 == '0x000000000000000000000000000000000000000E') token1 = ctx.WETH.options.address;
+  if(token0 == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') token0 = ctx.WETH.options.address;
+  if(token1 == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') token1 = ctx.WETH.options.address;
   var addr = await ctx.DPPFactory.methods._REGISTRY_(token0,token1,0).call();
   return addr;
 }
@@ -77,7 +77,7 @@ describe("DODOProxyV2.0", () => {
     await init(ctx);
     dpp_DODO_USDT = await initCreateDPP(ctx,ctx.DODO.options.address,ctx.USDT.options.address,decimalStr("100000"),mweiStr("30000"), "0",mweiStr("0.3"));
     DPP_DODO_USDT = contracts.getContractWithAddress(contracts.DPP_NAME,dpp_DODO_USDT);
-    dpp_WETH_USDT = await initCreateDPP(ctx,'0x000000000000000000000000000000000000000E',ctx.USDT.options.address,decimalStr("5"),mweiStr("30000"),"5",mweiStr("600"));
+    dpp_WETH_USDT = await initCreateDPP(ctx,'0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',ctx.USDT.options.address,decimalStr("5"),mweiStr("30000"),"5",mweiStr("600"));
     DPP_WETH_USDT = contracts.getContractWithAddress(contracts.DPP_NAME,dpp_WETH_USDT);
     console.log("dpp_DODO_USDT:",dpp_DODO_USDT);
     console.log("dpp_WETH_USDT:",dpp_WETH_USDT);
@@ -126,7 +126,7 @@ describe("DODOProxyV2.0", () => {
 
 
     it("createDPP - ETH", async () => {
-      var baseToken = '0x000000000000000000000000000000000000000E';
+      var baseToken = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
       var quoteToken = ctx.USDT.options.address;
       var baseAmount = decimalStr("5");
       var quoteAmount = mweiStr("10000");

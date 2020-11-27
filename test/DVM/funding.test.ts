@@ -154,11 +154,11 @@ describe("Funding", () => {
 
       var vaultShares = new BigNumber(await ctx.DVM.methods.balanceOf(lp).call())
       var bob = ctx.SpareAccounts[5]
-      await ctx.DVM.methods.sellShares(vaultShares.div(2).toFixed(0), bob, "0x").send(ctx.sendParam(lp))
+      await ctx.DVM.methods.sellShares(vaultShares.div(2).toFixed(0), 0, 0, bob, "0x").send(ctx.sendParam(lp))
       assert.equal(await ctx.BASE.methods.balanceOf(bob).call(), decimalStr("5"))
       assert.equal(await ctx.QUOTE.methods.balanceOf(bob).call(), decimalStr("50"))
 
-      await ctx.DVM.methods.sellShares(vaultShares.div(2).toFixed(0), bob, "0x").send(ctx.sendParam(lp))
+      await ctx.DVM.methods.sellShares(vaultShares.div(2).toFixed(0), 0, 0, bob, "0x").send(ctx.sendParam(lp))
       assert.equal(await ctx.BASE.methods.balanceOf(bob).call(), decimalStr("10"))
       assert.equal(await ctx.QUOTE.methods.balanceOf(bob).call(), decimalStr("100"))
     })
@@ -170,7 +170,7 @@ describe("Funding", () => {
 
       var vaultShares = await ctx.DVM.methods.balanceOf(lp).call()
       var bob = ctx.SpareAccounts[5]
-      await ctx.DVM.methods.sellShares(vaultShares, bob, "0x").send(ctx.sendParam(lp))
+      await ctx.DVM.methods.sellShares(vaultShares, 0, 0, bob, "0x").send(ctx.sendParam(lp))
       assert.equal(await ctx.BASE.methods.balanceOf(bob).call(), decimalStr("10"))
       assert.equal(await ctx.QUOTE.methods.balanceOf(bob).call(), decimalStr("100"))
     })
