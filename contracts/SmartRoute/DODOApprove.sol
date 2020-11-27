@@ -11,16 +11,16 @@ import {IERC20} from "../intf/IERC20.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
 import {Ownable} from "../lib/Ownable.sol";
 
-contract SmartApprove is Ownable {
+contract DODOApprove is Ownable {
     using SafeERC20 for IERC20;
-    address public smartSwap;
+    address public dodoProxy;
 
-    function setSmartSwap(address _smartSwap) external onlyOwner {
-        smartSwap = _smartSwap;
+    function setDODOProxy(address _dodoProxy) external onlyOwner {
+        dodoProxy = _dodoProxy;
     }
 
-    function getSmartSwap() public view returns (address) {
-        return smartSwap;
+    function getDODOProxy() public view returns (address) {
+        return dodoProxy;
     }
 
     function claimTokens(
@@ -29,7 +29,7 @@ contract SmartApprove is Ownable {
         address dest,
         uint256 amount
     ) external {
-        require(msg.sender == smartSwap, "Not SmartSwap Address, Access restricted");
+        require(msg.sender == dodoProxy, 'DODOApprove:Access restricted');
         IERC20(token).safeTransferFrom(who, dest, amount);
     }
 }

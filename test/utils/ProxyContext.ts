@@ -107,7 +107,7 @@ export class ProxyContext {
       ]
     );
 
-    await this.SmartApprove.methods.setSmartSwap(this.DODOProxy.options.address).send(this.sendParam(this.Deployer));
+    await this.SmartApprove.methods.setDODOProxy(this.DODOProxy.options.address).send(this.sendParam(this.Deployer));
 
     this.DODO = await contracts.newContract(
       contracts.MINTABLE_ERC20_CONTRACT_NAME,

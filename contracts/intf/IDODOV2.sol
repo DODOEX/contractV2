@@ -24,8 +24,6 @@ interface IDODOV2 {
 
     function _OWNER_() external returns (address);
 
-    function getOwner() external view returns (address);
-
     //========== DODOVendingMachine ========
     
     function createDODOVendingMachine(
@@ -87,6 +85,6 @@ interface IDODOV2 {
 
     function claimTokens(address token,address who,address dest,uint256 amount) external;
     
-    function getSmartSwap() external view returns (address);
+    function getDODOProxy() external view returns (address);
 
 }

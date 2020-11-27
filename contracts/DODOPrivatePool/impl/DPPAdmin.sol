@@ -9,20 +9,20 @@ pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
 import {IDPP} from "../intf/IDPP.sol";
-import {ISmartApprove} from '../../intf/ISmartApprove.sol';
+import {IDODOApprove} from '../../intf/IDODOApprove.sol';
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 
 contract DPPAdmin is InitializableOwnable {
 
     address public _DPP_;
     address public _OPERATOR_; 
-    address public _DODO_SMART_APPROVE_;
+    address public _DODO_APPROVE_;
 
-    function init(address owner, address dpp,address operator, address dodoSmartApprove) external {
+    function init(address owner, address dpp,address operator, address dodoApprove) external {
         initOwner(owner);
         _DPP_ = dpp;
         _OPERATOR_ = operator;
-        _DODO_SMART_APPROVE_ = dodoSmartApprove;
+        _DODO_APPROVE_ = dodoApprove;
     }
 
     function setOperator(address newOperator) external onlyOwner {
@@ -78,7 +78,7 @@ contract DPPAdmin is InitializableOwnable {
         uint256 baseOutAmount,
         uint256 quoteOutAmount
     ) external {
-        require(msg.sender == _OWNER_ || (msg.sender == ISmartApprove(_DODO_SMART_APPROVE_).getSmartSwap() && assetTo == _OPERATOR_), "RESET FORBIDDEN！");
+        require(msg.sender == _OWNER_ || (msg.sender == IDODOApprove(_DODO_APPROVE_).getDODOProxy() && assetTo == _OPERATOR_), "RESET FORBIDDEN！");
         IDPP(_DPP_).reset(
             assetTo,
             newLpFeeRate,
@@ -99,7 +99,7 @@ contract DPPAdmin is InitializableOwnable {
         uint256 baseOutAmount,
         uint256 quoteOutAmount
     ) external {
-        require(msg.sender == _OWNER_ || (msg.sender == ISmartApprove(_DODO_SMART_APPROVE_).getSmartSwap() && from == _OPERATOR_), "RESET FORBIDDEN！");
+        require(msg.sender == _OWNER_ || (msg.sender == IDODOApprove(_DODO_APPROVE_).getDODOProxy() && from == _OPERATOR_), "RESET FORBIDDEN！");
         IDPP(_DPP_).reset(
             msg.sender,
             newLpFeeRate,

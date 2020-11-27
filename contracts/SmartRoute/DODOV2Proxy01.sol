@@ -21,7 +21,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
 
     address constant ETH_ADDRESS = 0x000000000000000000000000000000000000000E;
     address payable public _WETH_;
-    address public smartApprove;
+    address public dodoApprove;
     address public dodoSellHelper;
     address public dvmFactory;
     address public dppFactory;
@@ -50,13 +50,13 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         address _dvmFactory,
         address _dppFactory,
         address payable _weth,
-        address _smartApprove,
+        address _dodoApprove,
         address _dodoSellHelper
     ) public {
         dvmFactory = _dvmFactory;
         dppFactory = _dppFactory;
         _WETH_ = _weth;
-        smartApprove = _smartApprove;
+        dodoApprove = _dodoApprove;
         dodoSellHelper = _dodoSellHelper;
     }
     
@@ -79,7 +79,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         }
         if(baseInAmount > 0){
             if(baseToken != ETH_ADDRESS){
-                IDODOV2(smartApprove).claimTokens(baseToken, msg.sender, newVendingMachine, baseInAmount);
+                IDODOV2(dodoApprove).claimTokens(baseToken, msg.sender, newVendingMachine, baseInAmount);
             }else {
                 require(msg.value == baseInAmount, 'DODOV2Proxy01: ETH_AMOUNT_NOT_MATCH');
                 IWETH(_WETH_).deposit{value: baseInAmount}();
@@ -88,7 +88,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         }
         if(quoteInAmount > 0){
             if(quoteToken != ETH_ADDRESS){
-                IDODOV2(smartApprove).claimTokens(quoteToken, msg.sender, newVendingMachine, quoteInAmount);
+                IDODOV2(dodoApprove).claimTokens(quoteToken, msg.sender, newVendingMachine, quoteInAmount);
             }else {
                 require(msg.value == quoteInAmount, 'DODOV2Proxy01: ETH_AMOUNT_NOT_MATCH');
                 IWETH(_WETH_).deposit{value: quoteInAmount}();
@@ -109,7 +109,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
             baseAdjustedInAmount = baseInAmount;
             quoteAdjustedInAmount = quoteInAmount;
         }
-        //TODO: 若init时候 baseInAmount > 0 quoteReserve = 0 之后没法添加quote？
         if (quoteReserve == 0 && baseReserve > 0) {
             baseAdjustedInAmount = baseInAmount;
             quoteAdjustedInAmount = 0;
@@ -135,16 +134,16 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 baseMinAmount,
         uint256 quoteMinAmount,
         uint256 deadline
-    ) external virtual override judgeExpired(deadline) returns (uint256 shares,uint256 baseActualInAmount,uint256 quoteActualInAmount) {
-        (uint256 baseAdjustedInAmount, uint256 quoteAdjustedInAmount) = _addDVMLiquidity(DVMAddress,baseInAmount,quoteInAmount);
+    ) external virtual override judgeExpired(deadline) returns (uint256 shares,uint256 baseAdjustedInAmount,uint256 quoteAdjustedInAmount) {
+        (baseAdjustedInAmount, quoteAdjustedInAmount) = _addDVMLiquidity(DVMAddress,baseInAmount,quoteInAmount);
+        require(baseAdjustedInAmount >= baseMinAmount && quoteAdjustedInAmount >= quoteMinAmount, 'DODOV2Proxy01: deposit amount is not enough');
         address _dvm = DVMAddress;
         if(baseAdjustedInAmount > 0) {
-            IDODOV2(smartApprove).claimTokens(IDODOV2(_dvm)._BASE_TOKEN_(), msg.sender, _dvm, baseAdjustedInAmount);
+            IDODOV2(dodoApprove).claimTokens(IDODOV2(_dvm)._BASE_TOKEN_(), msg.sender, _dvm, baseAdjustedInAmount);
         }
         if(quoteAdjustedInAmount > 0)
-            IDODOV2(smartApprove).claimTokens(IDODOV2(_dvm)._QUOTE_TOKEN_(), msg.sender, _dvm, quoteAdjustedInAmount);
-        (shares,baseActualInAmount,quoteActualInAmount) = IDODOV2(_dvm).buyShares(to);
-        require(baseActualInAmount >= baseMinAmount && quoteActualInAmount >= quoteMinAmount, 'DODOV2Proxy01: deposit amount is not enough');
+            IDODOV2(dodoApprove).claimTokens(IDODOV2(_dvm)._QUOTE_TOKEN_(), msg.sender, _dvm, quoteAdjustedInAmount);
+        (shares,,) = IDODOV2(_dvm).buyShares(to);
     }
 
     function addDVMLiquidityETH(
@@ -156,29 +155,37 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 quoteMinAmount,
         uint8 flag, // 1 - baseInETH, 2 - quoteInETH
         uint256 deadline
-    ) external virtual override payable judgeExpired(deadline) returns (uint256 shares,uint256 baseActualInAmount,uint256 quoteActualInAmount) {
-        (uint256 baseAdjustedInAmount, uint256 quoteAdjustedInAmount) = _addDVMLiquidity(DVMAddress,baseInAmount,quoteInAmount);
+    ) external virtual override payable judgeExpired(deadline) returns (uint256 shares,uint256 baseAdjustedInAmount,uint256 quoteAdjustedInAmount) {
+        (baseAdjustedInAmount, quoteAdjustedInAmount) = _addDVMLiquidity(DVMAddress,baseInAmount,quoteInAmount);
+        require(baseAdjustedInAmount >= baseMinAmount && quoteAdjustedInAmount >= quoteMinAmount, 'DODOV2Proxy01: deposit amount is not enough');
         address _dvm = DVMAddress;
         if(baseAdjustedInAmount > 0) {
             if(flag == 1) {
                 require(msg.value >= baseAdjustedInAmount, 'DODOV2Proxy01: ETH_AMOUNT_NOT_MATCH');
                 IWETH(_WETH_).deposit{value: baseAdjustedInAmount}();
                 assert(IWETH(_WETH_).transfer(_dvm, baseAdjustedInAmount));
+                if (msg.value > baseAdjustedInAmount) {
+                    (bool success,) = msg.sender.call{value:msg.value - baseAdjustedInAmount}(new bytes(0));
+                    require(success, 'DODOV2Proxy01: ETH_TRANSFER_FAILED');
+                }
             }else {
-                IDODOV2(smartApprove).claimTokens(IDODOV2(_dvm)._BASE_TOKEN_(), msg.sender, _dvm, baseAdjustedInAmount);
+                IDODOV2(dodoApprove).claimTokens(IDODOV2(_dvm)._BASE_TOKEN_(), msg.sender, _dvm, baseAdjustedInAmount);
             }
         }
         if(quoteAdjustedInAmount > 0){
             if(flag == 2) {
                 require(msg.value >= quoteAdjustedInAmount, 'DODOV2Proxy01: ETH_AMOUNT_NOT_MATCH');
                 IWETH(_WETH_).deposit{value: quoteAdjustedInAmount}();
-                assert(IWETH(_WETH_).transfer(_dvm, quoteAdjustedInAmount)); 
+                assert(IWETH(_WETH_).transfer(_dvm, quoteAdjustedInAmount));
+                if (msg.value > quoteAdjustedInAmount) { 
+                    (bool success,) = msg.sender.call{value:msg.value - quoteAdjustedInAmount}(new bytes(0));
+                    require(success, 'DODOV2Proxy01: ETH_TRANSFER_FAILED');
+                } 
             }else {
-              IDODOV2(smartApprove).claimTokens(IDODOV2(_dvm)._QUOTE_TOKEN_(), msg.sender, _dvm, quoteAdjustedInAmount);  
+              IDODOV2(dodoApprove).claimTokens(IDODOV2(_dvm)._QUOTE_TOKEN_(), msg.sender, _dvm, quoteAdjustedInAmount);  
             }
         }
-        (shares,baseActualInAmount,quoteActualInAmount) = IDODOV2(_dvm).buyShares(to);
-        require(baseActualInAmount >= baseMinAmount && quoteActualInAmount >= quoteMinAmount, 'DODOV2Proxy01: deposit amount is not enough');
+        (shares,,) = IDODOV2(_dvm).buyShares(to);
     }
 
     function createDODOPrivatePool(
@@ -195,7 +202,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         newPrivatePool = IDODOV2(dppFactory).createDODOPrivatePool();
         if(baseInAmount > 0){
             if(baseToken != ETH_ADDRESS){
-                IDODOV2(smartApprove).claimTokens(baseToken, msg.sender, newPrivatePool, baseInAmount);
+                IDODOV2(dodoApprove).claimTokens(baseToken, msg.sender, newPrivatePool, baseInAmount);
             }else {
                 require(msg.value == baseInAmount, 'DODOV2Proxy01: ETH_AMOUNT_NOT_MATCH');
                 IWETH(_WETH_).deposit{value: baseInAmount}();
@@ -205,7 +212,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         }
         if(quoteInAmount > 0){
             if(quoteToken != ETH_ADDRESS){
-                IDODOV2(smartApprove).claimTokens(quoteToken, msg.sender, newPrivatePool, quoteInAmount);
+                IDODOV2(dodoApprove).claimTokens(quoteToken, msg.sender, newPrivatePool, quoteInAmount);
             }else {
                 require(msg.value == quoteInAmount, 'DODOV2Proxy01: ETH_AMOUNT_NOT_MATCH');
                 IWETH(_WETH_).deposit{value: quoteInAmount}();
@@ -238,9 +245,9 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 deadline
     ) external virtual override judgeExpired(deadline) {
         if(baseInAmount > 0)
-            IDODOV2(smartApprove).claimTokens(IDODOV2(DPPAddress)._BASE_TOKEN_(), msg.sender, DPPAddress, baseInAmount);
+            IDODOV2(dodoApprove).claimTokens(IDODOV2(DPPAddress)._BASE_TOKEN_(), msg.sender, DPPAddress, baseInAmount);
         if(quoteInAmount > 0)
-            IDODOV2(smartApprove).claimTokens(IDODOV2(DPPAddress)._QUOTE_TOKEN_(), msg.sender, DPPAddress, quoteInAmount);
+            IDODOV2(dodoApprove).claimTokens(IDODOV2(DPPAddress)._QUOTE_TOKEN_(), msg.sender, DPPAddress, quoteInAmount);
         IDODOV2(IDODOV2(DPPAddress)._OWNER_()).reset(
             msg.sender,
             newLpFeeRate,
@@ -271,7 +278,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
                 IWETH(_WETH_).deposit{value: baseInAmount}();
                 assert(IWETH(_WETH_).transfer(DPPAddress, baseInAmount));
             }else {
-                IDODOV2(smartApprove).claimTokens(IDODOV2(DPPAddress)._BASE_TOKEN_(), msg.sender, DPPAddress, baseInAmount);
+                IDODOV2(dodoApprove).claimTokens(IDODOV2(DPPAddress)._BASE_TOKEN_(), msg.sender, DPPAddress, baseInAmount);
             }
         }
         if(quoteInAmount > 0){
@@ -280,7 +287,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
                 IWETH(_WETH_).deposit{value: quoteInAmount}();
                 assert(IWETH(_WETH_).transfer(DPPAddress, quoteInAmount));  
             }else {
-                IDODOV2(smartApprove).claimTokens(IDODOV2(DPPAddress)._QUOTE_TOKEN_(), msg.sender, DPPAddress, quoteInAmount);
+                IDODOV2(dodoApprove).claimTokens(IDODOV2(DPPAddress)._QUOTE_TOKEN_(), msg.sender, DPPAddress, quoteInAmount);
             }
         }
         if( (flag == 3 && baseOutAmount > 0) || (flag == 4 && quoteOutAmount > 0) ) {
@@ -370,7 +377,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 deadline
     ) external virtual override judgeExpired(deadline) returns (uint256 returnAmount) {
         require(minReturnAmount > 0, 'DODOV2Proxy01: Min return should be bigger than 0.');
-        IDODOV2(smartApprove).claimTokens(fromToken, msg.sender, dodoPairs[0], fromTokenAmount);
+        IDODOV2(dodoApprove).claimTokens(fromToken, msg.sender, dodoPairs[0], fromTokenAmount);
 
         for (uint256 i = 0; i < dodoPairs.length; i++) {
             if(i == dodoPairs.length - 1){
@@ -406,7 +413,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 deadline
     ) external virtual override judgeExpired(deadline) returns (uint256 returnAmount) {
         require(minReturnAmount > 0, 'DODOV2Proxy01: Min return should be bigger than 0.');
-        IDODOV2(smartApprove).claimTokens(fromToken, msg.sender, dodoPairs[0], fromTokenAmount);
+        IDODOV2(dodoApprove).claimTokens(fromToken, msg.sender, dodoPairs[0], fromTokenAmount);
 
         for (uint256 i = 0; i < dodoPairs.length; i++) {
             if(i == dodoPairs.length - 1){
@@ -439,7 +446,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
     ) external virtual override payable judgeExpired(deadline) returns (uint256 returnAmount) {
         require(minReturnAmount > 0, 'DODOV2Proxy01: Min return should be bigger then 0.');
         if (fromToken != ETH_ADDRESS) {
-            IDODOV2(smartApprove).claimTokens(fromToken, msg.sender, address(this), fromTokenAmount);
+            IDODOV2(dodoApprove).claimTokens(fromToken, msg.sender, address(this), fromTokenAmount);
             IERC20(fromToken).universalApprove(approveTarget, fromTokenAmount);
         }
 

@@ -74,7 +74,7 @@ interface IDODOV2Proxy01 {
         uint256 baseMinAmount,
         uint256 quoteMinAmount,
         uint256 deadline
-    ) external returns (uint256 shares,uint256 baseActualInAmount,uint256 quoteActualInAmount);
+    ) external returns (uint256 shares,uint256 baseAdjustedInAmount,uint256 quoteAdjustedInAmount);
 
     function addDVMLiquidityETH(
         address DVMAddress,
@@ -85,7 +85,7 @@ interface IDODOV2Proxy01 {
         uint256 quoteMinAmount,
         uint8 flag, // 1 - baseInETH, 2 - quoteInETH
         uint256 deadline
-    ) external payable returns (uint256 shares,uint256 baseActualInAmount,uint256 quoteActualInAmount);
+    ) external payable returns (uint256 shares,uint256 baseAdjustedInAmount,uint256 quoteAdjustedInAmount);
 
     function createDODOPrivatePool(
         address baseToken,
