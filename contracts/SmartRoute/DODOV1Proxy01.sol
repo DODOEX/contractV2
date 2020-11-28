@@ -9,9 +9,9 @@ pragma solidity 0.6.9;
 
 import {Ownable} from "../lib/Ownable.sol";
 import {IERC20} from "../intf/IERC20.sol";
-import {UniversalERC20} from "./UniversalERC20.sol";
+import {UniversalERC20} from "./lib/UniversalERC20.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
-import {IDODOSellHelper} from "../intf/IDODOSellHelper.sol";
+import {IDODOSellHelper} from "./intf/IDODOSellHelper.sol";
 import {IDODOApprove} from "../intf/IDODOApprove.sol";
 import {IDODO} from "../intf/IDODO.sol";
 import {IWETH} from "../intf/IWETH.sol";
@@ -59,7 +59,7 @@ contract DODOV1Proxy01 is Ownable {
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
         address[] memory dodoPairs,
-        uint256[] memory directions,
+        uint8[] memory directions,
         uint256 deadline
     ) public payable judgeExpired(deadline) returns (uint256 returnAmount) {
         if (fromToken != ETH_ADDRESS) {

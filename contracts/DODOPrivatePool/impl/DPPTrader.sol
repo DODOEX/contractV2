@@ -179,7 +179,6 @@ contract DPPTrader is DPPVault {
         receiveQuoteAmount = receiveQuoteAmount
             .sub(DecimalMath.mulFloor(receiveQuoteAmount, lpFeeRate))
             .sub(mtFee);
-
         return (receiveQuoteAmount, mtFee, newRState, state.B0);
     }
 

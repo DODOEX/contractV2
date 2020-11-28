@@ -109,11 +109,6 @@ describe("DODOProxyV2.0", () => {
         Math.floor(new Date().getTime()/1000 + 60 * 10)
       ),ctx.sendParam(project),"createDPP");
       var addrs = await ctx.DPPFactory.methods.getPrivatePool(baseToken,quoteToken).call();
-      var dppInfo = await ctx.DPPFactory.methods._DPP_INFO_(addrs[1]).call();
-      assert.equal(
-        dppInfo[0],
-        project
-      );
       assert.equal(
         await ctx.DODO.methods.balanceOf(addrs[1]).call(),
         baseAmount
@@ -142,11 +137,6 @@ describe("DODOProxyV2.0", () => {
         Math.floor(new Date().getTime()/1000 + 60 * 10)
       ),ctx.sendParam(project, "5"),"createDPP - Wrap ETH");
       var addrs = await ctx.DPPFactory.methods.getPrivatePool(ctx.WETH.options.address,quoteToken).call();
-      var dppInfo = await ctx.DPPFactory.methods._DPP_INFO_(addrs[1]).call();
-      assert.equal(
-        dppInfo[0],
-        project
-      );
       assert.equal(
         await ctx.WETH.methods.balanceOf(addrs[1]).call(),
         baseAmount
@@ -172,6 +162,7 @@ describe("DODOProxyV2.0", () => {
         mweiStr("1000"),
         decimalStr("0"),
         mweiStr("0"),
+        0,
         Math.floor(new Date().getTime()/1000 + 60 * 10)
       ),ctx.sendParam(project),"resetDPP");
       var afterState = await DPP_DODO_USDT.methods.getPMMState().call();
@@ -187,7 +178,7 @@ describe("DODOProxyV2.0", () => {
       assert.equal(beforeState.B0,decimalStr("5"));
       assert.equal(beforeState.Q0,mweiStr("30000"));
       var b_ETH = await ctx.Web3.eth.getBalance(project);
-      var tx = await logGas(await ctx.DODOProxy.methods.resetDODOPrivatePoolETH(
+      var tx = await logGas(await ctx.DODOProxy.methods.resetDODOPrivatePool(
         dpp_WETH_USDT,
         config.lpFeeRate,
         config.mtFeeRate,
@@ -217,7 +208,7 @@ describe("DODOProxyV2.0", () => {
       assert.equal(beforeState.B0,decimalStr("5"));
       assert.equal(beforeState.Q0,mweiStr("30000"));
       var b_ETH = await ctx.Web3.eth.getBalance(project);
-      var tx = await logGas(await ctx.DODOProxy.methods.resetDODOPrivatePoolETH(
+      var tx = await logGas(await ctx.DODOProxy.methods.resetDODOPrivatePool(
         dpp_WETH_USDT,
         config.lpFeeRate,
         config.mtFeeRate,
@@ -265,7 +256,7 @@ describe("DODOProxyV2.0", () => {
       console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
       console.log("b_USDT:" + b_USDT + " a_USDT:" + a_USDT);
       assert.equal(a_DOOD,decimalStr("500"));
-      assert.equal(a_USDT,"149474924");
+      assert.equal(a_USDT,"149474926");
     });
 
 
@@ -296,7 +287,7 @@ describe("DODOProxyV2.0", () => {
       console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
       console.log("b_WETH:" + b_WETH + " a_WETH:" + a_WETH);
       assert.equal(a_DOOD,decimalStr("500"));
-      assert.equal(a_WETH,"247088894507188480");
+      assert.equal(a_WETH,"247088897795331236");
     });
 
     it("swap - two hop - inETH", async () => {
@@ -326,7 +317,7 @@ describe("DODOProxyV2.0", () => {
       console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
       console.log("b_WETH:" + b_WETH + " a_WETH:" + a_WETH);
       console.log("b_ETH:" + b_ETH + " a_ETH:" + a_ETH);
-      assert.equal(a_DOOD,"1979965731049456633086");
+      assert.equal(a_DOOD,"1979965734359241770226");
     });
 
 
@@ -361,7 +352,7 @@ describe("DODOProxyV2.0", () => {
       assert.equal(a_DOOD,decimalStr("90000"));
       assert.equal(
         tx.events['OrderHistory'].returnValues['returnAmount'],
-        "3760778358599649282"
+        "3760778359898791539"
       )
     });
 

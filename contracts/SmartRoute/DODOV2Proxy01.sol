@@ -7,12 +7,12 @@
 
 pragma solidity 0.6.9;
 
-import {IDODOV2Proxy01} from "../intf/IDODOV2Proxy01.sol";
-import {IDODOV2} from "../intf/IDODOV2.sol";
+import {IDODOV2Proxy01} from "./intf/IDODOV2Proxy01.sol";
+import {IDODOV2} from "./intf/IDODOV2.sol";
 import {IERC20} from "../intf/IERC20.sol";
 import {IWETH} from "../intf/IWETH.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
-import {UniversalERC20} from "./UniversalERC20.sol";
+import {UniversalERC20} from "./lib/UniversalERC20.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
 
@@ -266,7 +266,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
         address[] memory dodoPairs,
-        uint256[] memory directions,
+        uint8[] memory directions,
         uint256 deadline
     ) external virtual override payable judgeExpired(deadline) returns (uint256 returnAmount) {
         uint256 originToTokenBalance = IERC20(toToken).balanceOf(msg.sender);
@@ -309,7 +309,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
         address[] memory dodoPairs,
-        uint256[] memory directions,
+        uint8[] memory directions,
         uint256 deadline
     ) external virtual override judgeExpired(deadline) returns (uint256 returnAmount) {
         IDODOV2(dodoApprove).claimTokens(fromToken, msg.sender, dodoPairs[0], fromTokenAmount);
@@ -350,7 +350,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
         address[] memory dodoPairs,
-        uint256[] memory directions,
+        uint8[] memory directions,
         uint256 deadline
     ) external virtual override judgeExpired(deadline) returns (uint256 returnAmount) {
         uint256 originToTokenBalance = IERC20(toToken).balanceOf(msg.sender);

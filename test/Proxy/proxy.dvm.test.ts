@@ -111,11 +111,6 @@ describe("DODOProxyV2.0", () => {
         Math.floor(new Date().getTime()/1000 + 60 * 10)
       ),ctx.sendParam(project),"createDVM");
       var addrs = await ctx.DVMFactory.methods.getVendingMachine(baseToken,quoteToken).call();
-      var dvmInfo = await ctx.DVMFactory.methods._DVM_INFO_(addrs[1]).call();
-      assert.equal(
-        dvmInfo[0],
-        project
-      );
       assert.equal(
         await ctx.DODO.methods.balanceOf(addrs[1]).call(),
         baseAmount
@@ -145,11 +140,6 @@ describe("DODOProxyV2.0", () => {
         Math.floor(new Date().getTime()/1000 + 60 * 10)
       ),ctx.sendParam(project, '5'),"createDVM - Wrap ETH");
       var addrs = await ctx.DVMFactory.methods.getVendingMachine(ctx.WETH.options.address,quoteToken).call();
-      var dvmInfo = await ctx.DVMFactory.methods._DVM_INFO_(addrs[1]).call();
-      assert.equal(
-        dvmInfo[0],
-        project
-      );
       assert.equal(
         await ctx.WETH.methods.balanceOf(addrs[1]).call(),
         baseAmount
@@ -175,6 +165,7 @@ describe("DODOProxyV2.0", () => {
         mweiStr("300"),
         decimalStr("0"),
         mweiStr("0"),
+        0,
         Math.floor(new Date().getTime()/1000 + 60 * 10)
       ),ctx.sendParam(lp),"addLiquidity");
       var a_baseReserve = await DVM_DODO_USDT.methods._BASE_RESERVE_().call();
@@ -193,7 +184,7 @@ describe("DODOProxyV2.0", () => {
       assert.equal(b_baseReserve,decimalStr("5"));
       assert.equal(b_quoteReserve,mweiStr("30000"));
       assert.equal(b_dlp,decimalStr("0"));
-      await logGas(await ctx.DODOProxy.methods.addDVMLiquidityETH(
+      await logGas(await ctx.DODOProxy.methods.addDVMLiquidity(
         dvm_WETH_USDT,
         lp,
         decimalStr("1"),

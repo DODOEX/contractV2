@@ -27,7 +27,7 @@ interface IDODOV2 {
     //========== DODOVendingMachine ========
     
     function createDODOVendingMachine(
-        address from,
+        address creator,
         address baseToken,
         address quoteToken,
         uint256 lpFeeRate,
@@ -46,7 +46,7 @@ interface IDODOV2 {
 
     function initDODOPrivatePool(
         address dppAddress,
-        address from,
+        address creator,
         address baseToken,
         address quoteToken,
         uint256 lpFeeRate,
@@ -56,7 +56,7 @@ interface IDODOV2 {
     ) external;
 
     function reset(
-        address assetTo,
+        address operator,
         uint256 newLpFeeRate,
         uint256 newMtFeeRate,
         uint256 newI,
@@ -65,23 +65,8 @@ interface IDODOV2 {
         uint256 quoteOutAmount
     ) external; 
 
-    function resetETH(
-        address from,
-        uint256 newLpFeeRate,
-        uint256 newMtFeeRate,
-        uint256 newI,
-        uint256 newK,
-        uint256 baseOutAmount,
-        uint256 quoteOutAmount
-    ) external; 
 
-    //========== DODOSellHelper ============
-
-    function querySellQuoteToken(address pair, uint256 quoteInAmount) external view returns (uint256 expectedReceiveBaseAmount);
-    
-    function querySellBaseToken(address pair, uint256 baseInAmount) external view returns (uint256 expectedReceiveQuoteAmount);
-
-    //========== SmartApprove  =============
+    //========== IDODOApprove  =============
 
     function claimTokens(address token,address who,address dest,uint256 amount) external;
     

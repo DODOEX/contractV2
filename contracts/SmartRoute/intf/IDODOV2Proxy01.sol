@@ -15,7 +15,7 @@ interface IDODOV2Proxy01 {
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
         address[] memory dodoPairs,
-        uint256[] memory directions,
+        uint8[] memory directions,
         uint256 deadline
     ) external payable returns (uint256 returnAmount);
 
@@ -25,7 +25,7 @@ interface IDODOV2Proxy01 {
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
         address[] memory dodoPairs,
-        uint256[] memory directions,
+        uint8[] memory directions,
         uint256 deadline
     ) external returns (uint256 returnAmount);
 
@@ -36,7 +36,7 @@ interface IDODOV2Proxy01 {
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
         address[] memory dodoPairs,
-        uint256[] memory directions,
+        uint8[] memory directions,
         uint256 deadline
     ) external returns (uint256 returnAmount);
 
@@ -111,4 +111,6 @@ interface IDODOV2Proxy01 {
     //TODO: addLiquidityToClassical
 
     //TODO: removeLiquidityToClassical
+
+    //TODO: Compatible with classical swap
 }
