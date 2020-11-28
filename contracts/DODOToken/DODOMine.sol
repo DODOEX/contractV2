@@ -15,7 +15,6 @@ import {SafeMath} from "../lib/SafeMath.sol";
 import {IERC20} from "../intf/IERC20.sol";
 import {IDODORewardVault, DODORewardVault} from "./DODORewardVault.sol";
 
-
 contract DODOMine is Ownable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
@@ -157,7 +156,7 @@ contract DODOMine is Ownable {
                 .div(totalAllocPoint);
             accDODOPerShare = accDODOPerShare.add(DecimalMath.divFloor(DODOReward, lpSupply));
         }
-        return DecimalMath.mul(user.amount, accDODOPerShare).sub(user.rewardDebt);
+        return DecimalMath.mulFloor(user.amount, accDODOPerShare).sub(user.rewardDebt);
     }
 
     function getAllPendingReward(address _user) external view returns (uint256) {
@@ -181,7 +180,7 @@ contract DODOMine is Ownable {
                 accDODOPerShare = accDODOPerShare.add(DecimalMath.divFloor(DODOReward, lpSupply));
             }
             totalReward = totalReward.add(
-                DecimalMath.mul(user.amount, accDODOPerShare).sub(user.rewardDebt)
+                DecimalMath.mulFloor(user.amount, accDODOPerShare).sub(user.rewardDebt)
             );
         }
         return totalReward;
@@ -237,14 +236,14 @@ contract DODOMine is Ownable {
         UserInfo storage user = userInfo[pid][msg.sender];
         updatePool(pid);
         if (user.amount > 0) {
-            uint256 pending = DecimalMath.mul(user.amount, pool.accDODOPerShare).sub(
+            uint256 pending = DecimalMath.mulFloor(user.amount, pool.accDODOPerShare).sub(
                 user.rewardDebt
             );
             safeDODOTransfer(msg.sender, pending);
         }
         IERC20(pool.lpToken).safeTransferFrom(address(msg.sender), address(this), _amount);
         user.amount = user.amount.add(_amount);
-        user.rewardDebt = DecimalMath.mul(user.amount, pool.accDODOPerShare);
+        user.rewardDebt = DecimalMath.mulFloor(user.amount, pool.accDODOPerShare);
         emit Deposit(msg.sender, pid, _amount);
     }
 
@@ -254,10 +253,12 @@ contract DODOMine is Ownable {
         UserInfo storage user = userInfo[pid][msg.sender];
         require(user.amount >= _amount, "withdraw too much");
         updatePool(pid);
-        uint256 pending = DecimalMath.mul(user.amount, pool.accDODOPerShare).sub(user.rewardDebt);
+        uint256 pending = DecimalMath.mulFloor(user.amount, pool.accDODOPerShare).sub(
+            user.rewardDebt
+        );
         safeDODOTransfer(msg.sender, pending);
         user.amount = user.amount.sub(_amount);
-        user.rewardDebt = DecimalMath.mul(user.amount, pool.accDODOPerShare);
+        user.rewardDebt = DecimalMath.mulFloor(user.amount, pool.accDODOPerShare);
         IERC20(pool.lpToken).safeTransfer(address(msg.sender), _amount);
         emit Withdraw(msg.sender, pid, _amount);
     }
@@ -285,8 +286,10 @@ contract DODOMine is Ownable {
         PoolInfo storage pool = poolInfos[pid];
         UserInfo storage user = userInfo[pid][msg.sender];
         updatePool(pid);
-        uint256 pending = DecimalMath.mul(user.amount, pool.accDODOPerShare).sub(user.rewardDebt);
-        user.rewardDebt = DecimalMath.mul(user.amount, pool.accDODOPerShare);
+        uint256 pending = DecimalMath.mulFloor(user.amount, pool.accDODOPerShare).sub(
+            user.rewardDebt
+        );
+        user.rewardDebt = DecimalMath.mulFloor(user.amount, pool.accDODOPerShare);
         safeDODOTransfer(msg.sender, pending);
     }
 
@@ -301,9 +304,9 @@ contract DODOMine is Ownable {
             UserInfo storage user = userInfo[pid][msg.sender];
             updatePool(pid);
             pending = pending.add(
-                DecimalMath.mul(user.amount, pool.accDODOPerShare).sub(user.rewardDebt)
+                DecimalMath.mulFloor(user.amount, pool.accDODOPerShare).sub(user.rewardDebt)
             );
-            user.rewardDebt = DecimalMath.mul(user.amount, pool.accDODOPerShare);
+            user.rewardDebt = DecimalMath.mulFloor(user.amount, pool.accDODOPerShare);
         }
         safeDODOTransfer(msg.sender, pending);
     }

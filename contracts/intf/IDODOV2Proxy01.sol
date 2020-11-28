@@ -9,7 +9,7 @@ pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
 interface IDODOV2Proxy01 {
-	function dodoSwapETHToToken(
+    function dodoSwapETHToToken(
         address payable assetTo,
         address toToken,
         uint256 fromTokenAmount,
@@ -51,7 +51,6 @@ interface IDODOV2Proxy01 {
         uint256 deadline
     ) external payable returns (uint256 returnAmount);
 
-    
     function createDODOVendingMachine(
         address assetTo,
         address baseToken,
@@ -63,29 +62,25 @@ interface IDODOV2Proxy01 {
         uint256 i,
         uint256 k,
         uint256 deadline
-    ) external payable returns (address newVendingMachine,uint256 shares);
+    ) external payable returns (address newVendingMachine, uint256 shares);
 
-   
     function addDVMLiquidity(
-    	address DVMAddress,
-        address to,
-        uint256 baseInAmount,
-        uint256 quoteInAmount,
-        uint256 baseMinAmount,
-        uint256 quoteMinAmount,
-        uint256 deadline
-    ) external returns (uint256 shares,uint256 baseAdjustedInAmount,uint256 quoteAdjustedInAmount);
-
-    function addDVMLiquidityETH(
         address DVMAddress,
         address to,
         uint256 baseInAmount,
         uint256 quoteInAmount,
         uint256 baseMinAmount,
         uint256 quoteMinAmount,
-        uint8 flag, // 1 - baseInETH, 2 - quoteInETH
+        uint8 flag, //  0 - ERC20, 1 - baseInETH, 2 - quoteInETH
         uint256 deadline
-    ) external payable returns (uint256 shares,uint256 baseAdjustedInAmount,uint256 quoteAdjustedInAmount);
+    )
+        external
+        payable
+        returns (
+            uint256 shares,
+            uint256 baseAdjustedInAmount,
+            uint256 quoteAdjustedInAmount
+        );
 
     function createDODOPrivatePool(
         address baseToken,
@@ -101,20 +96,6 @@ interface IDODOV2Proxy01 {
 
     function resetDODOPrivatePool(
         address DPPAddress,
-    	uint256 newLpFeeRate,
-        uint256 newMtFeeRate,
-        uint256 newI,
-        uint256 newK,
-        uint256 baseInAmount,
-        uint256 quoteInAmount,
-        uint256 baseOutAmount,
-        uint256 quoteOutAmount,
-        uint256 deadline
-    ) external;
-
-
-    function resetDODOPrivatePoolETH(
-        address DPPAddress,
         uint256 newLpFeeRate,
         uint256 newMtFeeRate,
         uint256 newI,
@@ -123,12 +104,11 @@ interface IDODOV2Proxy01 {
         uint256 quoteInAmount,
         uint256 baseOutAmount,
         uint256 quoteOutAmount,
-        uint8 flag,  // 1 - baseInETH, 2 - quoteInETH, 3 - baseOutETH, 4 - quoteOutETH
+        uint8 flag, // 0 - ERC20, 1 - baseInETH, 2 - quoteInETH, 3 - baseOutETH, 4 - quoteOutETH
         uint256 deadline
     ) external payable;
 
     //TODO: addLiquidityToClassical
 
     //TODO: removeLiquidityToClassical
-
 }

@@ -1,6 +1,6 @@
 /**
  *Submitted for verification at Etherscan.io on 2020-10-10
-*/
+ */
 
 // File: contracts/intf/IDODO.sol
 
@@ -17,8 +17,8 @@ pragma experimental ABIEncoderV2;
 import {IDODO} from "../intf/IDODO.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
-// import {DODOMath} from "../lib/DODOMath.sol";
 
+// import {DODOMath} from "../lib/DODOMath.sol";
 
 library DODOMath {
     using SafeMath for uint256;
@@ -37,10 +37,10 @@ library DODOMath {
         uint256 i,
         uint256 k
     ) internal pure returns (uint256) {
-        uint256 fairAmount = DecimalMath.mul(i, V1.sub(V2)); // i*delta
+        uint256 fairAmount = DecimalMath.mulFloor(i, V1.sub(V2)); // i*delta
         uint256 V0V0V1V2 = DecimalMath.divCeil(V0.mul(V0).div(V1), V2);
-        uint256 penalty = DecimalMath.mul(k, V0V0V1V2); // k(V0^2/V1/V2)
-        return DecimalMath.mul(fairAmount, DecimalMath.ONE.sub(k).add(penalty));
+        uint256 penalty = DecimalMath.mulFloor(k, V0V0V1V2); // k(V0^2/V1/V2)
+        return DecimalMath.mulFloor(fairAmount, DecimalMath.ONE.sub(k).add(penalty));
     }
 
     /*
@@ -66,8 +66,8 @@ library DODOMath {
     ) internal pure returns (uint256) {
         // calculate -b value and sig
         // -b = (1-k)Q1-kQ0^2/Q1+i*deltaB
-        uint256 kQ02Q1 = DecimalMath.mul(k, Q0).mul(Q0).div(Q1); // kQ0^2/Q1
-        uint256 b = DecimalMath.mul(DecimalMath.ONE.sub(k), Q1); // (1-k)Q1
+        uint256 kQ02Q1 = DecimalMath.mulFloor(k, Q0).mul(Q0).div(Q1); // kQ0^2/Q1
+        uint256 b = DecimalMath.mulFloor(DecimalMath.ONE.sub(k), Q1); // (1-k)Q1
         bool minusbSig = true;
         if (deltaBSig) {
             b = b.add(ideltaB); // (1-k)Q1+i*deltaB
@@ -83,9 +83,9 @@ library DODOMath {
         }
 
         // calculate sqrt
-        uint256 squareRoot = DecimalMath.mul(
+        uint256 squareRoot = DecimalMath.mulFloor(
             DecimalMath.ONE.sub(k).mul(4),
-            DecimalMath.mul(k, Q0).mul(Q0)
+            DecimalMath.mulFloor(k, Q0).mul(Q0)
         ); // 4(1-k)kQ0^2
         squareRoot = b.mul(b).add(squareRoot).sqrt(); // sqrt(b*b+4(1-k)kQ0*Q0)
 
@@ -117,14 +117,13 @@ library DODOMath {
         uint256 fairAmount
     ) internal pure returns (uint256 V0) {
         // V0 = V1+V1*(sqrt-1)/2k
-        uint256 sqrt = DecimalMath.divCeil(DecimalMath.mul(k, fairAmount).mul(4), V1);
+        uint256 sqrt = DecimalMath.divCeil(DecimalMath.mulFloor(k, fairAmount).mul(4), V1);
         sqrt = sqrt.add(DecimalMath.ONE).mul(DecimalMath.ONE).sqrt();
         uint256 premium = DecimalMath.divCeil(sqrt.sub(DecimalMath.ONE), k.mul(2));
         // V0 is greater than or equal to V1 according to the solution
-        return DecimalMath.mul(V1, DecimalMath.ONE.add(premium));
+        return DecimalMath.mulFloor(V1, DecimalMath.ONE.add(premium));
     }
 }
-
 
 contract DODOSellHelper {
     using SafeMath for uint256;
@@ -191,7 +190,7 @@ contract DODOSellHelper {
         uint256 B2 = DODOMath._SolveQuadraticFunctionForTrade(
             state.baseTarget,
             state.baseTarget,
-            DecimalMath.mul(i, amount),
+            DecimalMath.mulFloor(i, amount),
             false,
             state.K
         );
@@ -207,7 +206,7 @@ contract DODOSellHelper {
         uint256 B2 = DODOMath._SolveQuadraticFunctionForTrade(
             state.baseTarget,
             state.B,
-            DecimalMath.mul(i, amount),
+            DecimalMath.mulFloor(i, amount),
             false,
             state.K
         );

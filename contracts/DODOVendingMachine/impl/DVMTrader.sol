@@ -44,11 +44,10 @@ contract DVMTrader is DVMVault {
         external
         preventReentrant
         limitGasPrice
-        isSellAllow(to)
+        isSellAllow(to) // set DVM address in trade permission
         returns (uint256 receiveQuoteAmount)
     {
         uint256 baseInput = getBaseInput();
-        require(baseInput > 0, "INSUFFICIENT_BASE_INPUT");
         uint256 mtFee;
         (receiveQuoteAmount, mtFee) = querySellBase(tx.origin, baseInput);
         _transferQuoteOut(to, receiveQuoteAmount);
@@ -65,7 +64,6 @@ contract DVMTrader is DVMVault {
         returns (uint256 receiveBaseAmount)
     {
         uint256 quoteInput = getQuoteInput();
-        require(quoteInput > 0, "INSUFFICIENT_QUOTE_INPUT");
         uint256 mtFee;
         (receiveBaseAmount, mtFee) = querySellQuote(tx.origin, quoteInput);
         _transferBaseOut(to, receiveBaseAmount);
@@ -74,8 +72,6 @@ contract DVMTrader is DVMVault {
         return receiveBaseAmount;
     }
 
-    // 这是一个试验性质的函数
-    // 没有走标准库，需要仔细考虑下
     function flashLoan(
         uint256 baseAmount,
         uint256 quoteAmount,
@@ -95,9 +91,6 @@ contract DVMTrader is DVMVault {
             baseBalance >= _BASE_RESERVE_ || quoteBalance >= _QUOTE_RESERVE_,
             "FLASH_LOAN_FAILED"
         );
-
-        // no output -> pure profit
-        if (baseBalance >= _BASE_RESERVE_ && quoteBalance >= _QUOTE_RESERVE_) return;
 
         if (baseBalance < _BASE_RESERVE_) {
             (uint256 receiveBaseAmount, uint256 mtFee) = querySellQuote(
@@ -120,6 +113,8 @@ contract DVMTrader is DVMVault {
         _sync();
     }
 
+    // ============ View Functions ============
+
     function querySellBase(address trader, uint256 payBaseAmount)
         public
         view
@@ -129,11 +124,10 @@ contract DVMTrader is DVMVault {
 
         uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(trader);
         uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(trader);
-        mtFee = DecimalMath.mulCeil(receiveQuoteAmount, mtFeeRate);
-        receiveQuoteAmount = DecimalMath.mulFloor(
-            receiveQuoteAmount,
-            DecimalMath.ONE.sub(mtFeeRate).sub(lpFeeRate)
-        );
+        mtFee = DecimalMath.mulFloor(receiveQuoteAmount, mtFeeRate);
+        receiveQuoteAmount = receiveQuoteAmount
+            .sub(DecimalMath.mulFloor(receiveQuoteAmount, lpFeeRate))
+            .sub(mtFee);
 
         return (receiveQuoteAmount, mtFee);
     }
@@ -147,16 +141,11 @@ contract DVMTrader is DVMVault {
 
         uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(trader);
         uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(trader);
-        mtFee = DecimalMath.mulCeil(receiveBaseAmount, mtFeeRate);
-        receiveBaseAmount = DecimalMath.mulFloor(
-            receiveBaseAmount,
-            DecimalMath.ONE.sub(mtFeeRate).sub(lpFeeRate)
-        );
+        mtFee = DecimalMath.mulFloor(receiveBaseAmount, mtFeeRate);
+        receiveBaseAmount = receiveBaseAmount
+            .sub(DecimalMath.mulFloor(receiveBaseAmount, lpFeeRate))
+            .sub(mtFee);
         return (receiveBaseAmount, mtFee);
-    }
-
-    function getMidPrice() public view returns (uint256 midPrice) {
-        return PMMPricing.getMidPrice(getPMMState());
     }
 
     // ============ Helper Functions ============
@@ -166,30 +155,14 @@ contract DVMTrader is DVMVault {
         state.K = _K_;
         state.B = _BASE_RESERVE_;
         state.Q = _QUOTE_RESERVE_;
-        state.B0 = calculateBase0(state.B, state.Q);
+        state.B0 = 0; // recalculate in adjustedTarget
         state.Q0 = 0;
         state.R = PMMPricing.RState.ABOVE_ONE;
+        PMMPricing.adjustedTarget(state);
         return state;
     }
 
-    function calculateBase0(uint256 baseAmount, uint256 quoteAmount) public view returns (uint256) {
-        return
-            DODOMath._SolveQuadraticFunctionForTarget(
-                baseAmount,
-                quoteAmount,
-                DecimalMath.reciprocalFloor(_I_),
-                _K_
-            );
-    }
-
-    function getBase0() public view returns (uint256) {
-        (uint256 baseAmount, uint256 quoteAmount) = getVaultReserve();
-        return
-            DODOMath._SolveQuadraticFunctionForTarget(
-                baseAmount,
-                quoteAmount,
-                DecimalMath.reciprocalFloor(_I_),
-                _K_
-            );
+    function getMidPrice() public view returns (uint256 midPrice) {
+        return PMMPricing.getMidPrice(getPMMState());
     }
 }

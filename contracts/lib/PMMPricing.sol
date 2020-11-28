@@ -234,12 +234,12 @@ library PMMPricing {
     function getMidPrice(PMMState memory state) internal pure returns (uint256 midPrice) {
         if (state.R == RState.BELOW_ONE) {
             uint256 R = DecimalMath.divFloor(state.Q0.mul(state.Q0).div(state.Q), state.Q);
-            R = DecimalMath.ONE.sub(state.K).add(DecimalMath.mul(state.K, R));
+            R = DecimalMath.ONE.sub(state.K).add(DecimalMath.mulFloor(state.K, R));
             return DecimalMath.divFloor(state.i, R);
         } else {
             uint256 R = DecimalMath.divFloor(state.B0.mul(state.B0).div(state.B), state.B);
-            R = DecimalMath.ONE.sub(state.K).add(DecimalMath.mul(state.K, R));
-            return DecimalMath.mul(state.i, R);
+            R = DecimalMath.ONE.sub(state.K).add(DecimalMath.mulFloor(state.K, R));
+            return DecimalMath.mulFloor(state.i, R);
         }
     }
 }

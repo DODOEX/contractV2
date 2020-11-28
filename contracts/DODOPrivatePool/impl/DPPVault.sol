@@ -43,7 +43,7 @@ contract DPPVault is DPPStorage {
         return (_BASE_RESERVE_, _QUOTE_RESERVE_);
     }
 
-    // ============ Set Status ============
+    // ============ Set States ============
 
     function setTarget(uint256 baseTarget, uint256 quoteTarget) public preventReentrant onlyOwner {
         _BASE_TARGET_ = baseTarget;
@@ -68,8 +68,6 @@ contract DPPVault is DPPStorage {
         uint256 baseOutAmount,
         uint256 quoteOutAmount
     ) public preventReentrant onlyOwner {
-        require(newK >= 1e12 && newK <= 1e18, "K_OUT_OF_RANGE");
-        require(newI > 0 && newI <= 1e36, "I_OUT_OF_RANGE");
         _LP_FEE_RATE_MODEL_.setFeeRate(newLpFeeRate);
         _MT_FEE_RATE_MODEL_.setFeeRate(newMtFeeRate);
         _I_.set(newI);
@@ -77,6 +75,7 @@ contract DPPVault is DPPStorage {
         _transferBaseOut(assetTo, baseOutAmount);
         _transferQuoteOut(assetTo, quoteOutAmount);
         _resetTargetAndReserve();
+        _checkIK();
     }
 
     function _setRState() internal {

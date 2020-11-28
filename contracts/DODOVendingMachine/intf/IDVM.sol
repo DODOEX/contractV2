@@ -26,6 +26,10 @@ interface IDVM {
 
     function _QUOTE_TOKEN_() external returns (address);
 
+    function _LP_FEE_RATE_MODEL_() external returns (address);
+
+    function _MT_FEE_RATE_MODEL_() external returns (address);
+
     function getVaultReserve() external returns (uint256 baseReserve, uint256 quoteReserve);
 
     function sellBase(address to) external returns (uint256);
@@ -33,7 +37,6 @@ interface IDVM {
     function sellQuote(address to) external returns (uint256);
 
     function buyShares(address to) external returns (uint256);
-
 
     //=========== admin ==========
     function setLpFeeRateModel(address newLpFeeRateModel) external;
@@ -49,5 +52,5 @@ interface IDVM {
     function setBuy(bool open) external;
 
     function setSell(bool open) external;
-   //============================== 
+    //==============================
 }

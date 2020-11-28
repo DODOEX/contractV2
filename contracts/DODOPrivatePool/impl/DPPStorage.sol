@@ -96,6 +96,13 @@ contract DPPStorage is InitializableOwnable, ReentrancyGuard {
         _SELLING_CLOSE_ = !open;
     }
 
+    function _checkIK() internal view {
+        uint256 k = _K_.get();
+        uint256 i = _I_.get();
+        require(k > 0 && k <= 1e18, "K_OUT_OF_RANGE");
+        require(i > 0 && i <= 1e36, "I_OUT_OF_RANGE");
+    }
+
     // ============ View Functions ============
 
     function getLpFeeRate(address trader) external view returns (uint256 feeRate) {
@@ -105,5 +112,4 @@ contract DPPStorage is InitializableOwnable, ReentrancyGuard {
     function getMtFeeRate(address trader) external view returns (uint256 feeRate) {
         return _MT_FEE_RATE_MODEL_.getFeeRate(trader);
     }
-
 }

@@ -117,9 +117,6 @@ contract DPPTrader is DPPVault {
             "FLASH_LOAN_FAILED"
         );
 
-        // no output -> pure profit
-        if (baseBalance >= _BASE_RESERVE_ && quoteBalance >= _QUOTE_RESERVE_) return;
-
         // sell quote case
         // quote input + base output
         if (baseBalance < _BASE_RESERVE_) {
@@ -137,8 +134,6 @@ contract DPPTrader is DPPVault {
                 _RState_ = newRState;
                 _QUOTE_TARGET_ = newQuoteTarget;
             }
-
-            _syncReserve();
         }
 
         // sell base case
@@ -158,9 +153,9 @@ contract DPPTrader is DPPVault {
                 _RState_ = newRState;
                 _BASE_TARGET_ = newBaseTarget;
             }
-
-            _syncReserve();
         }
+
+        _syncReserve();
     }
 
     // ============ Query Functions ============
@@ -180,11 +175,10 @@ contract DPPTrader is DPPVault {
 
         uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(trader);
         uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(trader);
-        mtFee = DecimalMath.mulCeil(receiveQuoteAmount, mtFeeRate);
-        receiveQuoteAmount = DecimalMath.mulFloor(
-            receiveQuoteAmount,
-            DecimalMath.ONE.sub(mtFeeRate).sub(lpFeeRate)
-        );
+        mtFee = DecimalMath.mulFloor(receiveQuoteAmount, mtFeeRate);
+        receiveQuoteAmount = receiveQuoteAmount
+            .sub(DecimalMath.mulFloor(receiveQuoteAmount, lpFeeRate))
+            .sub(mtFee);
 
         return (receiveQuoteAmount, mtFee, newRState, state.B0);
     }
@@ -204,11 +198,10 @@ contract DPPTrader is DPPVault {
 
         uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(trader);
         uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(trader);
-        mtFee = DecimalMath.mulCeil(receiveBaseAmount, mtFeeRate);
-        receiveBaseAmount = DecimalMath.mulFloor(
-            receiveBaseAmount,
-            DecimalMath.ONE.sub(mtFeeRate).sub(lpFeeRate)
-        );
+        mtFee = DecimalMath.mulFloor(receiveBaseAmount, mtFeeRate);
+        receiveBaseAmount = receiveBaseAmount
+            .sub(DecimalMath.mulFloor(receiveBaseAmount, lpFeeRate))
+            .sub(mtFee);
         return (receiveBaseAmount, mtFee, newRState, state.Q0);
     }
 

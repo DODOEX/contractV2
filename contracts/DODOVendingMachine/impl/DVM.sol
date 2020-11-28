@@ -38,7 +38,9 @@ contract DVM is DVMTrader, DVMFunding {
         _GAS_PRICE_LIMIT_ = IExternalValue(gasPriceSource);
         _MAINTAINER_ = maintainer;
 
-        require(i > 0 && i < 10**36);
+        require(_BASE_TOKEN_ != _QUOTE_TOKEN_, "BASE_QUOTE_CAN_NOT_BE_SAME");
+
+        require(i > 0 && i <= 10**36);
         _I_ = i;
 
         require(k > 0 && k <= 10**18);
@@ -46,7 +48,13 @@ contract DVM is DVMTrader, DVMFunding {
 
         string memory connect = "_";
         string memory suffix = "DLP";
-        string memory uid = string(abi.encodePacked(address(this)));
+        uint32 uid = uint32(address(this));
+        bytes memory id = new bytes(4);
+        id[0] = bytes1(uint8(48 + (uid % 10)));
+        id[1] = bytes1(uint8(48 + ((uid / 10) % 10)));
+        id[2] = bytes1(uint8(48 + ((uid / 100) % 10)));
+        id[3] = bytes1(uint8(48 + ((uid / 1000) % 10)));
+
         name = string(
             abi.encodePacked(
                 suffix,
@@ -55,7 +63,7 @@ contract DVM is DVMTrader, DVMFunding {
                 connect,
                 _QUOTE_TOKEN_.symbol(),
                 connect,
-                uid
+                string(id)
             )
         );
         symbol = "DLP";

@@ -9,13 +9,12 @@ pragma solidity 0.6.9;
 
 import {Ownable} from "../lib/Ownable.sol";
 import {IERC20} from "../intf/IERC20.sol";
-import {UniversalERC20} from "../lib/UniversalERC20.sol";
+import {UniversalERC20} from "./UniversalERC20.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {IDODOSellHelper} from "../intf/IDODOSellHelper.sol";
 import {IDODOApprove} from "../intf/IDODOApprove.sol";
 import {IDODO} from "../intf/IDODO.sol";
 import {IWETH} from "../intf/IWETH.sol";
-
 
 contract DODOV1Proxy01 is Ownable {
     using SafeMath for uint256;
@@ -27,7 +26,7 @@ contract DODOV1Proxy01 is Ownable {
     address payable public _WETH_;
 
     modifier judgeExpired(uint256 deadline) {
-        require(deadline >= block.timestamp, 'DODOV1Proxy01: EXPIRED');
+        require(deadline >= block.timestamp, "DODOV1Proxy01: EXPIRED");
         _;
     }
 
@@ -63,12 +62,15 @@ contract DODOV1Proxy01 is Ownable {
         uint256[] memory directions,
         uint256 deadline
     ) public payable judgeExpired(deadline) returns (uint256 returnAmount) {
-        require(minReturnAmount > 0, 'DODOV1Proxy01: Min return should be bigger then 0.');
-
         if (fromToken != ETH_ADDRESS) {
-            IDODOApprove(dodoApprove).claimTokens(fromToken, msg.sender, address(this), fromTokenAmount);
+            IDODOApprove(dodoApprove).claimTokens(
+                fromToken,
+                msg.sender,
+                address(this),
+                fromTokenAmount
+            );
         } else {
-            require(msg.value == fromTokenAmount, 'DODOV1Proxy01: ETH_AMOUNT_NOT_MATCH');
+            require(msg.value == fromTokenAmount, "DODOV1Proxy01: ETH_AMOUNT_NOT_MATCH");
             IWETH(_WETH_).deposit{value: fromTokenAmount}();
         }
 
@@ -98,9 +100,16 @@ contract DODOV1Proxy01 is Ownable {
 
         returnAmount = IERC20(toToken).universalBalanceOf(address(this));
 
-        require(returnAmount >= minReturnAmount, 'DODOV1Proxy01: Return amount is not enough');
+        require(returnAmount >= minReturnAmount, "DODOV1Proxy01: Return amount is not enough");
         IERC20(toToken).universalTransfer(msg.sender, returnAmount);
-        emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount, block.timestamp);
+        emit OrderHistory(
+            fromToken,
+            toToken,
+            msg.sender,
+            fromTokenAmount,
+            returnAmount,
+            block.timestamp
+        );
     }
 
     function externalSwap(
@@ -112,24 +121,37 @@ contract DODOV1Proxy01 is Ownable {
         uint256 minReturnAmount,
         bytes memory callDataConcat,
         uint256 deadline
-    ) public payable judgeExpired(deadline) returns (uint256 returnAmount) {     
-        require(minReturnAmount > 0, 'DODOV1Proxy01: Min return should be bigger then 0.');
-
+    ) public payable judgeExpired(deadline) returns (uint256 returnAmount) {
         if (fromToken != ETH_ADDRESS) {
-            IDODOApprove(dodoApprove).claimTokens(fromToken, msg.sender, address(this), fromTokenAmount);
-            IERC20(fromToken).universalApprove(approveTarget, fromTokenAmount);
+            IDODOApprove(dodoApprove).claimTokens(
+                fromToken,
+                msg.sender,
+                address(this),
+                fromTokenAmount
+            );
+            IERC20(fromToken).universalApproveMax(approveTarget, fromTokenAmount);
         }
 
-        (bool success, ) = to.call{value: fromToken == ETH_ADDRESS ? msg.value : 0}(
-            callDataConcat
+        (bool success, ) = to.call{value: fromToken == ETH_ADDRESS ? msg.value : 0}(callDataConcat);
+
+        require(success, "DODOV1Proxy01: Contract Swap execution Failed");
+
+        IERC20(fromToken).universalTransfer(
+            msg.sender,
+            IERC20(fromToken).universalBalanceOf(address(this))
         );
 
-        require(success, 'DODOV1Proxy01: Contract Swap execution Failed');
-
         returnAmount = IERC20(toToken).universalBalanceOf(address(this));
-
-        require(returnAmount >= minReturnAmount, 'DODOV1Proxy01: Return amount is not enough');
+        require(returnAmount >= minReturnAmount, "DODOV1Proxy01: Return amount is not enough");
         IERC20(toToken).universalTransfer(msg.sender, returnAmount);
-        emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount, block.timestamp);
+
+        emit OrderHistory(
+            fromToken,
+            toToken,
+            msg.sender,
+            fromTokenAmount,
+            returnAmount,
+            block.timestamp
+        );
     }
 }

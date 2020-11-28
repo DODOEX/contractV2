@@ -22,6 +22,10 @@ interface IDPP {
         address tradePermissionManager
     ) external;
 
+    function _LP_FEE_RATE_MODEL_() external returns (address);
+
+    function _MT_FEE_RATE_MODEL_() external returns (address);
+
     //=========== admin ==========
     function setLpFeeRateModel(address newLpFeeRateModel) external;
 
@@ -40,9 +44,14 @@ interface IDPP {
     function setBuy(bool open) external;
 
     function setSell(bool open) external;
-   //============================== 
 
-    function retrieve(address payable to,address token,uint256 amount) external;
+    //==============================
+
+    function retrieve(
+        address payable to,
+        address token,
+        uint256 amount
+    ) external;
 
     function reset(
         address assetTo,
@@ -53,6 +62,4 @@ interface IDPP {
         uint256 baseOutAmount,
         uint256 quoteOutAmount
     ) external;
-
-
 }

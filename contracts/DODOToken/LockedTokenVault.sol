@@ -14,7 +14,6 @@ import {Ownable} from "../lib/Ownable.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
 import {IERC20} from "../intf/IERC20.sol";
 
-
 /**
  * @title LockedTokenVault
  * @author DODO Breeder
@@ -154,7 +153,7 @@ contract LockedTokenVault is Ownable {
 
     function getRemainingBalance(address holder) public view returns (uint256) {
         uint256 remainingRatio = getRemainingRatio(block.timestamp);
-        return DecimalMath.mul(originBalances[holder], remainingRatio);
+        return DecimalMath.mulFloor(originBalances[holder], remainingRatio);
     }
 
     function getRemainingRatio(uint256 timestamp) public view returns (uint256) {

@@ -29,7 +29,9 @@ contract DODOApprove is Ownable {
         address dest,
         uint256 amount
     ) external {
-        require(msg.sender == dodoProxy, 'DODOApprove:Access restricted');
-        IERC20(token).safeTransferFrom(who, dest, amount);
+        require(msg.sender == dodoProxy, "DODOApprove:Access restricted");
+        if (amount > 0) {
+            IERC20(token).safeTransferFrom(who, dest, amount);
+        }
     }
 }

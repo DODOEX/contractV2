@@ -23,20 +23,10 @@ contract DVMFactory is Ownable {
     address public _PERMISSION_MANAGER_TEMPLATE_;
     address public _DEFAULT_GAS_PRICE_SOURCE_;
 
-    //TODO: 平台修改tag的权限 && 池子标签类型
-    struct DVMInfo {
-        address creator;
-        uint256 createTimeStamp;
-    }
-
     // base -> quote -> DVM address list
     mapping(address => mapping(address => address[])) public _REGISTRY_;
-    // token0 -> token1 -> DVM address list
-    mapping(address => mapping(address => address[])) public _SORT_REGISTRY_;
     // creator -> DVM address list
     mapping(address => address[]) public _USER_REGISTRY_;
-    // DVM address -> info
-    mapping(address => DVMInfo) public _DVM_INFO_;
 
     constructor(
         address cloneFactory,
@@ -55,7 +45,7 @@ contract DVMFactory is Ownable {
     }
 
     function createDODOVendingMachine(
-        address from,
+        address creator,
         address baseToken,
         address quoteToken,
         uint256 lpFeeRate,
@@ -65,35 +55,28 @@ contract DVMFactory is Ownable {
     ) external returns (address newVendingMachine) {
         newVendingMachine = ICloneFactory(_CLONE_FACTORY_).clone(_DVM_TEMPLATE_);
         {
-        address adminModel = _createDVMAdminModel(from,newVendingMachine);
-        IDVM(newVendingMachine).init(
-            adminModel,
-            from,
-            baseToken,
-            quoteToken,
-            _createFeeRateModel(newVendingMachine, lpFeeRate),
-            _createFeeRateModel(newVendingMachine, mtFeeRate),
-            _createPermissionManager(adminModel),
-            _DEFAULT_GAS_PRICE_SOURCE_,
-            i,
-            k
-        );
+            address adminModel = _createDVMAdminModel(creator, newVendingMachine);
+            IDVM(newVendingMachine).init(
+                adminModel,
+                creator,
+                baseToken,
+                quoteToken,
+                _createFeeRateModel(adminModel, lpFeeRate),
+                _createFeeRateModel(adminModel, mtFeeRate),
+                _createPermissionManager(adminModel),
+                _DEFAULT_GAS_PRICE_SOURCE_,
+                i,
+                k
+            );
         }
         _REGISTRY_[baseToken][quoteToken].push(newVendingMachine);
-        {
-        (address token0, address token1) = baseToken < quoteToken ? (baseToken, quoteToken) : (quoteToken, baseToken);
-        _SORT_REGISTRY_[token0][token1].push(newVendingMachine);
-        }
-        _USER_REGISTRY_[from].push(newVendingMachine);
-        _DVM_INFO_[newVendingMachine] = (
-            DVMInfo({
-                creator: from,
-                createTimeStamp: block.timestamp
-            })
-        );
+        _USER_REGISTRY_[creator].push(newVendingMachine);
     }
 
-    function _createFeeRateModel(address owner, uint256 feeRate) internal returns (address feeRateModel) {
+    function _createFeeRateModel(address owner, uint256 feeRate)
+        internal
+        returns (address feeRateModel)
+    {
         feeRateModel = ICloneFactory(_CLONE_FACTORY_).clone(_FEE_RATE_MODEL_TEMPLATE_);
         IConstFeeRateModel(feeRateModel).init(owner, feeRate);
     }
@@ -103,9 +86,12 @@ contract DVMFactory is Ownable {
         IPermissionManager(permissionManager).initOwner(owner);
     }
 
-    function _createDVMAdminModel(address owner, address dvm) internal returns (address adminModel) {
+    function _createDVMAdminModel(address owner, address dvm)
+        internal
+        returns (address adminModel)
+    {
         adminModel = ICloneFactory(_CLONE_FACTORY_).clone(_DVM_ADMIN_TEMPLATE_);
-        IDVMAdmin(adminModel).init(owner,dvm);
+        IDVMAdmin(adminModel).init(owner, dvm);
     }
 
     function updateAdminTemplate(address _newDVMAdminTemplate) external onlyOwner {
@@ -118,5 +104,13 @@ contract DVMFactory is Ownable {
         returns (address[] memory machines)
     {
         return _REGISTRY_[baseToken][quoteToken];
+    }
+
+    function getVendingMachineBidirection(address token0, address token1)
+        external
+        view
+        returns (address[] memory baseToken0Machines, address[] memory baseToken1Machines)
+    {
+        return (_REGISTRY_[token0][token1], _REGISTRY_[token1][token0]);
     }
 }

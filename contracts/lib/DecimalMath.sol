@@ -22,10 +22,6 @@ library DecimalMath {
     uint256 constant ONE = 10**18;
     uint256 constant ONE2 = 10**36;
 
-    function mul(uint256 target, uint256 d) internal pure returns (uint256) {
-        return target.mul(d) / (10**18);
-    }
-
     function mulFloor(uint256 target, uint256 d) internal pure returns (uint256) {
         return target.mul(d) / (10**18);
     }

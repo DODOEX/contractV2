@@ -48,16 +48,19 @@ describe("Trader", () => {
   });
 
   describe("trade", () => {
-    // it.only("basic check", async () => {
-    //   console.log(await ctx.DVM.methods.getVaultReserve().call())
-    //   console.log(await ctx.DVM.methods.getPMMState().call())
-    //   console.log(await ctx.DVM.methods.getMidPrice().call())
-    //   console.log(await ctx.DVM.methods.querySellQuote(ctx.Deployer, decimalStr("200")).call())     
-    //   console.log(ctx.BASE.options.address)
-    //   console.log(await ctx.DVM.methods._BASE_TOKEN_().call())
-    //   console.log(ctx.QUOTE.options.address)
-    //   console.log(await ctx.DVM.methods._QUOTE_TOKEN_().call())
-    // })
+    it.only("basic check", async () => {
+      console.log(await ctx.DVM.methods.symbol().call())
+      console.log(await ctx.DVM.methods.decimals().call())
+      console.log(await ctx.DVM.methods.name().call())
+      // console.log(await ctx.DVM.methods.getVaultReserve().call())
+      // console.log(await ctx.DVM.methods.getPMMState().call())
+      // console.log(await ctx.DVM.methods.getMidPrice().call())
+      // console.log(await ctx.DVM.methods.querySellQuote(ctx.Deployer, decimalStr("200")).call())     
+      // console.log(ctx.BASE.options.address)
+      // console.log(await ctx.DVM.methods._BASE_TOKEN_().call())
+      // console.log(ctx.QUOTE.options.address)
+      // console.log(await ctx.DVM.methods._QUOTE_TOKEN_().call())
+    })
 
     // it.only("mannually buy", async () => {
     //   await ctx.QUOTE.methods.transfer(ctx.DVM.options.address, decimalStr("100")).send(ctx.sendParam(lp))

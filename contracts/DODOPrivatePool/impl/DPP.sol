@@ -38,6 +38,8 @@ contract DPP is DPPTrader {
         _GAS_PRICE_LIMIT_ = IExternalValue(gasPriceSource);
         _TRADE_PERMISSION_ = IPermissionManager(tradePermissionManager);
         _resetTargetAndReserve();
+        _checkIK();
+        require(_BASE_TOKEN_ != _QUOTE_TOKEN_, "BASE_QUOTE_CAN_NOT_BE_SAME");
     }
 
     // ============ Version Control ============

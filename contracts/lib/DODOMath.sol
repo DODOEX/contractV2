@@ -69,7 +69,7 @@ library DODOMath {
             DecimalMath.ONE
         );
         // V0 is greater than or equal to V1 according to the solution
-        return DecimalMath.mul(V1, premium);
+        return DecimalMath.mulFloor(V1, premium);
     }
 
     /*
@@ -103,6 +103,10 @@ library DODOMath {
         uint256 k
     ) internal pure returns (uint256) {
         require(V0 > 0, "TARGET_IS_ZERO");
+        if (delta == 0) {
+            return 0;
+        }
+
         if (k == DecimalMath.ONE) {
             // if k==1
             // Q2=Q1/(1+ideltaBQ1/Q0/Q0)
@@ -133,9 +137,9 @@ library DODOMath {
         bAbs = bAbs.div(DecimalMath.ONE);
 
         // calculate sqrt
-        uint256 squareRoot = DecimalMath.mul(
+        uint256 squareRoot = DecimalMath.mulFloor(
             DecimalMath.ONE.sub(k).mul(4),
-            DecimalMath.mul(k, V0).mul(V0)
+            DecimalMath.mulFloor(k, V0).mul(V0)
         ); // 4(1-k)kQ0^2
         squareRoot = bAbs.mul(bAbs).add(squareRoot).sqrt(); // sqrt(b*b+4(1-k)kQ0*Q0)
 
