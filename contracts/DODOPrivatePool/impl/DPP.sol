@@ -28,22 +28,26 @@ contract DPP is DPPTrader {
         address tradePermissionManager
     ) external {
         initOwner(owner);
-        _MAINTAINER_ = maintainer;
+
+        require(baseTokenAddress != quoteTokenAddress, "BASE_QUOTE_CAN_NOT_BE_SAME");
         _BASE_TOKEN_ = IERC20(baseTokenAddress);
         _QUOTE_TOKEN_ = IERC20(quoteTokenAddress);
+
         _LP_FEE_RATE_MODEL_ = IFeeRateModel(lpFeeRateModel);
         _MT_FEE_RATE_MODEL_ = IFeeRateModel(mtFeeRateModel);
         _I_ = IExternalValue(iSource);
         _K_ = IExternalValue(kSource);
         _GAS_PRICE_LIMIT_ = IExternalValue(gasPriceSource);
         _TRADE_PERMISSION_ = IPermissionManager(tradePermissionManager);
+        _MAINTAINER_ = maintainer;
+
         _resetTargetAndReserve();
         _checkIK();
-        require(_BASE_TOKEN_ != _QUOTE_TOKEN_, "BASE_QUOTE_CAN_NOT_BE_SAME");
     }
 
     // ============ Version Control ============
-    function version() external pure returns (uint256) {
-        return 100; // 1.0.0
+
+    function version() external pure returns (string memory) {
+        return "DPP 1.0.0";
     }
 }

@@ -17,6 +17,16 @@ import {IDODOCallee} from "../../intf/IDODOCallee.sol";
 contract DPPTrader is DPPVault {
     using SafeMath for uint256;
 
+    // ============ Events ============
+
+    event DODOSwap(
+        address indexed fromToken,
+        address indexed toToken,
+        uint256 fromAmount,
+        uint256 toAmount,
+        address trader
+    );
+
     // ============ Modifiers ============
 
     modifier isBuyAllow(address trader) {
@@ -43,7 +53,7 @@ contract DPPTrader is DPPVault {
         external
         preventReentrant
         limitGasPrice
-        isSellAllow(to)
+        isSellAllow(to) // set DVM address in trade permission
         returns (uint256 receiveQuoteAmount)
     {
         uint256 baseInput = getBaseInput();
@@ -54,6 +64,7 @@ contract DPPTrader is DPPVault {
 
         _transferQuoteOut(to, receiveQuoteAmount);
         _transferQuoteOut(_MAINTAINER_, mtFee);
+        _sync();
 
         // update TARGET
         if (_RState_ != newRState) {
@@ -61,9 +72,13 @@ contract DPPTrader is DPPVault {
             _BASE_TARGET_ = newBaseTarget;
         }
 
-        _syncReserve();
-
-        return receiveQuoteAmount;
+        emit DODOSwap(
+            address(_BASE_TOKEN_),
+            address(_QUOTE_TOKEN_),
+            baseInput,
+            receiveQuoteAmount,
+            tx.origin
+        );
     }
 
     function sellQuote(address to)
@@ -85,6 +100,7 @@ contract DPPTrader is DPPVault {
 
         _transferBaseOut(to, receiveBaseAmount);
         _transferBaseOut(_MAINTAINER_, mtFee);
+        _sync();
 
         // update TARGET
         if (_RState_ != newRState) {
@@ -92,9 +108,13 @@ contract DPPTrader is DPPVault {
             _QUOTE_TARGET_ = newQuoteTarget;
         }
 
-        _syncReserve();
-
-        return receiveBaseAmount;
+        emit DODOSwap(
+            address(_QUOTE_TOKEN_),
+            address(_BASE_TOKEN_),
+            quoteInput,
+            receiveBaseAmount,
+            tx.origin
+        );
     }
 
     function flashLoan(
@@ -105,6 +125,7 @@ contract DPPTrader is DPPVault {
     ) external preventReentrant {
         _transferBaseOut(assetTo, baseAmount);
         _transferQuoteOut(assetTo, quoteAmount);
+
         if (data.length > 0)
             IDODOCallee(assetTo).DPPFlashLoanCall(msg.sender, baseAmount, quoteAmount, data);
 
@@ -120,13 +141,13 @@ contract DPPTrader is DPPVault {
         // sell quote case
         // quote input + base output
         if (baseBalance < _BASE_RESERVE_) {
+            uint256 quoteInput = quoteBalance.sub(_QUOTE_RESERVE_);
             (
                 uint256 receiveBaseAmount,
                 uint256 mtFee,
                 PMMPricing.RState newRState,
                 uint256 newQuoteTarget
-            ) = querySellQuote(tx.origin, quoteBalance.sub(_QUOTE_RESERVE_)); // revert if quoteBalance<quoteReserve
-
+            ) = querySellQuote(tx.origin, quoteInput); // revert if quoteBalance<quoteReserve
             require(_BASE_RESERVE_.sub(baseBalance) <= receiveBaseAmount, "FLASH_LOAN_FAILED");
 
             _transferBaseOut(_MAINTAINER_, mtFee);
@@ -134,18 +155,25 @@ contract DPPTrader is DPPVault {
                 _RState_ = newRState;
                 _QUOTE_TARGET_ = newQuoteTarget;
             }
+            emit DODOSwap(
+                address(_QUOTE_TOKEN_),
+                address(_BASE_TOKEN_),
+                quoteInput,
+                receiveBaseAmount,
+                tx.origin
+            );
         }
 
         // sell base case
         // base input + quote output
         if (quoteBalance < _QUOTE_RESERVE_) {
+            uint256 baseInput = baseBalance.sub(_BASE_RESERVE_);
             (
                 uint256 receiveQuoteAmount,
                 uint256 mtFee,
                 PMMPricing.RState newRState,
                 uint256 newBaseTarget
-            ) = querySellBase(tx.origin, baseBalance.sub(_BASE_RESERVE_)); // revert if baseBalance<baseReserve
-
+            ) = querySellBase(tx.origin, baseInput); // revert if baseBalance<baseReserve
             require(_QUOTE_RESERVE_.sub(quoteBalance) <= receiveQuoteAmount, "FLASH_LOAN_FAILED");
 
             _transferQuoteOut(_MAINTAINER_, mtFee);
@@ -153,9 +181,16 @@ contract DPPTrader is DPPVault {
                 _RState_ = newRState;
                 _BASE_TARGET_ = newBaseTarget;
             }
+            emit DODOSwap(
+                address(_BASE_TOKEN_),
+                address(_QUOTE_TOKEN_),
+                baseInput,
+                receiveQuoteAmount,
+                tx.origin
+            );
         }
 
-        _syncReserve();
+        _sync();
     }
 
     // ============ Query Functions ============
@@ -179,7 +214,7 @@ contract DPPTrader is DPPVault {
         receiveQuoteAmount = receiveQuoteAmount
             .sub(DecimalMath.mulFloor(receiveQuoteAmount, lpFeeRate))
             .sub(mtFee);
-        return (receiveQuoteAmount, mtFee, newRState, state.B0);
+        newBaseTarget = state.B0;
     }
 
     function querySellQuote(address trader, uint256 payQuoteAmount)
@@ -201,7 +236,7 @@ contract DPPTrader is DPPVault {
         receiveBaseAmount = receiveBaseAmount
             .sub(DecimalMath.mulFloor(receiveBaseAmount, lpFeeRate))
             .sub(mtFee);
-        return (receiveBaseAmount, mtFee, newRState, state.Q0);
+        newQuoteTarget = state.Q0;
     }
 
     // ============ Helper Functions ============
@@ -215,14 +250,13 @@ contract DPPTrader is DPPVault {
         state.Q0 = _QUOTE_TARGET_;
         state.R = _RState_;
         PMMPricing.adjustedTarget(state);
-        return state;
     }
 
     function getMidPrice() public view returns (uint256 midPrice) {
         return PMMPricing.getMidPrice(getPMMState());
     }
 
-    function _syncReserve() internal {
+    function _sync() internal {
         _BASE_RESERVE_ = _BASE_TOKEN_.balanceOf(address(this));
         _QUOTE_RESERVE_ = _QUOTE_TOKEN_.balanceOf(address(this));
     }

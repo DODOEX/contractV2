@@ -21,6 +21,10 @@ contract DPPVault is DPPStorage {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
+    // ============ Events ============
+
+    event Reset();
+
     // ============ Get Input ============
 
     function getBaseInput() public view returns (uint256 input) {
@@ -64,6 +68,7 @@ contract DPPVault is DPPStorage {
         _transferQuoteOut(assetTo, quoteOutAmount);
         _resetTargetAndReserve();
         _checkIK();
+        emit Reset();
     }
 
     function _setRState() internal {

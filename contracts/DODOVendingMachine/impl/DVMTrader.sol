@@ -20,7 +20,7 @@ contract DVMTrader is DVMVault {
 
     // ============ Events ============
 
-    event DVMSwap(
+    event DODOSwap(
         address indexed fromToken,
         address indexed toToken,
         uint256 fromAmount,
@@ -60,10 +60,12 @@ contract DVMTrader is DVMVault {
         uint256 baseInput = getBaseInput();
         uint256 mtFee;
         (receiveQuoteAmount, mtFee) = querySellBase(tx.origin, baseInput);
+
         _transferQuoteOut(to, receiveQuoteAmount);
         _transferQuoteOut(_MAINTAINER_, mtFee);
         _sync();
-        emit DVMSwap(
+
+        emit DODOSwap(
             address(_BASE_TOKEN_),
             address(_QUOTE_TOKEN_),
             baseInput,
@@ -82,10 +84,12 @@ contract DVMTrader is DVMVault {
         uint256 quoteInput = getQuoteInput();
         uint256 mtFee;
         (receiveBaseAmount, mtFee) = querySellQuote(tx.origin, quoteInput);
+
         _transferBaseOut(to, receiveBaseAmount);
         _transferBaseOut(_MAINTAINER_, mtFee);
         _sync();
-        emit DVMSwap(
+
+        emit DODOSwap(
             address(_QUOTE_TOKEN_),
             address(_BASE_TOKEN_),
             quoteInput,
@@ -120,8 +124,9 @@ contract DVMTrader is DVMVault {
             uint256 quoteInput = quoteBalance.sub(_QUOTE_RESERVE_);
             (uint256 receiveBaseAmount, uint256 mtFee) = querySellQuote(tx.origin, quoteInput);
             require(_BASE_RESERVE_.sub(baseBalance) <= receiveBaseAmount, "FLASH_LOAN_FAILED");
+
             _transferBaseOut(_MAINTAINER_, mtFee);
-            emit DVMSwap(
+            emit DODOSwap(
                 address(_QUOTE_TOKEN_),
                 address(_BASE_TOKEN_),
                 quoteInput,
@@ -135,8 +140,9 @@ contract DVMTrader is DVMVault {
             uint256 baseInput = baseBalance.sub(_BASE_RESERVE_);
             (uint256 receiveQuoteAmount, uint256 mtFee) = querySellBase(tx.origin, baseInput);
             require(_QUOTE_RESERVE_.sub(quoteBalance) <= receiveQuoteAmount, "FLASH_LOAN_FAILED");
+
             _transferQuoteOut(_MAINTAINER_, mtFee);
-            emit DVMSwap(
+            emit DODOSwap(
                 address(_BASE_TOKEN_),
                 address(_QUOTE_TOKEN_),
                 baseInput,
