@@ -28,6 +28,13 @@ contract DVMVault is DVMStorage {
 
     event Burn(address indexed user, uint256 value);
 
+    // ============ View Functions ============
+
+    function getVaultReserve() external view returns (uint256 baseReserve, uint256 quoteReserve) {
+        baseReserve = _BASE_RESERVE_;
+        quoteReserve = _QUOTE_RESERVE_;
+    }
+
     // ============ Asset In ============
 
     function getBaseInput() public view returns (uint256 input) {
@@ -121,7 +128,11 @@ contract DVMVault is DVMStorage {
         return true;
     }
 
-    function _approve(address owner, address spender, uint256 amount) private {
+    function _approve(
+        address owner,
+        address spender,
+        uint256 amount
+    ) private {
         _ALLOWED_[owner][spender] = amount;
         emit Approval(owner, spender, amount);
     }
@@ -151,17 +162,30 @@ contract DVMVault is DVMStorage {
     }
 
     // ============================ Permit ======================================
-    function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external {
-        require(deadline >= block.timestamp, 'DODO_DVM_LP: EXPIRED');
+    function permit(
+        address owner,
+        address spender,
+        uint256 value,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external {
+        require(deadline >= block.timestamp, "DODO_DVM_LP: EXPIRED");
         bytes32 digest = keccak256(
             abi.encodePacked(
-                '\x19\x01',
+                "\x19\x01",
                 DOMAIN_SEPARATOR,
-                keccak256(abi.encode(PERMIT_TYPEHASH, owner, spender, value, nonces[owner]++, deadline))
+                keccak256(
+                    abi.encode(PERMIT_TYPEHASH, owner, spender, value, nonces[owner]++, deadline)
+                )
             )
         );
         address recoveredAddress = ecrecover(digest, v, r, s);
-        require(recoveredAddress != address(0) && recoveredAddress == owner, 'DODO_DVM_LP: INVALID_SIGNATURE');
+        require(
+            recoveredAddress != address(0) && recoveredAddress == owner,
+            "DODO_DVM_LP: INVALID_SIGNATURE"
+        );
         _approve(owner, spender, value);
     }
     // ===========================================================================

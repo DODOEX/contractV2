@@ -15,9 +15,14 @@ import {IDODOCallee} from "../../intf/IDODOCallee.sol";
 contract DVMFunding is DVMVault {
     // ============ Events ============
 
-    event BuyShares(address indexed user, uint256 increaseShares, uint256 totalShares);
+    event BuyShares(address indexed to, uint256 increaseShares, uint256 totalShares);
 
-    event SellShares(address indexed user, uint256 decreaseShares, uint256 totalShares);
+    event SellShares(
+        address indexed payer,
+        address indexed to,
+        uint256 decreaseShares,
+        uint256 totalShares
+    );
 
     // ============ Buy & Sell Shares ============
 
@@ -70,7 +75,7 @@ contract DVMFunding is DVMVault {
         bytes calldata data,
         uint256 deadline
     ) external preventReentrant returns (uint256 baseAmount, uint256 quoteAmount) {
-        require(deadline >= block.timestamp, 'DODOV2 DVMFUNDING: EXPIRED');
+        require(deadline >= block.timestamp, "DODOV2 DVMFUNDING: EXPIRED");
         require(shareAmount <= _SHARES_[msg.sender], "DLP_NOT_ENOUGH");
         uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
         uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
@@ -97,5 +102,6 @@ contract DVMFunding is DVMVault {
             );
         }
         _sync();
+        emit SellShares(msg.sender, to, shareAmount, _SHARES_[msg.sender]);
     }
 }

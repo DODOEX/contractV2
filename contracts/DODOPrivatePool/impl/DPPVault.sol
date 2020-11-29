@@ -25,6 +25,13 @@ contract DPPVault is DPPStorage {
 
     event Reset();
 
+    // ============ View Functions ============
+
+    function getVaultReserve() external view returns (uint256 baseReserve, uint256 quoteReserve) {
+        baseReserve = _BASE_RESERVE_;
+        quoteReserve = _QUOTE_RESERVE_;
+    }
+
     // ============ Get Input ============
 
     function getBaseInput() public view returns (uint256 input) {
