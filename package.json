@@ -26,6 +26,7 @@
   "dependencies": {
     "@types/chai": "^4.2.11",
     "@types/es6-promisify": "^6.0.0",
+    "@types/ethereumjs-abi": "^0.6.3",
     "@types/mocha": "^7.0.2",
     "assert": "^2.0.0",
     "axios": "^0.20.0",
@@ -36,7 +37,8 @@
     "debug": "^4.1.1",
     "dotenv-flow": "^3.1.0",
     "es6-promisify": "^6.1.1",
-    "ethereumjs-util": "^7.0.2",
+    "ethereumjs-util": "^7.0.7",
+    "ethjs": "^0.4.0",
     "lodash": "^4.17.20",
     "mocha": "^7.2.0",
     "solc": "0.6.9",

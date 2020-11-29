@@ -67,13 +67,14 @@ contract DVMFunding is DVMVault {
         address to,
         uint256 baseMinAmount,
         uint256 quoteMinAmount,
-        bytes calldata data
+        bytes calldata data,
+        uint256 deadline
     ) external preventReentrant returns (uint256 baseAmount, uint256 quoteAmount) {
+        require(deadline >= block.timestamp, 'DODOV2 DVMFUNDING: EXPIRED');
+        require(shareAmount <= _SHARES_[msg.sender], "DLP_NOT_ENOUGH");
         uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
         uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
         uint256 totalShares = totalSupply;
-
-        require(shareAmount <= _SHARES_[msg.sender], "DLP_NOT_ENOUGH");
 
         baseAmount = baseBalance.mul(shareAmount).div(totalShares);
         quoteAmount = quoteBalance.mul(shareAmount).div(totalShares);

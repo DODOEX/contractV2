@@ -82,6 +82,30 @@ interface IDODOV2Proxy01 {
             uint256 quoteAdjustedInAmount
         );
 
+    function removeDVMLiquidity(
+        address DVMAddress,
+        address payable to,
+        uint256 sharesAmount,
+        uint256 baseMinOutAmount,
+        uint256 quoteMinOutAmount,
+        uint8 flag, // 0 -ERC20, 1 - baseOutETH, 2 - quoteOutETH
+        uint256 deadline
+    ) external returns (uint256 baseOutAmount, uint256 quoteOutAmount);
+
+    // ====================  Permit ================================
+    function removeDVMLiquidityWithPermit(
+        address DVMAddress,
+        address payable to,
+        uint256 sharesAmount,
+        uint256 baseMinOutAmount,
+        uint256 quoteMinOutAmount,
+        uint8 flag, // 0 -ERC20, 1 - baseOutETH, 2 - quoteOutETH
+        uint256 deadline,
+        bool approveMax, uint8 v, bytes32 r, bytes32 s
+    ) external returns (uint256 baseOutAmount, uint256 quoteOutAmount);
+    // ==============================================================
+
+
     function createDODOPrivatePool(
         address baseToken,
         address quoteToken,

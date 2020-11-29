@@ -6,13 +6,15 @@
 */
 
 // import * as assert from 'assert';
+const ethUtil = require('ethereumjs-util');
 import BigNumber from "bignumber.js";
-import { decimalStr, mweiStr } from '../utils/Converter';
+import { decimalStr, MAX_UINT256, mweiStr } from '../utils/Converter';
 import { logGas } from '../utils/Log';
 import { ProxyContext, getProxyContext } from '../utils/ProxyContext';
 import { assert } from 'chai';
 import * as contracts from '../utils/Contracts';
 import { Contract } from 'web3-eth-contract';
+import { SignHelper } from "../utils/SignHelper";
 
 let lp: string;
 let project: string;
@@ -23,6 +25,39 @@ let config = {
   mtFeeRate: decimalStr("0.001"),
   k: decimalStr("0.1"),
   i: decimalStr("100"),
+};
+
+//For Permit Init
+let typedData = {
+  types: {
+    EIP712Domain: [
+      { name: 'name', type: 'string' },
+      { name: 'version', type: 'string' },
+      { name: 'chainId', type: 'uint256' },
+      { name: 'verifyingContract', type: 'address' },
+    ],
+    Permit: [
+      { name: 'owner', type: 'address' },
+      { name: 'spender', type: 'address' },
+      { name: 'value', type: 'uint256' },
+      { name: 'nonce', type: 'uint256' },
+      { name: 'deadline', type: 'uint256' },
+    ]
+  },
+  primaryType: 'Permit',
+  domain: {
+    name: '',
+    version: '1',
+    chainId: 1,
+    verifyingContract: '',
+  },
+  message: {
+    owner: "",
+    spender: "",
+    value: MAX_UINT256,
+    nonce: 0,
+    deadline: 0
+  }
 };
 
 async function init(ctx: ProxyContext): Promise<void> {
@@ -200,6 +235,147 @@ describe("DODOProxyV2.0", () => {
       assert.equal(a_baseReserve,decimalStr("6"));
       assert.equal(a_quoteReserve,mweiStr("36000"));
       assert.equal(a_dlp,"1000000000000000000");
+    });
+
+    it("removeLiquidity", async () => {
+      var b_baseReserve = await DVM_DODO_USDT.methods._BASE_RESERVE_().call();
+      var b_quoteReserve = await DVM_DODO_USDT.methods._QUOTE_RESERVE_().call();
+      var b_dlp = await DVM_DODO_USDT.methods.balanceOf(project).call();
+      var b_DODO = await ctx.DODO.methods.balanceOf(project).call();
+      var b_USDT = await ctx.USDT.methods.balanceOf(project).call();
+      assert.equal(b_baseReserve,decimalStr("100000"));
+      assert.equal(b_quoteReserve,mweiStr("30000"));
+      assert.equal(b_dlp,decimalStr("100000"));
+      assert.equal(b_DODO,decimalStr("900000"));
+      assert.equal(b_USDT,mweiStr("940000"));
+      await DVM_DODO_USDT.methods.approve(ctx.SmartApprove.options.address, MAX_UINT256).send(ctx.sendParam(project));
+      await logGas(await ctx.DODOProxy.methods.removeDVMLiquidity(
+        dvm_DODO_USDT,
+        project,
+        decimalStr("100"),
+        decimalStr("0"),
+        mweiStr("0"),
+        0,
+        Math.floor(new Date().getTime() / 1000 + 60 * 10)
+      ),ctx.sendParam(project),"removeLiquidity");
+      var a_baseReserve = await DVM_DODO_USDT.methods._BASE_RESERVE_().call();
+      var a_quoteReserve = await DVM_DODO_USDT.methods._QUOTE_RESERVE_().call();
+      var a_dlp = await DVM_DODO_USDT.methods.balanceOf(project).call();
+      var a_DODO = await ctx.DODO.methods.balanceOf(project).call();
+      var a_USDT = await ctx.USDT.methods.balanceOf(project).call();
+      assert.equal(a_baseReserve, decimalStr("99900"));
+      assert.equal(a_quoteReserve, mweiStr("29970"));
+      assert.equal(a_dlp, decimalStr("99900"));
+      assert.equal(a_DODO, decimalStr("900100"));
+      assert.equal(a_USDT, mweiStr("940030"));
+    });
+
+    it("removeLiquidity - ETH", async () => {
+      var b_baseReserve = await DVM_WETH_USDT.methods._BASE_RESERVE_().call();
+      var b_quoteReserve = await DVM_WETH_USDT.methods._QUOTE_RESERVE_().call();
+      var b_dlp = await DVM_WETH_USDT.methods.balanceOf(project).call();
+      var b_WETH = await ctx.WETH.methods.balanceOf(project).call();
+      var b_USDT = await ctx.USDT.methods.balanceOf(project).call();
+      var b_ETH = await ctx.Web3.eth.getBalance(project);
+      assert.equal(b_baseReserve, decimalStr("5"));
+      assert.equal(b_quoteReserve, mweiStr("30000"));
+      assert.equal(b_dlp, decimalStr("5"));
+      assert.equal(b_WETH, decimalStr("0"));
+      assert.equal(b_USDT, mweiStr("940000"));
+      await DVM_WETH_USDT.methods.approve(ctx.SmartApprove.options.address, MAX_UINT256).send(ctx.sendParam(project));
+      var tx = await logGas(await ctx.DODOProxy.methods.removeDVMLiquidity(
+        dvm_WETH_USDT,
+        project,
+        decimalStr("1"),
+        decimalStr("0"),
+        mweiStr("0"),
+        1,
+        Math.floor(new Date().getTime() / 1000 + 60 * 10)
+      ), ctx.sendParam(project), "removeLiquidity - ETH");
+      var a_baseReserve = await DVM_WETH_USDT.methods._BASE_RESERVE_().call();
+      var a_quoteReserve = await DVM_WETH_USDT.methods._QUOTE_RESERVE_().call();
+      var a_dlp = await DVM_WETH_USDT.methods.balanceOf(project).call();
+      var a_WETH = await ctx.WETH.methods.balanceOf(project).call();
+      var a_USDT = await ctx.USDT.methods.balanceOf(project).call();
+      var a_ETH = await ctx.Web3.eth.getBalance(project);
+      // console.log("a_baseReserve:" + a_baseReserve + " a_quoteReserve:" + a_quoteReserve + " a_dlp:" + a_dlp + " a_WETH:" + a_WETH + " a_USDT:" + a_USDT);
+      assert.equal(a_baseReserve, decimalStr("4"));
+      assert.equal(a_quoteReserve, mweiStr("24000"));
+      assert.equal(a_dlp, decimalStr("4"));
+      assert.equal(a_WETH, decimalStr("0"));
+      assert.equal(a_USDT, mweiStr("946000"));
+      console.log("b_ETH:", b_ETH);
+      console.log("a_ETH:", a_ETH);
+      assert.equal(new BigNumber(b_ETH).isGreaterThan(new BigNumber(a_ETH).minus(decimalStr("1"))), true);
+    });
+
+
+    it("removeLiquidity - permit", async () => {
+      var b_baseReserve = await DVM_DODO_USDT.methods._BASE_RESERVE_().call();
+      var b_quoteReserve = await DVM_DODO_USDT.methods._QUOTE_RESERVE_().call();
+      var b_dlp = await DVM_DODO_USDT.methods.balanceOf(project).call();
+      var b_DODO = await ctx.DODO.methods.balanceOf(project).call();
+      var b_USDT = await ctx.USDT.methods.balanceOf(project).call();
+      assert.equal(b_baseReserve, decimalStr("100000"));
+      assert.equal(b_quoteReserve, mweiStr("30000"));
+      assert.equal(b_dlp, decimalStr("100000"));
+      assert.equal(b_DODO, decimalStr("900000"));
+      assert.equal(b_USDT, mweiStr("940000"));
+
+      var DOMAIN_SEPARATOR = await DVM_DODO_USDT.methods.DOMAIN_SEPARATOR().call();
+      // var name = await DVM_DODO_USDT.methods.name().call();
+      // typedData.domain.name = ctx.Web3.utils.sha3(name);
+      // typedData.domain.version = ctx.Web3.utils.sha3('1');
+      // typedData.domain.chainId = await ctx.Web3.eth.getChainId();
+      // typedData.domain.verifyingContract = dvm_DODO_USDT;
+      typedData.message.owner = project;
+      typedData.message.spender = ctx.SmartApprove.options.address;
+      var nonceStr = await DVM_DODO_USDT.methods.nonces(project).call();
+      typedData.message.nonce = parseInt(nonceStr);
+      typedData.message.deadline = Math.floor(new Date().getTime() / 1000 + 60 * 10);
+      var resHash = new SignHelper().signHash(DOMAIN_SEPARATOR,typedData.message);
+      var sig = await ctx.Web3.eth.sign('0x' + resHash.toString('hex'), project);
+      // let r = sig.slice(0, 66)
+      // let s = '0x' + sig.slice(66, 130)
+      // let v = '0x1c'
+      const signRes = ethUtil.fromRpcSig(sig);
+      const prefix = Buffer.from("\x19Ethereum Signed Message:\n");
+      const prefixedMsg = ethUtil.keccak256(
+        Buffer.concat([prefix, Buffer.from(String(resHash.length)), resHash])
+      );
+      console.log("add-prefix-degist:", "0x" + prefixedMsg.toString('hex'));
+      var pubKey = ethUtil.ecrecover(prefixedMsg, signRes.v,signRes.r,signRes.s)
+      // var pubKey = ethUtil.ecrecover(resHash, Buffer.from(v), Buffer.from(r), Buffer.from(s))
+      var addrBuf = ethUtil.pubToAddress(pubKey);
+      console.log("project:" + project);
+      console.log("addr-web3-recover:" + ethUtil.bufferToHex(addrBuf));
+      // var tx = await logGas(await DVM_DODO_USDT.methods.permit(project, typedData.message.spender, typedData.message.value, typedData.message.deadline, signRes.v, signRes.r, signRes.s), ctx.sendParam(project), "perimit test");
+      // console.log("addr-sol-recover:" + tx.events['TestAddr'].returnValues['addr']);
+      // console.log("sol-domain:" + tx.events['TestAddr'].returnValues['domain']);
+      // console.log("sol-msg:" + tx.events['TestAddr'].returnValues['message']);
+      // console.log("sol-digest:" + tx.events['TestAddr'].returnValues['digest']);
+      // await logGas(await ctx.DODOProxy.methods.removeDVMLiquidityWithPermit(
+      //   dvm_DODO_USDT,
+      //   project,
+      //   decimalStr("100"),
+      //   decimalStr("0"),
+      //   mweiStr("0"),
+      //   0,
+      //   typedData.message.deadline,
+      //   true,
+      //   signRes.v, signRes.r, signRes.s          
+      // ), ctx.sendParam(project), "removeLiquidity perimit");
+      // var a_baseReserve = await DVM_DODO_USDT.methods._BASE_RESERVE_().call();
+      // var a_quoteReserve = await DVM_DODO_USDT.methods._QUOTE_RESERVE_().call();
+      // var a_dlp = await DVM_DODO_USDT.methods.balanceOf(project).call();
+      // var a_DODO = await ctx.DODO.methods.balanceOf(project).call();
+      // var a_USDT = await ctx.USDT.methods.balanceOf(project).call();
+      // console.log("a_baseReserve:" + a_baseReserve + " a_quoteReserve:" + a_quoteReserve + " a_dlp:" + a_dlp + " a_DODO:" + a_DODO + " a_USDT:" + a_USDT);
+      // assert.equal(a_baseReserve, decimalStr("99900"));
+      // assert.equal(a_quoteReserve, mweiStr("29970"));
+      // assert.equal(a_dlp, decimalStr("99900"));
+      // assert.equal(a_DODO, decimalStr("900100"));
+      // assert.equal(a_USDT, mweiStr("940030"));
     });
 
   });
