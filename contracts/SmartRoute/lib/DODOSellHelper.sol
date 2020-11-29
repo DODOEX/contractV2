@@ -14,9 +14,9 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {IDODO} from "../intf/IDODO.sol";
-import {SafeMath} from "../lib/SafeMath.sol";
-import {DecimalMath} from "../lib/DecimalMath.sol";
+import {IDODOV1} from "../intf/IDODOV1.sol";
+import {SafeMath} from "../../lib/SafeMath.sol";
+import {DecimalMath} from "../../lib/DecimalMath.sol";
 
 // import {DODOMath} from "../lib/DODOMath.sol";
 
@@ -143,17 +143,17 @@ contract DODOSellHelper {
     }
 
     function querySellBaseToken(address dodo, uint256 amount) public view returns (uint256) {
-        return IDODO(dodo).querySellBaseToken(amount);
+        return IDODOV1(dodo).querySellBaseToken(amount);
     }
 
     function querySellQuoteToken(address dodo, uint256 amount) public view returns (uint256) {
         DODOState memory state;
-        (state.baseTarget, state.quoteTarget) = IDODO(dodo).getExpectedTarget();
-        state.rStatus = RStatus(IDODO(dodo)._R_STATUS_());
-        state.oraclePrice = IDODO(dodo).getOraclePrice();
-        state.Q = IDODO(dodo)._QUOTE_BALANCE_();
-        state.B = IDODO(dodo)._BASE_BALANCE_();
-        state.K = IDODO(dodo)._K_();
+        (state.baseTarget, state.quoteTarget) = IDODOV1(dodo).getExpectedTarget();
+        state.rStatus = RStatus(IDODOV1(dodo)._R_STATUS_());
+        state.oraclePrice = IDODOV1(dodo).getOraclePrice();
+        state.Q = IDODOV1(dodo)._QUOTE_BALANCE_();
+        state.B = IDODOV1(dodo)._BASE_BALANCE_();
+        state.K = IDODOV1(dodo)._K_();
 
         uint256 boughtAmount;
         // Determine the status (RStatus) and calculate the amount
@@ -177,7 +177,9 @@ contract DODOSellHelper {
         return
             DecimalMath.divFloor(
                 boughtAmount,
-                DecimalMath.ONE.add(IDODO(dodo)._MT_FEE_RATE_()).add(IDODO(dodo)._LP_FEE_RATE_())
+                DecimalMath.ONE.add(IDODOV1(dodo)._MT_FEE_RATE_()).add(
+                    IDODOV1(dodo)._LP_FEE_RATE_()
+                )
             );
     }
 

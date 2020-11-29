@@ -23,24 +23,12 @@ contract DPPVault is DPPStorage {
 
     // ============ Get Input ============
 
-    function getInput() public view returns (uint256 baseInput, uint256 quoteInput) {
-        return (
-            _BASE_TOKEN_.balanceOf(address(this)).sub(_BASE_RESERVE_),
-            _QUOTE_TOKEN_.balanceOf(address(this)).sub(_QUOTE_RESERVE_)
-        );
-    }
-
     function getBaseInput() public view returns (uint256 input) {
         return _BASE_TOKEN_.balanceOf(address(this)).sub(_BASE_RESERVE_);
     }
 
     function getQuoteInput() public view returns (uint256 input) {
         return _QUOTE_TOKEN_.balanceOf(address(this)).sub(_QUOTE_RESERVE_);
-    }
-
-    // ============ Vault Related
-    function getVaultReserve() public view returns (uint256 baseReserve, uint256 quoteReserve) {
-        return (_BASE_RESERVE_, _QUOTE_RESERVE_);
     }
 
     // ============ Set States ============
@@ -90,7 +78,7 @@ contract DPPVault is DPPStorage {
         }
     }
 
-    // ============ Assets Transfer ============
+    // ============ Asset Out ============
 
     function _transferBaseOut(address to, uint256 amount) internal {
         if (amount > 0) {

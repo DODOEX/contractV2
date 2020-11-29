@@ -13,7 +13,7 @@ import {UniversalERC20} from "./lib/UniversalERC20.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {IDODOSellHelper} from "./intf/IDODOSellHelper.sol";
 import {IDODOApprove} from "../intf/IDODOApprove.sol";
-import {IDODO} from "../intf/IDODO.sol";
+import {IDODOV1} from "./intf/IDODOV1.sol";
 import {IWETH} from "../intf/IWETH.sol";
 
 contract DODOV1Proxy01 is Ownable {
@@ -77,19 +77,19 @@ contract DODOV1Proxy01 is Ownable {
         for (uint256 i = 0; i < dodoPairs.length; i++) {
             address curDodoPair = dodoPairs[i];
             if (directions[i] == 0) {
-                address curDodoBase = IDODO(curDodoPair)._BASE_TOKEN_();
+                address curDodoBase = IDODOV1(curDodoPair)._BASE_TOKEN_();
                 uint256 curAmountIn = IERC20(curDodoBase).balanceOf(address(this));
                 IERC20(curDodoBase).universalApproveMax(curDodoPair, curAmountIn);
-                IDODO(curDodoPair).sellBaseToken(curAmountIn, 0, "");
+                IDODOV1(curDodoPair).sellBaseToken(curAmountIn, 0, "");
             } else {
-                address curDodoQuote = IDODO(curDodoPair)._QUOTE_TOKEN_();
+                address curDodoQuote = IDODOV1(curDodoPair)._QUOTE_TOKEN_();
                 uint256 curAmountIn = IERC20(curDodoQuote).balanceOf(address(this));
                 IERC20(curDodoQuote).universalApproveMax(curDodoPair, curAmountIn);
                 uint256 canBuyBaseAmount = IDODOSellHelper(dodoSellHelper).querySellQuoteToken(
                     curDodoPair,
                     curAmountIn
                 );
-                IDODO(curDodoPair).buyBaseToken(canBuyBaseAmount, curAmountIn, "");
+                IDODOV1(curDodoPair).buyBaseToken(canBuyBaseAmount, curAmountIn, "");
             }
         }
 

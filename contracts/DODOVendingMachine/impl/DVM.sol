@@ -30,15 +30,10 @@ contract DVM is DVMTrader, DVMFunding {
         uint256 k
     ) external {
         initOwner(owner);
+
+        require(baseTokenAddress != quoteTokenAddress, "BASE_QUOTE_CAN_NOT_BE_SAME");
         _BASE_TOKEN_ = IERC20(baseTokenAddress);
         _QUOTE_TOKEN_ = IERC20(quoteTokenAddress);
-        _LP_FEE_RATE_MODEL_ = IFeeRateModel(lpFeeRateModel);
-        _MT_FEE_RATE_MODEL_ = IFeeRateModel(mtFeeRateModel);
-        _TRADE_PERMISSION_ = IPermissionManager(tradePermissionManager);
-        _GAS_PRICE_LIMIT_ = IExternalValue(gasPriceSource);
-        _MAINTAINER_ = maintainer;
-
-        require(_BASE_TOKEN_ != _QUOTE_TOKEN_, "BASE_QUOTE_CAN_NOT_BE_SAME");
 
         require(i > 0 && i <= 10**36);
         _I_ = i;
@@ -46,32 +41,35 @@ contract DVM is DVMTrader, DVMFunding {
         require(k > 0 && k <= 10**18);
         _K_ = k;
 
+        _LP_FEE_RATE_MODEL_ = IFeeRateModel(lpFeeRateModel);
+        _MT_FEE_RATE_MODEL_ = IFeeRateModel(mtFeeRateModel);
+        _TRADE_PERMISSION_ = IPermissionManager(tradePermissionManager);
+        _GAS_PRICE_LIMIT_ = IExternalValue(gasPriceSource);
+        _MAINTAINER_ = maintainer;
+
         string memory connect = "_";
         string memory suffix = "DLP";
-        uint32 uid = uint32(address(this));
-        bytes memory id = new bytes(4);
-        id[0] = bytes1(uint8(48 + (uid % 10)));
-        id[1] = bytes1(uint8(48 + ((uid / 10) % 10)));
-        id[2] = bytes1(uint8(48 + ((uid / 100) % 10)));
-        id[3] = bytes1(uint8(48 + ((uid / 1000) % 10)));
 
-        name = string(
-            abi.encodePacked(
-                suffix,
-                connect,
-                _BASE_TOKEN_.symbol(),
-                connect,
-                _QUOTE_TOKEN_.symbol(),
-                connect,
-                string(id)
-            )
-        );
+        name = string(abi.encodePacked(suffix, connect, addressToShortString(address(this))));
         symbol = "DLP";
         decimals = _BASE_TOKEN_.decimals();
     }
 
+    function addressToShortString(address _addr) public pure returns (string memory) {
+        bytes32 value = bytes32(uint256(_addr));
+        bytes memory alphabet = "0123456789abcdef";
+
+        bytes memory str = new bytes(8);
+        for (uint256 i = 0; i < 4; i++) {
+            str[i * 2] = alphabet[uint8(value[i + 12] >> 4)];
+            str[1 + i * 2] = alphabet[uint8(value[i + 12] & 0x0f)];
+        }
+        return string(str);
+    }
+
     // ============ Version Control ============
-    function version() external pure returns (uint256) {
-        return 100; // 1.0.0
+
+    function version() external pure returns (string memory) {
+        return "DVM 1.0.0";
     }
 }

@@ -8,8 +8,7 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-
-interface IDODO {
+interface IDODOV1 {
     function init(
         address owner,
         address supervisor,

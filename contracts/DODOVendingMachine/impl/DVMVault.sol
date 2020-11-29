@@ -28,23 +28,7 @@ contract DVMVault is DVMStorage {
 
     event Burn(address indexed user, uint256 value);
 
-    // Vault related
-
-    function getVaultBalance() public view returns (uint256 baseBalance, uint256 quoteBalance) {
-        return (_BASE_TOKEN_.balanceOf(address(this)), _QUOTE_TOKEN_.balanceOf(address(this)));
-    }
-
-    function getVaultReserve() public view returns (uint256 baseReserve, uint256 quoteReserve) {
-        return (_BASE_RESERVE_, _QUOTE_RESERVE_);
-    }
-
-    function getBaseBalance() public view returns (uint256 baseBalance) {
-        return _BASE_TOKEN_.balanceOf(address(this));
-    }
-
-    function getQuoteBalance() public view returns (uint256 quoteBalance) {
-        return _QUOTE_TOKEN_.balanceOf(address(this));
-    }
+    // ============ Asset In ============
 
     function getBaseInput() public view returns (uint256 input) {
         return _BASE_TOKEN_.balanceOf(address(this)).sub(_BASE_RESERVE_);
@@ -54,8 +38,11 @@ contract DVMVault is DVMStorage {
         return _QUOTE_TOKEN_.balanceOf(address(this)).sub(_QUOTE_RESERVE_);
     }
 
+    // ============ Set States ============
+
     function _sync() internal {
-        (uint256 baseBalance, uint256 quoteBalance) = getVaultBalance();
+        uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
+        uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
         if (baseBalance != _BASE_RESERVE_) {
             _BASE_RESERVE_ = baseBalance;
         }
@@ -63,6 +50,8 @@ contract DVMVault is DVMStorage {
             _QUOTE_RESERVE_ = quoteBalance;
         }
     }
+
+    // ============ Asset Out ============
 
     function _transferBaseOut(address to, uint256 amount) internal {
         if (amount > 0) {
@@ -76,7 +65,8 @@ contract DVMVault is DVMStorage {
         }
     }
 
-    // Shares related
+    // ============ Shares (ERC20) ============
+
     /**
      * @dev transfer token for a specified address
      * @param to The address to transfer to.
@@ -98,10 +88,6 @@ contract DVMVault is DVMStorage {
      */
     function balanceOf(address owner) external view returns (uint256 balance) {
         return _SHARES_[owner];
-    }
-
-    function shareRatioOf(address owner) external view returns (uint256 shareRatio) {
-        return DecimalMath.divFloor(_SHARES_[owner], totalSupply);
     }
 
     /**

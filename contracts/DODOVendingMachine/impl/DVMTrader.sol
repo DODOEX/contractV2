@@ -18,6 +18,16 @@ import {PMMPricing} from "../../lib/PMMPricing.sol";
 contract DVMTrader is DVMVault {
     using SafeMath for uint256;
 
+    // ============ Events ============
+
+    event DVMSwap(
+        address indexed fromToken,
+        address indexed toToken,
+        uint256 fromAmount,
+        uint256 toAmount,
+        address trader
+    );
+
     // ============ Modifiers ============
 
     modifier isBuyAllow(address trader) {
@@ -53,7 +63,13 @@ contract DVMTrader is DVMVault {
         _transferQuoteOut(to, receiveQuoteAmount);
         _transferQuoteOut(_MAINTAINER_, mtFee);
         _sync();
-        return receiveQuoteAmount;
+        emit DVMSwap(
+            address(_BASE_TOKEN_),
+            address(_QUOTE_TOKEN_),
+            baseInput,
+            receiveQuoteAmount,
+            tx.origin
+        );
     }
 
     function sellQuote(address to)
@@ -69,7 +85,13 @@ contract DVMTrader is DVMVault {
         _transferBaseOut(to, receiveBaseAmount);
         _transferBaseOut(_MAINTAINER_, mtFee);
         _sync();
-        return receiveBaseAmount;
+        emit DVMSwap(
+            address(_QUOTE_TOKEN_),
+            address(_BASE_TOKEN_),
+            quoteInput,
+            receiveBaseAmount,
+            tx.origin
+        );
     }
 
     function flashLoan(
@@ -84,7 +106,8 @@ contract DVMTrader is DVMVault {
         if (data.length > 0)
             IDODOCallee(assetTo).DVMFlashLoanCall(msg.sender, baseAmount, quoteAmount, data);
 
-        (uint256 baseBalance, uint256 quoteBalance) = getVaultBalance();
+        uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
+        uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
 
         // no input -> pure loss
         require(
@@ -92,28 +115,40 @@ contract DVMTrader is DVMVault {
             "FLASH_LOAN_FAILED"
         );
 
+        // sell quote
         if (baseBalance < _BASE_RESERVE_) {
-            (uint256 receiveBaseAmount, uint256 mtFee) = querySellQuote(
-                tx.origin,
-                quoteBalance.sub(_QUOTE_RESERVE_)
-            );
+            uint256 quoteInput = quoteBalance.sub(_QUOTE_RESERVE_);
+            (uint256 receiveBaseAmount, uint256 mtFee) = querySellQuote(tx.origin, quoteInput);
             require(_BASE_RESERVE_.sub(baseBalance) <= receiveBaseAmount, "FLASH_LOAN_FAILED");
             _transferBaseOut(_MAINTAINER_, mtFee);
+            emit DVMSwap(
+                address(_QUOTE_TOKEN_),
+                address(_BASE_TOKEN_),
+                quoteInput,
+                receiveBaseAmount,
+                tx.origin
+            );
         }
 
+        // sell base
         if (quoteBalance < _QUOTE_RESERVE_) {
-            (uint256 receiveQuoteAmount, uint256 mtFee) = querySellBase(
-                tx.origin,
-                baseBalance.sub(_BASE_RESERVE_)
-            );
+            uint256 baseInput = baseBalance.sub(_BASE_RESERVE_);
+            (uint256 receiveQuoteAmount, uint256 mtFee) = querySellBase(tx.origin, baseInput);
             require(_QUOTE_RESERVE_.sub(quoteBalance) <= receiveQuoteAmount, "FLASH_LOAN_FAILED");
             _transferQuoteOut(_MAINTAINER_, mtFee);
+            emit DVMSwap(
+                address(_BASE_TOKEN_),
+                address(_QUOTE_TOKEN_),
+                baseInput,
+                receiveQuoteAmount,
+                tx.origin
+            );
         }
 
         _sync();
     }
 
-    // ============ View Functions ============
+    // ============ Query Functions ============
 
     function querySellBase(address trader, uint256 payBaseAmount)
         public
@@ -128,8 +163,6 @@ contract DVMTrader is DVMVault {
         receiveQuoteAmount = receiveQuoteAmount
             .sub(DecimalMath.mulFloor(receiveQuoteAmount, lpFeeRate))
             .sub(mtFee);
-
-        return (receiveQuoteAmount, mtFee);
     }
 
     function querySellQuote(address trader, uint256 payQuoteAmount)
@@ -145,7 +178,6 @@ contract DVMTrader is DVMVault {
         receiveBaseAmount = receiveBaseAmount
             .sub(DecimalMath.mulFloor(receiveBaseAmount, lpFeeRate))
             .sub(mtFee);
-        return (receiveBaseAmount, mtFee);
     }
 
     // ============ Helper Functions ============
@@ -155,11 +187,10 @@ contract DVMTrader is DVMVault {
         state.K = _K_;
         state.B = _BASE_RESERVE_;
         state.Q = _QUOTE_RESERVE_;
-        state.B0 = 0; // recalculate in adjustedTarget
+        state.B0 = 0; // will be calculated in adjustedTarget
         state.Q0 = 0;
         state.R = PMMPricing.RState.ABOVE_ONE;
         PMMPricing.adjustedTarget(state);
-        return state;
     }
 
     function getMidPrice() public view returns (uint256 midPrice) {

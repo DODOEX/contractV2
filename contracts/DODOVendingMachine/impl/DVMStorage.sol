@@ -21,20 +21,17 @@ import {IERC20} from "../../intf/IERC20.sol";
 contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
 
-    // ============ Variables for Control ============
-
-    IExternalValue public _GAS_PRICE_LIMIT_;
-
     // ============ Advanced Controls ============
 
     bool public _BUYING_CLOSE_;
     bool public _SELLING_CLOSE_;
 
     IPermissionManager public _TRADE_PERMISSION_;
+    IExternalValue public _GAS_PRICE_LIMIT_;
 
     // ============ Core Address ============
 
-    address public _MAINTAINER_; // collect maintainer fee
+    address public _MAINTAINER_;
 
     IERC20 public _BASE_TOKEN_;
     IERC20 public _QUOTE_TOKEN_;
@@ -42,7 +39,7 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     uint256 public _BASE_RESERVE_;
     uint256 public _QUOTE_RESERVE_;
 
-    // ============ Shares ============
+    // ============ Shares (ERC20) ============
 
     string public symbol;
     uint256 public decimals;
@@ -59,43 +56,56 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     uint256 public _K_;
     uint256 public _I_;
 
+    // ============ Events ============
+
+    event SetLpFeeRateModel(address indexed oldAddr, address indexed newAddr);
+
+    event SetMtFeeRateModel(address indexed oldAddr, address indexed newAddr);
+
+    event SetTradePermissionManager(address indexed oldAddr, address indexed newAddr);
+
+    event SetMaintainer(address indexed oldAddr, address indexed newAddr);
+
+    event SetGasPriceSource(address indexed oldAddr, address indexed newAddr);
+
+    event SetBuy(bool allow);
+
+    event SetSell(bool allow);
+
     // ============ Setting Functions ============
+
     function setLpFeeRateModel(address newLpFeeRateModel) external onlyOwner {
+        emit SetLpFeeRateModel(address(_LP_FEE_RATE_MODEL_), newLpFeeRateModel);
         _LP_FEE_RATE_MODEL_ = IFeeRateModel(newLpFeeRateModel);
     }
 
     function setMtFeeRateModel(address newMtFeeRateModel) external onlyOwner {
+        emit SetMtFeeRateModel(address(_MT_FEE_RATE_MODEL_), newMtFeeRateModel);
         _MT_FEE_RATE_MODEL_ = IFeeRateModel(newMtFeeRateModel);
     }
 
     function setTradePermissionManager(address newTradePermissionManager) external onlyOwner {
+        emit SetTradePermissionManager(address(_TRADE_PERMISSION_), newTradePermissionManager);
         _TRADE_PERMISSION_ = IPermissionManager(newTradePermissionManager);
     }
 
     function setMaintainer(address newMaintainer) external onlyOwner {
+        emit SetMaintainer(address(_MAINTAINER_), newMaintainer);
         _MAINTAINER_ = newMaintainer;
     }
 
     function setGasPriceSource(address newGasPriceLimitSource) external onlyOwner {
+        emit SetGasPriceSource(address(_GAS_PRICE_LIMIT_), newGasPriceLimitSource);
         _GAS_PRICE_LIMIT_ = IExternalValue(newGasPriceLimitSource);
     }
 
     function setBuy(bool open) external onlyOwner {
+        emit SetBuy(open);
         _BUYING_CLOSE_ = !open;
     }
 
     function setSell(bool open) external onlyOwner {
+        emit SetSell(open);
         _SELLING_CLOSE_ = !open;
     }
-
-    // ============ View Functions ============
-
-    function getLpFeeRate(address trader) external view returns (uint256 feeRate) {
-        return _LP_FEE_RATE_MODEL_.getFeeRate(trader);
-    }
-
-    function getMtFeeRate(address trader) external view returns (uint256 feeRate) {
-        return _MT_FEE_RATE_MODEL_.getFeeRate(trader);
-    }
-    
 }

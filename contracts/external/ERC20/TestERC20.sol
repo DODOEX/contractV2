@@ -7,7 +7,7 @@
 
 pragma solidity 0.6.9;
 
-import {SafeMath} from "../lib/SafeMath.sol";
+import {SafeMath} from "../../lib/SafeMath.sol";
 
 contract TestERC20 {
     using SafeMath for uint256;
@@ -22,7 +22,11 @@ contract TestERC20 {
     event Transfer(address indexed from, address indexed to, uint256 amount);
     event Approval(address indexed owner, address indexed spender, uint256 amount);
 
-    constructor(string memory _name, uint8 _decimals,string memory _symbol) public {
+    constructor(
+        string memory _name,
+        uint8 _decimals,
+        string memory _symbol
+    ) public {
         name = _name;
         decimals = _decimals;
         symbol = _symbol;

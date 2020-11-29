@@ -12,6 +12,7 @@ import { logGas } from '../utils/Log';
 import { DVMContext, getDVMContext } from '../utils/DVMContext';
 import { assert } from 'chai';
 import BigNumber from 'bignumber.js';
+const truffleAssert = require('truffle-assertions');
 
 let lp: string;
 let trader: string;
@@ -95,7 +96,7 @@ describe("Funding", () => {
 
       assert.equal(
         await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
-        "8856412162577279149"
+        "8856412162577279148"
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
@@ -154,11 +155,11 @@ describe("Funding", () => {
 
       var vaultShares = new BigNumber(await ctx.DVM.methods.balanceOf(lp).call())
       var bob = ctx.SpareAccounts[5]
-      await ctx.DVM.methods.sellShares(vaultShares.div(2).toFixed(0), 0, 0, bob, "0x").send(ctx.sendParam(lp))
+      await ctx.DVM.methods.sellShares(vaultShares.div(2).toFixed(0), bob, 0, 0, "0x").send(ctx.sendParam(lp))
       assert.equal(await ctx.BASE.methods.balanceOf(bob).call(), decimalStr("5"))
       assert.equal(await ctx.QUOTE.methods.balanceOf(bob).call(), decimalStr("50"))
 
-      await ctx.DVM.methods.sellShares(vaultShares.div(2).toFixed(0), 0, 0, bob, "0x").send(ctx.sendParam(lp))
+      await ctx.DVM.methods.sellShares(vaultShares.div(2).toFixed(0), bob, 0, 0, "0x").send(ctx.sendParam(lp))
       assert.equal(await ctx.BASE.methods.balanceOf(bob).call(), decimalStr("10"))
       assert.equal(await ctx.QUOTE.methods.balanceOf(bob).call(), decimalStr("100"))
     })
@@ -170,9 +171,30 @@ describe("Funding", () => {
 
       var vaultShares = await ctx.DVM.methods.balanceOf(lp).call()
       var bob = ctx.SpareAccounts[5]
-      await ctx.DVM.methods.sellShares(vaultShares, 0, 0, bob, "0x").send(ctx.sendParam(lp))
+      await ctx.DVM.methods.sellShares(vaultShares, bob, 0, 0, "0x").send(ctx.sendParam(lp))
       assert.equal(await ctx.BASE.methods.balanceOf(bob).call(), decimalStr("10"))
       assert.equal(await ctx.QUOTE.methods.balanceOf(bob).call(), decimalStr("100"))
+    })
+
+    it("revert cases", async () => {
+      await ctx.transferBaseToDVM(lp, decimalStr("10"))
+      await ctx.transferQuoteToDVM(lp, decimalStr("100"))
+      await ctx.DVM.methods.buyShares(lp).send(ctx.sendParam(lp))
+
+      var vaultShares = await ctx.DVM.methods.balanceOf(lp).call()
+      var bob = ctx.SpareAccounts[5]
+      await truffleAssert.reverts(
+        ctx.DVM.methods.sellShares(new BigNumber(vaultShares).multipliedBy(2), bob, 0, 0, "0x").send(ctx.sendParam(lp)),
+        "DLP_NOT_ENOUGH"
+      )
+      await truffleAssert.reverts(
+        ctx.DVM.methods.sellShares(vaultShares, bob, decimalStr("100"), 0, "0x").send(ctx.sendParam(lp)),
+        "WITHDRAW_NOT_ENOUGH"
+      )
+      await truffleAssert.reverts(
+        ctx.DVM.methods.sellShares(vaultShares, bob, 0, decimalStr("10000"), "0x").send(ctx.sendParam(lp)),
+        "WITHDRAW_NOT_ENOUGH"
+      )
     })
   })
 });

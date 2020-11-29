@@ -13,27 +13,39 @@ import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {IDODOCallee} from "../../intf/IDODOCallee.sol";
 
 contract DVMFunding is DVMVault {
-    // shares [round down]
+    // ============ Events ============
+
+    event BuyShares(address indexed user, uint256 increaseShares, uint256 totalShares);
+
+    event SellShares(address indexed user, uint256 decreaseShares, uint256 totalShares);
+
+    // ============ Buy & Sell Shares ============
+
+    // buy shares [round down]
     function buyShares(address to)
         external
         preventReentrant
         returns (
             uint256 shares,
-            uint256 baseAmount,
-            uint256 quoteAmount
+            uint256 baseInput,
+            uint256 quoteInput
         )
     {
-        uint256 baseInput = getBaseInput();
-        uint256 quoteInput = getQuoteInput();
-        require(baseInput > 0, "NO_BASE_INPUT");
+        uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
+        uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
         uint256 baseReserve = _BASE_RESERVE_;
         uint256 quoteReserve = _QUOTE_RESERVE_;
+
+        baseInput = baseBalance.sub(baseReserve);
+        quoteInput = quoteBalance.sub(quoteReserve);
+        require(baseInput > 0, "NO_BASE_INPUT");
+
         // case 1. initial supply
         // 包含了 baseReserve == 0 && quoteReserve == 0 的情况
         // 在提币的时候向下取整。因此永远不会出现，balance为0但totalsupply不为0的情况
         // 但有可能出现，reserve>0但totalSupply=0的场景
         if (totalSupply == 0) {
-            shares = getBaseBalance(); // 以免出现balance很大但shares很小的情况
+            shares = baseBalance; // 以免出现balance很大但shares很小的情况
         } else if (baseReserve > 0 && quoteReserve == 0) {
             // case 2. supply when quote reserve is 0
             shares = baseInput.mul(totalSupply).div(baseReserve);
@@ -46,10 +58,10 @@ contract DVMFunding is DVMVault {
         }
         _mint(to, shares);
         _sync();
-        return (shares, baseInput, quoteInput);
+        emit BuyShares(to, shares, _SHARES_[to]);
     }
 
-    // withdraw amount [round down]
+    // sell shares [round down]
     function sellShares(
         uint256 shareAmount,
         address to,
@@ -57,12 +69,20 @@ contract DVMFunding is DVMVault {
         uint256 quoteMinAmount,
         bytes calldata data
     ) external preventReentrant returns (uint256 baseAmount, uint256 quoteAmount) {
-        (uint256 baseBalance, uint256 quoteBalance) = getVaultBalance();
+        uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
+        uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
         uint256 totalShares = totalSupply;
+
         require(shareAmount <= _SHARES_[msg.sender], "DLP_NOT_ENOUGH");
+
         baseAmount = baseBalance.mul(shareAmount).div(totalShares);
         quoteAmount = quoteBalance.mul(shareAmount).div(totalShares);
-        require(baseAmount >= baseMinAmount && quoteAmount >= quoteMinAmount,'WITHDRAW_DLP_NOT_ENOUGH');
+
+        require(
+            baseAmount >= baseMinAmount && quoteAmount >= quoteMinAmount,
+            "WITHDRAW_NOT_ENOUGH"
+        );
+
         _burn(msg.sender, shareAmount);
         _transferBaseOut(to, baseAmount);
         _transferQuoteOut(to, quoteAmount);

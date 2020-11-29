@@ -34,6 +34,8 @@ library PMMPricing {
         RState R;
     }
 
+    // ============ buy & sell ============
+
     function sellBaseToken(PMMState memory state, uint256 payBaseAmount)
         internal
         pure
@@ -75,8 +77,6 @@ library PMMPricing {
             receiveQuoteAmount = _RBelowSellBaseToken(state, payBaseAmount);
             newR = RState.BELOW_ONE;
         }
-
-        return (receiveQuoteAmount, newR);
     }
 
     function sellQuoteToken(PMMState memory state, uint256 payQuoteAmount)
@@ -109,8 +109,6 @@ library PMMPricing {
                 newR = RState.ABOVE_ONE;
             }
         }
-
-        return (receiveBaseAmount, newR);
     }
 
     // ============ R = 1 cases ============
@@ -118,7 +116,9 @@ library PMMPricing {
     function _ROneSellBaseToken(PMMState memory state, uint256 payBaseAmount)
         internal
         pure
-        returns (uint256 receiveQuoteToken)
+        returns (
+            uint256 // receiveQuoteToken
+        )
     {
         // in theory Q2 <= targetQuoteTokenAmount
         // however when amount is close to 0, precision problems may cause Q2 > targetQuoteTokenAmount
@@ -135,7 +135,9 @@ library PMMPricing {
     function _ROneSellQuoteToken(PMMState memory state, uint256 payQuoteAmount)
         internal
         pure
-        returns (uint256 receiveBaseToken)
+        returns (
+            uint256 // receiveBaseToken
+        )
     {
         return
             DODOMath._SolveQuadraticFunctionForTrade(
@@ -152,7 +154,9 @@ library PMMPricing {
     function _RBelowSellQuoteToken(PMMState memory state, uint256 payQuoteAmount)
         internal
         pure
-        returns (uint256 receiveBaseToken)
+        returns (
+            uint256 // receiveBaseToken
+        )
     {
         return
             DODOMath._GeneralIntegrate(
@@ -167,7 +171,9 @@ library PMMPricing {
     function _RBelowSellBaseToken(PMMState memory state, uint256 payBaseAmount)
         internal
         pure
-        returns (uint256 receiveQuoteToken)
+        returns (
+            uint256 // receiveQuoteToken
+        )
     {
         return
             DODOMath._SolveQuadraticFunctionForTrade(
@@ -184,7 +190,9 @@ library PMMPricing {
     function _RAboveSellBaseToken(PMMState memory state, uint256 payBaseAmount)
         internal
         pure
-        returns (uint256 receiveQuoteToken)
+        returns (
+            uint256 // receiveQuoteToken
+        )
     {
         return
             DODOMath._GeneralIntegrate(
@@ -199,7 +207,9 @@ library PMMPricing {
     function _RAboveSellQuoteToken(PMMState memory state, uint256 payQuoteAmount)
         internal
         pure
-        returns (uint256 receiveBaseToken)
+        returns (
+            uint256 // receiveBaseToken
+        )
     {
         return
             DODOMath._SolveQuadraticFunctionForTrade(
@@ -231,7 +241,7 @@ library PMMPricing {
         }
     }
 
-    function getMidPrice(PMMState memory state) internal pure returns (uint256 midPrice) {
+    function getMidPrice(PMMState memory state) internal pure returns (uint256) {
         if (state.R == RState.BELOW_ONE) {
             uint256 R = DecimalMath.divFloor(state.Q0.mul(state.Q0).div(state.Q), state.Q);
             R = DecimalMath.ONE.sub(state.K).add(DecimalMath.mulFloor(state.K, R));
