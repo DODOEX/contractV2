@@ -169,7 +169,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         );
         require(
             baseAdjustedInAmount >= baseMinAmount && quoteAdjustedInAmount >= quoteMinAmount,
-            "DODOV2Proxy01: deposit amount is not enough"
+            'DODOV2Proxy01: deposit amount is not enough'
         );
         address _dvm = DVMAddress;
 
@@ -178,6 +178,46 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
 
         (shares, , ) = IDODOV2(_dvm).buyShares(to);
     }
+
+
+    function removeDVMLiquidity(
+        address DVMAddress,
+        address payable to,
+        uint256 sharesAmount,
+        uint256 baseMinOutAmount,
+        uint256 quoteMinOutAmount,
+        uint8 flag, // 0 -ERC20, 1 - baseOutETH, 2 - quoteOutETH
+        uint256 deadline
+    ) public virtual override judgeExpired(deadline) returns (uint256 baseOutAmount, uint256 quoteOutAmount) {
+        _deposit(msg.sender,DVMAddress,DVMAddress,sharesAmount,false);
+        if(flag == 0)
+            (baseOutAmount,quoteOutAmount) = IDODOV2(DVMAddress).sellShares(to);
+        else 
+            (baseOutAmount,quoteOutAmount) = IDODOV2(DVMAddress).sellShares(address(this));
+        require(baseOutAmount >= baseMinOutAmount && quoteOutAmount >= quoteMinOutAmount, 'DODOV2Proxy01: Return Amount is not enough');
+        if(flag != 0){
+           _withdraw(to, IDODOV2(DVMAddress)._BASE_TOKEN_(), baseOutAmount,flag == 1);
+           _withdraw(to, IDODOV2(DVMAddress)._QUOTE_TOKEN_(), quoteOutAmount, flag == 2); 
+        }
+    }
+
+
+    // ================ Permit ======================
+    function removeDVMLiquidityWithPermit(
+        address DVMAddress,
+        address payable to,
+        uint256 sharesAmount,
+        uint256 baseMinOutAmount,
+        uint256 quoteMinOutAmount,
+        uint8 flag, // 0 -ERC20, 1 - baseOutETH, 2 - quoteOutETH
+        uint256 deadline,
+        bool approveMax, uint8 v, bytes32 r, bytes32 s
+    ) external virtual override returns (uint256 baseOutAmount, uint256 quoteOutAmount) {
+        uint256 value = approveMax ? uint256(-1) : sharesAmount;
+        IDODOV2(DVMAddress).permit(msg.sender, dodoApprove, value, deadline, v, r, s);
+        (baseOutAmount,quoteOutAmount) = removeDVMLiquidity(DVMAddress,to,sharesAmount,baseMinOutAmount,quoteMinOutAmount,flag,deadline);
+    }
+    // ============================================
 
     function createDODOPrivatePool(
         address baseToken,
@@ -439,7 +479,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
     }
 
     function _withdraw(
-        address to,
+        address payable to,
         address token,
         uint256 amount,
         bool isETH
@@ -447,7 +487,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         if (isETH) {
             if (amount > 0) {
                 IWETH(_WETH_).withdraw(amount);
-                msg.sender.transfer(amount);
+                to.transfer(amount);
             }
         } else {
             SafeERC20.safeTransfer(IERC20(token), to, amount);

@@ -117,9 +117,13 @@ contract DVMVault is DVMStorage {
      * @param amount The amount of tokens to be spent.
      */
     function approve(address spender, uint256 amount) public returns (bool) {
-        _ALLOWED_[msg.sender][spender] = amount;
-        emit Approval(msg.sender, spender, amount);
+        _approve(msg.sender, spender, amount);
         return true;
+    }
+
+    function _approve(address owner, address spender, uint256 amount) private {
+        _ALLOWED_[owner][spender] = amount;
+        emit Approval(owner, spender, amount);
     }
 
     /**
@@ -145,6 +149,22 @@ contract DVMVault is DVMStorage {
         emit Burn(user, value);
         emit Transfer(user, address(0), value);
     }
+
+    // ============================ Permit ======================================
+    function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external {
+        require(deadline >= block.timestamp, 'DODO_DVM_LP: EXPIRED');
+        bytes32 digest = keccak256(
+            abi.encodePacked(
+                '\x19\x01',
+                DOMAIN_SEPARATOR,
+                keccak256(abi.encode(PERMIT_TYPEHASH, owner, spender, value, nonces[owner]++, deadline))
+            )
+        );
+        address recoveredAddress = ecrecover(digest, v, r, s);
+        require(recoveredAddress != address(0) && recoveredAddress == owner, 'DODO_DVM_LP: INVALID_SIGNATURE');
+        _approve(owner, spender, value);
+    }
+    // ===========================================================================
 
     // function approveAndCall()
 }
