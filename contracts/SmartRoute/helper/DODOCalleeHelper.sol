@@ -18,11 +18,11 @@ contract DODOCalleeHelper is ReentrancyGuard {
     address payable public _WETH_;
 
     fallback() external payable {
-        require(msg.sender == _WETH_, "WE_DONT_SAVED_YOUR_ETH");
+        require(msg.sender == _WETH_, "WE_SAVED_YOUR_ETH");
     }
 
     receive() external payable {
-        require(msg.sender == _WETH_, "WE_DONT_SAVED_YOUR_ETH");
+        require(msg.sender == _WETH_, "WE_SAVED_YOUR_ETH");
     }
 
     constructor(address payable _weth) public {

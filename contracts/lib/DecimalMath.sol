@@ -19,8 +19,8 @@ import {SafeMath} from "./SafeMath.sol";
 library DecimalMath {
     using SafeMath for uint256;
 
-    uint256 constant ONE = 10**18;
-    uint256 constant ONE2 = 10**36;
+    uint256 internal constant ONE = 10**18;
+    uint256 internal constant ONE2 = 10**36;
 
     function mulFloor(uint256 target, uint256 d) internal pure returns (uint256) {
         return target.mul(d) / (10**18);

@@ -17,10 +17,6 @@ library UniversalERC20 {
 
     IERC20 private constant ETH_ADDRESS = IERC20(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
 
-    function isETH(IERC20 token) internal pure returns (bool) {
-        return token == ETH_ADDRESS;
-    }
-
     function universalTransfer(
         IERC20 token,
         address payable to,
@@ -55,5 +51,9 @@ library UniversalERC20 {
         } else {
             return token.balanceOf(who);
         }
+    }
+
+    function isETH(IERC20 token) internal pure returns (bool) {
+        return token == ETH_ADDRESS;
     }
 }

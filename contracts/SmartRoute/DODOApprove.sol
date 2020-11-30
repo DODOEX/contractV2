@@ -15,7 +15,12 @@ contract DODOApprove is Ownable {
     using SafeERC20 for IERC20;
     address public dodoProxy;
 
+    // ============ Events ============
+
+    event SetDODOProxy(address indexed oldProxy, address indexed newProxy);
+
     function setDODOProxy(address _dodoProxy) external onlyOwner {
+        emit SetDODOProxy(dodoProxy, _dodoProxy);
         dodoProxy = _dodoProxy;
     }
 
