@@ -29,6 +29,8 @@ library DODOMath {
 
         i is the price of res-V trading pair
 
+        support k=1 & k=0 case
+
         [round down]
     */
     function _GeneralIntegrate(
@@ -53,6 +55,8 @@ library DODOMath {
         i is the price of delta-V trading pair
         give out target of V
 
+        support k=1 & k=0 case
+
         [round down]
     */
     function _SolveQuadraticFunctionForTarget(
@@ -60,7 +64,10 @@ library DODOMath {
         uint256 delta,
         uint256 i,
         uint256 k
-    ) internal pure returns (uint256 V0) {
+    ) internal pure returns (uint256) {
+        if (k == 0) {
+            return V1.add(DecimalMath.mulFloor(i, delta));
+        }
         // V0 = V1*(1+(sqrt-1)/2k)
         // sqrt = √(1+4kidelta/V1)
         // premium = 1+(sqrt-1)/2k
@@ -93,6 +100,8 @@ library DODOMath {
 
         i is the price of delta-V trading pair
 
+        support k=1 & k=0 case
+
         [round down]
     */
     function _SolveQuadraticFunctionForTrade(
@@ -105,6 +114,10 @@ library DODOMath {
         require(V0 > 0, "TARGET_IS_ZERO");
         if (delta == 0) {
             return 0;
+        }
+
+        if (k == 0) {
+            return DecimalMath.mulFloor(i, delta);
         }
 
         if (k == DecimalMath.ONE) {
