@@ -57,7 +57,8 @@ contract DVMAdmin is InitializableOwnable {
     }
 
     // ============ Admin Version Control ============
-    function version() external pure returns (uint256) {
-        return 100; // 1.0.0
+
+    function version() external pure returns (string memory) {
+        return "DVMAdmin 1.0.0"; // 1.0.0
     }
 }

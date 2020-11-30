@@ -16,6 +16,8 @@ import {IDVMAdmin} from "../DODOVendingMachine/intf/IDVMAdmin.sol";
 import {IPermissionManager} from "../lib/PermissionManager.sol";
 
 contract DVMFactory is Ownable {
+    // ============ Templates ============
+
     address public _CLONE_FACTORY_;
     address public _DVM_TEMPLATE_;
     address public _DVM_ADMIN_TEMPLATE_;
@@ -23,10 +25,23 @@ contract DVMFactory is Ownable {
     address public _PERMISSION_MANAGER_TEMPLATE_;
     address public _DEFAULT_GAS_PRICE_SOURCE_;
 
+    // ============ Registry ============
+
     // base -> quote -> DVM address list
     mapping(address => mapping(address => address[])) public _REGISTRY_;
     // creator -> DVM address list
     mapping(address => address[]) public _USER_REGISTRY_;
+
+    // ============ Events ============
+
+    event NewDVM(
+        address indexed baseToken,
+        address indexed quoteToken,
+        address indexed creator,
+        address dvm
+    );
+
+    // ============ Functions ============
 
     constructor(
         address cloneFactory,
@@ -71,6 +86,7 @@ contract DVMFactory is Ownable {
         }
         _REGISTRY_[baseToken][quoteToken].push(newVendingMachine);
         _USER_REGISTRY_[creator].push(newVendingMachine);
+        emit NewDVM(baseToken, quoteToken, creator, newVendingMachine);
     }
 
     function _createFeeRateModel(address owner, uint256 feeRate)
@@ -97,6 +113,8 @@ contract DVMFactory is Ownable {
     function updateAdminTemplate(address _newDVMAdminTemplate) external onlyOwner {
         _DVM_ADMIN_TEMPLATE_ = _newDVMAdminTemplate;
     }
+
+    // ============ View Functions ============
 
     function getVendingMachine(address baseToken, address quoteToken)
         external

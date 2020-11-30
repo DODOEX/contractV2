@@ -104,7 +104,8 @@ contract DPPAdmin is InitializableOwnable {
     }
 
     // ============ Admin Version Control ============
-    function version() external pure returns (uint256) {
-        return 100; // 1.0.0
+
+    function version() external pure returns (string memory) {
+        return "DPPAdmin 1.0.0"; // 1.0.0
     }
 }

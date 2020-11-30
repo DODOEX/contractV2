@@ -189,6 +189,4 @@ contract DVMVault is DVMStorage {
         _approve(owner, spender, value);
     }
     // ===========================================================================
-
-    // function approveAndCall()
 }

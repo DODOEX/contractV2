@@ -17,6 +17,8 @@ import {IDPPAdmin} from "../DODOPrivatePool/intf/IDPPAdmin.sol";
 import {IPermissionManager} from "../lib/PermissionManager.sol";
 
 contract DPPFactory is Ownable {
+    // ============ Templates ============
+
     address public _CLONE_FACTORY_;
     address public _DPP_TEMPLATE_;
     address public _DPP_ADMIN_TEMPLATE_;
@@ -26,10 +28,23 @@ contract DPPFactory is Ownable {
     address public _VALUE_SOURCE_;
     address public _DODO_SMART_APPROVE_;
 
+    // ============ Registry ============
+
     // base -> quote -> DPP address list
     mapping(address => mapping(address => address[])) public _REGISTRY_;
     // creator -> DPP address list
     mapping(address => address[]) public _USER_REGISTRY_;
+
+    // ============ Events ============
+
+    event NewDPP(
+        address indexed baseToken,
+        address indexed quoteToken,
+        address indexed creator,
+        address dpp
+    );
+
+    // ============ Functions ============
 
     constructor(
         address cloneFactory,
@@ -89,6 +104,7 @@ contract DPPFactory is Ownable {
 
         _REGISTRY_[baseToken][quoteToken].push(dppAddress);
         _USER_REGISTRY_[creator].push(dppAddress);
+        emit NewDPP(baseToken, quoteToken, creator, dppAddress);
     }
 
     function _createFeeRateModel(address owner, uint256 feeRate)
@@ -125,6 +141,8 @@ contract DPPFactory is Ownable {
     function updateAdminTemplate(address _newDPPAdminTemplate) external onlyOwner {
         _DPP_ADMIN_TEMPLATE_ = _newDPPAdminTemplate;
     }
+
+    // ============ View Functions ============
 
     function getPrivatePool(address baseToken, address quoteToken)
         external
