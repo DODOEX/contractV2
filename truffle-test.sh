@@ -11,6 +11,12 @@ then
 	truffle test ./test/Proxy/proxy.dvm.test.ts
 fi
 
+if [ "$1"x = "proxy-mix"x ]
+then
+	truffle test ./test/Proxy/proxy.mix.test.ts
+fi
+
+
 if [ "$1"x = "route"x ]
 then
 	truffle test ./test/Route/route.test.ts

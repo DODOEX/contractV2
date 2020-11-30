@@ -43,6 +43,7 @@ export const SMART_APPROVE = "DODOApprove"
 export const DODO_SELL_HELPER = "DODOSellHelper"
 export const DVM_ADMIN_NAME = "DVMAdmin"
 export const DPP_ADMIN_NAME = "DPPAdmin"
+export const DODO_CALLEE_HELPER_NAME = "DODOCalleeHelper"
 
 interface ContractJson {
   abi: any;

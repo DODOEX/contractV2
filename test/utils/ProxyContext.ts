@@ -27,6 +27,7 @@ export class ProxyContext {
   DVMFactory: Contract;
   DPPFactory: Contract;
   SmartApprove: Contract;
+  DODOCalleeHelper: Contract;
 
   //token
   DODO: Contract;
@@ -112,6 +113,11 @@ export class ProxyContext {
       contracts.MINTABLE_ERC20_CONTRACT_NAME,
       ["USDT Token", "USDT", 6]
     );
+
+    this.DODOCalleeHelper = await contracts.newContract(
+      contracts.DODO_CALLEE_HELPER_NAME,
+      [this.WETH.options.address]
+    )
 
     console.log(log.blueText("[Init DVM context]"));
   }

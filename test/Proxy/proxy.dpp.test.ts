@@ -231,7 +231,7 @@ describe("DODOProxyV2.0", () => {
       assert.equal(new BigNumber(b_ETH).isGreaterThan(new BigNumber(a_ETH).plus(decimalStr("1"))),true);
     });
 
-    it("swap - one hop", async () => {
+    it("swap - one jump", async () => {
       await ctx.mintTestToken(trader, ctx.DODO, decimalStr("1000"));
       var b_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
       var b_USDT = await ctx.USDT.methods.balanceOf(trader).call();
@@ -250,7 +250,7 @@ describe("DODOProxyV2.0", () => {
         dodoPairs,
         directions,
         Math.floor(new Date().getTime()/1000 + 60 * 10)
-      ),ctx.sendParam(trader),"swap - one hop");
+      ),ctx.sendParam(trader),"swap - one jump");
       var a_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
       var a_USDT = await ctx.USDT.methods.balanceOf(trader).call();
       console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
@@ -260,7 +260,7 @@ describe("DODOProxyV2.0", () => {
     });
 
 
-    it("swap - two hop", async () => {
+    it("swap - two jump", async () => {
       await ctx.mintTestToken(trader, ctx.DODO, decimalStr("1000"));
       var b_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
       var b_WETH = await ctx.WETH.methods.balanceOf(trader).call();
@@ -281,7 +281,7 @@ describe("DODOProxyV2.0", () => {
         dodoPairs,
         directions,
         Math.floor(new Date().getTime()/1000 + 60 * 10)
-      ),ctx.sendParam(trader),"swap - two hop");
+      ),ctx.sendParam(trader),"swap - two jump");
       var a_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
       var a_WETH = await ctx.WETH.methods.balanceOf(trader).call();
       console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
@@ -290,7 +290,7 @@ describe("DODOProxyV2.0", () => {
       assert.equal(a_WETH,"247088897795331236");
     });
 
-    it("swap - two hop - inETH", async () => {
+    it("swap - two jump - inETH", async () => {
       var b_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
       var b_WETH = await ctx.WETH.methods.balanceOf(trader).call();
       var b_ETH = await ctx.Web3.eth.getBalance(trader);
@@ -310,7 +310,7 @@ describe("DODOProxyV2.0", () => {
         dodoPairs,
         directions,
         Math.floor(new Date().getTime()/1000 + 60 * 10)
-      ),ctx.sendParam(trader,"1"),"swap - two hop - inETH");
+      ),ctx.sendParam(trader,"1"),"swap - two jump - inETH");
       var a_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
       var a_WETH = await ctx.WETH.methods.balanceOf(trader).call();
       var a_ETH = await ctx.Web3.eth.getBalance(trader);
@@ -321,7 +321,7 @@ describe("DODOProxyV2.0", () => {
     });
 
 
-    it("swap - two hop - outETH", async () => {
+    it("swap - two jump - outETH", async () => {
       await ctx.mintTestToken(trader, ctx.DODO, decimalStr("100000"));
       var b_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
       var b_WETH = await ctx.WETH.methods.balanceOf(trader).call();
@@ -342,7 +342,7 @@ describe("DODOProxyV2.0", () => {
         dodoPairs,
         directions,
         Math.floor(new Date().getTime()/1000 + 60 * 10)
-      ),ctx.sendParam(trader),"swap - two hop - outETH");
+      ),ctx.sendParam(trader),"swap - two jump - outETH");
       var a_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
       var a_WETH = await ctx.WETH.methods.balanceOf(trader).call();
       var a_ETH = await ctx.Web3.eth.getBalance(trader);

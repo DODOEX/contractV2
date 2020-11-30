@@ -21,7 +21,7 @@ library DODOMath {
     using SafeMath for uint256;
 
     /*
-        Integrate dodo curve fron V1 to V2
+        Integrate dodo curve from V1 to V2
         require V0>=V1>=V2>0
         res = (1-k)i(V1-V2)+ikV0*V0(1/V2-1/V1)
         let V1-V2=delta
