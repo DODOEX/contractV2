@@ -24,11 +24,9 @@ async function init(ctx: DVMContext): Promise<void> {
   await ctx.transferBaseToDVM(lp, decimalStr("10"))
   await ctx.transferQuoteToDVM(lp, decimalStr("1000"))
   await ctx.DVM.methods.buyShares(lp).send(ctx.sendParam(lp));
-
-  console.log("deposit")
 }
 
-describe("AMMLikeCase", () => {
+describe("ConstPriceCase", () => {
   let snapshotId: string;
   let ctx: DVMContext;
 
@@ -36,8 +34,8 @@ describe("AMMLikeCase", () => {
     let AMMLikeDVMContextInitConfig = {
       lpFeeRate: decimalStr("0.002"),
       mtFeeRate: decimalStr("0.001"),
-      k: decimalStr("1"),
-      i: "1",
+      k: "0",
+      i: decimalStr("100"),
     };
     ctx = await getDVMContext(AMMLikeDVMContextInitConfig);
     await init(ctx);
@@ -54,7 +52,7 @@ describe("AMMLikeCase", () => {
   describe("trade", () => {
 
     it("basic state", async () => {
-      console.log(await ctx.DVM.methods.getMidPrice().call())
+      assert.equal(await ctx.DVM.methods.getMidPrice().call(), decimalStr("100"))
     })
 
     it("buy", async () => {
@@ -65,7 +63,7 @@ describe("AMMLikeCase", () => {
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
-        "11661666666528194445"
+        decimalStr("11.994")
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(trader).call(),
@@ -75,7 +73,7 @@ describe("AMMLikeCase", () => {
       // vault balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
-        "8336666666805277778"
+        decimalStr("8.004")
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
@@ -85,7 +83,7 @@ describe("AMMLikeCase", () => {
       // maintainer balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(),
-        "1666666666527777"
+        decimalStr("0.002")
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
@@ -106,7 +104,7 @@ describe("AMMLikeCase", () => {
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(trader).call(),
-        "1090636363645427272728"
+        decimalStr("1099.7")
       );
 
       // vault balances
@@ -116,7 +114,7 @@ describe("AMMLikeCase", () => {
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
-        "909272727263654545454"
+        decimalStr("900.2")
       );
 
       // maintainer balances
@@ -126,7 +124,7 @@ describe("AMMLikeCase", () => {
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
-        "90909090918181818"
+        decimalStr("0.1")
       );
     });
   });

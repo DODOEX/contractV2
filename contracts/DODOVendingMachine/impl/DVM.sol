@@ -38,7 +38,7 @@ contract DVM is DVMTrader, DVMFunding {
         require(i > 0 && i <= 10**36);
         _I_ = i;
 
-        require(k > 0 && k <= 10**18);
+        require(k <= 10**18);
         _K_ = k;
 
         _LP_FEE_RATE_MODEL_ = IFeeRateModel(lpFeeRateModel);
@@ -64,7 +64,7 @@ contract DVM is DVMTrader, DVMFunding {
                 // keccak256('EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)'),
                 0x8b73c3c69bb8fe3d512ecc4cf759cc79239f7b179b0ffacaa9a75d522b39400f,
                 keccak256(bytes(name)),
-                keccak256(bytes('1')),
+                keccak256(bytes("1")),
                 chainId,
                 address(this)
             )

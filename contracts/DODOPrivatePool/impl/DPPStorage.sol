@@ -127,7 +127,7 @@ contract DPPStorage is InitializableOwnable, ReentrancyGuard {
     function _checkIK() internal view {
         uint256 k = _K_.get();
         uint256 i = _I_.get();
-        require(k > 0 && k <= 1e18, "K_OUT_OF_RANGE");
+        require(k <= 1e18, "K_OUT_OF_RANGE");
         require(i > 0 && i <= 1e36, "I_OUT_OF_RANGE");
     }
 }

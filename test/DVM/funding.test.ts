@@ -195,6 +195,10 @@ describe("Funding", () => {
         ctx.DVM.methods.sellShares(vaultShares, bob, 0, decimalStr("10000"), "0x", MAX_UINT256).send(ctx.sendParam(lp)),
         "WITHDRAW_NOT_ENOUGH"
       )
+      await truffleAssert.reverts(
+        ctx.DVM.methods.sellShares(vaultShares, bob, 0, decimalStr("10000"), "0x", "0").send(ctx.sendParam(lp)),
+        "TIME_EXPIRED"
+      )
     })
   })
 });
