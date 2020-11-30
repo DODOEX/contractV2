@@ -5,12 +5,11 @@
 
 */
 
-import * as assert from 'assert';
 import BigNumber from 'bignumber.js';
 import { DODOContext, getDODOContext } from '../utils-v1/Context-route';
 import { decimalStr, MAX_UINT256, fromWei, mweiStr } from '../utils-v1/Converter';
 import { logGas } from '../utils-v1/Log';
-import { DODOHelper } from '../utils-v1/dodoHelper';
+import * as contracts from '../utils-v1/Contracts';
 
 let lp: string;
 let trader: string;
@@ -90,18 +89,18 @@ async function calcRoute(ctx: DODOContext, fromTokenAmount: string, slippage: nu
     let curPair = pairs[i]
     dodoPairs.push(curPair.pair)
     let curContact = pairs[i].pairContract
-    if (routes[i].address == '0x000000000000000000000000000000000000000E') {
+    if (routes[i].address == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
       directions[i] = 0;
       swapAmount = await curContact.methods.querySellBaseToken(swapAmount).call();
-      console.log(i + "-swapAmount:", swapAmount);
+      // console.log(i + "-swapAmount:", swapAmount);
     } else if (curPair.base === routes[i].address) {
       directions[i] = 0;
       swapAmount = await curContact.methods.querySellBaseToken(swapAmount).call();
-      console.log(i + "-swapAmount:", swapAmount);
+      // console.log(i + "-swapAmount:", swapAmount);
     } else {
       directions[i] = 1;
       swapAmount = await ctx.DODOSellHelper.methods.querySellQuoteToken(curPair.pair, swapAmount).call();
-      console.log(i + "-swapAmount:", swapAmount);
+      // console.log(i + "-swapAmount:", swapAmount);
     }
   }
 
@@ -110,7 +109,7 @@ async function calcRoute(ctx: DODOContext, fromTokenAmount: string, slippage: nu
   console.log("minAmount:",toAmount);
   let deadline = Math.floor(new Date().getTime()/1000 + 60 * 10);
 
-  return ctx.SmartSwap.methods.dodoSwap(
+  return ctx.SmartSwap.methods.dodoSwapV1(
     routes[0].address,
     routes[routes.length - 1].address,
     fromTokenAmount,
@@ -126,7 +125,10 @@ describe("Trader", () => {
   let ctx: DODOContext;
 
   before(async () => {
-    ctx = await getDODOContext();
+    let ETH = await contracts.newContract(
+      contracts.WETH_CONTRACT_NAME
+    );
+    ctx = await getDODOContext(ETH.options.address);
     await initDODO_USDT(ctx);
     await initUSDT_USDC(ctx);
     await initWETH_USDC(ctx);
@@ -276,7 +278,7 @@ describe("Trader", () => {
       console.log("weth contract Before:" + fromWei(b_w_eth, 'ether'))
       //set route path
       var routes = [{
-        address: "0x000000000000000000000000000000000000000E",
+        address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
         decimals: 18
       }, {
         address: ctx.USDC.options.address,
@@ -315,7 +317,7 @@ describe("Trader", () => {
       console.log("weth contract Before:" + fromWei(b_w_eth, 'ether'))
       //set route path
       var routes = [{
-        address: "0x000000000000000000000000000000000000000E",
+        address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
         decimals: 18
       }, {
         address: ctx.USDC.options.address,
@@ -373,7 +375,7 @@ describe("Trader", () => {
         address: ctx.USDC.options.address,
         decimals: 6
       }, {
-        address: "0x000000000000000000000000000000000000000E",
+        address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
         decimals: 18
       }];
 

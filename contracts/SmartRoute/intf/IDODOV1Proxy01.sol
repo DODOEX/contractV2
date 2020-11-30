@@ -9,14 +9,14 @@ pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
 interface IDODOV1Proxy01 {
-    function dodoSwap(
+    function dodoSwapV1(
         address fromToken,
         address toToken,
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
         address[] memory dodoPairs,
         uint8[] memory directions,
-        uint256 deadline
+        uint256 deadLine
     ) external payable returns (uint256 returnAmount);
 
     function externalSwap(
@@ -27,6 +27,6 @@ interface IDODOV1Proxy01 {
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
         bytes memory callDataConcat,
-        uint256 deadline
+        uint256 deadLine
     ) external payable returns (uint256 returnAmount);
 }

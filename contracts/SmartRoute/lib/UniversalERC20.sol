@@ -53,6 +53,10 @@ library UniversalERC20 {
         }
     }
 
+    function tokenBalanceOf(IERC20 token, address who) internal view returns (uint256) {
+        return token.balanceOf(who);
+    }
+
     function isETH(IERC20 token) internal pure returns (bool) {
         return token == ETH_ADDRESS;
     }

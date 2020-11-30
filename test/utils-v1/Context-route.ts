@@ -69,14 +69,13 @@ export class DODOContext {
   DODO_USDT_ORACLE: Contract;
   USDT_USDC_ORACLE: Contract;
   WETH_USDC_ORACLE: Contract;
-  //SmartRoute
   SmartSwap: Contract;
   SmartApprove: Contract;
   DODOSellHelper: Contract;
 
   constructor() { }
 
-  async init(config: DODOContextInitConfig) {
+  async init(config: DODOContextInitConfig,weth:string) {
     this.k = config.k;
     this.mtFeeRate = config.mtFeeRate;
     this.lpFeeRate = config.lpFeeRate;
@@ -115,9 +114,8 @@ export class DODOContext {
       contracts.TEST_ERC20_CONTRACT_NAME,
       ["USDC", 6]
     );
-    this.WETH = await contracts.newContract(
-      contracts.WETH_CONTRACT_NAME
-    );
+
+    this.WETH = contracts.getContractWithAddress(contracts.WETH_CONTRACT_NAME, weth);
 
 
     //创建交易对
@@ -227,7 +225,7 @@ export class DODOContext {
       [this.SmartApprove.options.address, this.DODOSellHelper.options.address, this.WETH.options.address]
     );
 
-    await this.SmartApprove.methods.setSmartSwap(this.SmartSwap.options.address).send(this.sendParam(this.Deployer));
+    await this.SmartApprove.methods.setDODOProxy(this.SmartSwap.options.address).send(this.sendParam(this.Deployer));
 
     console.log(log.blueText("[Init dodo context]"));
   }
@@ -266,9 +264,9 @@ export class DODOContext {
 }
 
 export async function getDODOContext(
-  config: DODOContextInitConfig = DefaultDODOContextInitConfig
+  weth:string, config: DODOContextInitConfig = DefaultDODOContextInitConfig
 ): Promise<DODOContext> {
   var context = new DODOContext();
-  await context.init(config);
+  await context.init(config,weth);
   return context;
 }

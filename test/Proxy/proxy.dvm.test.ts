@@ -5,7 +5,6 @@
 
 */
 
-// import * as assert from 'assert';
 const ethUtil = require('ethereumjs-util');
 import { SignHelper } from "../utils/SignHelper";
 import BigNumber from "bignumber.js";
@@ -71,9 +70,6 @@ async function init(ctx: ProxyContext): Promise<void> {
   await ctx.mintTestToken(lp, ctx.USDT, mweiStr("1000000"));
   await ctx.mintTestToken(project, ctx.USDT, mweiStr("1000000"));
 
-  // await ctx.WETH.methods.deposit().send(ctx.sendParam(lp, '80'));
-  // await ctx.WETH.methods.deposit().send(ctx.sendParam(project, '80'));
-
   await ctx.approveProxy(lp);
   await ctx.approveProxy(project);
   await ctx.approveProxy(trader);
@@ -109,7 +105,10 @@ describe("DODOProxyV2.0", () => {
   let DVM_WETH_USDT: Contract;
 
   before(async () => {
-    ctx = await getProxyContext();
+    let ETH = await contracts.newContract(
+      contracts.WETH_CONTRACT_NAME
+    );
+    ctx = await getProxyContext(ETH.options.address);
     await init(ctx);
     dvm_DODO_USDT = await initCreateDVM(ctx,ctx.DODO.options.address,ctx.USDT.options.address,decimalStr("100000"),mweiStr("30000"), "0",mweiStr("0.3"));
     DVM_DODO_USDT = contracts.getContractWithAddress(contracts.DVM_NAME,dvm_DODO_USDT);
@@ -285,7 +284,7 @@ describe("DODOProxyV2.0", () => {
       var directions = [
         0
       ]
-      var tx = await logGas(await ctx.DODOProxy.methods.dodoSwapTokenToToken(
+      var tx = await logGas(await ctx.DODOProxy.methods.dodoSwapV2TokenToToken(
         trader,
         ctx.DODO.options.address,
         ctx.USDT.options.address,
@@ -316,7 +315,7 @@ describe("DODOProxyV2.0", () => {
         0,
         1
       ]
-      var tx = await logGas(await ctx.DODOProxy.methods.dodoSwapTokenToToken(
+      var tx = await logGas(await ctx.DODOProxy.methods.dodoSwapV2TokenToToken(
         trader,
         ctx.DODO.options.address,
         ctx.WETH.options.address,
@@ -346,10 +345,9 @@ describe("DODOProxyV2.0", () => {
         0,
         1
       ]
-      var tx = await logGas(await ctx.DODOProxy.methods.dodoSwapETHToToken(
+      var tx = await logGas(await ctx.DODOProxy.methods.dodoSwapV2ETHToToken(
         trader,
         ctx.DODO.options.address,
-        decimalStr("1"),
         1,
         dodoPairs,
         directions,
@@ -378,7 +376,7 @@ describe("DODOProxyV2.0", () => {
         0,
         1
       ]
-      var tx = await logGas(await ctx.DODOProxy.methods.dodoSwapTokenToETH(
+      var tx = await logGas(await ctx.DODOProxy.methods.dodoSwapV2TokenToETH(
         trader,
         ctx.DODO.options.address,
         decimalStr("10000"),

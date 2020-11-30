@@ -41,7 +41,7 @@ export class ProxyContext {
 
   constructor() { }
 
-  async init() {
+  async init(weth:string) {
     this.EVM = new EVM();
     this.Web3 = getDefaultWeb3();
 
@@ -50,9 +50,7 @@ export class ProxyContext {
     this.Maintainer = allAccounts[1];
     this.SpareAccounts = allAccounts.slice(2, 10);
 
-    this.WETH = await contracts.newContract(
-      contracts.WETH_CONTRACT_NAME
-    );
+    this.WETH = contracts.getContractWithAddress(contracts.WETH_CONTRACT_NAME, weth);
 
     var cloneFactory = await contracts.newContract(
       contracts.CLONE_FACTORY_CONTRACT_NAME
@@ -132,7 +130,6 @@ export class ProxyContext {
     return {
       from: sender,
       gas: process.env["COVERAGE"] ? 10000000000 : 7000000,
-      // gasPrice: process.env.GAS_PRICE,
       gasPrice: mweiStr("1000"),
       value: decimalStr(value),
     };
@@ -155,8 +152,8 @@ export class ProxyContext {
   }
 }
 
-export async function getProxyContext(): Promise<ProxyContext> {
+export async function getProxyContext(weth:string): Promise<ProxyContext> {
   var context = new ProxyContext();
-  await context.init();
+  await context.init(weth);
   return context;
 }

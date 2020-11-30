@@ -16,6 +16,10 @@ then
 	truffle test ./test/Proxy/proxy.mix.test.ts
 fi
 
+if [ "$1"x = "proxy-classical"x ]
+then
+	truffle test ./test/Proxy/proxy.classical.test.ts
+fi
 
 if [ "$1"x = "route"x ]
 then

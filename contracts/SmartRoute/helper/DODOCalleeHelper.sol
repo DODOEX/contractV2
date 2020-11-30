@@ -25,8 +25,8 @@ contract DODOCalleeHelper is ReentrancyGuard {
         require(msg.sender == _WETH_, "WE_SAVED_YOUR_ETH");
     }
 
-    constructor(address payable _weth) public {
-        _WETH_ = _weth;
+    constructor(address payable weth) public {
+        _WETH_ = weth;
     }
 
     function DVMSellShareCall(
