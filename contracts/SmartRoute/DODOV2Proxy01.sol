@@ -18,9 +18,9 @@ import {SafeMath} from "../lib/SafeMath.sol";
 import {UniversalERC20} from "./lib/UniversalERC20.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
-// import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
 
-contract DODOV2Proxy01 is IDODOV2Proxy01 {
+contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
     using SafeMath for uint256;
     using UniversalERC20 for IERC20;
 
@@ -80,6 +80,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         virtual
         override
         payable
+        preventReentrant
         judgeExpired(deadline)
         returns (address newVendingMachine, uint256 shares)
     {
@@ -160,6 +161,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         virtual
         override
         payable
+        preventReentrant
         judgeExpired(deadline)
         returns (
             uint256 shares,
@@ -193,7 +195,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 quoteMinOutAmount,
         uint8 flag, // 0 -ERC20, 1 - baseOutETH, 2 - quoteOutETH
         uint256 deadline
-    ) public virtual override judgeExpired(deadline) returns (uint256 baseOutAmount, uint256 quoteOutAmount) {
+    ) public virtual override preventReentrant judgeExpired(deadline) returns (uint256 baseOutAmount, uint256 quoteOutAmount) {
         _deposit(msg.sender,DVMAddress,DVMAddress,sharesAmount,false);
         if(flag == 0)
             (baseOutAmount,quoteOutAmount) = IDODOV2(DVMAddress).sellShares(to);
@@ -215,7 +217,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint8 flag, // 0 -ERC20, 1 - baseOutETH, 2 - quoteOutETH
         uint256 deadline,
         bool approveMax, uint8 v, bytes32 r, bytes32 s
-    ) external virtual override returns (uint256 baseOutAmount, uint256 quoteOutAmount) {
+    ) external virtual override preventReentrant returns (uint256 baseOutAmount, uint256 quoteOutAmount) {
         uint256 value = approveMax ? uint256(-1) : sharesAmount;
         IDODOV2(DVMAddress).permit(msg.sender, dodoApprove, value, deadline, v, r, s);
         (baseOutAmount,quoteOutAmount) = removeDVMLiquidity(DVMAddress,to,sharesAmount,baseMinOutAmount,quoteMinOutAmount,flag,deadline);
@@ -232,7 +234,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 i,
         uint256 k,
         uint256 deadline
-    ) external virtual override payable judgeExpired(deadline) returns (address newPrivatePool) {
+    ) external virtual override payable preventReentrant judgeExpired(deadline) returns (address newPrivatePool) {
         newPrivatePool = IDODOV2(dppFactory).createDODOPrivatePool();
 
         address _baseToken = baseToken;
@@ -273,7 +275,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 quoteOutAmount,
         uint8 flag, // 0 - ERC20, 1 - baseInETH, 2 - quoteInETH, 3 - baseOutETH, 4 - quoteOutETH
         uint256 deadline
-    ) external virtual override payable judgeExpired(deadline) {
+    ) external virtual override payable preventReentrant judgeExpired(deadline) {
         _deposit(
             msg.sender,
             DPPAddress,
@@ -311,7 +313,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         address[] memory dodoPairs,
         uint8[] memory directions,
         uint256 deadline
-    ) external virtual override payable judgeExpired(deadline) returns (uint256 returnAmount) {
+    ) external virtual override payable preventReentrant judgeExpired(deadline) returns (uint256 returnAmount) {
         uint256 originToTokenBalance = IERC20(toToken).balanceOf(msg.sender);
 
         require(msg.value == fromTokenAmount, "DODOV2Proxy01: ETH_AMOUNT_NOT_MATCH");
@@ -354,7 +356,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         address[] memory dodoPairs,
         uint8[] memory directions,
         uint256 deadline
-    ) external virtual override judgeExpired(deadline) returns (uint256 returnAmount) {
+    ) external virtual override preventReentrant judgeExpired(deadline) returns (uint256 returnAmount) {
         IDODOApprove(dodoApprove).claimTokens(fromToken, msg.sender, dodoPairs[0], fromTokenAmount);
 
         for (uint256 i = 0; i < dodoPairs.length; i++) {
@@ -395,7 +397,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         address[] memory dodoPairs,
         uint8[] memory directions,
         uint256 deadline
-    ) external virtual override judgeExpired(deadline) returns (uint256 returnAmount) {
+    ) external virtual override preventReentrant judgeExpired(deadline) returns (uint256 returnAmount) {
         uint256 originToTokenBalance = IERC20(toToken).balanceOf(msg.sender);
         IDODOApprove(dodoApprove).claimTokens(fromToken, msg.sender, dodoPairs[0], fromTokenAmount);
 
@@ -435,7 +437,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 minReturnAmount,
         bytes memory callDataConcat,
         uint256 deadline
-    ) external virtual override payable judgeExpired(deadline) returns (uint256 returnAmount) {
+    ) external virtual override payable preventReentrant judgeExpired(deadline) returns (uint256 returnAmount) {
         if (fromToken != ETH_ADDRESS) {
             IDODOApprove(dodoApprove).claimTokens(fromToken, msg.sender, address(this), fromTokenAmount);
             IERC20(fromToken).universalApproveMax(approveTarget, fromTokenAmount);
@@ -472,7 +474,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         address[] memory dodoPairs,
         uint8[] memory directions,
         uint256 deadline
-    ) external virtual override payable judgeExpired(deadline) returns (uint256 returnAmount) {
+    ) external virtual override payable preventReentrant judgeExpired(deadline) returns (uint256 returnAmount) {
         _deposit(msg.sender,address(this),fromToken,fromTokenAmount, fromToken == ETH_ADDRESS);
 
         for (uint256 i = 0; i < dodoPairs.length; i++) {

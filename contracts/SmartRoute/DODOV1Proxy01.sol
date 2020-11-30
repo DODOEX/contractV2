@@ -15,9 +15,9 @@ import {IDODOSellHelper} from './helper/DODOSellHelper.sol';
 import {IWETH} from "../intf/IWETH.sol";
 import {IDODOApprove} from "../intf/IDODOApprove.sol";
 import {IDODOV1Proxy01} from "./intf/IDODOV1Proxy01.sol";
-// import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
 
-contract DODOV1Proxy01 is IDODOV1Proxy01 {
+contract DODOV1Proxy01 is IDODOV1Proxy01, ReentrancyGuard {
     using SafeMath for uint256;
     using UniversalERC20 for IERC20;
 
@@ -62,7 +62,7 @@ contract DODOV1Proxy01 is IDODOV1Proxy01 {
         address[] memory dodoPairs,
         uint8[] memory directions,
         uint256 deadline
-    ) external virtual override payable judgeExpired(deadline) returns (uint256 returnAmount) {
+    ) external virtual override payable preventReentrant judgeExpired(deadline) returns (uint256 returnAmount) {
         if (fromToken != ETH_ADDRESS) {
             IDODOApprove(dodoApprove).claimTokens(
                 fromToken,
@@ -120,7 +120,7 @@ contract DODOV1Proxy01 is IDODOV1Proxy01 {
         uint256 minReturnAmount,
         bytes memory callDataConcat,
         uint256 deadline
-    ) external virtual override payable judgeExpired(deadline) returns (uint256 returnAmount) {
+    ) external virtual override payable preventReentrant judgeExpired(deadline) returns (uint256 returnAmount) {
         if (fromToken != ETH_ADDRESS) {
             IDODOApprove(dodoApprove).claimTokens(
                 fromToken,
