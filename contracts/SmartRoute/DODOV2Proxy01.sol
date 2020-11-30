@@ -9,12 +9,16 @@ pragma solidity 0.6.9;
 
 import {IDODOV2Proxy01} from "./intf/IDODOV2Proxy01.sol";
 import {IDODOV2} from "./intf/IDODOV2.sol";
+import {IDODOV1} from "./intf/IDODOV1.sol";
+import {IDODOApprove} from '../intf/IDODOApprove.sol';
+import {IDODOSellHelper} from './helper/DODOSellHelper.sol';
 import {IERC20} from "../intf/IERC20.sol";
 import {IWETH} from "../intf/IWETH.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {UniversalERC20} from "./lib/UniversalERC20.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
+// import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
 
 contract DODOV2Proxy01 is IDODOV2Proxy01 {
     using SafeMath for uint256;
@@ -23,6 +27,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
     address constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     address payable public _WETH_;
     address public dodoApprove;
+    address public dodoSellHelper;
     address public dvmFactory;
     address public dppFactory;
 
@@ -35,7 +40,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
 
     receive() external payable {}
 
-    //============================== events ==================================
+
     event OrderHistory(
         address indexed fromToken,
         address indexed toToken,
@@ -45,18 +50,18 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 timeStamp
     );
 
-    //========================================================================
-
     constructor(
         address _dvmFactory,
         address _dppFactory,
         address payable _weth,
-        address _dodoApprove
+        address _dodoApprove,
+        address _dodoSellHelper
     ) public {
         dvmFactory = _dvmFactory;
         dppFactory = _dppFactory;
         _WETH_ = _weth;
         dodoApprove = _dodoApprove;
+        dodoSellHelper = _dodoSellHelper;
     }
 
     function createDODOVendingMachine(
@@ -179,7 +184,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         (shares, , ) = IDODOV2(_dvm).buyShares(to);
     }
 
-
+    // ===================== Permit ======================
     function removeDVMLiquidity(
         address DVMAddress,
         address payable to,
@@ -201,8 +206,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         }
     }
 
-
-    // ================ Permit ======================
     function removeDVMLiquidityWithPermit(
         address DVMAddress,
         address payable to,
@@ -352,7 +355,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint8[] memory directions,
         uint256 deadline
     ) external virtual override judgeExpired(deadline) returns (uint256 returnAmount) {
-        IDODOV2(dodoApprove).claimTokens(fromToken, msg.sender, dodoPairs[0], fromTokenAmount);
+        IDODOApprove(dodoApprove).claimTokens(fromToken, msg.sender, dodoPairs[0], fromTokenAmount);
 
         for (uint256 i = 0; i < dodoPairs.length; i++) {
             if (i == dodoPairs.length - 1) {
@@ -394,7 +397,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 deadline
     ) external virtual override judgeExpired(deadline) returns (uint256 returnAmount) {
         uint256 originToTokenBalance = IERC20(toToken).balanceOf(msg.sender);
-        IDODOV2(dodoApprove).claimTokens(fromToken, msg.sender, dodoPairs[0], fromTokenAmount);
+        IDODOApprove(dodoApprove).claimTokens(fromToken, msg.sender, dodoPairs[0], fromTokenAmount);
 
         for (uint256 i = 0; i < dodoPairs.length; i++) {
             if (i == dodoPairs.length - 1) {
@@ -434,7 +437,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         uint256 deadline
     ) external virtual override payable judgeExpired(deadline) returns (uint256 returnAmount) {
         if (fromToken != ETH_ADDRESS) {
-            IDODOV2(dodoApprove).claimTokens(fromToken, msg.sender, address(this), fromTokenAmount);
+            IDODOApprove(dodoApprove).claimTokens(fromToken, msg.sender, address(this), fromTokenAmount);
             IERC20(fromToken).universalApproveMax(approveTarget, fromTokenAmount);
         }
 
@@ -461,6 +464,51 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         );
     }
 
+    function dodoSwap(
+        address fromToken,
+        address toToken,
+        uint256 fromTokenAmount,
+        uint256 minReturnAmount,
+        address[] memory dodoPairs,
+        uint8[] memory directions,
+        uint256 deadline
+    ) external virtual override payable judgeExpired(deadline) returns (uint256 returnAmount) {
+        _deposit(msg.sender,address(this),fromToken,fromTokenAmount, fromToken == ETH_ADDRESS);
+
+        for (uint256 i = 0; i < dodoPairs.length; i++) {
+            address curDodoPair = dodoPairs[i];
+            if (directions[i] == 0) {
+                address curDodoBase = IDODOV1(curDodoPair)._BASE_TOKEN_();
+                uint256 curAmountIn = IERC20(curDodoBase).balanceOf(address(this));
+                IERC20(curDodoBase).universalApproveMax(curDodoPair, curAmountIn);
+                IDODOV1(curDodoPair).sellBaseToken(curAmountIn, 0, "");
+            } else {
+                address curDodoQuote = IDODOV1(curDodoPair)._QUOTE_TOKEN_();
+                uint256 curAmountIn = IERC20(curDodoQuote).balanceOf(address(this));
+                IERC20(curDodoQuote).universalApproveMax(curDodoPair, curAmountIn);
+                uint256 canBuyBaseAmount = IDODOSellHelper(dodoSellHelper).querySellQuoteToken(
+                    curDodoPair,
+                    curAmountIn
+                );
+                IDODOV1(curDodoPair).buyBaseToken(canBuyBaseAmount, curAmountIn, "");
+            }
+        }
+
+        returnAmount = IERC20(toToken).universalBalanceOf(address(this));
+        require(returnAmount >= minReturnAmount, "DODOV2Proxy01: Return amount is not enough");
+        
+        _withdraw(msg.sender, toToken, returnAmount, toToken == ETH_ADDRESS);
+
+        emit OrderHistory(
+            fromToken,
+            toToken,
+            msg.sender,
+            fromTokenAmount,
+            returnAmount,
+            block.timestamp
+        );
+    }
+
     function _deposit(
         address from,
         address to,
@@ -471,10 +519,11 @@ contract DODOV2Proxy01 is IDODOV2Proxy01 {
         if (isETH) {
             if (amount > 0) {
                 IWETH(_WETH_).deposit{value: amount}();
-                SafeERC20.safeTransfer(IERC20(_WETH_), to, amount);
+                if(to != address(this)) 
+                    SafeERC20.safeTransfer(IERC20(_WETH_), to, amount);
             }
         } else {
-            IDODOV2(dodoApprove).claimTokens(token, from, to, amount);
+            IDODOApprove(dodoApprove).claimTokens(token, from, to, amount);
         }
     }
 

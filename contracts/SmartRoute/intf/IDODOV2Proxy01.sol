@@ -8,7 +8,9 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-interface IDODOV2Proxy01 {
+import {IDODOV1Proxy01} from './IDODOV1Proxy01.sol';
+
+interface IDODOV2Proxy01 is IDODOV1Proxy01 {
     function dodoSwapETHToToken(
         address payable assetTo,
         address toToken,
@@ -39,17 +41,6 @@ interface IDODOV2Proxy01 {
         uint8[] memory directions,
         uint256 deadline
     ) external returns (uint256 returnAmount);
-
-    function externalSwap(
-        address fromToken,
-        address toToken,
-        address approveTarget,
-        address to,
-        uint256 fromTokenAmount,
-        uint256 minReturnAmount,
-        bytes memory callDataConcat,
-        uint256 deadline
-    ) external payable returns (uint256 returnAmount);
 
     function createDODOVendingMachine(
         address assetTo,
@@ -82,6 +73,8 @@ interface IDODOV2Proxy01 {
             uint256 quoteAdjustedInAmount
         );
 
+    // ====================  Permit ================================
+
     function removeDVMLiquidity(
         address DVMAddress,
         address payable to,
@@ -92,7 +85,6 @@ interface IDODOV2Proxy01 {
         uint256 deadline
     ) external returns (uint256 baseOutAmount, uint256 quoteOutAmount);
 
-    // ====================  Permit ================================
     function removeDVMLiquidityWithPermit(
         address DVMAddress,
         address payable to,

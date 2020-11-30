@@ -10,12 +10,14 @@ pragma solidity 0.6.9;
 import {IERC20} from "../intf/IERC20.sol";
 import {UniversalERC20} from "./lib/UniversalERC20.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
-import {IDODOSellHelper} from "./intf/IDODOSellHelper.sol";
-import {IDODOApprove} from "../intf/IDODOApprove.sol";
 import {IDODOV1} from "./intf/IDODOV1.sol";
+import {IDODOSellHelper} from './helper/DODOSellHelper.sol';
 import {IWETH} from "../intf/IWETH.sol";
+import {IDODOApprove} from "../intf/IDODOApprove.sol";
+import {IDODOV1Proxy01} from "./intf/IDODOV1Proxy01.sol";
+// import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
 
-contract DODOV1Proxy01 {
+contract DODOV1Proxy01 is IDODOV1Proxy01 {
     using SafeMath for uint256;
     using UniversalERC20 for IERC20;
 
@@ -60,7 +62,7 @@ contract DODOV1Proxy01 {
         address[] memory dodoPairs,
         uint8[] memory directions,
         uint256 deadline
-    ) external payable judgeExpired(deadline) returns (uint256 returnAmount) {
+    ) external virtual override payable judgeExpired(deadline) returns (uint256 returnAmount) {
         if (fromToken != ETH_ADDRESS) {
             IDODOApprove(dodoApprove).claimTokens(
                 fromToken,
@@ -92,15 +94,13 @@ contract DODOV1Proxy01 {
             }
         }
 
-        if (toToken == ETH_ADDRESS) {
-            uint256 wethAmount = IWETH(_WETH_).balanceOf(address(this));
-            IWETH(_WETH_).withdraw(wethAmount);
-        }
-
         returnAmount = IERC20(toToken).universalBalanceOf(address(this));
-
         require(returnAmount >= minReturnAmount, "DODOV1Proxy01: Return amount is not enough");
+
+        if (toToken == ETH_ADDRESS) 
+            IWETH(_WETH_).withdraw(returnAmount);
         IERC20(toToken).universalTransfer(msg.sender, returnAmount);
+        
         emit OrderHistory(
             fromToken,
             toToken,
@@ -120,7 +120,7 @@ contract DODOV1Proxy01 {
         uint256 minReturnAmount,
         bytes memory callDataConcat,
         uint256 deadline
-    ) external payable judgeExpired(deadline) returns (uint256 returnAmount) {
+    ) external virtual override payable judgeExpired(deadline) returns (uint256 returnAmount) {
         if (fromToken != ETH_ADDRESS) {
             IDODOApprove(dodoApprove).claimTokens(
                 fromToken,

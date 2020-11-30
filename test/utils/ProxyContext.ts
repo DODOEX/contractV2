@@ -28,6 +28,7 @@ export class ProxyContext {
   DPPFactory: Contract;
   SmartApprove: Contract;
   DODOCalleeHelper: Contract;
+  DODOSellHelper: Contract;
 
   //token
   DODO: Contract;
@@ -94,12 +95,17 @@ export class ProxyContext {
       ]
     )
 
+    this.DODOSellHelper = await contracts.newContract(
+      contracts.DODO_SELL_HELPER
+    );
+
     this.DODOProxy = await contracts.newContract(contracts.DODO_PROXY_NAME,
       [
         this.DVMFactory.options.address,
         this.DPPFactory.options.address,
         this.WETH.options.address,
-        this.SmartApprove.options.address
+        this.SmartApprove.options.address,
+        this.DODOSellHelper.options.address
       ]
     );
 

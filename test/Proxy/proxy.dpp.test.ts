@@ -259,7 +259,6 @@ describe("DODOProxyV2.0", () => {
       assert.equal(a_USDT,"149474926");
     });
 
-
     it("swap - two jump", async () => {
       await ctx.mintTestToken(trader, ctx.DODO, decimalStr("1000"));
       var b_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
@@ -355,7 +354,5 @@ describe("DODOProxyV2.0", () => {
         "3760778359898791539"
       )
     });
-
-
   });
 });

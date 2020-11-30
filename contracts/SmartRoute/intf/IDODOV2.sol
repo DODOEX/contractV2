@@ -35,14 +35,14 @@ interface IDODOV2 {
         uint256 i,
         uint256 k
     ) external returns (address newVendingMachine);
+    
+    function buyShares(address to) external returns (uint256,uint256,uint256);
 
     // ============= permit =================
     function permit(address owner, address spender, uint value, uint deadline, uint8 v, bytes32 r, bytes32 s) external;
+    function sellShares(address to) external returns (uint256,uint256);
     // ======================================
 
-    function buyShares(address to) external returns (uint256,uint256,uint256);
-
-    function sellShares(address to) external returns (uint256,uint256);
 
     //========== DODOPrivatePool ===========
 
@@ -68,12 +68,4 @@ interface IDODOV2 {
         uint256 baseOutAmount,
         uint256 quoteOutAmount
     ) external; 
-
-
-    //========== IDODOApprove  =============
-
-    function claimTokens(address token,address who,address dest,uint256 amount) external;
-    
-    function getDODOProxy() external view returns (address);
-
 }
