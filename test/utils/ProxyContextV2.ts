@@ -23,10 +23,10 @@ BigNumber.config({
 export class ProxyContext {
   EVM: EVM;
   Web3: Web3;
-  DODOProxy: Contract;
+  DODOProxyV2: Contract;
   DVMFactory: Contract;
   DPPFactory: Contract;
-  SmartApprove: Contract;
+  DODOApprove: Contract;
   DODOCalleeHelper: Contract;
   DODOSellHelper: Contract;
 
@@ -76,7 +76,7 @@ export class ProxyContext {
        ]
     )
 
-    this.SmartApprove = await contracts.newContract(
+    this.DODOApprove = await contracts.newContract(
       contracts.SMART_APPROVE
     );
 
@@ -89,7 +89,7 @@ export class ProxyContext {
         permissionManagerTemplate.options.address,
         vauleSource.options.address,
         defaultGasSource.options.address,
-        this.SmartApprove.options.address
+        this.DODOApprove.options.address
       ]
     )
 
@@ -97,17 +97,17 @@ export class ProxyContext {
       contracts.DODO_SELL_HELPER
     );
 
-    this.DODOProxy = await contracts.newContract(contracts.DODO_PROXY_NAME,
+    this.DODOProxyV2 = await contracts.newContract(contracts.DODO_PROXY_NAME,
       [
         this.DVMFactory.options.address,
         this.DPPFactory.options.address,
         this.WETH.options.address,
-        this.SmartApprove.options.address,
+        this.DODOApprove.options.address,
         this.DODOSellHelper.options.address
       ]
     );
 
-    await this.SmartApprove.methods.setDODOProxy(this.DODOProxy.options.address).send(this.sendParam(this.Deployer));
+    await this.DODOApprove.methods.setDODOProxy(this.DODOProxyV2.options.address).send(this.sendParam(this.Deployer));
 
     this.DODO = await contracts.newContract(
       contracts.MINTABLE_ERC20_CONTRACT_NAME,
@@ -141,13 +141,13 @@ export class ProxyContext {
 
   async approveProxy(account: string) {
     await this.DODO.methods
-      .approve(this.SmartApprove.options.address, MAX_UINT256)
+      .approve(this.DODOApprove.options.address, MAX_UINT256)
       .send(this.sendParam(account));
     await this.USDT.methods
-      .approve(this.SmartApprove.options.address, MAX_UINT256)
+      .approve(this.DODOApprove.options.address, MAX_UINT256)
       .send(this.sendParam(account));
     await this.WETH.methods
-      .approve(this.SmartApprove.options.address, MAX_UINT256)
+      .approve(this.DODOApprove.options.address, MAX_UINT256)
       .send(this.sendParam(account));
   }
 }

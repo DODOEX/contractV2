@@ -7,7 +7,7 @@
 
 import { decimalStr, mweiStr } from '../utils/Converter';
 import { logGas } from '../utils/Log';
-import { ProxyContext, getProxyContext } from '../utils/ProxyContext';
+import { ProxyContext, getProxyContext } from '../utils/ProxyContextV2';
 import { assert } from 'chai';
 import * as contracts from '../utils/Contracts';
 
@@ -40,7 +40,7 @@ async function init(ctx: ProxyContext): Promise<void> {
 
 
 async function initCreateDPP(ctx: ProxyContext, token0: string, token1: string, token0Amount: string, token1Amount: string, ethValue: string, i: string): Promise<string> {
-    let PROXY = ctx.DODOProxy;
+    let PROXY = ctx.DODOProxyV2;
     await PROXY.methods.createDODOPrivatePool(
         token0,
         token1,
@@ -59,7 +59,7 @@ async function initCreateDPP(ctx: ProxyContext, token0: string, token1: string, 
 }
 
 async function initCreateDVM(ctx: ProxyContext, token0: string, token1: string, token0Amount: string, token1Amount: string, ethValue: string, i: string): Promise<string> {
-    let PROXY = ctx.DODOProxy;
+    let PROXY = ctx.DODOProxyV2;
     await PROXY.methods.createDODOVendingMachine(
         project,
         token0,
@@ -118,7 +118,7 @@ describe("DODOProxyV2.0", () => {
                 0,
                 1
             ]
-            var tx = await logGas(await ctx.DODOProxy.methods.dodoSwapV2TokenToToken(
+            var tx = await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
                 trader,
                 ctx.DODO.options.address,
                 ctx.WETH.options.address,
@@ -148,7 +148,7 @@ describe("DODOProxyV2.0", () => {
                 0,
                 1
             ]
-            var tx = await logGas(await ctx.DODOProxy.methods.dodoSwapV2ETHToToken(
+            var tx = await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2ETHToToken(
                 trader,
                 ctx.DODO.options.address,
                 1,
@@ -179,7 +179,7 @@ describe("DODOProxyV2.0", () => {
                 0,
                 1
             ]
-            var tx = await logGas(await ctx.DODOProxy.methods.dodoSwapV2TokenToETH(
+            var tx = await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToETH(
                 trader,
                 ctx.DODO.options.address,
                 decimalStr("10000"),

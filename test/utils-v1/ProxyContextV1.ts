@@ -69,8 +69,8 @@ export class DODOContext {
   DODO_USDT_ORACLE: Contract;
   USDT_USDC_ORACLE: Contract;
   WETH_USDC_ORACLE: Contract;
-  SmartSwap: Contract;
-  SmartApprove: Contract;
+  DODOProxyV1: Contract;
+  DODOApprove: Contract;
   DODOSellHelper: Contract;
 
   constructor() { }
@@ -216,16 +216,16 @@ export class DODOContext {
       contracts.DODO_SELL_HELPER
     );
 
-    this.SmartApprove = await contracts.newContract(
+    this.DODOApprove = await contracts.newContract(
       contracts.SMART_APPROVE
     );
 
-    this.SmartSwap = await contracts.newContract(
+    this.DODOProxyV1 = await contracts.newContract(
       contracts.SMART_SWAP,
-      [this.SmartApprove.options.address, this.DODOSellHelper.options.address, this.WETH.options.address]
+      [this.DODOApprove.options.address, this.DODOSellHelper.options.address, this.WETH.options.address]
     );
 
-    await this.SmartApprove.methods.setDODOProxy(this.SmartSwap.options.address).send(this.sendParam(this.Deployer));
+    await this.DODOApprove.methods.setDODOProxy(this.DODOProxyV1.options.address).send(this.sendParam(this.Deployer));
 
     console.log(log.blueText("[Init dodo context]"));
   }
