@@ -37,7 +37,7 @@ contract LockedTokenVault is Ownable {
 
     bool public _DISTRIBUTE_FINISHED_;
 
-    // ============ Modifiers ============
+    // ============ Events ============
 
     event Claim(address indexed holder, uint256 origin, uint256 claimed, uint256 amount);
 

@@ -30,4 +30,10 @@ interface IDODOCallee {
         uint256 quoteAmount,
         bytes calldata data
     ) external;
+
+    function CACancelCall(
+        address sender,
+        uint256 amount,
+        bytes calldata data
+    ) external;
 }

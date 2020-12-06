@@ -19,3 +19,7 @@ DPP 是 DODO Private Pool 的缩写，”私有池“
  1. 参数i和k可以任意改变
  2. Target和reserve可以任意设置
  3. 只有creator可以充提，且充提不受限制
+
+## 文档
+
+https://dodoex.github.io/docs/docs/coreConcept
