@@ -81,9 +81,9 @@ contract DPPVault is DPPStorage {
     function _setRState() internal {
         if (_BASE_RESERVE_ == _BASE_TARGET_ && _QUOTE_RESERVE_ == _QUOTE_TARGET_) {
             _RState_ = PMMPricing.RState.ONE;
-        } else if (_BASE_RESERVE_ > _BASE_TARGET_) {
+        } else if (_BASE_RESERVE_ > _BASE_TARGET_ && _QUOTE_RESERVE_ < _QUOTE_TARGET_) {
             _RState_ = PMMPricing.RState.BELOW_ONE;
-        } else if (_QUOTE_RESERVE_ > _QUOTE_TARGET_) {
+        } else if (_BASE_RESERVE_ < _BASE_TARGET_ && _QUOTE_RESERVE_ > _QUOTE_TARGET_) {
             _RState_ = PMMPricing.RState.ABOVE_ONE;
         } else {
             require(false, "R_STATE_WRONG");

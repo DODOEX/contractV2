@@ -20,9 +20,9 @@ import {InitializableMintableERC20} from "../external/ERC20/InitializableMintabl
 contract ERC20Factory is Ownable {
     // ============ Templates ============
 
-    address public _CLONE_FACTORY_;
-    address public _ERC20_TEMPLATE_;
-    address public _MINTABLE_ERC20_TEMPLATE_;
+    address public immutable _CLONE_FACTORY_;
+    address public immutable _ERC20_TEMPLATE_;
+    address public immutable _MINTABLE_ERC20_TEMPLATE_;
 
     // ============ Events ============
 
