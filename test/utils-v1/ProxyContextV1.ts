@@ -62,6 +62,8 @@ export class DODOContext {
   USDT: Contract;
   USDC: Contract;
   WETH: Contract;
+  CHI: Contract;
+  GST2: Contract;
   //pair
   DODO_USDT: Contract;
   USDT_USDC: Contract;
@@ -220,12 +222,22 @@ export class DODOContext {
       contracts.SMART_APPROVE
     );
 
+    //Gas Token 
+    this.CHI = await contracts.newContract(
+      contracts.CHI_TOKEN
+    );
+
+    // await this.CHI.methods.mint(140).send(this.sendParam(this.Deployer));
+
     this.DODOProxyV1 = await contracts.newContract(
       contracts.SMART_SWAP,
-      [this.DODOApprove.options.address, this.DODOSellHelper.options.address, this.WETH.options.address]
+      [this.DODOApprove.options.address, this.DODOSellHelper.options.address, this.WETH.options.address, this.CHI.options.address]
+      // [this.DODOApprove.options.address, this.DODOSellHelper.options.address, this.WETH.options.address, "0x0000000000000000000000000000000000000000"]
     );
 
     await this.DODOApprove.methods.setDODOProxy(this.DODOProxyV1.options.address).send(this.sendParam(this.Deployer));
+
+    // await this.CHI.methods.transfer(this.DODOProxyV1.options.address,140).send(this.sendParam(this.Deployer));
 
     console.log(log.blueText("[Init dodo context]"));
   }

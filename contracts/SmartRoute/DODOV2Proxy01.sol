@@ -27,11 +27,11 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
     // ============ Storage ============
 
     address constant _ETH_ADDRESS_ = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
-    address payable public _WETH_;
-    address public _DODO_APPROVE_;
-    address public _DODO_SELL_HELPER_;
-    address public _DVM_FACTORY_;
-    address public _DPP_FACTORY_;
+    address public immutable _WETH_;
+    address public immutable _DODO_APPROVE_;
+    address public immutable _DODO_SELL_HELPER_;
+    address public immutable _DVM_FACTORY_;
+    address public immutable _DPP_FACTORY_;
 
     // ============ Events ============
 
@@ -83,7 +83,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
         uint256 deadLine
     )
         external
-        virtual
         override
         payable
         preventReentrant
@@ -137,7 +136,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
         uint256 deadLine
     )
         external
-        virtual
         override
         payable
         preventReentrant
@@ -172,7 +170,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
         address dvmAddress,
         uint256 baseInAmount,
         uint256 quoteInAmount
-    ) internal virtual view returns (uint256 baseAdjustedInAmount, uint256 quoteAdjustedInAmount) {
+    ) internal view returns (uint256 baseAdjustedInAmount, uint256 quoteAdjustedInAmount) {
         (uint256 baseReserve, uint256 quoteReserve) = IDODOV2(dvmAddress).getVaultReserve();
         if (quoteReserve == 0 && baseReserve == 0) {
             baseAdjustedInAmount = baseInAmount;
@@ -209,7 +207,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
         uint256 deadLine
     )
         external
-        virtual
         override
         payable
         preventReentrant
@@ -256,7 +253,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
         uint256 quoteOutAmount,
         uint8 flag, // 0 - ERC20, 1 - baseInETH, 2 - quoteInETH, 3 - baseOutETH, 4 - quoteOutETH
         uint256 deadLine
-    ) external virtual override payable preventReentrant judgeExpired(deadLine) {
+    ) external override payable preventReentrant judgeExpired(deadLine) {
         _deposit(
             msg.sender,
             dppAddress,
@@ -297,7 +294,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
         uint256 deadLine
     )
         external
-        virtual
         override
         payable
         judgeExpired(deadLine)
@@ -345,7 +341,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
         uint256 deadLine
     )
         external
-        virtual
         override
         judgeExpired(deadLine)
         returns (uint256 returnAmount)
@@ -391,7 +386,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
         uint256 deadLine
     )
         external
-        virtual
         override
         judgeExpired(deadLine)
         returns (uint256 returnAmount)
@@ -436,7 +430,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
         uint256 deadLine
     )
         external
-        virtual
         override
         payable
         judgeExpired(deadLine)
@@ -490,7 +483,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
         uint256 deadLine
     )
         external
-        virtual
         override
         payable
         judgeExpired(deadLine)
@@ -540,7 +532,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
         uint256 quoteMinShares,
         uint8 flag, // 0 erc20 In  1 baseInETH  2 quoteIn ETH 
         uint256 deadLine
-    ) external virtual override payable judgeExpired(deadLine) returns(uint256 baseShares, uint256 quoteShares) {
+    ) external override payable judgeExpired(deadLine) returns(uint256 baseShares, uint256 quoteShares) {
         address _baseToken = IDODOV1(pair)._BASE_TOKEN_();
         address _quoteToken = IDODOV1(pair)._QUOTE_TOKEN_();
         
