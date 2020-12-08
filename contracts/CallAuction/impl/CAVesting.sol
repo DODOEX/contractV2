@@ -28,10 +28,16 @@ contract LockedTokenVault is CAFunding {
 
     // ============ Functions ============
 
-    function claim() external {
-        uint256 claimableToken = getClaimableBalance(msg.sender);
+    function claimBase() external {
+        uint256 claimableToken = getClaimableBaseBalance(msg.sender);
         _transferBaseOut(msg.sender, claimableToken);
-        _CLAIMED_BALANCES_[msg.sender] = _CLAIMED_BALANCES_[msg.sender].add(claimableToken);
+        _CLAIMED_BASE_[msg.sender] = _CLAIMED_BASE_[msg.sender].add(claimableToken);
+    }
+
+    function claimQuote() external {
+        require(!_QUOTE_CLAIMED_[msg.sender], "QUOTE_CLAIMED");
+        _QUOTE_CLAIMED_[msg.sender] = true;
+        _transferQuoteOut(msg.sender, getClaimableQuoteBalance(msg.sender));
     }
 
     // ============ View ============
@@ -41,20 +47,20 @@ contract LockedTokenVault is CAFunding {
     }
 
     function getClaimedBaseBalance(address holder) public view returns (uint256) {
-        return _CLAIMED_BALANCES_[holder];
+        return _CLAIMED_BASE_[holder];
     }
 
-    function getClaimableBalance(address holder) public view returns (uint256) {
-        uint256 remainingToken = getRemainingBalance(holder);
-        return getOriginBaseBalance(holder).sub(remainingToken).sub(_CLAIMED_BALANCES_[holder]);
+    function getClaimableBaseBalance(address holder) public view returns (uint256) {
+        uint256 remainingToken = getRemainingBaseBalance(holder);
+        return getOriginBaseBalance(holder).sub(remainingToken).sub(_CLAIMED_BASE_[holder]);
     }
 
-    function getRemainingBalance(address holder) public view returns (uint256) {
-        uint256 remainingRatio = getRemainingRatio(block.timestamp);
+    function getRemainingBaseBalance(address holder) public view returns (uint256) {
+        uint256 remainingRatio = getRemainingBaseRatio(block.timestamp);
         return DecimalMath.mulFloor(getOriginBaseBalance(holder), remainingRatio);
     }
 
-    function getRemainingRatio(uint256 timestamp) public view returns (uint256) {
+    function getRemainingBaseRatio(uint256 timestamp) public view returns (uint256) {
         if (timestamp < _START_VESTING_TIME_) {
             return DecimalMath.ONE;
         }
@@ -64,6 +70,14 @@ contract LockedTokenVault is CAFunding {
             return DecimalMath.ONE.sub(_CLIFF_RATE_).mul(remainingTime).div(_VESTING_DURATION_);
         } else {
             return 0;
+        }
+    }
+
+    function getClaimableQuoteBalance(address holder) public view returns (uint256) {
+        if (!_QUOTE_CLAIMED_[msg.sender]) {
+            return 0;
+        } else {
+            return _TOTAL_UNUSED_QUOTE_.mul(_QUOTE_SHARES_[holder]).div(_TOTAL_QUOTE_SHARES_);
         }
     }
 }

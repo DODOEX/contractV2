@@ -21,7 +21,12 @@ contract CAFunding is CAStorage {
 
     // ============ BID ============
 
-    function bid(address to) external phaseBid preventReentrant {
+    modifier isBidderAllow(address bidder) {
+        require(_BIDDER_PERMISSION_.isAllowed(bidder), "BIDDER_NOT_ALLOWED");
+        _;
+    }
+
+    function bid(address to) external phaseBid preventReentrant isBidderAllow(to) {
         uint256 input = _getQuoteInput();
         _QUOTE_SHARES_[to] = _QUOTE_SHARES_[to].add(input);
         _TOTAL_QUOTE_SHARES_ = _TOTAL_QUOTE_SHARES_.add(input);
@@ -30,18 +35,11 @@ contract CAFunding is CAStorage {
 
     // ============ CALM ============
 
-    function cancel(
-        address to,
-        uint256 amount,
-        bytes memory data
-    ) external phaseBidOrCalm preventReentrant {
+    function cancel(address to, uint256 amount) external phaseBidOrCalm preventReentrant {
         require(_QUOTE_SHARES_[msg.sender] >= amount, "SHARES_NOT_ENOUGH");
         _QUOTE_SHARES_[msg.sender] = _QUOTE_SHARES_[msg.sender].sub(amount);
         _transferQuoteOut(to, amount);
         _sync();
-        if (data.length > 0) {
-            IDODOCallee(to).CACancelCall(msg.sender, amount, data);
-        }
     }
 
     // ============ SETTLEMENT ============
@@ -52,16 +50,20 @@ contract CAFunding is CAStorage {
 
         uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
         uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
-        uint256 mtFee;
-        (_TOTAL_SOLD_BASE_, mtFee) = getBaseSold();
 
-        // 1. maintainer quote
-        _transferQuoteOut(_MAINTAINER_, mtFee);
-        // 2. remaining quote
-        _transferQuoteOut(_QUOTE_PAY_BACK_, quoteBalance.sub(mtFee));
-        // 3. base token pay back
+        // 1. sold base remaining in the contract
+        _TOTAL_SOLD_BASE_ = getBaseSold();
+
+        // 2. left base send out
         _transferBaseOut(_BASE_PAY_BACK_, baseBalance.sub(_TOTAL_SOLD_BASE_));
-        // 4. left base in contract
+
+        // 3. used quote token
+        uint256 usedQuote = _QUOTE_CAP_ <= quoteBalance ? _QUOTE_CAP_ : quoteBalance;
+        _transferQuoteOut(_QUOTE_PAY_BACK_, usedQuote);
+
+        // 4. unused quote token
+        _TOTAL_UNUSED_QUOTE_ = quoteBalance.sub(usedQuote);
+
         // 5. external call
         if (_BASE_PAY_BACK_CALL_DATA_.length > 0) {
             (bool success, ) = _BASE_PAY_BACK_.call(_BASE_PAY_BACK_CALL_DATA_);
@@ -76,18 +78,20 @@ contract CAFunding is CAStorage {
     // ============ Pricing ============
 
     function getAvgPrice() public view returns (uint256 avgPrice) {
-        (uint256 baseSold, ) = getBaseSold();
+        uint256 baseSold = getBaseSold();
         avgPrice = DecimalMath.divFloor(_QUOTE_TOKEN_.balanceOf(address(this)), baseSold);
     }
 
     function getBaseByUser(address user) public view returns (uint256 baseAmount) {
-        (uint256 baseSold, ) = getBaseSold();
+        uint256 baseSold = getBaseSold();
         baseAmount = baseSold.mul(_QUOTE_SHARES_[user]).div(_TOTAL_QUOTE_SHARES_);
     }
 
-    function getBaseSold() public view returns (uint256 baseSold, uint256 mtFee) {
+    function getBaseSold() public view returns (uint256 baseSold) {
         uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
-        mtFee = DecimalMath.mulFloor(quoteBalance, _QUOTE_MAINTAINER_FEE_RATE_);
+        if (quoteBalance > _QUOTE_CAP_) {
+            quoteBalance = _QUOTE_CAP_;
+        }
         (baseSold, ) = PMMPricing.sellQuoteToken(_getPMMState(), quoteBalance);
     }
 

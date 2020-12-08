@@ -10,6 +10,7 @@ pragma experimental ABIEncoderV2;
 
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
+import {IPermissionManager} from "../../lib/PermissionManager.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 
@@ -27,13 +28,12 @@ contract CAStorage is InitializableOwnable, ReentrancyGuard {
 
     IERC20 public _BASE_TOKEN_;
     IERC20 public _QUOTE_TOKEN_;
-    address public _MAINTAINER_;
-    address public _BASE_PAY_BACK_;
-    address public _QUOTE_PAY_BACK_;
 
     // ============ Distribution Parameters ============
 
-    uint256 _QUOTE_MAINTAINER_FEE_RATE_;
+    uint256 _QUOTE_CAP_;
+    address public _BASE_PAY_BACK_;
+    address public _QUOTE_PAY_BACK_;
     bytes _BASE_PAY_BACK_CALL_DATA_;
     bytes _QUOTE_PAY_BACK_CALL_DATA_;
 
@@ -42,9 +42,12 @@ contract CAStorage is InitializableOwnable, ReentrancyGuard {
     uint256 public _QUOTE_RESERVE_;
     uint256 public _BASE_RESERVE_;
     uint256 public _TOTAL_SOLD_BASE_;
+    uint256 public _TOTAL_UNUSED_QUOTE_;
     uint256 public _TOTAL_QUOTE_SHARES_;
     mapping(address => uint256) internal _QUOTE_SHARES_;
-    mapping(address => uint256) internal _CLAIMED_BALANCES_;
+    mapping(address => bool) internal _QUOTE_CLAIMED_;
+    mapping(address => uint256) internal _CLAIMED_BASE_;
+    IPermissionManager public _BIDDER_PERMISSION_;
 
     // ============ Time Lock ============
 
