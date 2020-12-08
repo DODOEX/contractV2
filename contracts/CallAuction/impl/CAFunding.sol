@@ -19,7 +19,14 @@ import {PMMPricing} from "../../lib/PMMPricing.sol";
 contract CAFunding is CAStorage {
     using SafeERC20 for IERC20;
 
-    // ============ BID ============
+    // ============ PRE BID PHASE ============
+
+    // in case deposit base amount too much
+    function withdrawBaseToken(address to, uint256 amount) external phasePreBid onlyOwner {
+        _transferQuoteOut(to, amount);
+    }
+
+    // ============ BID & CALM PHASE ============
 
     modifier isBidderAllow(address bidder) {
         require(_BIDDER_PERMISSION_.isAllowed(bidder), "BIDDER_NOT_ALLOWED");
@@ -32,8 +39,6 @@ contract CAFunding is CAStorage {
         _TOTAL_QUOTE_SHARES_ = _TOTAL_QUOTE_SHARES_.add(input);
         _sync();
     }
-
-    // ============ CALM ============
 
     function cancel(address to, uint256 amount) external phaseBidOrCalm preventReentrant {
         require(_QUOTE_SHARES_[msg.sender] >= amount, "SHARES_NOT_ENOUGH");
@@ -61,18 +66,30 @@ contract CAFunding is CAStorage {
         uint256 usedQuote = _QUOTE_CAP_ <= quoteBalance ? _QUOTE_CAP_ : quoteBalance;
         _transferQuoteOut(_QUOTE_PAY_BACK_, usedQuote);
 
-        // 4. unused quote token
+        // 4. leave unused quote token in contract
         _TOTAL_UNUSED_QUOTE_ = quoteBalance.sub(usedQuote);
 
         // 5. external call
-        if (_BASE_PAY_BACK_CALL_DATA_.length > 0) {
-            (bool success, ) = _BASE_PAY_BACK_.call(_BASE_PAY_BACK_CALL_DATA_);
-            require(success, "BASE_PAY_BACK_CALL_FAILED");
+        if (block.timestamp < _PHASE_CALM_ENDTIME_.add(_SETTLEMENT_EXPIRED_TIME_)) {
+            if (_BASE_PAY_BACK_CALL_DATA_.length > 0) {
+                (bool success, ) = _BASE_PAY_BACK_.call(_BASE_PAY_BACK_CALL_DATA_);
+                require(success, "BASE_PAY_BACK_CALL_FAILED");
+            }
+            if (_QUOTE_PAY_BACK_CALL_DATA_.length > 0) {
+                (bool success, ) = _QUOTE_PAY_BACK_.call(_QUOTE_PAY_BACK_CALL_DATA_);
+                require(success, "QUOTE_PAY_BACK_CALL_FAILED");
+            }
         }
-        if (_QUOTE_PAY_BACK_CALL_DATA_.length > 0) {
-            (bool success, ) = _QUOTE_PAY_BACK_.call(_QUOTE_PAY_BACK_CALL_DATA_);
-            require(success, "QUOTE_PAY_BACK_CALL_FAILED");
-        }
+    }
+
+    function emergencySettle() external phaseSettlement preventReentrant {
+        require(!_SETTLED_, "ALREADY_SETTLED");
+        require(
+            block.timestamp > _PHASE_CALM_ENDTIME_.add(_SETTLEMENT_EXPIRED_TIME_),
+            "NOT_EMERGENCY"
+        );
+        _SETTLED_ = true;
+        _TOTAL_UNUSED_QUOTE_ = _QUOTE_TOKEN_.balanceOf(address(this));
     }
 
     // ============ Pricing ============

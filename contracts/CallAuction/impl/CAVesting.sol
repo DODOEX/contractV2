@@ -16,25 +16,30 @@ import {IERC20} from "../../intf/IERC20.sol";
 import {CAFunding} from "./CAFunding.sol";
 
 /**
- * @title LockedTokenVault
+ * @title CAVesting
  * @author DODO Breeder
  *
  * @notice Lock Token and release it linearly
  */
 
-contract LockedTokenVault is CAFunding {
+contract CAVesting is CAFunding {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
+    modifier afterSettlement() {
+        require(_SETTLED_, "NOT_SETTLED");
+        _;
+    }
+
     // ============ Functions ============
 
-    function claimBase() external {
+    function claimBase() external afterSettlement {
         uint256 claimableToken = getClaimableBaseBalance(msg.sender);
         _transferBaseOut(msg.sender, claimableToken);
         _CLAIMED_BASE_[msg.sender] = _CLAIMED_BASE_[msg.sender].add(claimableToken);
     }
 
-    function claimQuote() external {
+    function claimQuote() external afterSettlement {
         require(!_QUOTE_CLAIMED_[msg.sender], "QUOTE_CLAIMED");
         _QUOTE_CLAIMED_[msg.sender] = true;
         _transferQuoteOut(msg.sender, getClaimableQuoteBalance(msg.sender));

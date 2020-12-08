@@ -17,9 +17,11 @@ import {IERC20} from "../../intf/IERC20.sol";
 contract CAStorage is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
 
+    uint256 internal constant _SETTLEMENT_EXPIRED_TIME_ = 86400 * 7;
+
     // ============ Timeline ============
 
-    uint256 _PAHSE_SETTING_ENDTIME_;
+    uint256 _PHASE_BID_STARTTIME_;
     uint256 _PHASE_BID_ENDTIME_;
     uint256 _PHASE_CALM_ENDTIME_;
     bool _SETTLED_;
@@ -40,7 +42,6 @@ contract CAStorage is InitializableOwnable, ReentrancyGuard {
     // ============ Balances ============
 
     uint256 public _QUOTE_RESERVE_;
-    uint256 public _BASE_RESERVE_;
     uint256 public _TOTAL_SOLD_BASE_;
     uint256 public _TOTAL_UNUSED_QUOTE_;
     uint256 public _TOTAL_QUOTE_SHARES_;
@@ -62,14 +63,14 @@ contract CAStorage is InitializableOwnable, ReentrancyGuard {
 
     // ============ Modifiers ============
 
-    modifier phaseSetting() {
-        require(block.timestamp <= _PAHSE_SETTING_ENDTIME_, "NOT_PHASE_SETTING");
+    modifier phasePreBid() {
+        require(block.timestamp <= _PHASE_BID_STARTTIME_, "NOT_PHASE_PREBID");
         _;
     }
 
     modifier phaseBid() {
         require(
-            block.timestamp > _PAHSE_SETTING_ENDTIME_ && block.timestamp <= _PHASE_BID_ENDTIME_,
+            block.timestamp > _PHASE_BID_STARTTIME_ && block.timestamp <= _PHASE_BID_ENDTIME_,
             "NOT_PHASE_BID"
         );
         _;
@@ -85,7 +86,7 @@ contract CAStorage is InitializableOwnable, ReentrancyGuard {
 
     modifier phaseBidOrCalm() {
         require(
-            block.timestamp > _PAHSE_SETTING_ENDTIME_ && block.timestamp <= _PHASE_CALM_ENDTIME_,
+            block.timestamp > _PHASE_BID_STARTTIME_ && block.timestamp <= _PHASE_CALM_ENDTIME_,
             "NOT_PHASE_BID_OR_CALM"
         );
         _;
