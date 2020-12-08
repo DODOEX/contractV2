@@ -140,13 +140,14 @@ describe("Trader", () => {
   });
 
   afterEach(async () => {
-    await ctx.EVM.reset(snapshotId);
+    // await ctx.EVM.reset(snapshotId);
   });
 
   describe("route calc test", () => {
-    it("DODO to USDT directly swap", async () => {
+    it.only("DODO to USDT directly swap", async () => {
       var b_DODO = await ctx.DODO.methods.balanceOf(trader).call()
       var b_USDT = await ctx.USDT.methods.balanceOf(trader).call()
+      var c_b_CHI = await ctx.CHI.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
       console.log("Before DODO:" + fromWei(b_DODO, 'ether') + "; USDT:" + fromWei(b_USDT, 'mwei'));
       //approve DODO entry
       await ctx.DODO.methods.approve(ctx.DODOApprove.options.address, MAX_UINT256).send(ctx.sendParam(trader))
@@ -167,15 +168,17 @@ describe("Trader", () => {
       }];
 
       await logGas(await calcRoute(ctx, decimalStr('10'), 0.1, routes, pairs), ctx.sendParam(trader), "directly swap")
-      await logGas(await calcRoute(ctx, decimalStr('10'), 0.1, routes, pairs), ctx.sendParam(trader), "directly swap")
-      // console.log(tx.events['OrderHistory']);
+      var tx = await logGas(await calcRoute(ctx, decimalStr('10'), 0.1, routes, pairs), ctx.sendParam(trader), "directly swap")
+      console.log(tx.transactionHash);
       var a_DODO = await ctx.DODO.methods.balanceOf(trader).call()
       var a_USDT = await ctx.USDT.methods.balanceOf(trader).call()
       console.log("After DODO:" + fromWei(a_DODO, 'ether') + "; USDT:" + fromWei(a_USDT, 'mwei'));
       console.log("===============================================")
       var c_DODO = await ctx.DODO.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
       var c_USDT = await ctx.USDT.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
+      var c_a_CHI = await ctx.CHI.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
       console.log("Contract DODO:" + fromWei(c_DODO, 'ether') + "; USDT:" + fromWei(c_USDT, 'mwei'));
+      console.log("Contract gas Token Before:" + c_b_CHI + " ;After:" + c_a_CHI);
       // console.log("USDT:" + a_USDT);
       assert(a_USDT, "1994000");
     });

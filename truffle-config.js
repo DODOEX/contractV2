@@ -68,8 +68,17 @@ module.exports = {
         return new HDWalletProvider(privKey, "https://mainnet.infura.io/v3/" + infuraId);
       },
       gas: 3000000,
-      gasPrice: 120000000000,
+      gasPrice: 45000000000,
       network_id: 1,
+      skipDryRun: true
+    },
+    bsclive: {
+      provider: function() {
+        return new HDWalletProvider(privKey, "https://bsc-dataseed1.binance.org");
+      },
+      network_id: 56,
+      confirmations: 10,
+      timeoutBlocks: 200,
       skipDryRun: true
     },
     coverage: {

@@ -18,12 +18,12 @@ import {IPermissionManager} from "../lib/PermissionManager.sol";
 contract DVMFactory is Ownable {
     // ============ Templates ============
 
-    address public _CLONE_FACTORY_;
-    address public _DVM_TEMPLATE_;
+    address public immutable _CLONE_FACTORY_;
+    address public immutable _DVM_TEMPLATE_;
+    address public immutable _FEE_RATE_MODEL_TEMPLATE_;
+    address public immutable _PERMISSION_MANAGER_TEMPLATE_;
+    address public immutable _DEFAULT_GAS_PRICE_SOURCE_;
     address public _DVM_ADMIN_TEMPLATE_;
-    address public _FEE_RATE_MODEL_TEMPLATE_;
-    address public _PERMISSION_MANAGER_TEMPLATE_;
-    address public _DEFAULT_GAS_PRICE_SOURCE_;
 
     // ============ Registry ============
 

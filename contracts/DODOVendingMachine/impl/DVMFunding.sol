@@ -92,6 +92,8 @@ contract DVMFunding is DVMVault {
         _burn(msg.sender, shareAmount);
         _transferBaseOut(to, baseAmount);
         _transferQuoteOut(to, quoteAmount);
+        _sync();
+        
         if (data.length > 0) {
             IDODOCallee(to).DVMSellShareCall(
                 msg.sender,
@@ -101,7 +103,7 @@ contract DVMFunding is DVMVault {
                 data
             );
         }
-        _sync();
+        
         emit SellShares(msg.sender, to, shareAmount, _SHARES_[msg.sender]);
     }
 }

@@ -1,0 +1,18 @@
+====================================================
+network type: kovan
+Deploy time: 2020/12/7 下午3:15:53
+Deploy type: V2
+CloneFactoryAddress:  0xf7959fe661124C49F96CF30Da33729201aEE1b27
+FeeRateModelTemplateAddress:  0xEF3137780B387313c5889B999D03BdCf9aeEa892
+PermissionManagerTemplateAddress:  0x5D2Da09501d97a7bf0A8F192D2eb2F9Aa80d3241
+ExternalValueTemplateAddress:  0xe0f813951dE2BB012f7Feb981669F9a7b5250A57
+DefaultGasSourceAddress:  0xE0c0df0e0be7ec4f579503304a6C186cA4365407
+DvmTemplateAddress:  0x460Ada67279Ff2ce8c87cb88F99070c6520Aa624
+DvmAdminTemplateAddress:  0xbB9F79f6ac9e577B658E3B2E1340838d8965986B
+DppTemplateAddress:  0x577c2cE26B8b5C8b3f7c57826Bf351ac7c21a441
+DppAdminTemplateAddress:  0x402ace5a3e6Aa71FB942d309341F8867afcde302
+DODOCalleeHelperAddress:  0x507EBbb195CF54E0aF147A2b269C08a38EA36989
+DvmFactoryAddress:  0xaeF2cce5678e6e29f7a7C2A6f5d2Ce26df600dc1
+DppFactoryAddress:  0x5935a606383Ba43C61FcE5E632357744a95e9dC3
+DODOProxyV2 Address:  0xD4b15Ab0e1F06373dA7ccd9f01D5e9776674DB9e
+DODOApprovce setProxy tx:  0x67c5c5b1883950baec753a99bff5e1c20bfb92f876cdcd03c90ae2aa0053d891

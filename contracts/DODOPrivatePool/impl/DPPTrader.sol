@@ -257,7 +257,13 @@ contract DPPTrader is DPPVault {
     }
 
     function _sync() internal {
-        _BASE_RESERVE_ = _BASE_TOKEN_.balanceOf(address(this));
-        _QUOTE_RESERVE_ = _QUOTE_TOKEN_.balanceOf(address(this));
+        uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
+        uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
+        if(baseBalance != _BASE_RESERVE_) {
+            _BASE_RESERVE_ = baseBalance;
+        }
+        if(quoteBalance != _QUOTE_RESERVE_) {
+            _QUOTE_RESERVE_ = quoteBalance;
+        }
     }
 }

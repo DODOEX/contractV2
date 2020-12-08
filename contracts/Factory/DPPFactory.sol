@@ -19,14 +19,14 @@ import {IPermissionManager} from "../lib/PermissionManager.sol";
 contract DPPFactory is Ownable {
     // ============ Templates ============
 
-    address public _CLONE_FACTORY_;
-    address public _DPP_TEMPLATE_;
+    address public immutable _CLONE_FACTORY_;
+    address public immutable _DPP_TEMPLATE_;
+    address public immutable _FEE_RATE_MODEL_TEMPLATE_;
+    address public immutable _PERMISSION_MANAGER_TEMPLATE_;
+    address public immutable _DEFAULT_GAS_PRICE_SOURCE_;
+    address public immutable _VALUE_SOURCE_;
+    address public immutable _DODO_SMART_APPROVE_;
     address public _DPP_ADMIN_TEMPLATE_;
-    address public _FEE_RATE_MODEL_TEMPLATE_;
-    address public _PERMISSION_MANAGER_TEMPLATE_;
-    address public _DEFAULT_GAS_PRICE_SOURCE_;
-    address public _VALUE_SOURCE_;
-    address public _DODO_SMART_APPROVE_;
 
     // ============ Registry ============
 

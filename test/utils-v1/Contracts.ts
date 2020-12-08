@@ -31,6 +31,7 @@ const SmartSwap = require(`${jsonPath2}DODOV1Proxy01.json`)
 const SmartApprove = require(`${jsonPath2}DODOApprove.json`)
 const DODOSellHelper = require(`${jsonPath2}DODOSellHelper.json`)
 const WETH = require(`${jsonPath2}WETH9.json`)
+const CHI = require(`${jsonPath2}ChiToken.json`)
 /******/
 
 import { getDefaultWeb3 } from './EVM';
@@ -55,6 +56,7 @@ export const DODO_MINE_READER_NAME = "DODOMineReader"
 export const SMART_SWAP = "DODOV1Proxy01"
 export const SMART_APPROVE = "DODOApprove"
 export const DODO_SELL_HELPER = "DODOSellHelper"
+export const CHI_TOKEN = "ChiToken"
 /******/
 
 var contractMap: { [name: string]: any } = {}
@@ -76,6 +78,7 @@ contractMap[DODO_MINE_READER_NAME] = DODOMineReader
 contractMap[SMART_SWAP] = SmartSwap
 contractMap[SMART_APPROVE] = SmartApprove
 contractMap[DODO_SELL_HELPER] = DODOSellHelper
+contractMap[CHI_TOKEN] = CHI
 /******/
 
 interface ContractJson {
