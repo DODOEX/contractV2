@@ -131,4 +131,12 @@ contract DVMFactory is Ownable {
     {
         return (_REGISTRY_[token0][token1], _REGISTRY_[token1][token0]);
     }
+
+    function getVendingMachineByUser(address user)
+        external
+        view
+        returns (address[] memory machines)
+    {
+        return _USER_REGISTRY_[user];
+    }
 }

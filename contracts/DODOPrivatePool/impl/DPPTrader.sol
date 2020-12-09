@@ -122,7 +122,12 @@ contract DPPTrader is DPPVault {
         uint256 quoteAmount,
         address assetTo,
         bytes calldata data
-    ) external preventReentrant {
+    ) 
+        external 
+        preventReentrant 
+        isSellAllow(assetTo)
+        isBuyAllow(assetTo)  
+    {
         _transferBaseOut(assetTo, baseAmount);
         _transferQuoteOut(assetTo, quoteAmount);
 

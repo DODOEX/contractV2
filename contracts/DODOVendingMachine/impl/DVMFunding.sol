@@ -50,7 +50,8 @@ contract DVMFunding is DVMVault {
         // 在提币的时候向下取整。因此永远不会出现，balance为0但totalsupply不为0的情况
         // 但有可能出现，reserve>0但totalSupply=0的场景
         if (totalSupply == 0) {
-            shares = baseBalance; // 以免出现balance很大但shares很小的情况
+            shares = baseBalance.sub(10**3); // 以免出现balance很大但shares很小的情况
+            _mint(address(0), 10**3); 
         } else if (baseReserve > 0 && quoteReserve == 0) {
             // case 2. supply when quote reserve is 0
             shares = baseInput.mul(totalSupply).div(baseReserve);
@@ -61,6 +62,7 @@ contract DVMFunding is DVMVault {
             uint256 mintRatio = quoteInputRatio < baseInputRatio ? quoteInputRatio : baseInputRatio;
             shares = DecimalMath.mulFloor(totalSupply, mintRatio);
         }
+        require(shares > 0, 'INSUFFICIENT_LIQUIDITY_MINED');
         _mint(to, shares);
         _sync();
         emit BuyShares(to, shares, _SHARES_[to]);

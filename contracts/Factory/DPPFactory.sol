@@ -159,4 +159,12 @@ contract DPPFactory is Ownable {
     {
         return (_REGISTRY_[token0][token1], _REGISTRY_[token1][token0]);
     }
+
+    function getPrivatePoolByUser(address user) 
+        external
+        view
+        returns (address[] memory pools)
+    {
+        return _USER_REGISTRY_[user];
+    }
 }

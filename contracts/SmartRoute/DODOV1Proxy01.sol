@@ -32,6 +32,7 @@ contract DODOV1Proxy01 is IDODOV1Proxy01, ReentrancyGuard, Ownable {
     address public immutable _CHI_TOKEN_;
     uint8 public _GAS_DODO_MAX_RETURN_ = 0;
     uint8 public _GAS_EXTERNAL_RETURN_ = 0;
+    mapping (address => bool) public isWhiteListed;
 
     // ============ Events ============
 
@@ -71,6 +72,14 @@ contract DODOV1Proxy01 is IDODOV1Proxy01, ReentrancyGuard, Ownable {
         _GAS_EXTERNAL_RETURN_ = newExternalGasReturn;
     }
 
+    function addWhiteList (address contractAddr) public onlyOwner {
+        isWhiteListed[contractAddr] = true;
+    }
+
+    function removeWhiteList (address contractAddr) public onlyOwner {
+        isWhiteListed[contractAddr] = false;
+    }
+
     function dodoSwapV1(
         address fromToken,
         address toToken,
@@ -80,6 +89,7 @@ contract DODOV1Proxy01 is IDODOV1Proxy01, ReentrancyGuard, Ownable {
         uint8[] memory directions,
         uint256 deadLine
     ) external override payable judgeExpired(deadLine) returns (uint256 returnAmount) {
+        require(dodoPairs.length == directions.length, "DODOV1Proxy01: PARAMS_LENGTH_NOT_MATCH");
         uint256 originGas = gasleft();
 
         if (fromToken != _ETH_ADDRESS_) {
@@ -159,6 +169,7 @@ contract DODOV1Proxy01 is IDODOV1Proxy01, ReentrancyGuard, Ownable {
             IERC20(_fromToken).universalApproveMax(approveTarget, fromTokenAmount);
         }
 
+        require(isWhiteListed[to], "DODOV1Proxy01: Not Whitelist Contract");
         (bool success, ) = to.call{value: _fromToken == _ETH_ADDRESS_ ? msg.value : 0}(callDataConcat);
 
         require(success, "DODOV1Proxy01: Contract Swap execution Failed");
