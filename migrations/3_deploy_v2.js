@@ -19,7 +19,7 @@ const DODOProxyV2 = artifacts.require("DODOV2Proxy01");
 const DODOSellHelper = artifacts.require("DODOSellHelper");
 const DODOCalleeHelper = artifacts.require("DODOCalleeHelper");
 
-const DEPLOY_V2 = true;
+const DEPLOY_V2 = false;
 
 module.exports = async (deployer, network, accounts) => {
     let DODOSellHelperAddress = "";
@@ -72,11 +72,11 @@ module.exports = async (deployer, network, accounts) => {
         //Template
     } else return;
 
-    logger.log("====================================================");
-    logger.log("network type: " + network);
-    logger.log("Deploy time: " + new Date().toLocaleString());
 
     if (DEPLOY_V2) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
         logger.log("Deploy type: V2");
         if (CloneFactoryAddress == "") {
             await deployer.deploy(CloneFactory);

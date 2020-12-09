@@ -1,3 +1,12 @@
 ====================================================
 network type: kovan
-Deploy time: 2020/12/7 下午3:15:48
+Deploy time: 2020/12/9 下午10:11:50
+DODOSwapCalcHelper Address:  0x096b90D15AB8319f6829C96E7062556b74806988
+====================================================
+network type: bsclive
+Deploy time: 2020/12/9 下午10:14:15
+DODOSwapCalcHelper Address:  0xED3Ac3335a24331F1704df8CB456C88dCA282782
+====================================================
+network type: live
+Deploy time: 2020/12/9 下午10:16:19
+DODOSwapCalcHelper Address:  0x22C1a736DBE8200E6DF2f3D8F97c0D5749c1E257

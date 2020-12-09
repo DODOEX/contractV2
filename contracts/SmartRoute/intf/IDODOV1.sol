@@ -77,4 +77,6 @@ interface IDODOV1 {
     function getExpectedTarget() external view returns (uint256 baseTarget, uint256 quoteTarget);
 
     function getOraclePrice() external view returns (uint256);
+
+    function getMidPrice() external view returns (uint256 midPrice); 
 }

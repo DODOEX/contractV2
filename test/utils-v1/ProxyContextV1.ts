@@ -74,6 +74,8 @@ export class DODOContext {
   DODOProxyV1: Contract;
   DODOApprove: Contract;
   DODOSellHelper: Contract;
+  //Helper
+  DODOSwapCalcHelper: Contract;
 
   constructor() { }
 
@@ -238,6 +240,10 @@ export class DODOContext {
     await this.DODOApprove.methods.setDODOProxy(this.DODOProxyV1.options.address).send(this.sendParam(this.Deployer));
 
     // await this.CHI.methods.transfer(this.DODOProxyV1.options.address,140).send(this.sendParam(this.Deployer));
+    
+    this.DODOSwapCalcHelper = await contracts.newContract(
+      contracts.DODO_SWAP_CALC_HELPER,[this.DODOSellHelper.options.address]
+    );
 
     console.log(log.blueText("[Init dodo context]"));
   }

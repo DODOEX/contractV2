@@ -105,10 +105,19 @@ async function calcRoute(ctx: DODOContext, fromTokenAmount: string, slippage: nu
     }
   }
 
+  var [returmAmount, midPrices] = await ctx.DODOSwapCalcHelper.methods.calcReturnAmountV1(
+    fromTokenAmount,
+    dodoPairs,
+    directions,
+  ).call();
+  console.log("returnAmount:", returmAmount)
+  console.log("localAmount:", swapAmount)
+  console.log("midPrices:", midPrices)
+
 
   let toAmount = new BigNumber(swapAmount).multipliedBy(1 - slippage).toFixed(0, BigNumber.ROUND_DOWN)
   // console.log("minAmount:",toAmount);
-  let deadline = Math.floor(new Date().getTime()/1000 + 60 * 10);
+  let deadline = Math.floor(new Date().getTime() / 1000 + 60 * 10);
 
   return ctx.DODOProxyV1.methods.dodoSwapV1(
     routes[0].address,
@@ -144,7 +153,7 @@ describe("Trader", () => {
   });
 
   describe("route calc test", () => {
-    it.only("DODO to USDT directly swap", async () => {
+    it("DODO to USDT directly swap", async () => {
       var b_DODO = await ctx.DODO.methods.balanceOf(trader).call()
       var b_USDT = await ctx.USDT.methods.balanceOf(trader).call()
       var c_b_CHI = await ctx.CHI.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
