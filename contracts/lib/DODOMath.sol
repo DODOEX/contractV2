@@ -123,7 +123,7 @@ library DODOMath {
         if (k == DecimalMath.ONE) {
             // if k==1
             // Q2=Q1/(1+ideltaBQ1/Q0/Q0)
-            // temp = (1+ideltaBQ1/Q0/Q0)
+            // temp = ideltaBQ1/Q0/Q0
             // Q1-Q2 = Q1*(temp/(1+temp))
             uint256 temp = i.mul(delta).mul(V1).div(V0.mul(V0));
             return V1.mul(temp).div(temp.add(DecimalMath.ONE));

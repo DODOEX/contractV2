@@ -42,7 +42,7 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     // ============ Shares (ERC20) ============
 
     string public symbol;
-    uint256 public decimals;
+    uint8 public decimals;
     string public name;
 
     uint256 public totalSupply;

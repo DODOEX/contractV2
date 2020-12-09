@@ -19,8 +19,9 @@ import {UniversalERC20} from "./lib/UniversalERC20.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
 import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
+import {Ownable} from "../lib/Ownable.sol";
 
-contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
+contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, Ownable {
     using SafeMath for uint256;
     using UniversalERC20 for IERC20;
 
@@ -32,6 +33,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
     address public immutable _DODO_SELL_HELPER_;
     address public immutable _DVM_FACTORY_;
     address public immutable _DPP_FACTORY_;
+    mapping (address => bool) public isWhiteListed;
 
     // ============ Events ============
 
@@ -66,6 +68,14 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
         _WETH_ = weth;
         _DODO_APPROVE_ = dodoApprove;
         _DODO_SELL_HELPER_ = dodoSellHelper;
+    }
+
+    function addWhiteList (address contractAddr) public onlyOwner {
+        isWhiteListed[contractAddr] = true;
+    }
+
+    function removeWhiteList (address contractAddr) public onlyOwner {
+        isWhiteListed[contractAddr] = false;
     }
 
     // ============ DVM Functions (create & add liquidity) ============
@@ -299,6 +309,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
         judgeExpired(deadLine)
         returns (uint256 returnAmount)
     {
+        require(dodoPairs.length == directions.length, "DODOV2Proxy01: PARAMS_LENGTH_NOT_MATCH");
         uint256 originToTokenBalance = IERC20(toToken).balanceOf(msg.sender);
 
         IWETH(_WETH_).deposit{value: msg.value}();
@@ -345,6 +356,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
         judgeExpired(deadLine)
         returns (uint256 returnAmount)
     {
+        require(dodoPairs.length == directions.length, "DODOV2Proxy01: PARAMS_LENGTH_NOT_MATCH");
         IDODOApprove(_DODO_APPROVE_).claimTokens(fromToken, msg.sender, dodoPairs[0], fromTokenAmount);
 
         for (uint256 i = 0; i < dodoPairs.length; i++) {
@@ -390,6 +402,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
         judgeExpired(deadLine)
         returns (uint256 returnAmount)
     {
+        require(dodoPairs.length == directions.length, "DODOV2Proxy01: PARAMS_LENGTH_NOT_MATCH");
         uint256 originToTokenBalance = IERC20(toToken).balanceOf(msg.sender);
         IDODOApprove(_DODO_APPROVE_).claimTokens(fromToken, msg.sender, dodoPairs[0], fromTokenAmount);
 
@@ -447,6 +460,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
             IERC20(fromToken).universalApproveMax(approveTarget, fromTokenAmount);
         }
 
+        require(isWhiteListed[to], "DODOV2Proxy01: Not Whitelist Contract");
         (bool success, ) = to.call{value: fromToken == _ETH_ADDRESS_ ? msg.value : 0}(callDataConcat);
 
         require(success, "DODOV2Proxy01: Contract Swap execution Failed");
@@ -488,6 +502,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard {
         judgeExpired(deadLine)
         returns (uint256 returnAmount)
     {
+        require(dodoPairs.length == directions.length, "DODOV2Proxy01: PARAMS_LENGTH_NOT_MATCH");
         _deposit(msg.sender, address(this), fromToken, fromTokenAmount, fromToken == _ETH_ADDRESS_);
 
         for (uint256 i = 0; i < dodoPairs.length; i++) {
