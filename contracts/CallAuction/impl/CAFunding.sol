@@ -82,6 +82,7 @@ contract CAFunding is CAStorage {
         }
     }
 
+    // in case something wrong with base token contract
     function emergencySettle() external phaseSettlement preventReentrant {
         require(!_SETTLED_, "ALREADY_SETTLED");
         require(
