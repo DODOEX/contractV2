@@ -57,19 +57,19 @@ contract DPPStorage is InitializableOwnable, ReentrancyGuard {
 
     // ============ Events ============
 
-    event SetLpFeeRateModel(address indexed oldAddr, address indexed newAddr);
+    event SetLpFeeRateModel(address oldAddr, address newAddr);
 
-    event SetMtFeeRateModel(address indexed oldAddr, address indexed newAddr);
+    event SetMtFeeRateModel(address oldAddr, address newAddr);
 
-    event SetTradePermissionManager(address indexed oldAddr, address indexed newAddr);
+    event SetTradePermissionManager(address oldAddr, address newAddr);
 
-    event SetMaintainer(address indexed oldAddr, address indexed newAddr);
+    event SetMaintainer(address oldAddr, address newAddr);
 
-    event SetGasPriceSource(address indexed oldAddr, address indexed newAddr);
+    event SetGasPriceSource(address oldAddr, address newAddr);
 
-    event SetISource(address indexed oldAddr, address indexed newAddr);
+    event SetISource(address oldAddr, address newAddr);
 
-    event SetKSource(address indexed oldAddr, address indexed newAddr);
+    event SetKSource(address oldAddr, address newAddr);
 
     event SetBuy(bool allow);
 

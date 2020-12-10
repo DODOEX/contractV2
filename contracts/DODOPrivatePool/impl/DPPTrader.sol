@@ -20,8 +20,8 @@ contract DPPTrader is DPPVault {
     // ============ Events ============
 
     event DODOSwap(
-        address indexed fromToken,
-        address indexed toToken,
+        address fromToken,
+        address toToken,
         uint256 fromAmount,
         uint256 toAmount,
         address trader
@@ -122,12 +122,7 @@ contract DPPTrader is DPPVault {
         uint256 quoteAmount,
         address assetTo,
         bytes calldata data
-    ) 
-        external 
-        preventReentrant 
-        isSellAllow(assetTo)
-        isBuyAllow(assetTo)  
-    {
+    ) external preventReentrant isSellAllow(assetTo) isBuyAllow(assetTo) {
         _transferBaseOut(assetTo, baseAmount);
         _transferQuoteOut(assetTo, quoteAmount);
 
@@ -264,10 +259,10 @@ contract DPPTrader is DPPVault {
     function _sync() internal {
         uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
         uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
-        if(baseBalance != _BASE_RESERVE_) {
+        if (baseBalance != _BASE_RESERVE_) {
             _BASE_RESERVE_ = baseBalance;
         }
-        if(quoteBalance != _QUOTE_RESERVE_) {
+        if (quoteBalance != _QUOTE_RESERVE_) {
             _QUOTE_RESERVE_ = quoteBalance;
         }
     }

@@ -21,8 +21,8 @@ contract DVMTrader is DVMVault {
     // ============ Events ============
 
     event DODOSwap(
-        address indexed fromToken,
-        address indexed toToken,
+        address fromToken,
+        address toToken,
         uint256 fromAmount,
         uint256 toAmount,
         address trader
@@ -103,12 +103,7 @@ contract DVMTrader is DVMVault {
         uint256 quoteAmount,
         address assetTo,
         bytes calldata data
-    ) 
-        external 
-        preventReentrant 
-        isSellAllow(assetTo)
-        isBuyAllow(assetTo)  
-    {
+    ) external preventReentrant isSellAllow(assetTo) isBuyAllow(assetTo) {
         _transferBaseOut(assetTo, baseAmount);
         _transferQuoteOut(assetTo, quoteAmount);
 

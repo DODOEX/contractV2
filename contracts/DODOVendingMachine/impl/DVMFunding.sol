@@ -15,14 +15,9 @@ import {IDODOCallee} from "../../intf/IDODOCallee.sol";
 contract DVMFunding is DVMVault {
     // ============ Events ============
 
-    event BuyShares(address indexed to, uint256 increaseShares, uint256 totalShares);
+    event BuyShares(address to, uint256 increaseShares, uint256 totalShares);
 
-    event SellShares(
-        address indexed payer,
-        address indexed to,
-        uint256 decreaseShares,
-        uint256 totalShares
-    );
+    event SellShares(address payer, address to, uint256 decreaseShares, uint256 totalShares);
 
     // ============ Buy & Sell Shares ============
 
@@ -51,7 +46,7 @@ contract DVMFunding is DVMVault {
         // 但有可能出现，reserve>0但totalSupply=0的场景
         if (totalSupply == 0) {
             shares = baseBalance.sub(10**3); // 以免出现balance很大但shares很小的情况
-            _mint(address(0), 10**3); 
+            _mint(address(0), 10**3);
         } else if (baseReserve > 0 && quoteReserve == 0) {
             // case 2. supply when quote reserve is 0
             shares = baseInput.mul(totalSupply).div(baseReserve);
@@ -62,7 +57,7 @@ contract DVMFunding is DVMVault {
             uint256 mintRatio = quoteInputRatio < baseInputRatio ? quoteInputRatio : baseInputRatio;
             shares = DecimalMath.mulFloor(totalSupply, mintRatio);
         }
-        require(shares > 0, 'INSUFFICIENT_LIQUIDITY_MINED');
+        require(shares > 0, "INSUFFICIENT_LIQUIDITY_MINED");
         _mint(to, shares);
         _sync();
         emit BuyShares(to, shares, _SHARES_[to]);
@@ -95,7 +90,7 @@ contract DVMFunding is DVMVault {
         _transferBaseOut(to, baseAmount);
         _transferQuoteOut(to, quoteAmount);
         _sync();
-        
+
         if (data.length > 0) {
             IDODOCallee(to).DVMSellShareCall(
                 msg.sender,
@@ -105,7 +100,7 @@ contract DVMFunding is DVMVault {
                 data
             );
         }
-        
+
         emit SellShares(msg.sender, to, shareAmount, _SHARES_[msg.sender]);
     }
 }
