@@ -11,6 +11,7 @@ pragma experimental ABIEncoderV2;
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 import {IPermissionManager} from "../../lib/PermissionManager.sol";
+import {IFeeRateModel} from "../../lib/FeeRateModel.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 
@@ -34,6 +35,7 @@ contract CAStorage is InitializableOwnable, ReentrancyGuard {
     // ============ Distribution Parameters ============
 
     uint256 _QUOTE_CAP_;
+    uint256 _OWNER_RATIO_;
     address public _BASE_PAY_BACK_;
     address public _QUOTE_PAY_BACK_;
     bytes _BASE_PAY_BACK_CALL_DATA_;
@@ -48,6 +50,11 @@ contract CAStorage is InitializableOwnable, ReentrancyGuard {
     mapping(address => uint256) internal _QUOTE_SHARES_;
     mapping(address => bool) internal _QUOTE_CLAIMED_;
     mapping(address => uint256) internal _CLAIMED_BASE_;
+
+    // ============ Advanced Control ============
+
+    address public _MAINTAINER_;
+    IFeeRateModel public _MT_FEE_RATE_MODEL_;
     IPermissionManager public _BIDDER_PERMISSION_;
 
     // ============ Time Lock ============

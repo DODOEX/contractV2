@@ -11,6 +11,7 @@ pragma experimental ABIEncoderV2;
 import {CAVesting} from "./CAVesting.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {IPermissionManager} from "../../lib/PermissionManager.sol";
+import {IFeeRateModel} from "../../lib/FeeRateModel.sol";
 
 contract CA is CAVesting {
     function init(
@@ -23,19 +24,23 @@ contract CA is CAVesting {
         /*
         Address List
         0. owner
-        1. baseToken
-        2. quoteToken
-        3. basePayBack
-        4. quotePayBack
-        5. permissionManager
+        1. maintainer
+        2. baseToken
+        3. quoteToken
+        4. basePayBack
+        5. quotePayBack
+        6. permissionManager
+        7. feeRateModel
       */
 
         initOwner(addressList[0]);
-        _BASE_TOKEN_ = IERC20(addressList[1]);
-        _QUOTE_TOKEN_ = IERC20(addressList[2]);
-        _BASE_PAY_BACK_ = addressList[3];
-        _QUOTE_PAY_BACK_ = addressList[4];
-        _BIDDER_PERMISSION_ = IPermissionManager(addressList[5]);
+        _MAINTAINER_ = addressList[1];
+        _BASE_TOKEN_ = IERC20(addressList[2]);
+        _QUOTE_TOKEN_ = IERC20(addressList[3]);
+        _BASE_PAY_BACK_ = addressList[4];
+        _QUOTE_PAY_BACK_ = addressList[5];
+        _BIDDER_PERMISSION_ = IPermissionManager(addressList[6]);
+        _MT_FEE_RATE_MODEL_ = IFeeRateModel(addressList[7]);
 
         /*
         Time Line
@@ -67,13 +72,15 @@ contract CA is CAVesting {
         1. cliff rate
         2. k
         3. i
+        4. owner ratio
         */
 
         require(
             valueList[1] <= 10**18 &&
                 valueList[2] <= 10**18 &&
                 valueList[3] > 0 &&
-                valueList[3] <= 10**36,
+                valueList[3] <= 10**36 &&
+                valueList[4] <= 10**18,
             "VALUE_RANGE_WRONG"
         );
 
@@ -81,6 +88,7 @@ contract CA is CAVesting {
         _CLIFF_RATE_ = valueList[1];
         _K_ = valueList[2];
         _I_ = valueList[3];
+        _OWNER_RATIO_ = valueList[4];
 
         // ============ External Call Data ============
 

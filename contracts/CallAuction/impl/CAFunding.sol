@@ -35,8 +35,10 @@ contract CAFunding is CAStorage {
 
     function bid(address to) external phaseBid preventReentrant isBidderAllow(to) {
         uint256 input = _getQuoteInput();
-        _QUOTE_SHARES_[to] = _QUOTE_SHARES_[to].add(input);
-        _TOTAL_QUOTE_SHARES_ = _TOTAL_QUOTE_SHARES_.add(input);
+        uint256 mtFee = DecimalMath.mulFloor(input, _MT_FEE_RATE_MODEL_.getFeeRate(to));
+        _transferQuoteOut(_MAINTAINER_, mtFee);
+        _QUOTE_SHARES_[to] = _QUOTE_SHARES_[to].add(input.sub(mtFee));
+        _TOTAL_QUOTE_SHARES_ = _TOTAL_QUOTE_SHARES_.add(input.sub(mtFee));
         _sync();
     }
 
@@ -64,7 +66,9 @@ contract CAFunding is CAStorage {
 
         // 3. used quote token
         uint256 usedQuote = _QUOTE_CAP_ <= quoteBalance ? _QUOTE_CAP_ : quoteBalance;
-        _transferQuoteOut(_QUOTE_PAY_BACK_, usedQuote);
+        uint256 ownerQuote = DecimalMath.mulFloor(usedQuote, _OWNER_RATIO_);
+        _transferQuoteOut(_OWNER_, ownerQuote);
+        _transferQuoteOut(_QUOTE_PAY_BACK_, usedQuote.sub(usedQuote));
 
         // 4. leave unused quote token in contract
         _TOTAL_UNUSED_QUOTE_ = quoteBalance.sub(usedQuote);
