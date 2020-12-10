@@ -17,6 +17,13 @@ contract DPPAdmin is InitializableOwnable {
     address public _OPERATOR_;
     address public _DODO_APPROVE_;
 
+    uint256 public _FREEZE_TIMESTAMP_;
+
+    modifier notFreezed() {
+        require(block.timestamp >= _FREEZE_TIMESTAMP_, "ADMIN_FREEZED");
+        _;
+    }
+
     function init(
         address owner,
         address dpp,
@@ -27,6 +34,10 @@ contract DPPAdmin is InitializableOwnable {
         _DPP_ = dpp;
         _OPERATOR_ = operator;
         _DODO_APPROVE_ = dodoApprove;
+    }
+
+    function setFreezeTimestamp(uint256 timestamp) external notFreezed onlyOwner {
+        _FREEZE_TIMESTAMP_ = timestamp;
     }
 
     function setOperator(address newOperator) external onlyOwner {
@@ -85,7 +96,7 @@ contract DPPAdmin is InitializableOwnable {
         uint256 newK,
         uint256 baseOutAmount,
         uint256 quoteOutAmount
-    ) external {
+    ) external notFreezed {
         require(
             msg.sender == _OWNER_ ||
                 (msg.sender == IDODOApprove(_DODO_APPROVE_).getDODOProxy() &&
