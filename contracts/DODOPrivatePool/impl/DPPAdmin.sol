@@ -40,43 +40,43 @@ contract DPPAdmin is InitializableOwnable {
         _FREEZE_TIMESTAMP_ = timestamp;
     }
 
-    function setOperator(address newOperator) external onlyOwner {
+    function setOperator(address newOperator) external notFreezed onlyOwner {
         _OPERATOR_ = newOperator;
     }
 
-    // function setLpFeeRateModel(address newLpFeeRateModel) external onlyOwner {
+    // function setLpFeeRateModel(address newLpFeeRateModel) external notFreezed onlyOwner {
     //     IDPP(_DPP_).setLpFeeRateModel(newLpFeeRateModel);
     // }
 
-    // function setMtFeeRateModel(address newMtFeeRateModel) external onlyOwner {
+    // function setMtFeeRateModel(address newMtFeeRateModel) external notFreezed onlyOwner {
     //     IDPP(_DPP_).setMtFeeRateModel(newMtFeeRateModel);
     // }
 
-    // function setTradePermissionManager(address newTradePermissionManager) external onlyOwner {
+    // function setTradePermissionManager(address newTradePermissionManager) external notFreezed onlyOwner {
     //     IDPP(_DPP_).setTradePermissionManager(newTradePermissionManager);
     // }
 
-    function setMaintainer(address newMaintainer) external onlyOwner {
+    function setMaintainer(address newMaintainer) external notFreezed onlyOwner {
         IDPP(_DPP_).setMaintainer(newMaintainer);
     }
 
-    // function setGasPriceSource(address newGasPriceLimitSource) external onlyOwner {
+    // function setGasPriceSource(address newGasPriceLimitSource) external notFreezed onlyOwner {
     //     IDPP(_DPP_).setGasPriceSource(newGasPriceLimitSource);
     // }
 
-    // function setISource(address newISource) external onlyOwner {
+    // function setISource(address newISource) external notFreezed onlyOwner {
     //     IDPP(_DPP_).setISource(newISource);
     // }
 
-    // function setKSource(address newKSource) external onlyOwner {
+    // function setKSource(address newKSource) external notFreezed onlyOwner {
     //     IDPP(_DPP_).setKSource(newKSource);
     // }
 
-    function setBuy(bool open) external onlyOwner {
+    function setBuy(bool open) external notFreezed onlyOwner {
         IDPP(_DPP_).setBuy(open);
     }
 
-    function setSell(bool open) external onlyOwner {
+    function setSell(bool open) external notFreezed onlyOwner {
         IDPP(_DPP_).setSell(open);
     }
 
@@ -84,7 +84,7 @@ contract DPPAdmin is InitializableOwnable {
         address payable to,
         address token,
         uint256 amount
-    ) external onlyOwner {
+    ) external notFreezed onlyOwner {
         IDPP(_DPP_).retrieve(to, token, amount);
     }
 
