@@ -14,6 +14,7 @@ import {IDODOV1} from "./intf/IDODOV1.sol";
 import {IDODOSellHelper} from "./helper/DODOSellHelper.sol";
 import {IWETH} from "../intf/IWETH.sol";
 import {IChi} from "./intf/IChi.sol";
+import {IUni} from "./intf/IUni.sol";
 import {IDODOApprove} from "../intf/IDODOApprove.sol";
 import {IDODOV1Proxy01} from "./intf/IDODOV1Proxy01.sol";
 import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
@@ -104,7 +105,7 @@ contract DODOV1Proxy01 is IDODOV1Proxy01, ReentrancyGuard, Ownable {
             IWETH(_WETH_).deposit{value: fromTokenAmount}();
         }
 
-        for (uint256 i = 0; i < dodoPairs.length; i++) {
+        for (uint8 i = 0; i < dodoPairs.length; i++) {
             address curDodoPair = dodoPairs[i];
             if (directions[i] == 0) {
                 address curDodoBase = IDODOV1(curDodoPair)._BASE_TOKEN_();
@@ -148,7 +149,7 @@ contract DODOV1Proxy01 is IDODOV1Proxy01, ReentrancyGuard, Ownable {
         address fromToken,
         address toToken,
         address approveTarget,
-        address to,
+        address swapTarget,
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
         bytes memory callDataConcat,
@@ -169,10 +170,10 @@ contract DODOV1Proxy01 is IDODOV1Proxy01, ReentrancyGuard, Ownable {
             IERC20(_fromToken).universalApproveMax(approveTarget, fromTokenAmount);
         }
 
-        require(isWhiteListed[to], "DODOV1Proxy01: Not Whitelist Contract");
-        (bool success, ) = to.call{value: _fromToken == _ETH_ADDRESS_ ? msg.value : 0}(callDataConcat);
+        require(isWhiteListed[swapTarget], "DODOV1Proxy01: Not Whitelist Contract");
+        (bool success, ) = swapTarget.call{value: _fromToken == _ETH_ADDRESS_ ? msg.value : 0}(callDataConcat);
 
-        require(success, "DODOV1Proxy01: Contract Swap execution Failed");
+        require(success, "DODOV1Proxy01: External Swap execution Failed");
 
         IERC20(_fromToken).universalTransfer(
             msg.sender,
@@ -187,6 +188,77 @@ contract DODOV1Proxy01 is IDODOV1Proxy01, ReentrancyGuard, Ownable {
         require(returnAmount >= minReturnAmount, "DODOV1Proxy01: Return amount is not enough");
 
         emit OrderHistory(_fromToken, _toToken, msg.sender, fromTokenAmount, returnAmount);
+        
+        uint8 _gasExternalReturn = _GAS_EXTERNAL_RETURN_;
+        if(_gasExternalReturn > 0) {
+            if(gasleft() > 27710 + _gasExternalReturn * 6080)
+                IChi(_CHI_TOKEN_).freeUpTo(_gasExternalReturn);
+        }
+    }
+
+
+    function mixSwapV1(
+        address fromToken,
+        address toToken,
+        uint256 fromTokenAmount,
+        uint256 minReturnAmount,
+        address[] memory mixPairs,
+        uint8[] memory directions,
+        address[] memory portionPath,
+        uint256 deadLine
+    ) external override payable judgeExpired(deadLine) returns (uint256 returnAmount) {
+        require(mixPairs.length == directions.length, "DODOV1Proxy01: PARAMS_LENGTH_NOT_MATCH");
+        uint256 toTokenOriginBalance = IERC20(toToken).universalBalanceOf(msg.sender);
+
+        if (fromToken != _ETH_ADDRESS_) {
+            IDODOApprove(_DODO_APPROVE_).claimTokens(
+                fromToken,
+                msg.sender,
+                address(this),
+                fromTokenAmount
+            );
+        } else {
+            require(msg.value == fromTokenAmount, "DODOV1Proxy01: ETH_AMOUNT_NOT_MATCH");
+            IWETH(_WETH_).deposit{value: fromTokenAmount}();
+        }
+
+        for (uint8 i = 0; i < mixPairs.length; i++) {
+            address curPair = mixPairs[i];
+            if (directions[i] == 0) {
+                address curDodoBase = IDODOV1(curPair)._BASE_TOKEN_();
+                uint256 curAmountIn = IERC20(curDodoBase).balanceOf(address(this));
+                IERC20(curDodoBase).universalApproveMax(curPair, curAmountIn);
+                IDODOV1(curPair).sellBaseToken(curAmountIn, 0, "");
+            } else if(directions[i] == 1){
+                address curDodoQuote = IDODOV1(curPair)._QUOTE_TOKEN_();
+                uint256 curAmountIn = IERC20(curDodoQuote).balanceOf(address(this));
+                IERC20(curDodoQuote).universalApproveMax(curPair, curAmountIn);
+                uint256 canBuyBaseAmount = IDODOSellHelper(_DODO_SELL_HELPER_).querySellQuoteToken(
+                    curPair,
+                    curAmountIn
+                );
+                IDODOV1(curPair).buyBaseToken(canBuyBaseAmount, curAmountIn, "");
+            } else {
+                uint256 curAmountIn = IERC20(portionPath[0]).balanceOf(address(this));
+                IERC20(portionPath[0]).universalApproveMax(curPair, curAmountIn);
+                IUni(curPair).swapExactTokensForTokens(curAmountIn,0,portionPath,address(this),deadLine);
+            }
+        }
+
+        IERC20(fromToken).universalTransfer(
+            msg.sender,
+            IERC20(fromToken).universalBalanceOf(address(this))
+        );
+
+        IERC20(toToken).universalTransfer(
+            msg.sender,
+            IERC20(toToken).universalBalanceOf(address(this))
+        );
+
+        returnAmount = IERC20(toToken).universalBalanceOf(msg.sender).sub(toTokenOriginBalance);
+        require(returnAmount >= minReturnAmount, "DODOV1Proxy01: Return amount is not enough");
+
+        emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount);
         
         uint8 _gasExternalReturn = _GAS_EXTERNAL_RETURN_;
         if(_gasExternalReturn > 0) {
