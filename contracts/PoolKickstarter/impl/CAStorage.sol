@@ -25,6 +25,7 @@ contract CAStorage is InitializableOwnable, ReentrancyGuard {
     uint256 _PHASE_BID_STARTTIME_;
     uint256 _PHASE_BID_ENDTIME_;
     uint256 _PHASE_CALM_ENDTIME_;
+    uint256 _FREEZE_DURATION_;
     bool _SETTLED_;
 
     // ============ Core Address ============
@@ -34,22 +35,26 @@ contract CAStorage is InitializableOwnable, ReentrancyGuard {
 
     // ============ Distribution Parameters ============
 
-    uint256 _QUOTE_CAP_;
-    uint256 _OWNER_RATIO_;
-    address public _BASE_PAY_BACK_;
-    address public _QUOTE_PAY_BACK_;
-    bytes _BASE_PAY_BACK_CALL_DATA_;
-    bytes _QUOTE_PAY_BACK_CALL_DATA_;
+    uint256 _OWNER_QUOTE_RATIO_; // 抽取一部分
+    uint256 _TOTAL_BASE_;
 
-    // ============ Balances ============
+    uint256 _POOL_QUOTE_CAP_;
+    uint256 _POOL_BASE_RESERVE_;
+
+    // ============ Settlement ============
 
     uint256 public _QUOTE_RESERVE_;
-    uint256 public _TOTAL_SOLD_BASE_;
-    uint256 public _TOTAL_UNUSED_QUOTE_;
-    uint256 public _TOTAL_QUOTE_SHARES_;
-    mapping(address => uint256) internal _QUOTE_SHARES_;
+
+    uint256 public _UNUSED_BASE_;
+    uint256 public _UNUSED_QUOTE_;
+
+    uint256 public _TOTAL_SHARES_;
+    mapping(address => uint256) internal _SHARES_;
     mapping(address => bool) internal _QUOTE_CLAIMED_;
-    mapping(address => uint256) internal _CLAIMED_BASE_;
+    mapping(address => bool) internal _BASE_CLAIMED_;
+
+    address _POOL_FACTORY_;
+    address _POOL_;
 
     // ============ Advanced Control ============
 
@@ -57,23 +62,12 @@ contract CAStorage is InitializableOwnable, ReentrancyGuard {
     IFeeRateModel public _MT_FEE_RATE_MODEL_;
     IPermissionManager public _BIDDER_PERMISSION_;
 
-    // ============ Time Lock ============
-
-    uint256 public _START_VESTING_TIME_;
-    uint256 public _VESTING_DURATION_;
-    uint256 public _CLIFF_RATE_;
-
     // ============ PMM Parameters ============
 
     uint256 public _K_;
     uint256 public _I_;
 
     // ============ Modifiers ============
-
-    modifier phasePreBid() {
-        require(block.timestamp <= _PHASE_BID_STARTTIME_, "NOT_PHASE_PREBID");
-        _;
-    }
 
     modifier phaseBid() {
         require(

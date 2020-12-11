@@ -15,6 +15,18 @@ import {IDVM} from "../DODOVendingMachine/intf/IDVM.sol";
 import {IDVMAdmin} from "../DODOVendingMachine/intf/IDVMAdmin.sol";
 import {IPermissionManager} from "../lib/PermissionManager.sol";
 
+interface IDVMFactory {
+    function createDODOVendingMachine(
+        address creator,
+        address baseToken,
+        address quoteToken,
+        uint256 lpFeeRate,
+        uint256 mtFeeRate,
+        uint256 i,
+        uint256 k
+    ) external returns (address newVendingMachine);
+}
+
 contract DVMFactory is Ownable {
     // ============ Templates ============
 

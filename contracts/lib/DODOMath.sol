@@ -42,6 +42,9 @@ library DODOMath {
     ) internal pure returns (uint256) {
         require(V0 > 0, "TARGET_IS_ZERO");
         uint256 fairAmount = i.mul(V1.sub(V2)); // i*delta
+        if (k == 0) {
+            return fairAmount;
+        }
         uint256 V0V0V1V2 = DecimalMath.divFloor(V0.mul(V0).div(V1), V2);
         uint256 penalty = DecimalMath.mulFloor(k, V0V0V1V2); // k(V0^2/V1/V2)
         return DecimalMath.ONE.sub(k).add(penalty).mul(fairAmount).div(DecimalMath.ONE2);
@@ -117,7 +120,7 @@ library DODOMath {
         }
 
         if (k == 0) {
-            return DecimalMath.mulFloor(i, delta);
+            return DecimalMath.mulFloor(i, delta) > V1 ? V1 : DecimalMath.mulFloor(i, delta);
         }
 
         if (k == DecimalMath.ONE) {
