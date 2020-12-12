@@ -13,11 +13,11 @@ import {SafeERC20} from "../../lib/SafeERC20.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {IDVM} from "../../DODOVendingMachine/intf/IDVM.sol";
-import {IDVMFactory} from "../../Factory/DVMFactory.sol";
-import {CAStorage} from "./CAStorage.sol";
+import {IUnownedDVMFactory} from "../../Factory/UnownedDVMFactory.sol";
+import {CPStorage} from "./CPStorage.sol";
 import {PMMPricing} from "../../lib/PMMPricing.sol";
 
-contract CAFunding is CAStorage {
+contract CPFunding is CPStorage {
     using SafeERC20 for IERC20;
 
     // ============ BID & CALM PHASE ============
@@ -61,7 +61,6 @@ contract CAFunding is CAStorage {
         (uint256 poolBase, uint256 poolQuote, uint256 ownerQuote) = getSettleResult();
         _UNUSED_QUOTE_ = _QUOTE_TOKEN_.balanceOf(address(this)).sub(poolQuote).sub(ownerQuote);
         _UNUSED_BASE_ = _BASE_TOKEN_.balanceOf(address(this)).sub(poolBase);
-        uint256 avgPrice = DecimalMath.divCeil(poolQuote.add(ownerQuote), _UNUSED_BASE_);
 
         // 这里的目的是让开盘价尽量等于avgPrice
         // 我们统一设定k=1，如果quote和base不平衡，就必然要截断一边
@@ -70,39 +69,36 @@ contract CAFunding is CAStorage {
         // i = m (1-quote/(m*base))
         // if quote = m*base i = 1
         // if quote > m*base reverse
-        uint256 baseDepth = DecimalMath.mulFloor(avgPrice, poolBase);
-        if (poolQuote == baseDepth) {
-            _POOL_ = IDVMFactory(_POOL_FACTORY_).createDODOVendingMachine(
-                address(this),
-                address(_BASE_TOKEN_),
-                address(_QUOTE_TOKEN_),
-                3e15,
-                0,
-                1,
-                DecimalMath.ONE
-            );
-        } else if (poolQuote < baseDepth) {
-            uint256 ratio = DecimalMath.ONE.sub(DecimalMath.divFloor(poolQuote, baseDepth));
-            _POOL_ = IDVMFactory(_POOL_FACTORY_).createDODOVendingMachine(
-                address(this),
-                address(_BASE_TOKEN_),
-                address(_QUOTE_TOKEN_),
-                3e15,
-                0,
-                avgPrice.mul(ratio).mul(ratio).divCeil(DecimalMath.ONE2),
-                DecimalMath.ONE
-            );
-        } else if (poolQuote > baseDepth) {
-            uint256 ratio = DecimalMath.ONE.sub(DecimalMath.divFloor(baseDepth, poolQuote));
-            _POOL_ = IDVMFactory(_POOL_FACTORY_).createDODOVendingMachine(
-                address(this),
-                address(_QUOTE_TOKEN_),
-                address(_BASE_TOKEN_),
-                3e15,
-                0,
-                DecimalMath.reciprocalFloor(avgPrice).mul(ratio).mul(ratio).divCeil(
+        {
+            uint256 avgPrice = DecimalMath.divCeil(poolQuote.add(ownerQuote), _UNUSED_BASE_);
+            uint256 baseDepth = DecimalMath.mulFloor(avgPrice, poolBase);
+            address _poolBaseToken;
+            address _poolQuoteToken;
+            uint256 _poolI;
+            if (poolQuote == baseDepth) {
+                _poolBaseToken = address(_BASE_TOKEN_);
+                _poolQuoteToken = address(_QUOTE_TOKEN_);
+                _poolI = 1;
+            } else if (poolQuote < baseDepth) {
+                _poolBaseToken = address(_BASE_TOKEN_);
+                _poolQuoteToken = address(_QUOTE_TOKEN_);
+                uint256 ratio = DecimalMath.ONE.sub(DecimalMath.divFloor(poolQuote, baseDepth));
+                _poolI = avgPrice.mul(ratio).mul(ratio).divCeil(DecimalMath.ONE2);
+            } else if (poolQuote > baseDepth) {
+                _poolBaseToken = address(_QUOTE_TOKEN_);
+                _poolQuoteToken = address(_BASE_TOKEN_);
+                uint256 ratio = DecimalMath.ONE.sub(DecimalMath.divFloor(baseDepth, poolQuote));
+                _poolI = DecimalMath.reciprocalFloor(avgPrice).mul(ratio).mul(ratio).divCeil(
                     DecimalMath.ONE2
-                ),
+                );
+            }
+            _POOL_ = IUnownedDVMFactory(_POOL_FACTORY_).createDODOVendingMachine(
+                address(this),
+                _poolBaseToken,
+                _poolQuoteToken,
+                3e15,
+                0,
+                _poolI,
                 DecimalMath.ONE
             );
         }

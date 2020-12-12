@@ -15,7 +15,7 @@ import {IFeeRateModel} from "../../lib/FeeRateModel.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 
-contract CAStorage is InitializableOwnable, ReentrancyGuard {
+contract CPStorage is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
 
     uint256 internal constant _SETTLEMENT_EXPIRED_TIME_ = 86400 * 7;
@@ -71,7 +71,7 @@ contract CAStorage is InitializableOwnable, ReentrancyGuard {
 
     modifier phaseBid() {
         require(
-            block.timestamp > _PHASE_BID_STARTTIME_ && block.timestamp <= _PHASE_BID_ENDTIME_,
+            block.timestamp >= _PHASE_BID_STARTTIME_ && block.timestamp < _PHASE_BID_ENDTIME_,
             "NOT_PHASE_BID"
         );
         _;
@@ -79,7 +79,7 @@ contract CAStorage is InitializableOwnable, ReentrancyGuard {
 
     modifier phaseCalm() {
         require(
-            block.timestamp > _PHASE_BID_ENDTIME_ && block.timestamp <= _PHASE_CALM_ENDTIME_,
+            block.timestamp >= _PHASE_BID_ENDTIME_ && block.timestamp < _PHASE_CALM_ENDTIME_,
             "NOT_PHASE_CALM"
         );
         _;
@@ -87,14 +87,14 @@ contract CAStorage is InitializableOwnable, ReentrancyGuard {
 
     modifier phaseBidOrCalm() {
         require(
-            block.timestamp > _PHASE_BID_STARTTIME_ && block.timestamp <= _PHASE_CALM_ENDTIME_,
+            block.timestamp >= _PHASE_BID_STARTTIME_ && block.timestamp < _PHASE_CALM_ENDTIME_,
             "NOT_PHASE_BID_OR_CALM"
         );
         _;
     }
 
     modifier phaseSettlement() {
-        require(block.timestamp > _PHASE_CALM_ENDTIME_, "NOT_PHASE_EXE");
+        require(block.timestamp >= _PHASE_CALM_ENDTIME_, "NOT_PHASE_EXE");
         _;
     }
 

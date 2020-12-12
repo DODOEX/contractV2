@@ -31,6 +31,7 @@ export const DODO_MINE_READER_NAME = "DODOMineReader"
 export const DVM_VAULT_NAME = "DVMVault"
 export const DVM_NAME = "DVM"
 export const DVM_FACTORY_NAME = "DVMFactory"
+export const UNOWNED_DVM_FACTORY_NAME = "UnownedDVMFactory"
 export const DVM_PROXY_NAME = "DVMProxy"
 export const CONST_FEE_RATE_MODEL_NAME = "ConstFeeRateModel"
 export const PERMISSION_MANAGER_NAME = "PermissionManager"
@@ -44,6 +45,7 @@ export const DODO_SELL_HELPER = "DODOSellHelper"
 export const DVM_ADMIN_NAME = "DVMAdmin"
 export const DPP_ADMIN_NAME = "DPPAdmin"
 export const DODO_CALLEE_HELPER_NAME = "DODOCalleeHelper"
+export const CROWD_POOLING_NAME = "CP"
 
 interface ContractJson {
   abi: any;

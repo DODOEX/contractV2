@@ -13,16 +13,16 @@ import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {Ownable} from "../../lib/Ownable.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 import {IERC20} from "../../intf/IERC20.sol";
-import {CAFunding} from "./CAFunding.sol";
+import {CPFunding} from "./CPFunding.sol";
 
 /**
- * @title CAVesting
+ * @title CPVesting
  * @author DODO Breeder
  *
  * @notice Lock Token and release it linearly
  */
 
-contract CAVesting is CAFunding {
+contract CPVesting is CPFunding {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
