@@ -537,6 +537,20 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, Ownable {
         emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount);
     }
 
+    //TODO:
+    function mixSwapV1(
+        address fromToken,
+        address toToken,
+        uint256 fromTokenAmount,
+        uint256 minReturnAmount,
+        address[] memory mixPairs,
+        uint8[] memory directions,
+        address[] memory portionPath,
+        uint256 deadLine
+    ) external override payable judgeExpired(deadLine) returns (uint256 returnAmount) {
+        return 0;
+    }
+
 
     function addLiquidityToV1(
         address to,

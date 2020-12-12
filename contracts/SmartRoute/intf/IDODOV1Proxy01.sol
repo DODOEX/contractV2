@@ -29,4 +29,15 @@ interface IDODOV1Proxy01 {
         bytes memory callDataConcat,
         uint256 deadLine
     ) external payable returns (uint256 returnAmount);
+
+    function mixSwapV1(
+        address fromToken,
+        address toToken,
+        uint256 fromTokenAmount,
+        uint256 minReturnAmount,
+        address[] memory mixPairs,
+        uint8[] memory directions,
+        address[] memory portionPath,
+        uint256 deadLine
+    ) external payable returns (uint256 returnAmount);
 }
