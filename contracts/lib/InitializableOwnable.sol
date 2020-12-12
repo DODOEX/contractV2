@@ -39,13 +39,12 @@ contract InitializableOwnable {
 
     // ============ Functions ============
 
-    function initOwner(address newOwner) public notInitialized{
+    function initOwner(address newOwner) public notInitialized {
         _INITIALIZED_ = true;
         _OWNER_ = newOwner;
     }
 
     function transferOwnership(address newOwner) public onlyOwner {
-        require(newOwner != address(0), "INVALID_OWNER");
         emit OwnershipTransferPrepared(_OWNER_, newOwner);
         _NEW_OWNER_ = newOwner;
     }
