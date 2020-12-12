@@ -15,9 +15,14 @@ import {IDODOCallee} from "../../intf/IDODOCallee.sol";
 contract DVMFunding is DVMVault {
     // ============ Events ============
 
-    event BuyShares(address to, uint256 increaseShares, uint256 totalShares);
+    event BuyShares(address indexed to, uint256 increaseShares, uint256 totalShares);
 
-    event SellShares(address payer, address to, uint256 decreaseShares, uint256 totalShares);
+    event SellShares(
+        address indexed payer,
+        address indexed to,
+        uint256 decreaseShares,
+        uint256 totalShares
+    );
 
     // ============ Buy & Sell Shares ============
 

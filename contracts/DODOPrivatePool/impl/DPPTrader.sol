@@ -20,11 +20,11 @@ contract DPPTrader is DPPVault {
     // ============ Events ============
 
     event DODOSwap(
-        address fromToken,
-        address toToken,
+        address indexed fromToken,
+        address indexed toToken,
         uint256 fromAmount,
         uint256 toAmount,
-        address trader
+        address indexed trader
     );
 
     // ============ Modifiers ============
