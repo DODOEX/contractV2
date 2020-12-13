@@ -21,11 +21,11 @@ contract DVMTrader is DVMVault {
     // ============ Events ============
 
     event DODOSwap(
-        address indexed fromToken,
-        address indexed toToken,
+        address fromToken,
+        address toToken,
         uint256 fromAmount,
         uint256 toAmount,
-        address indexed trader
+        address trader
     );
 
     // ============ Modifiers ============

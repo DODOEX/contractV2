@@ -33,6 +33,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, Ownable {
     address public immutable _DODO_SELL_HELPER_;
     address public immutable _DVM_FACTORY_;
     address public immutable _DPP_FACTORY_;
+    address public immutable _CP_FACTORY_;
     mapping (address => bool) public isWhiteListed;
 
     // ============ Events ============
@@ -59,12 +60,14 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, Ownable {
     constructor(
         address dvmFactory,
         address dppFactory,
+        address cpFactory,
         address payable weth,
         address dodoApprove,
         address dodoSellHelper
     ) public {
         _DVM_FACTORY_ = dvmFactory;
         _DPP_FACTORY_ = dppFactory;
+        _CP_FACTORY_ = cpFactory;
         _WETH_ = weth;
         _DODO_APPROVE_ = dodoApprove;
         _DODO_SELL_HELPER_ = dodoSellHelper;
@@ -549,6 +552,51 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, Ownable {
         uint256 deadLine
     ) external override payable judgeExpired(deadLine) returns (uint256 returnAmount) {
         return 0;
+    }
+
+    //============ CrowdPooling Functions (create & bid) ============
+
+    function createCrowdPooling(
+        address baseToken,
+        address quoteToken,
+        uint256 baseInAmount,
+        uint256[] memory timeLine,
+        uint256[] memory valueList,
+        uint256 deadLine
+    ) external override judgeExpired(deadLine) returns (address newCrowdPooling) {
+        address _baseToken = baseToken;
+        address _quoteToken = quoteToken == _ETH_ADDRESS_ ? _WETH_ : quoteToken;
+        
+        newCrowdPooling = IDODOV2(_CP_FACTORY_).createCrowdPooling();
+
+        _deposit(
+            msg.sender,
+            newCrowdPooling,
+            _baseToken,
+            baseInAmount,
+            false
+        );
+
+
+        IDODOV2(_CP_FACTORY_).initCrowdPooling(
+            newCrowdPooling,
+            msg.sender,
+            _baseToken,
+            _quoteToken,
+            timeLine,
+            valueList
+        );
+    }
+
+    function bid(
+        address assetTo,
+        address cpAddress,
+        uint256 quoteAmount,
+        uint8 flag, // 0 - ERC20, 1 - quoteInETH
+        uint256 deadLine
+    ) external override payable judgeExpired(deadLine) {
+        _deposit(msg.sender, cpAddress, IDODOV2(cpAddress)._QUOTE_TOKEN_(), quoteAmount, flag == 1);
+        IDODOV2(cpAddress).bid(assetTo);
     }
 
 

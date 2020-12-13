@@ -98,6 +98,23 @@ interface IDODOV2Proxy01 is IDODOV1Proxy01 {
         uint256 deadLine
     ) external payable;
 
+    function createCrowdPooling(
+        address baseToken,
+        address quoteToken,
+        uint256 baseInAmount,
+        uint256[] memory timeLine,
+        uint256[] memory valueList,
+        uint256 deadLine
+    ) external returns (address newCrowdPooling);
+
+    function bid(
+        address assetTo,
+        address cpAddress,
+        uint256 quoteAmount,
+        uint8 flag, // 0 - ERC20, 1 - quoteInETH
+        uint256 deadLine
+    ) external payable;
+
     function addLiquidityToV1(
         address to,
         address pair,

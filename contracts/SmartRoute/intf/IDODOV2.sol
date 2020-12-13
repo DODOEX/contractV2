@@ -63,4 +63,19 @@ interface IDODOV2 {
         uint256 baseOutAmount,
         uint256 quoteOutAmount
     ) external; 
+
+    //========== CrowdPooling ===========
+
+    function createCrowdPooling() external returns (address newCrowdPooling);
+
+    function initCrowdPooling(
+        address cpAddress,
+        address creator,
+        address baseToken,
+        address quoteToken,
+        uint256[] memory timeLine,
+        uint256[] memory valueList
+    ) external;
+
+    function bid(address to) external;
 }
