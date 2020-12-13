@@ -25,9 +25,10 @@ module.exports = async (deployer, network, accounts) => {
   } else if (network == "live") {
     DODOSellHelperAddress = "0x533da777aedce766ceae696bf90f8541a4ba80eb";
     WETHAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
-    DODOApproveAddress = "0x4eC851895d85bfa6835241b3157ae10FfFD3BebC";
+    // DODOApproveAddress = "0x4eC851895d85bfa6835241b3157ae10FfFD3BebC";
+    DODOApproveAddress = "";
     chiAddress = "0x0000000000004946c0e9F43F4Dee607b0eF1fA1c";
-    DODOSwapCalcHelperAddress = "";
+    DODOSwapCalcHelperAddress = "0x22C1a736DBE8200E6DF2f3D8F97c0D5749c1E257";
   } else if (network == "bsclive") {
     DODOSellHelperAddress = "0x0F859706AeE7FcF61D5A8939E8CB9dBB6c1EDA33";
     WETHAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
@@ -42,10 +43,11 @@ module.exports = async (deployer, network, accounts) => {
     logger.log("network type: " + network);
     logger.log("Deploy time: " + new Date().toLocaleString());
 
-    // logger.log("Deploy type: Proxy");
+    logger.log("Deploy type: Proxy");
     if (DODOApproveAddress == "") {
       await deployer.deploy(DODOApprove);
       DODOApproveAddress = DODOApprove.address;
+      logger.log("DODOApprove Address: ", DODOApproveAddress);
     }
     if (DODOSellHelperAddress == "") {
       await deployer.deploy(DODOSellHelper);
@@ -55,21 +57,26 @@ module.exports = async (deployer, network, accounts) => {
       await deployer.deploy(DODOSwapCalcHelper, DODOSellHelperAddress);
       DODOSwapCalcHelperAddress = DODOSwapCalcHelper.address;
     }
-    // logger.log("DODOApprove Address: ", DODOApproveAddress);
-    // logger.log("DODOSellHelper Address: ", DODOSellHelperAddress);
-    logger.log("DODOSwapCalcHelper Address: ", DODOSwapCalcHelperAddress);
 
-    // await deployer.deploy(
-    //   DODOProxyV1,
-    //   DODOApproveAddress,
-    //   DODOSellHelperAddress,
-    //   WETHAddress,
-    //   chiAddress
-    // );
-    // logger.log("DODOProxyV1 Address: ", DODOProxyV1.address);
+    await deployer.deploy(
+      DODOProxyV1,
+      DODOApproveAddress,
+      DODOSellHelperAddress,
+      WETHAddress,
+      chiAddress
+    );
+    logger.log("DODOProxyV1 Address: ", DODOProxyV1.address);
 
-    // const DODOApproveInstance = await DODOApprove.at(DODOApproveAddress);
-    // var tx = await DODOApproveInstance.setDODOProxy(DODOProxyV1.address);
-    // logger.log("DODOApprovce setProxy tx: ", tx.tx);
+    const DODOApproveInstance = await DODOApprove.at(DODOApproveAddress);
+    var tx = await DODOApproveInstance.setDODOProxy(DODOProxyV1.address);
+    logger.log("DODOApprove setProxy tx: ", tx.tx);
+
+    const DODOProxyV1Instance = await DODOProxyV1.at(DODOProxyV1.address);
+    var tx1 = await DODOProxyV1Instance.addWhiteList("0x111111125434b319222cdbf8c261674adb56f3ae");
+    var tx2 = await DODOProxyV1Instance.addWhiteList("0xf740b67da229f2f10bcbd38a7979992fcc71b8eb");
+    var tx3 = await DODOProxyV1Instance.addWhiteList("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D");
+    logger.log("AddWhiteList tx1: ", tx1.tx);
+    logger.log("AddWhiteList tx2: ", tx2.tx);
+    logger.log("AddWhiteList tx3: ", tx3.tx);
   }
 };

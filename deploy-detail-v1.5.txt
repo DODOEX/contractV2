@@ -10,3 +10,13 @@ DODOSwapCalcHelper Address:  0xED3Ac3335a24331F1704df8CB456C88dCA282782
 network type: live
 Deploy time: 2020/12/9 下午10:16:19
 DODOSwapCalcHelper Address:  0x22C1a736DBE8200E6DF2f3D8F97c0D5749c1E257
+====================================================
+network type: live
+Deploy time: 2020/12/12 下午12:29:38
+Deploy type: Proxy
+DODOApprove Address:  0x2B03B0B40C91808981915A1704BCC086ECC956dB
+DODOProxyV1 Address:  0xf1AD611399eDD53f5729178853e00856D01f381E
+DODOApprove setProxy tx:  0xb00c07780c0a6a6d2cd03430ae0cc69590b9aebb581bbb3556d2fb929ab115b6
+AddWhiteList tx1:  0xb3e5cbd55c0de94916820a4cccfe4e72d48faeeb73a922f07e088c3634a37c54
+AddWhiteList tx2:  0xc078005b280677d1da032c69adba7d95b28500492b447334bb77151b595a171b
+AddWhiteList tx3:  0xe80dbdfc8855677c6bc94cc810e16e36a707c6ca0fd9a56abc625d0940d927a7
