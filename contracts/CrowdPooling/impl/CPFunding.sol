@@ -55,8 +55,7 @@ contract CPFunding is CPStorage {
     // ============ SETTLEMENT ============
 
     function settle() external phaseSettlement preventReentrant {
-        require(!_SETTLED_, "ALREADY_SETTLED");
-        _SETTLED_ = true;
+        _settle();
 
         (uint256 poolBase, uint256 poolQuote, uint256 ownerQuote) = getSettleResult();
         _UNUSED_QUOTE_ = _QUOTE_TOKEN_.balanceOf(address(this)).sub(poolQuote).sub(ownerQuote);
@@ -80,15 +79,17 @@ contract CPFunding is CPStorage {
                 _poolQuoteToken = address(_QUOTE_TOKEN_);
                 _poolI = 1;
             } else if (poolQuote < baseDepth) {
+                // poolI up round
                 _poolBaseToken = address(_BASE_TOKEN_);
                 _poolQuoteToken = address(_QUOTE_TOKEN_);
-                uint256 ratio = DecimalMath.ONE.sub(DecimalMath.divFloor(poolQuote, baseDepth));
+                uint256 ratio = DecimalMath.ONE.sub(DecimalMath.divCeil(poolQuote, baseDepth));
                 _poolI = avgPrice.mul(ratio).mul(ratio).divCeil(DecimalMath.ONE2);
             } else if (poolQuote > baseDepth) {
+                // poolI down round
                 _poolBaseToken = address(_QUOTE_TOKEN_);
                 _poolQuoteToken = address(_BASE_TOKEN_);
                 uint256 ratio = DecimalMath.ONE.sub(DecimalMath.divFloor(baseDepth, poolQuote));
-                _poolI = DecimalMath.reciprocalFloor(avgPrice).mul(ratio).mul(ratio).divCeil(
+                _poolI = DecimalMath.reciprocalFloor(avgPrice).mul(ratio).mul(ratio).div(
                     DecimalMath.ONE2
                 );
             }
@@ -96,11 +97,11 @@ contract CPFunding is CPStorage {
                 address(this),
                 _poolBaseToken,
                 _poolQuoteToken,
-                3e15,
-                0,
+                3e15, // 0.3%
                 _poolI,
                 DecimalMath.ONE
             );
+            _AVG_SETTLED_PRICE_ = avgPrice;
         }
 
         _transferBaseOut(_POOL_, poolBase);
@@ -112,14 +113,16 @@ contract CPFunding is CPStorage {
 
     // in case something wrong with base token contract
     function emergencySettle() external phaseSettlement preventReentrant {
-        require(!_SETTLED_, "ALREADY_SETTLED");
-        require(
-            block.timestamp > _PHASE_CALM_ENDTIME_.add(_SETTLEMENT_EXPIRED_TIME_),
-            "NOT_EMERGENCY"
-        );
-        _SETTLED_ = true;
+        require(block.timestamp > _PHASE_CALM_ENDTIME_.add(_SETTLEMENT_EXPIRE_), "NOT_EMERGENCY");
+        _settle();
         _UNUSED_QUOTE_ = _QUOTE_TOKEN_.balanceOf(address(this));
         _UNUSED_BASE_ = _BASE_TOKEN_.balanceOf(address(this));
+    }
+
+    function _settle() internal {
+        require(!_SETTLED_, "ALREADY_SETTLED");
+        _SETTLED_ = true;
+        _SETTLED_TIME_ = block.timestamp;
     }
 
     // ============ Pricing ============
@@ -139,9 +142,6 @@ contract CPFunding is CPStorage {
         }
         (uint256 soldBase, ) = PMMPricing.sellQuoteToken(_getPMMState(), poolQuote);
         poolBase = _TOTAL_BASE_.sub(soldBase);
-        if (poolBase < _POOL_BASE_RESERVE_) {
-            poolBase = _POOL_BASE_RESERVE_;
-        }
         ownerQuote = DecimalMath.mulFloor(poolQuote, _OWNER_QUOTE_RATIO_);
         poolQuote = poolQuote.sub(ownerQuote);
     }
@@ -154,6 +154,16 @@ contract CPFunding is CPStorage {
         state.B0 = state.B;
         state.Q0 = 0;
         state.R = PMMPricing.RState.ONE;
+    }
+
+    function getExpectedAvgPrice() external view returns (uint256) {
+        require(!_SETTLED_, "ALREADY_SETTLED");
+        (uint256 poolBase, uint256 poolQuote, uint256 ownerQuote) = getSettleResult();
+        return
+            DecimalMath.divCeil(
+                poolQuote.add(ownerQuote),
+                _BASE_TOKEN_.balanceOf(address(this)).sub(poolBase)
+            );
     }
 
     // ============ Asset In ============
@@ -183,5 +193,11 @@ contract CPFunding is CPStorage {
         if (amount > 0) {
             _QUOTE_TOKEN_.safeTransfer(to, amount);
         }
+    }
+
+    // ============ Asset Out ============
+
+    function getShares(address user) external view returns (uint256) {
+        return _SHARES_[user];
     }
 }

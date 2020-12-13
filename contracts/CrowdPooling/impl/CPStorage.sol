@@ -18,15 +18,16 @@ import {IERC20} from "../../intf/IERC20.sol";
 contract CPStorage is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
 
-    uint256 internal constant _SETTLEMENT_EXPIRED_TIME_ = 86400 * 7;
+    uint256 internal constant _SETTLEMENT_EXPIRE_ = 86400 * 7;
 
     // ============ Timeline ============
 
-    uint256 _PHASE_BID_STARTTIME_;
-    uint256 _PHASE_BID_ENDTIME_;
-    uint256 _PHASE_CALM_ENDTIME_;
-    uint256 _FREEZE_DURATION_;
-    bool _SETTLED_;
+    uint256 public _PHASE_BID_STARTTIME_;
+    uint256 public _PHASE_BID_ENDTIME_;
+    uint256 public _PHASE_CALM_ENDTIME_;
+    uint256 public _SETTLED_TIME_;
+    uint256 public _FREEZE_DURATION_;
+    bool public _SETTLED_;
 
     // ============ Core Address ============
 
@@ -35,11 +36,10 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
 
     // ============ Distribution Parameters ============
 
-    uint256 _OWNER_QUOTE_RATIO_; // 抽取一部分
-    uint256 _TOTAL_BASE_;
+    uint256 public _OWNER_QUOTE_RATIO_; // 抽取一部分
+    uint256 public _TOTAL_BASE_;
 
-    uint256 _POOL_QUOTE_CAP_;
-    uint256 _POOL_BASE_RESERVE_;
+    uint256 public _POOL_QUOTE_CAP_;
 
     // ============ Settlement ============
 
@@ -53,8 +53,9 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
     mapping(address => bool) internal _QUOTE_CLAIMED_;
     mapping(address => bool) internal _BASE_CLAIMED_;
 
-    address _POOL_FACTORY_;
-    address _POOL_;
+    address public _POOL_FACTORY_;
+    address public _POOL_;
+    uint256 public _AVG_SETTLED_PRICE_;
 
     // ============ Advanced Control ============
 

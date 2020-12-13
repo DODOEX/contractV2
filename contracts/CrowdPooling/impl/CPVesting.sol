@@ -32,7 +32,7 @@ contract CPVesting is CPFunding {
     }
 
     modifier afterFreeze() {
-        require(block.timestamp >= _PHASE_CALM_ENDTIME_.add(_FREEZE_DURATION_), "FREEZED");
+        require(block.timestamp >= _SETTLED_TIME_.add(_FREEZE_DURATION_), "FREEZED");
         _;
     }
 

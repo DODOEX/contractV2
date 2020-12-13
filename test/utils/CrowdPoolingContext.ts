@@ -21,7 +21,6 @@ BigNumber.config({
 
 export interface CPContextInitConfig {
   totalBase: string;
-  poolBaseReserve: string;
   poolQuoteCap: string;
   ownerQuoteRatio: string;
   k: string;
@@ -105,7 +104,6 @@ export class CPContext {
       ],
       [
         config.poolQuoteCap,
-        config.poolBaseReserve,
         config.ownerQuoteRatio,
         config.k,
         config.i

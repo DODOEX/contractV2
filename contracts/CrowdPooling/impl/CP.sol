@@ -33,6 +33,8 @@ contract CP is CPVesting {
         6. poolFactory
       */
 
+        require(addressList.length == 7, "LIST_LENGTH_WRONG");
+
         initOwner(addressList[0]);
         _MAINTAINER_ = addressList[1];
         _BASE_TOKEN_ = IERC20(addressList[2]);
@@ -49,7 +51,7 @@ contract CP is CPVesting {
         3. freeze duration
         */
 
-        require(block.timestamp <= timeLine[0], "TIMELINE_WRONG");
+        require(timeLine.length == 4, "LIST_LENGTH_WRONG");
 
         _PHASE_BID_STARTTIME_ = timeLine[0];
         _PHASE_BID_ENDTIME_ = _PHASE_BID_STARTTIME_.add(timeLine[1]);
@@ -57,26 +59,27 @@ contract CP is CPVesting {
 
         _FREEZE_DURATION_ = timeLine[3];
 
+        require(block.timestamp <= _PHASE_BID_STARTTIME_, "TIMELINE_WRONG");
+
         /*
         Value List
         0. pool quote cap
-        1. pool base reserve
-        2. owner quote ratio
-        3. k
-        4 i
+        1. owner quote ratio
+        2. k
+        3. i
         */
 
-        require(valueList[4] > 0 && valueList[4] <= 10**36, "I_VALUE_WRONG");
-        require(valueList[3] <= 10**18, "K_VALUE_WRONG");
-        require(valueList[2] <= 10**18, "OWNER_RATIO_WRONG");
+        require(valueList.length == 4, "LIST_LENGTH_WRONG");
 
         _POOL_QUOTE_CAP_ = valueList[0];
-        _POOL_BASE_RESERVE_ = valueList[1];
-        _OWNER_QUOTE_RATIO_ = valueList[2];
+        _OWNER_QUOTE_RATIO_ = valueList[1];
         _K_ = valueList[2];
         _I_ = valueList[3];
 
+        require(_I_ > 0 && _I_ <= 10**36, "I_VALUE_WRONG");
+        require(_K_ <= 10**18, "K_VALUE_WRONG");
+        require(_OWNER_QUOTE_RATIO_ <= 10**18, "OWNER_RATIO_WRONG");
+
         _TOTAL_BASE_ = _BASE_TOKEN_.balanceOf(address(this));
-        require(_TOTAL_BASE_ >= _POOL_BASE_RESERVE_, "BASE_TOKEN_NOT_ENOUGH");
     }
 }

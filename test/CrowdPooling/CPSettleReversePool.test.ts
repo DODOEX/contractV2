@@ -1,0 +1,87 @@
+/*
+
+    Copyright 2020 DODO ZOO.
+    SPDX-License-Identifier: Apache-2.0
+
+*/
+
+import { decimalStr } from '../utils/Converter';
+import { logGas } from '../utils/Log';
+import { CPContext, CPContextInitConfig } from '../utils/CrowdPoolingContext';
+import BigNumber from 'bignumber.js';
+// import { assert } from 'chai';
+import { DVM_NAME, getContractWithAddress, UNOWNED_DVM_FACTORY_NAME } from '../utils/Contracts';
+import { assert } from 'chai';
+const truffleAssert = require('truffle-assertions');
+
+let bidder1: string;
+let bidder2: string;
+let config: CPContextInitConfig
+
+async function init(ctx: CPContext): Promise<void> {
+  bidder1 = ctx.SpareAccounts[1]
+  bidder2 = ctx.SpareAccounts[2]
+  await ctx.QUOTE.methods.mint(bidder1, decimalStr("1000")).send(ctx.sendParam(ctx.Deployer))
+  await ctx.QUOTE.methods.mint(bidder2, decimalStr("1000")).send(ctx.sendParam(ctx.Deployer))
+}
+
+describe("Funding", () => {
+  let snapshotId: string;
+  let ctx: CPContext;
+
+  before(async () => {
+    config = {
+      totalBase: decimalStr("10000"),
+      poolQuoteCap: decimalStr("100000"),
+      ownerQuoteRatio: decimalStr("0.1"),
+      k: decimalStr("0.1"),
+      i: decimalStr("10"),
+      lpFeeRate: decimalStr("0.002"),
+      bidDuration: new BigNumber(86400),
+      calmDuration: new BigNumber(86400),
+      freezeDuration: new BigNumber(86400),
+    }
+    ctx = new CPContext();
+    await ctx.init(config);
+    await init(ctx);
+  });
+
+  beforeEach(async () => {
+    snapshotId = await ctx.EVM.snapshot();
+  });
+
+  afterEach(async () => {
+    await ctx.EVM.reset(snapshotId);
+  });
+
+  describe("settle", () => {
+
+    it("bid not exceed cap", async () => {
+      await ctx.QUOTE.methods.mint(ctx.CP.options.address, decimalStr("100000")).send(ctx.sendParam(ctx.Deployer))
+      await ctx.CP.methods.bid(bidder1).send(ctx.sendParam(bidder1))
+
+      await ctx.EVM.increaseTime(86400 * 2)
+
+      await logGas(ctx.CP.methods.settle(), ctx.sendParam(ctx.Deployer), "settle")
+      assert.equal(await ctx.CP.methods._SETTLED_().call(), true)
+
+      var poolAddress = await ctx.CP.methods._POOL_().call()
+      var pool = getContractWithAddress(DVM_NAME, poolAddress)
+
+      assert.equal(await pool.methods.getMidPrice().call(), "76012678448689469")
+      assert.equal(await ctx.CP.methods._AVG_SETTLED_PRICE_().call(), "13155700080678329720")
+
+      assert.equal(await ctx.CP.methods._UNUSED_QUOTE_().call(), "0")
+      assert.equal(await ctx.CP.methods._UNUSED_BASE_().call(), "7593666577024078089065")
+
+      assert.equal(await ctx.BASE.methods.balanceOf(ctx.Deployer).call(), "0")
+      assert.equal(await ctx.BASE.methods.balanceOf(poolAddress).call(), "2406333422975921910935")
+      assert.equal(await ctx.BASE.methods.balanceOf(ctx.CP.options.address).call(), "7593666577024078089065")
+
+      assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.Deployer).call(), decimalStr("9990"))
+      assert.equal(await ctx.QUOTE.methods.balanceOf(poolAddress).call(), decimalStr("89910"))
+      assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.CP.options.address).call(), "0")
+    })
+
+  })
+})
