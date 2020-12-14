@@ -18,9 +18,9 @@ import {IUni} from "./intf/IUni.sol";
 import {IDODOApprove} from "../intf/IDODOApprove.sol";
 import {IDODOV1Proxy01} from "./intf/IDODOV1Proxy01.sol";
 import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
-import {Ownable} from "../lib/Ownable.sol";
+import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 
-contract DODOV1Proxy01 is IDODOV1Proxy01, ReentrancyGuard, Ownable {
+contract DODOV1Proxy01 is IDODOV1Proxy01, ReentrancyGuard, InitializableOwnable {
     using SafeMath for uint256;
     using UniversalERC20 for IERC20;
 

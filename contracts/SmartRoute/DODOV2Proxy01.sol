@@ -20,9 +20,9 @@ import {UniversalERC20} from "./lib/UniversalERC20.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
 import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
-import {Ownable} from "../lib/Ownable.sol";
+import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 
-contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, Ownable {
+contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable {
     using SafeMath for uint256;
     using UniversalERC20 for IERC20;
 

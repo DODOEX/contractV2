@@ -9,9 +9,9 @@ pragma solidity 0.6.9;
 
 import {IERC20} from "../intf/IERC20.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
-import {Ownable} from "../lib/Ownable.sol";
+import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 
-contract DODOApprove is Ownable {
+contract DODOApprove is InitializableOwnable {
     using SafeERC20 for IERC20;
     
     // ============ Storage ============
