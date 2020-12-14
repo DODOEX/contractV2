@@ -23,7 +23,7 @@ contract DODOApprove is InitializableOwnable {
     
     // ============ Storage ============
     uint256 private constant _TIMELOCK_DURATION_ = 3 days;
-    uint256 private constant _TIMELOCK_EMERGENCY_DURATION_ = 2 hours;
+    uint256 private constant _TIMELOCK_EMERGENCY_DURATION_ = 24 hours;
     uint256 public _TIMELOCK_;
     address public _PENDING_DODO_PROXY_;
     address public _DODO_PROXY_;
