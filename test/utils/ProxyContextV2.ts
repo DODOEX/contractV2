@@ -26,6 +26,8 @@ export class ProxyContext {
   DODOProxyV2: Contract;
   DVMFactory: Contract;
   DPPFactory: Contract;
+  CPFactory: Contract;
+  UnownedDVMFactory: Contract;
   DODOApprove: Contract;
   DODOCalleeHelper: Contract;
   DODOSellHelper: Contract;
@@ -44,7 +46,6 @@ export class ProxyContext {
   async init(weth:string) {
     this.EVM = new EVM();
     this.Web3 = getDefaultWeb3();
-
     const allAccounts = await this.Web3.eth.getAccounts();
     this.Deployer = allAccounts[0];
     this.Maintainer = allAccounts[1];
@@ -57,6 +58,7 @@ export class ProxyContext {
     );
     var dvmTemplate = await contracts.newContract(contracts.DVM_NAME)
     var dppTemplate = await contracts.newContract(contracts.DPP_NAME)
+    var cpTemplate = await contracts.newContract(contracts.CROWD_POOLING_NAME)
     var dvmAdminTemplate = await contracts.newContract(contracts.DVM_ADMIN_NAME)
     var dppAdminTemplate = await contracts.newContract(contracts.DPP_ADMIN_NAME)
     var feeRateModelTemplate = await contracts.newContract(contracts.FEE_RATE_MODEL_NAME)
@@ -76,9 +78,23 @@ export class ProxyContext {
        ]
     )
 
+
+    this.UnownedDVMFactory = await contracts.newContract(contracts.UNOWNED_DVM_FACTORY_NAME,
+      [
+        cloneFactory.options.address,
+        dvmTemplate.options.address,
+        feeRateModelTemplate.options.address,
+        this.Deployer,
+        feeRateModelTemplate.options.address,
+        permissionManagerTemplate.options.address,
+        defaultGasSource.options.address
+      ]
+    )
+
     this.DODOApprove = await contracts.newContract(
       contracts.SMART_APPROVE
     );
+
 
     this.DPPFactory = await contracts.newContract(contracts.DPP_FACTORY_NAME,
       [
@@ -93,6 +109,19 @@ export class ProxyContext {
       ]
     )
 
+    this.CPFactory = await contracts.newContract(contracts.CROWD_POOLING_FACTORY,
+      [
+        cloneFactory.options.address,
+        cpTemplate.options.address,
+        this.UnownedDVMFactory.options.address,
+        feeRateModelTemplate.options.address,
+        this.Deployer,
+        feeRateModelTemplate.options.address,
+        permissionManagerTemplate.options.address,
+        defaultGasSource.options.address
+      ]  
+    )
+
     this.DODOSellHelper = await contracts.newContract(
       contracts.DODO_SELL_HELPER
     );
@@ -101,13 +130,15 @@ export class ProxyContext {
       [
         this.DVMFactory.options.address,
         this.DPPFactory.options.address,
+        this.CPFactory.options.address,
         this.WETH.options.address,
         this.DODOApprove.options.address,
         this.DODOSellHelper.options.address
       ]
     );
 
-    await this.DODOApprove.methods.setDODOProxy(this.DODOProxyV2.options.address).send(this.sendParam(this.Deployer));
+    await this.DODOProxyV2.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
+    await this.DODOApprove.methods.init(this.Deployer,this.DODOProxyV2.options.address).send(this.sendParam(this.Deployer));
 
     this.DODO = await contracts.newContract(
       contracts.MINTABLE_ERC20_CONTRACT_NAME,
