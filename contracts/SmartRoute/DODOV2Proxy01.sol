@@ -14,6 +14,7 @@ import {IDODOApprove} from "../intf/IDODOApprove.sol";
 import {IDODOSellHelper} from "./helper/DODOSellHelper.sol";
 import {IERC20} from "../intf/IERC20.sol";
 import {IWETH} from "../intf/IWETH.sol";
+import {IUni} from "./intf/IUni.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {UniversalERC20} from "./lib/UniversalERC20.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
@@ -540,7 +541,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, Ownable {
         emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount);
     }
 
-    //TODO:
     function mixSwapV1(
         address fromToken,
         address toToken,
@@ -551,7 +551,50 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, Ownable {
         address[] memory portionPath,
         uint256 deadLine
     ) external override payable judgeExpired(deadLine) returns (uint256 returnAmount) {
-        return 0;
+        require(mixPairs.length == directions.length, "DODOV2Proxy01: PARAMS_LENGTH_NOT_MATCH");
+        uint256 toTokenOriginBalance = IERC20(toToken).universalBalanceOf(msg.sender);
+
+        address _fromToken = fromToken;
+        address _toToken = toToken;
+        _deposit(msg.sender, address(this), _fromToken, fromTokenAmount, _fromToken == _ETH_ADDRESS_);
+
+        for (uint8 i = 0; i < mixPairs.length; i++) {
+            address curPair = mixPairs[i];
+            if (directions[i] == 0) {
+                address curDodoBase = IDODOV1(curPair)._BASE_TOKEN_();
+                uint256 curAmountIn = IERC20(curDodoBase).balanceOf(address(this));
+                IERC20(curDodoBase).universalApproveMax(curPair, curAmountIn);
+                IDODOV1(curPair).sellBaseToken(curAmountIn, 0, "");
+            } else if(directions[i] == 1){
+                address curDodoQuote = IDODOV1(curPair)._QUOTE_TOKEN_();
+                uint256 curAmountIn = IERC20(curDodoQuote).balanceOf(address(this));
+                IERC20(curDodoQuote).universalApproveMax(curPair, curAmountIn);
+                uint256 canBuyBaseAmount = IDODOSellHelper(_DODO_SELL_HELPER_).querySellQuoteToken(
+                    curPair,
+                    curAmountIn
+                );
+                IDODOV1(curPair).buyBaseToken(canBuyBaseAmount, curAmountIn, "");
+            } else {
+                uint256 curAmountIn = IERC20(portionPath[0]).balanceOf(address(this));
+                IERC20(portionPath[0]).universalApproveMax(curPair, curAmountIn);
+                IUni(curPair).swapExactTokensForTokens(curAmountIn,0,portionPath,address(this),deadLine);
+            }
+        }
+
+        IERC20(_fromToken).universalTransfer(
+            msg.sender,
+            IERC20(_fromToken).universalBalanceOf(address(this))
+        );
+
+        IERC20(_toToken).universalTransfer(
+            msg.sender,
+            IERC20(_toToken).universalBalanceOf(address(this))
+        );
+
+        returnAmount = IERC20(_toToken).universalBalanceOf(msg.sender).sub(toTokenOriginBalance);
+        require(returnAmount >= minReturnAmount, "DODOV2Proxy01: Return amount is not enough");
+
+        emit OrderHistory(_fromToken, _toToken, msg.sender, fromTokenAmount, returnAmount);
     }
 
     //============ CrowdPooling Functions (create & bid) ============

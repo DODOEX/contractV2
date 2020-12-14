@@ -13,20 +13,48 @@ import {Ownable} from "../lib/Ownable.sol";
 
 contract DODOApprove is Ownable {
     using SafeERC20 for IERC20;
+    
+    // ============ Storage ============
+    uint256 private constant _TIMELOCK_DURATION_ = 3 days;
+    uint256 public _TIMELOCK_;
+    address public _PENDING_DODO_PROXY_;
     address public _DODO_PROXY_;
 
     // ============ Events ============
 
     event SetDODOProxy(address indexed oldProxy, address indexed newProxy);
 
-    function setDODOProxy(address newDodoProxy) external onlyOwner {
-        emit SetDODOProxy(_DODO_PROXY_, newDodoProxy);
-        _DODO_PROXY_ = newDodoProxy;
+    
+    // ============ Modifiers ============
+    modifier notLocked() {
+        require(
+            _TIMELOCK_ <= block.timestamp,
+            "SetProxy is timelocked"
+        );
+        _;
     }
 
-    function getDODOProxy() public view returns (address) {
-        return _DODO_PROXY_;
+    function unlockSetProxy(address newDodoProxy) public onlyOwner {
+        if(newDodoProxy == address(0) || _DODO_PROXY_ == address(0))
+            _TIMELOCK_ = block.timestamp;
+        else
+            _TIMELOCK_ = block.timestamp + _TIMELOCK_DURATION_;
+        _PENDING_DODO_PROXY_ = newDodoProxy;
     }
+
+
+    function lockSetProxy() public onlyOwner {
+       _PENDING_DODO_PROXY_ = address(0);
+       _TIMELOCK_ = 0;
+    }
+
+
+    function setDODOProxy() external onlyOwner notLocked() {
+        emit SetDODOProxy(_DODO_PROXY_, _PENDING_DODO_PROXY_);
+        _DODO_PROXY_ = _PENDING_DODO_PROXY_;
+        lockSetProxy();
+    }
+
 
     function claimTokens(
         address token,
@@ -38,5 +66,9 @@ contract DODOApprove is Ownable {
         if (amount > 0) {
             IERC20(token).safeTransferFrom(who, dest, amount);
         }
+    }
+
+    function getDODOProxy() public view returns (address) {
+        return _DODO_PROXY_;
     }
 }
