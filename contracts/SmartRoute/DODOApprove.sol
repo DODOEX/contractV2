@@ -11,11 +11,19 @@ import {IERC20} from "../intf/IERC20.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 
+
+/**
+ * @title DODOApprove
+ * @author DODO Breeder
+ *
+ * @notice Handle authorizations in DODO platform
+ */
 contract DODOApprove is InitializableOwnable {
     using SafeERC20 for IERC20;
     
     // ============ Storage ============
     uint256 private constant _TIMELOCK_DURATION_ = 3 days;
+    uint256 private constant _TIMELOCK_EMERGENCY_DURATION_ = 2 hours;
     uint256 public _TIMELOCK_;
     address public _PENDING_DODO_PROXY_;
     address public _DODO_PROXY_;
@@ -34,9 +42,14 @@ contract DODOApprove is InitializableOwnable {
         _;
     }
 
+    function init(address owner, address initProxyAddress) external {
+        initOwner(owner);
+        _DODO_PROXY_ = initProxyAddress;
+    }
+
     function unlockSetProxy(address newDodoProxy) public onlyOwner {
-        if(newDodoProxy == address(0) || _DODO_PROXY_ == address(0))
-            _TIMELOCK_ = block.timestamp;
+        if(_DODO_PROXY_ == address(0))
+            _TIMELOCK_ = block.timestamp + _TIMELOCK_EMERGENCY_DURATION_;
         else
             _TIMELOCK_ = block.timestamp + _TIMELOCK_DURATION_;
         _PENDING_DODO_PROXY_ = newDodoProxy;

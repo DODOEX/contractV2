@@ -20,3 +20,21 @@ DODOApprove setProxy tx:  0xb00c07780c0a6a6d2cd03430ae0cc69590b9aebb581bbb3556d2
 AddWhiteList tx1:  0xb3e5cbd55c0de94916820a4cccfe4e72d48faeeb73a922f07e088c3634a37c54
 AddWhiteList tx2:  0xc078005b280677d1da032c69adba7d95b28500492b447334bb77151b595a171b
 AddWhiteList tx3:  0xe80dbdfc8855677c6bc94cc810e16e36a707c6ca0fd9a56abc625d0940d927a7
+====================================================
+network type: kovan
+Deploy time: 2020/12/14 下午6:09:05
+Deploy type: Proxy
+DODOApprove Address:  0xdD666863E8eF7E9a3d2F47B5336F07d104040951
+Set DODOApprove Owner tx:  0x94c841208b277e3cbd39a347da8a91cb5c26a884c801c085725057b6a22bcc66
+DODOProxyV1 Address:  0x6720Aa404ce9dbf2fE1b6aB1A259663eB21Ce625
+Set DODOProxyV1 Owner tx:  0xa7db5a8fef91b614304ea10e897b1eb4ca2eaf410da1b39d749427cba894ed93
+DODOApprove unlockSetProxy tx:  0x0d33567cda1cf322090efcfb7e247be8069ac3f7090ae449dab35a8e2718b2fa
+DODOApprove triggerSetProxy tx:  0xb3bb062ade1c0174dcd71934cff3fb666fb7ba0c678ce99900d87dad87fdf4c4
+====================================================
+network type: kovan
+Deploy time: 2020/12/14 下午6:41:46
+Deploy type: Proxy
+DODOApprove Address:  0x7Ef9DCE3EB7CE03de5E98dB0AA7Da70B71B15ff7
+DODOProxyV1 Address:  0x69dD38A07e50F4E4F571b89EAB12Ef2745aF8670
+Set DODOProxyV1 Owner tx:  0xb5124a76363d999fe265e9e9dfab99f04052de613bd32d22b3fee1725f429abd
+Set DODOApprove Owner And Init Set Proxy tx:  0x19d9f159b1a676bfa00a7c9edb1e251300d1d7319ec61d6fbb074ceae9a28c73
