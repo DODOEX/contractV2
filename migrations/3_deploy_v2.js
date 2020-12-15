@@ -24,7 +24,7 @@ const DODOProxyV2 = artifacts.require("DODOV2Proxy01");
 const DODOSellHelper = artifacts.require("DODOSellHelper");
 const DODOCalleeHelper = artifacts.require("DODOCalleeHelper");
 
-const DEPLOY_V2 = true;
+const DEPLOY_V2 = false;
 
 module.exports = async (deployer, network, accounts) => {
     //Helper And Common

@@ -21,9 +21,10 @@ contract DODOSwapCalcHelper {
         uint256 fromTokenAmount,
         address[] memory dodoPairs,
         uint8[] memory directions
-    ) external view returns (uint256 returnAmount,uint256[] memory midPrices) {
+    ) external view returns (uint256 returnAmount,uint256[] memory midPrices,uint256[] memory feeRates) {
         returnAmount = fromTokenAmount;
         midPrices = new uint256[](dodoPairs.length);
+        feeRates = new uint256[](dodoPairs.length);
         for (uint256 i = 0; i < dodoPairs.length; i++) {
             address curDodoPair = dodoPairs[i];
             if (directions[i] == 0) {
@@ -35,6 +36,7 @@ contract DODOSwapCalcHelper {
                 );
             }
             midPrices[i] = IDODOV1(curDodoPair).getMidPrice();
+            feeRates[i] = IDODOV1(curDodoPair)._MT_FEE_RATE_() + IDODOV1(curDodoPair)._LP_FEE_RATE_();
         }        
     }
 }
