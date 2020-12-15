@@ -8,7 +8,7 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {Ownable} from "../lib/Ownable.sol";
+import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 import {ICloneFactory} from "../lib/CloneFactory.sol";
 import {IConstFeeRateModel} from "../lib/ConstFeeRateModel.sol";
 import {IDVM} from "../DODOVendingMachine/intf/IDVM.sol";
@@ -27,7 +27,7 @@ interface IDVMFactory {
     ) external returns (address newVendingMachine);
 }
 
-contract DVMFactory is Ownable {
+contract DVMFactory is InitializableOwnable {
     // ============ Templates ============
 
     address public immutable _CLONE_FACTORY_;

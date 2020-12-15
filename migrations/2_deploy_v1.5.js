@@ -7,7 +7,7 @@ const DODOProxyV1 = artifacts.require("DODOV1Proxy01");
 const DODOSellHelper = artifacts.require("DODOSellHelper");
 const DODOSwapCalcHelper = artifacts.require("DODOSwapCalcHelper");
 
-const DEPLOY_ROUTE = true;
+const DEPLOY_ROUTE = false;
 
 module.exports = async (deployer, network, accounts) => {
   let DODOSellHelperAddress = "";

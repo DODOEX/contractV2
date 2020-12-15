@@ -8,7 +8,6 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {Ownable} from "../lib/Ownable.sol";
 import {ICloneFactory} from "../lib/CloneFactory.sol";
 import {IConstFeeRateModel} from "../lib/ConstFeeRateModel.sol";
 import {IDVM} from "../DODOVendingMachine/intf/IDVM.sol";
@@ -17,7 +16,7 @@ import {IPermissionManager} from "../lib/PermissionManager.sol";
 import {InitializableERC20} from "../external/ERC20/InitializableERC20.sol";
 import {InitializableMintableERC20} from "../external/ERC20/InitializableMintableERC20.sol";
 
-contract ERC20Factory is Ownable {
+contract ERC20Factory {
     // ============ Templates ============
 
     address public immutable _CLONE_FACTORY_;
