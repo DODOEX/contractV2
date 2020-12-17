@@ -27,6 +27,13 @@ contract DPPTrader is DPPVault {
         address trader
     );
 
+    event DODOFlashLoan(
+        address borrower,
+        address assetTo,
+        uint256 baseAmount,
+        uint256 quoteAmount
+    );
+
     // ============ Modifiers ============
 
     modifier isBuyAllow(address trader) {
@@ -77,7 +84,7 @@ contract DPPTrader is DPPVault {
             address(_QUOTE_TOKEN_),
             baseInput,
             receiveQuoteAmount,
-            tx.origin
+            msg.sender
         );
     }
 
@@ -113,7 +120,7 @@ contract DPPTrader is DPPVault {
             address(_BASE_TOKEN_),
             quoteInput,
             receiveBaseAmount,
-            tx.origin
+            msg.sender
         );
     }
 
@@ -160,7 +167,7 @@ contract DPPTrader is DPPVault {
                 address(_BASE_TOKEN_),
                 quoteInput,
                 receiveBaseAmount,
-                tx.origin
+                msg.sender
             );
         }
 
@@ -186,11 +193,13 @@ contract DPPTrader is DPPVault {
                 address(_QUOTE_TOKEN_),
                 baseInput,
                 receiveQuoteAmount,
-                tx.origin
+                msg.sender
             );
         }
 
         _sync();
+        
+        emit DODOFlashLoan(msg.sender, assetTo, baseAmount, quoteAmount);
     }
 
     // ============ Query Functions ============

@@ -9,10 +9,6 @@ pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
 import {ICloneFactory} from "../lib/CloneFactory.sol";
-import {IConstFeeRateModel} from "../lib/ConstFeeRateModel.sol";
-import {IDVM} from "../DODOVendingMachine/intf/IDVM.sol";
-import {IDVMAdmin} from "../DODOVendingMachine/intf/IDVMAdmin.sol";
-import {IPermissionManager} from "../lib/PermissionManager.sol";
 import {InitializableERC20} from "../external/ERC20/InitializableERC20.sol";
 import {InitializableMintableERC20} from "../external/ERC20/InitializableMintableERC20.sol";
 
@@ -25,7 +21,7 @@ contract ERC20Factory {
 
     // ============ Events ============
 
-    event NewERC20(address indexed erc20, address indexed creator, bool isMintable);
+    event NewERC20(address erc20, address creator, bool isMintable);
 
     // ============ Functions ============
 

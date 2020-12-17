@@ -36,8 +36,7 @@ module.exports = async (deployer, network, accounts) => {
     DODOApproveAddress = "";
     chiAddress = "0x0000000000000000000000000000000000000000";
     DODOSwapCalcHelperAddress = "0xb0199C2c8ADF1E6c1e41De60A62E993406Cb8C02";
-    //TODO:待生成替换
-    ownerAddress = accounts[0];
+    ownerAddress = "0x4073f2b9bB95774531b9e23d206a308c614A943a";
   } else return;
 
   if (DEPLOY_ROUTE) {
@@ -80,7 +79,7 @@ module.exports = async (deployer, network, accounts) => {
     logger.log("Set DODOApprove Owner And Init Set Proxy tx: ", tx.tx);
 
     // var tx1 = await DODOProxyV1Instance.addWhiteList("0x111111125434b319222cdbf8c261674adb56f3ae");
-    // var tx2 = await DODOProxyV1Instance.addWhiteList("0xf740b67da229f2f10bcbd38a7979992fcc71b8eb");
+    // var tx2 = await DODOProxyV1Instance.addWhiteList("0xdef1c0ded9bec7f1a1670819833240f027b25eff");
     // logger.log("AddWhiteList tx1: ", tx1.tx);
     // logger.log("AddWhiteList tx2: ", tx2.tx);
   }

@@ -38,10 +38,12 @@ contract DPPFactory is InitializableOwnable {
     // ============ Events ============
 
     event NewDPP(
-        address indexed baseToken,
-        address indexed quoteToken,
-        address indexed creator,
-        address dpp
+        address baseToken,
+        address quoteToken,
+        address creator,
+        address dpp,
+        uint256 lpFeeRate,
+        uint256 mtFeeRate
     );
 
     // ============ Functions ============
@@ -104,7 +106,7 @@ contract DPPFactory is InitializableOwnable {
 
         _REGISTRY_[baseToken][quoteToken].push(dppAddress);
         _USER_REGISTRY_[creator].push(dppAddress);
-        emit NewDPP(baseToken, quoteToken, creator, dppAddress);
+        emit NewDPP(baseToken, quoteToken, creator, dppAddress, lpFeeRate, mtFeeRate);
     }
 
     function _createFeeRateModel(address owner, uint256 feeRate)

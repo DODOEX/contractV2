@@ -23,13 +23,26 @@ contract DPPVault is DPPStorage {
 
     // ============ Events ============
 
-    event Reset();
+    event Reset(
+        uint256 newLpFeeRate,
+        uint256 newMtFeeRate
+    );
 
     // ============ View Functions ============
 
     function getVaultReserve() external view returns (uint256 baseReserve, uint256 quoteReserve) {
         baseReserve = _BASE_RESERVE_;
         quoteReserve = _QUOTE_RESERVE_;
+    }
+
+    function getUserFeeRate(address user) external view returns (uint256 lpFeeRate, uint256 mtFeeRate) {
+        lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(user);
+        mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(user);
+    }
+
+    function getUserTradePermission(address user) external view returns (bool isBuyAllow, bool isSellAllow) {
+        isBuyAllow = (!_BUYING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(user));
+        isSellAllow =  (!_SELLING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(user));
     }
 
     // ============ Get Input ============
@@ -75,7 +88,7 @@ contract DPPVault is DPPStorage {
         _transferQuoteOut(assetTo, quoteOutAmount);
         _resetTargetAndReserve();
         _checkIK();
-        emit Reset();
+        emit Reset(newLpFeeRate, newMtFeeRate);
     }
 
     function _setRState() internal {

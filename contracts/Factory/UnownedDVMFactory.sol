@@ -10,7 +10,7 @@ pragma experimental ABIEncoderV2;
 
 import {Ownable} from "../lib/Ownable.sol";
 import {ICloneFactory} from "../lib/CloneFactory.sol";
-import {IConstFeeRateModel} from "../lib/ConstFeeRateModel.sol";
+import {IFeeRateModel} from "../lib/FeeRateModel.sol";
 import {IDVM} from "../DODOVendingMachine/intf/IDVM.sol";
 import {IDVMAdmin} from "../DODOVendingMachine/intf/IDVMAdmin.sol";
 import {IPermissionManager} from "../lib/PermissionManager.sol";
@@ -49,11 +49,12 @@ contract UnownedDVMFactory {
 
     // ============ Events ============
 
-    event NewDVM(
-        address indexed baseToken,
-        address indexed quoteToken,
-        address indexed creator,
-        address dvm
+    event NewUnOwnedDVM(
+        address baseToken,
+        address quoteToken,
+        address creator,
+        address dvm,
+        uint256 lpFeeRate
     );
 
     // ============ Functions ============
@@ -102,7 +103,7 @@ contract UnownedDVMFactory {
         }
         _REGISTRY_[baseToken][quoteToken].push(newVendingMachine);
         _USER_REGISTRY_[creator].push(newVendingMachine);
-        emit NewDVM(baseToken, quoteToken, creator, newVendingMachine);
+        emit NewUnOwnedDVM(baseToken, quoteToken, creator, newVendingMachine, lpFeeRate);
     }
 
     function _createFeeRateModel(address owner, uint256 feeRate)
@@ -110,7 +111,7 @@ contract UnownedDVMFactory {
         returns (address feeRateModel)
     {
         feeRateModel = ICloneFactory(_CLONE_FACTORY_).clone(_FEE_RATE_MODEL_TEMPLATE_);
-        IConstFeeRateModel(feeRateModel).init(owner, feeRate);
+        IFeeRateModel(feeRateModel).init(owner, feeRate);
     }
 
     // ============ View Functions ============

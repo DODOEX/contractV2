@@ -28,6 +28,13 @@ contract DVMTrader is DVMVault {
         address trader
     );
 
+    event DODOFlashLoan(
+        address borrower,
+        address assetTo,
+        uint256 baseAmount,
+        uint256 quoteAmount
+    );
+
     // ============ Modifiers ============
 
     modifier isBuyAllow(address trader) {
@@ -70,7 +77,7 @@ contract DVMTrader is DVMVault {
             address(_QUOTE_TOKEN_),
             baseInput,
             receiveQuoteAmount,
-            tx.origin
+            msg.sender
         );
     }
 
@@ -94,7 +101,7 @@ contract DVMTrader is DVMVault {
             address(_BASE_TOKEN_),
             quoteInput,
             receiveBaseAmount,
-            tx.origin
+            msg.sender
         );
     }
 
@@ -112,7 +119,7 @@ contract DVMTrader is DVMVault {
 
         uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
         uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
-
+        
         // no input -> pure loss
         require(
             baseBalance >= _BASE_RESERVE_ || quoteBalance >= _QUOTE_RESERVE_,
@@ -147,11 +154,13 @@ contract DVMTrader is DVMVault {
                 address(_QUOTE_TOKEN_),
                 baseInput,
                 receiveQuoteAmount,
-                tx.origin
+                msg.sender
             );
         }
 
         _sync();
+        
+        emit DODOFlashLoan(msg.sender, assetTo, baseAmount, quoteAmount);
     }
 
     // ============ Query Functions ============

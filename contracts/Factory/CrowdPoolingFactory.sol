@@ -35,9 +35,9 @@ contract CrowdPoolingFactory {
     // ============ Events ============
 
     event NewCP(
-        address indexed baseToken,
-        address indexed quoteToken,
-        address indexed creator,
+        address baseToken,
+        address quoteToken,
+        address creator,
         address cp
     );
 
