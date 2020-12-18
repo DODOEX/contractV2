@@ -15,12 +15,6 @@ import {IExternalValue} from "../../lib/ExternalValue.sol";
 contract DVMAdmin is InitializableOwnable {
     address public _DVM_;
 
-    // ============ Events ============
-
-    event SetLpFeeRate(uint256 newLpFeeRate);
-    
-    event SetMtFeeRate(uint256 newMtFeeRate);
-
     function init(address owner, address dvm) external {
         initOwner(owner);
         _DVM_ = dvm;
@@ -31,8 +25,7 @@ contract DVMAdmin is InitializableOwnable {
     // }
 
     function setLpFeeRateValue(uint256 newLpFeeRate) external onlyOwner {
-        IExternalValue(IDVM(_DVM_)._LP_FEE_RATE_MODEL_()).set(newLpFeeRate);
-        emit SetLpFeeRate(newLpFeeRate);
+        IDVM(_DVM_).setLpFeeRateValue(newLpFeeRate);
     }
 
     // function setMtFeeRateModel(address newMtFeeRateModel) external onlyOwner {
@@ -40,8 +33,7 @@ contract DVMAdmin is InitializableOwnable {
     // }
 
     function setMtFeeRateValue(uint256 newMtFeeRate) external onlyOwner {
-        IExternalValue(IDVM(_DVM_)._MT_FEE_RATE_MODEL_()).set(newMtFeeRate);
-        emit SetMtFeeRate(newMtFeeRate);
+        IDVM(_DVM_).setMtFeeRateValue(newMtFeeRate);
     }
 
     // function setTradePermissionManager(address newTradePermissionManager) external onlyOwner {

@@ -50,9 +50,7 @@ contract DVMFactory is InitializableOwnable {
         address baseToken,
         address quoteToken,
         address creator,
-        address dvm,
-        uint256 lpFeeRate,
-        uint256 mtFeeRate
+        address dvm
     );
 
     // ============ Functions ============
@@ -100,7 +98,7 @@ contract DVMFactory is InitializableOwnable {
         }
         _REGISTRY_[baseToken][quoteToken].push(newVendingMachine);
         _USER_REGISTRY_[creator].push(newVendingMachine);
-        emit NewDVM(baseToken, quoteToken, creator, newVendingMachine, lpFeeRate, mtFeeRate);
+        emit NewDVM(baseToken, quoteToken, creator, newVendingMachine);
     }
 
     function _createFeeRateModel(address owner, uint256 feeRate)

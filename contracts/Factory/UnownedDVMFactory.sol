@@ -53,8 +53,7 @@ contract UnownedDVMFactory {
         address baseToken,
         address quoteToken,
         address creator,
-        address dvm,
-        uint256 lpFeeRate
+        address dvm
     );
 
     // ============ Functions ============
@@ -103,7 +102,7 @@ contract UnownedDVMFactory {
         }
         _REGISTRY_[baseToken][quoteToken].push(newVendingMachine);
         _USER_REGISTRY_[creator].push(newVendingMachine);
-        emit NewUnOwnedDVM(baseToken, quoteToken, creator, newVendingMachine, lpFeeRate);
+        emit NewUnOwnedDVM(baseToken, quoteToken, creator, newVendingMachine);
     }
 
     function _createFeeRateModel(address owner, uint256 feeRate)
