@@ -22,13 +22,14 @@ BigNumber.config({
 export interface CPContextInitConfig {
   totalBase: string;
   poolQuoteCap: string;
-  ownerQuoteRatio: string;
   k: string;
   i: string;
   lpFeeRate: string;
   bidDuration: BigNumber;
   calmDuration: BigNumber;
   freezeDuration: BigNumber;
+  vestingDuration: BigNumber;
+  cliffRate: string;
 }
 
 
@@ -100,13 +101,14 @@ export class CPContext {
         (await this.Web3.eth.getBlock(await this.Web3.eth.getBlockNumber())).timestamp,
         config.bidDuration,
         config.calmDuration,
-        config.freezeDuration
+        config.freezeDuration,
+        config.vestingDuration
       ],
       [
         config.poolQuoteCap,
-        config.ownerQuoteRatio,
         config.k,
-        config.i
+        config.i,
+        config.cliffRate
       ]
     ).send(this.sendParam(this.Deployer))
 

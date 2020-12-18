@@ -31,6 +31,11 @@ contract CPVesting is CPFunding {
         _;
     }
 
+    modifier afterFreeze() {
+        require(_SETTLED_ && block.timestamp >= _SETTLED_TIME_.add(_FREEZE_DURATION_), "FREEZED");
+        _;
+    }
+
     // ============ Bidder Functions ============
 
     function bidderClaim() external afterSettlement {
@@ -43,11 +48,11 @@ contract CPVesting is CPFunding {
 
     // ============ Owner Functions ============
 
-    function claimLPToken() external onlyOwner afterSettlement {
+    function claimLPToken() external onlyOwner afterFreeze {
         IERC20(_POOL_).safeTransfer(_OWNER_, getClaimableLPToken());
     }
 
-    function getClaimableLPToken() public view afterSettlement returns (uint256) {
+    function getClaimableLPToken() public view afterFreeze returns (uint256) {
         uint256 remainingLPToken = DecimalMath.mulFloor(
             getRemainingLPRatio(block.timestamp),
             _TOTAL_LP_AMOUNT_
@@ -55,8 +60,8 @@ contract CPVesting is CPFunding {
         return IERC20(_POOL_).balanceOf(address(this)).sub(remainingLPToken);
     }
 
-    function getRemainingLPRatio(uint256 timestamp) public view afterSettlement returns (uint256) {
-        uint256 timePast = timestamp.sub(_SETTLED_TIME_);
+    function getRemainingLPRatio(uint256 timestamp) public view afterFreeze returns (uint256) {
+        uint256 timePast = timestamp.sub(_SETTLED_TIME_.add(_FREEZE_DURATION_));
         if (timePast < _VESTING_DURATION_) {
             uint256 remainingTime = _VESTING_DURATION_.sub(timePast);
             return DecimalMath.ONE.sub(_CLIFF_RATE_).mul(remainingTime).div(_VESTING_DURATION_);

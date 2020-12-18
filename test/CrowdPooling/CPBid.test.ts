@@ -33,13 +33,14 @@ describe("Funding", () => {
     config = {
       totalBase: decimalStr("10000"),
       poolQuoteCap: decimalStr("50000"),
-      ownerQuoteRatio: decimalStr("0.1"),
       k: decimalStr("0.5"),
       i: decimalStr("10"),
       lpFeeRate: decimalStr("0.002"),
       bidDuration: new BigNumber(86400),
       calmDuration: new BigNumber(86400),
       freezeDuration: new BigNumber(86400),
+      vestingDuration: new BigNumber(86400),
+      cliffRate: decimalStr("0.1"),
     }
     ctx = new CPContext();
     await ctx.init(config);

@@ -31,13 +31,14 @@ describe("Funding", () => {
     config = {
       totalBase: decimalStr("10000"),
       poolQuoteCap: decimalStr("50000"),
-      ownerQuoteRatio: decimalStr("0.1"),
       k: decimalStr("0.5"),
       i: decimalStr("10"),
       lpFeeRate: decimalStr("0.002"),
       bidDuration: new BigNumber(86400),
       calmDuration: new BigNumber(86400),
       freezeDuration: new BigNumber(86400),
+      vestingDuration: new BigNumber(86400),
+      cliffRate: decimalStr("0.1"),
     }
     ctx = new CPContext();
     await ctx.init(config);
@@ -68,13 +69,11 @@ describe("Funding", () => {
       assert.equal(await ctx.BASE.methods.balanceOf(ctx.CP.options.address).call(), "2557555139280633184959")
       assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.CP.options.address).call(), "0")
 
-      await ctx.CP.methods.claimBase().send(ctx.sendParam(bidder1))
-      await ctx.CP.methods.claimQuote().send(ctx.sendParam(bidder1))
+      await ctx.CP.methods.bidderClaim().send(ctx.sendParam(bidder1))
       assert.equal(await ctx.BASE.methods.balanceOf(bidder1).call(), "852518379760211061653")
       assert.equal(await ctx.QUOTE.methods.balanceOf(bidder1).call(), "0")
 
-      await ctx.CP.methods.claimBase().send(ctx.sendParam(bidder2))
-      await ctx.CP.methods.claimQuote().send(ctx.sendParam(bidder2))
+      await ctx.CP.methods.bidderClaim().send(ctx.sendParam(bidder2))
       assert.equal(await ctx.BASE.methods.balanceOf(bidder2).call(), "1705036759520422123306")
       assert.equal(await ctx.QUOTE.methods.balanceOf(bidder2).call(), "0")
 
@@ -93,13 +92,11 @@ describe("Funding", () => {
       assert.equal(await ctx.BASE.methods.balanceOf(ctx.CP.options.address).call(), "3819660112501051517955")
       assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.CP.options.address).call(), decimalStr("39910"))
 
-      await ctx.CP.methods.claimBase().send(ctx.sendParam(bidder1))
-      await ctx.CP.methods.claimQuote().send(ctx.sendParam(bidder1))
+      await ctx.CP.methods.bidderClaim().send(ctx.sendParam(bidder1))
       assert.equal(await ctx.BASE.methods.balanceOf(bidder1).call(), "1273220037500350505985")
       assert.equal(await ctx.QUOTE.methods.balanceOf(bidder1).call(), "13303333333333333333333")
 
-      await ctx.CP.methods.claimBase().send(ctx.sendParam(bidder2))
-      await ctx.CP.methods.claimQuote().send(ctx.sendParam(bidder2))
+      await ctx.CP.methods.bidderClaim().send(ctx.sendParam(bidder2))
       assert.equal(await ctx.BASE.methods.balanceOf(bidder2).call(), "2546440075000701011970")
       assert.equal(await ctx.QUOTE.methods.balanceOf(bidder2).call(), "26606666666666666666666")
     })
@@ -114,15 +111,22 @@ describe("Funding", () => {
       await logGas(ctx.CP.methods.settle(), ctx.sendParam(ctx.Deployer), "settle")
       await truffleAssert.reverts(ctx.CP.methods.claimLPToken().send(ctx.sendParam(ctx.Deployer)), "FREEZED")
 
+      // Cliff
       await ctx.EVM.increaseTime(86400)
-      await ctx.CP.methods.claimLPToken().send(ctx.sendParam(ctx.Deployer))
-
       var poolAddress = await ctx.CP.methods._POOL_().call()
       var pool = getContractWithAddress(DVM_NAME, poolAddress)
 
+      await ctx.CP.methods.claimLPToken().send(ctx.sendParam(ctx.Deployer))
+      assert.equal(await pool.methods.balanceOf(ctx.Deployer).call(), "618033988749894848205")
+
+      // Vesting end
+      await ctx.EVM.increaseTime(86400)
+      await ctx.CP.methods.claimLPToken().send(ctx.sendParam(ctx.Deployer))
+      assert.equal(await pool.methods.balanceOf(ctx.Deployer).call(), "6180339887498948482045")
+
       await pool.methods.sellShares("6180339887498948482045", bidder1, 0, 0, "0x", MAX_UINT256).send(ctx.sendParam(ctx.Deployer))
       assert.equal(await ctx.BASE.methods.balanceOf(bidder1).call(), "6180339887498948482045")
-      assert.equal(await ctx.QUOTE.methods.balanceOf(bidder1).call(), "45000000000000000000000")
+      assert.equal(await ctx.QUOTE.methods.balanceOf(bidder1).call(), "50000000000000000000000")
 
       assert.equal(await ctx.BASE.methods.balanceOf(poolAddress).call(), "0")
       assert.equal(await ctx.QUOTE.methods.balanceOf(poolAddress).call(), "0")

@@ -32,14 +32,15 @@ describe("Funding", () => {
   before(async () => {
     config = {
       totalBase: decimalStr("10000"),
-      poolQuoteCap: decimalStr("100000"),
-      ownerQuoteRatio: decimalStr("0.1"),
-      k: decimalStr("0.1"),
+      poolQuoteCap: decimalStr("80000"),
+      k: decimalStr("0.5"),
       i: decimalStr("10"),
       lpFeeRate: decimalStr("0.002"),
       bidDuration: new BigNumber(86400),
       calmDuration: new BigNumber(86400),
       freezeDuration: new BigNumber(86400),
+      vestingDuration: new BigNumber(86400),
+      cliffRate: decimalStr("0.1"),
     }
     ctx = new CPContext();
     await ctx.init(config);
@@ -68,19 +69,17 @@ describe("Funding", () => {
       var poolAddress = await ctx.CP.methods._POOL_().call()
       var pool = getContractWithAddress(DVM_NAME, poolAddress)
 
-      assert.equal(await pool.methods.getMidPrice().call(), "76012678448689469")
-      assert.equal(await ctx.CP.methods._AVG_SETTLED_PRICE_().call(), "13155700080678329720")
+      assert.equal(await pool.methods.getMidPrice().call(), "64921894064178782")
+      assert.equal(await ctx.CP.methods._AVG_SETTLED_PRICE_().call(), "15403124237432848687")
 
-      assert.equal(await ctx.CP.methods._UNUSED_QUOTE_().call(), "0")
-      assert.equal(await ctx.CP.methods._UNUSED_BASE_().call(), "7593666577024078089065")
+      assert.equal(await ctx.CP.methods._UNUSED_QUOTE_().call(), decimalStr("19900"))
+      assert.equal(await ctx.CP.methods._UNUSED_BASE_().call(), "5193751525134302627024")
 
-      assert.equal(await ctx.BASE.methods.balanceOf(ctx.Deployer).call(), "0")
-      assert.equal(await ctx.BASE.methods.balanceOf(poolAddress).call(), "2406333422975921910935")
-      assert.equal(await ctx.BASE.methods.balanceOf(ctx.CP.options.address).call(), "7593666577024078089065")
+      assert.equal(await ctx.BASE.methods.balanceOf(poolAddress).call(), "4806248474865697372976")
+      assert.equal(await ctx.BASE.methods.balanceOf(ctx.CP.options.address).call(), "5193751525134302627024")
 
-      assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.Deployer).call(), decimalStr("9990"))
-      assert.equal(await ctx.QUOTE.methods.balanceOf(poolAddress).call(), decimalStr("89910"))
-      assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.CP.options.address).call(), "0")
+      assert.equal(await ctx.QUOTE.methods.balanceOf(poolAddress).call(), decimalStr("80000"))
+      assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.CP.options.address).call(), decimalStr("19900"))
     })
 
   })

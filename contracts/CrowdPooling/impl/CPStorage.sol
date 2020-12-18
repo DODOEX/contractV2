@@ -67,6 +67,7 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
     // ============ LP Token Vesting ============
 
     uint256 public _TOTAL_LP_AMOUNT_;
+    uint256 public _FREEZE_DURATION_;
     uint256 public _VESTING_DURATION_;
     uint256 public _CLIFF_RATE_;
 
