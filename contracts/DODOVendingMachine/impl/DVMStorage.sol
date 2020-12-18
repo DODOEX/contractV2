@@ -80,6 +80,10 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
 
     event SetSell(bool allow);
 
+    event SetLpFeeRate(uint256 newValue);
+
+    event SetMtFeeRate(uint256 newValue);
+
     // ============ Setting Functions ============
 
     function setLpFeeRateModel(address newLpFeeRateModel) external onlyOwner {
@@ -90,6 +94,16 @@ contract DVMStorage is InitializableOwnable, ReentrancyGuard {
     function setMtFeeRateModel(address newMtFeeRateModel) external onlyOwner {
         emit SetMtFeeRateModel(address(_MT_FEE_RATE_MODEL_), newMtFeeRateModel);
         _MT_FEE_RATE_MODEL_ = IFeeRateModel(newMtFeeRateModel);
+    }
+
+    function setLpFeeRateValue(uint256 newLpFeeRate) external onlyOwner {
+        _LP_FEE_RATE_MODEL_.setFeeRate(newLpFeeRate);
+        emit SetLpFeeRate(newLpFeeRate);
+    }
+
+    function setMtFeeRateValue(uint256 newMtFeeRate) external onlyOwner {
+        _MT_FEE_RATE_MODEL_.setFeeRate(newMtFeeRate);
+        emit SetMtFeeRate(newMtFeeRate);
     }
 
     function setTradePermissionManager(address newTradePermissionManager) external onlyOwner {

@@ -8,7 +8,7 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {Ownable} from "../lib/Ownable.sol";
+import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 import {ICloneFactory} from "../lib/CloneFactory.sol";
 import {IFeeRateModel} from "../lib/FeeRateModel.sol";
 import {IExternalValue} from "../lib/ExternalValue.sol";
@@ -16,7 +16,7 @@ import {IDPP} from "../DODOPrivatePool/intf/IDPP.sol";
 import {IDPPAdmin} from "../DODOPrivatePool/intf/IDPPAdmin.sol";
 import {IPermissionManager} from "../lib/PermissionManager.sol";
 
-contract DPPFactory is Ownable {
+contract DPPFactory is InitializableOwnable {
     // ============ Templates ============
 
     address public immutable _CLONE_FACTORY_;
@@ -38,9 +38,9 @@ contract DPPFactory is Ownable {
     // ============ Events ============
 
     event NewDPP(
-        address indexed baseToken,
-        address indexed quoteToken,
-        address indexed creator,
+        address baseToken,
+        address quoteToken,
+        address creator,
         address dpp
     );
 

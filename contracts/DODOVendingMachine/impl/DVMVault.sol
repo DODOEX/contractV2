@@ -35,6 +35,16 @@ contract DVMVault is DVMStorage {
         quoteReserve = _QUOTE_RESERVE_;
     }
 
+    function getUserFeeRate(address user) external view returns (uint256 lpFeeRate, uint256 mtFeeRate) {
+        lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(user);
+        mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(user);
+    }
+
+    function getUserTradePermission(address user) external view returns (bool isBuyAllow, bool isSellAllow) {
+        isBuyAllow = (!_BUYING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(user));
+        isSellAllow =  (!_SELLING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(user));
+    }
+
     // ============ Asset In ============
 
     function getBaseInput() public view returns (uint256 input) {

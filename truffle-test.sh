@@ -21,6 +21,11 @@ then
 	truffle test ./test/Proxy/proxy.classical.test.ts
 fi
 
+if [ "$1"x = "proxy-cp"x ]
+then
+	truffle test ./test/Proxy/proxy.cp.test.ts
+fi
+
 if [ "$1"x = "route"x ]
 then
 	truffle test ./test/Route/route.test.ts

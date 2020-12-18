@@ -46,3 +46,31 @@ DODOApprove Address:  0xCB859eA579b28e02B87A1FDE08d087ab9dbE5149
 DODOProxyV1 Address:  0xd0678Ec59d1337e29D1E1B1b6338f3E85D311F5e
 Set DODOProxyV1 Owner tx:  0xb8bc4d84d39159c34c885b53fd345c935dc82214979e5885f9f9bc3ff59a3524
 Set DODOApprove Owner And Init Set Proxy tx:  0x2199c008304d2c2a7ddfd18b26dbe4dd480aa7cd064a5ff85b87a9679b078702
+====================================================
+network type: live
+Deploy time: 2020/12/15 下午6:05:56
+Deploy type: Proxy
+DODOSwapCalcHelperAddress:  0x7B9e97C4E3F008E854CF210E6948A0E40f70461B
+====================================================
+network type: live
+Deploy time: 2020/12/15 下午6:31:06
+Deploy type: Proxy
+DODOSwapCalcHelperAddress:  0x3C02477f1B3C70D692be95a6e3805E02bba71206
+====================================================
+network type: kovan
+Deploy time: 2020/12/15 下午6:44:08
+Deploy type: Proxy
+DODOSwapCalcHelperAddress:  0x0473FFd7039435F1FC794281F2a05830A1a0108a
+====================================================
+network type: bsclive
+Deploy time: 2020/12/15 下午6:45:35
+Deploy type: Proxy
+DODOSwapCalcHelperAddress:  0xb0199C2c8ADF1E6c1e41De60A62E993406Cb8C02
+====================================================
+network type: bsclive
+Deploy time: 2020/12/16 上午10:40:39
+Deploy type: Proxy
+DODOApprove Address:  0xa128Ba44B2738A558A1fdC06d6303d52D3Cef8c1
+DODOProxyV1 Address:  0x0cA2d4BC266B1ad7a0787409AD7a0331D78Eea90
+Set DODOProxyV1 Owner tx:  0x35c8405b4b4dfbac83971c622f4e086dc0f850ade69da408792eb9a835a683f4
+Set DODOApprove Owner And Init Set Proxy tx:  0xb381ac8a87a834a6ab8cc63064153dd2c65261e7c43e5d1a504bcae11fb42a10

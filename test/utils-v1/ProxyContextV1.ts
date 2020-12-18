@@ -237,7 +237,9 @@ export class DODOContext {
       // [this.DODOApprove.options.address, this.DODOSellHelper.options.address, this.WETH.options.address, "0x0000000000000000000000000000000000000000"]
     );
 
-    await this.DODOApprove.methods.setDODOProxy(this.DODOProxyV1.options.address).send(this.sendParam(this.Deployer));
+    await this.DODOProxyV1.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
+    await this.DODOApprove.methods.init(this.Deployer,this.DODOProxyV1.options.address).send(this.sendParam(this.Deployer));
+
 
     // await this.CHI.methods.transfer(this.DODOProxyV1.options.address,140).send(this.sendParam(this.Deployer));
     

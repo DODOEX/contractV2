@@ -95,22 +95,26 @@ contract DPPAdmin is InitializableOwnable {
         uint256 newI,
         uint256 newK,
         uint256 baseOutAmount,
-        uint256 quoteOutAmount
-    ) external notFreezed {
+        uint256 quoteOutAmount,
+        uint256 minBaseReserve,
+        uint256 minQuoteReserve
+    ) external notFreezed returns (bool) {
         require(
             msg.sender == _OWNER_ ||
                 (msg.sender == IDODOApprove(_DODO_APPROVE_).getDODOProxy() &&
                     operator == _OPERATOR_),
             "RESET FORBIDDEN！"
         );
-        IDPP(_DPP_).reset(
+        return IDPP(_DPP_).reset(
             msg.sender,
             newLpFeeRate,
             newMtFeeRate,
             newI,
             newK,
             baseOutAmount,
-            quoteOutAmount
+            quoteOutAmount,
+            minBaseReserve,
+            minQuoteReserve
         );
     }
 

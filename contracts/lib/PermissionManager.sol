@@ -13,7 +13,7 @@ import {InitializableOwnable} from "./InitializableOwnable.sol";
 interface IPermissionManager {
     function initOwner(address) external;
 
-    function isAllowed(address) external returns (bool);
+    function isAllowed(address) external view returns (bool);
 }
 
 contract PermissionManager is InitializableOwnable {

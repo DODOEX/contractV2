@@ -8,9 +8,9 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {Ownable} from "../lib/Ownable.sol";
+import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 import {ICloneFactory} from "../lib/CloneFactory.sol";
-import {IConstFeeRateModel} from "../lib/ConstFeeRateModel.sol";
+import {IFeeRateModel} from "../lib/FeeRateModel.sol";
 import {IDVM} from "../DODOVendingMachine/intf/IDVM.sol";
 import {IDVMAdmin} from "../DODOVendingMachine/intf/IDVMAdmin.sol";
 import {IPermissionManager} from "../lib/PermissionManager.sol";
@@ -27,7 +27,7 @@ interface IDVMFactory {
     ) external returns (address newVendingMachine);
 }
 
-contract DVMFactory is Ownable {
+contract DVMFactory is InitializableOwnable {
     // ============ Templates ============
 
     address public immutable _CLONE_FACTORY_;
@@ -47,9 +47,9 @@ contract DVMFactory is Ownable {
     // ============ Events ============
 
     event NewDVM(
-        address indexed baseToken,
-        address indexed quoteToken,
-        address indexed creator,
+        address baseToken,
+        address quoteToken,
+        address creator,
         address dvm
     );
 
@@ -106,7 +106,7 @@ contract DVMFactory is Ownable {
         returns (address feeRateModel)
     {
         feeRateModel = ICloneFactory(_CLONE_FACTORY_).clone(_FEE_RATE_MODEL_TEMPLATE_);
-        IConstFeeRateModel(feeRateModel).init(owner, feeRate);
+        IFeeRateModel(feeRateModel).init(owner, feeRate);
     }
 
     function _createPermissionManager(address owner) internal returns (address permissionManager) {

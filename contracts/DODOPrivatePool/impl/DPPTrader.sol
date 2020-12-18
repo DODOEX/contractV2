@@ -27,6 +27,15 @@ contract DPPTrader is DPPVault {
         address trader
     );
 
+    event DODOFlashLoan(
+        address borrower,
+        address assetTo,
+        uint256 baseAmount,
+        uint256 quoteAmount
+    );
+
+    event RChange(PMMPricing.RState newRState);
+
     // ============ Modifiers ============
 
     modifier isBuyAllow(address trader) {
@@ -70,6 +79,7 @@ contract DPPTrader is DPPVault {
         if (_RState_ != newRState) {
             _RState_ = newRState;
             _BASE_TARGET_ = newBaseTarget;
+            emit RChange(newRState);
         }
 
         emit DODOSwap(
@@ -77,7 +87,7 @@ contract DPPTrader is DPPVault {
             address(_QUOTE_TOKEN_),
             baseInput,
             receiveQuoteAmount,
-            tx.origin
+            msg.sender
         );
     }
 
@@ -106,6 +116,7 @@ contract DPPTrader is DPPVault {
         if (_RState_ != newRState) {
             _RState_ = newRState;
             _QUOTE_TARGET_ = newQuoteTarget;
+            emit RChange(newRState);
         }
 
         emit DODOSwap(
@@ -113,7 +124,7 @@ contract DPPTrader is DPPVault {
             address(_BASE_TOKEN_),
             quoteInput,
             receiveBaseAmount,
-            tx.origin
+            msg.sender
         );
     }
 
@@ -154,13 +165,14 @@ contract DPPTrader is DPPVault {
             if (_RState_ != newRState) {
                 _RState_ = newRState;
                 _QUOTE_TARGET_ = newQuoteTarget;
+                emit RChange(newRState);
             }
             emit DODOSwap(
                 address(_QUOTE_TOKEN_),
                 address(_BASE_TOKEN_),
                 quoteInput,
                 receiveBaseAmount,
-                tx.origin
+                msg.sender
             );
         }
 
@@ -180,17 +192,20 @@ contract DPPTrader is DPPVault {
             if (_RState_ != newRState) {
                 _RState_ = newRState;
                 _BASE_TARGET_ = newBaseTarget;
+                emit RChange(newRState);
             }
             emit DODOSwap(
                 address(_BASE_TOKEN_),
                 address(_QUOTE_TOKEN_),
                 baseInput,
                 receiveQuoteAmount,
-                tx.origin
+                msg.sender
             );
         }
 
         _sync();
+        
+        emit DODOFlashLoan(msg.sender, assetTo, baseAmount, quoteAmount);
     }
 
     // ============ Query Functions ============

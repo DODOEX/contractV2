@@ -60,6 +60,8 @@ interface IDPP {
         uint256 newI,
         uint256 newK,
         uint256 baseOutAmount,
-        uint256 quoteOutAmount
-    ) external;
+        uint256 quoteOutAmount,
+        uint256 minBaseReserve,
+        uint256 minQuoteReserve
+    ) external returns (bool);
 }

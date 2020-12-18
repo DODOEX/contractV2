@@ -74,24 +74,22 @@ contract CPFunding is CPStorage {
             address _poolBaseToken;
             address _poolQuoteToken;
             uint256 _poolI;
-            if (poolQuote == baseDepth) {
+            if (poolQuote.mul(_UNUSED_BASE_) == poolQuote.add(ownerQuote).mul(poolBase)) {
                 _poolBaseToken = address(_BASE_TOKEN_);
                 _poolQuoteToken = address(_QUOTE_TOKEN_);
                 _poolI = 1;
-            } else if (poolQuote < baseDepth) {
-                // poolI round up
+            } else if (poolQuote.mul(_UNUSED_BASE_) < poolQuote.add(ownerQuote).mul(poolBase)) {
+                // poolI up round
                 _poolBaseToken = address(_BASE_TOKEN_);
                 _poolQuoteToken = address(_QUOTE_TOKEN_);
                 uint256 ratio = DecimalMath.ONE.sub(DecimalMath.divFloor(poolQuote, baseDepth));
                 _poolI = avgPrice.mul(ratio).mul(ratio).divCeil(DecimalMath.ONE2);
-            } else if (poolQuote > baseDepth) {
-                // poolI round down
+            } else if (poolQuote.mul(_UNUSED_BASE_) > poolQuote.add(ownerQuote).mul(poolBase)) {
+                // poolI down round
                 _poolBaseToken = address(_QUOTE_TOKEN_);
                 _poolQuoteToken = address(_BASE_TOKEN_);
                 uint256 ratio = DecimalMath.ONE.sub(DecimalMath.divCeil(baseDepth, poolQuote));
-                _poolI = DecimalMath.reciprocalFloor(avgPrice).mul(ratio).mul(ratio).div(
-                    DecimalMath.ONE2
-                );
+                _poolI = ratio.mul(ratio).div(avgPrice).div(DecimalMath.ONE2);
             }
             _POOL_ = IUnownedDVMFactory(_POOL_FACTORY_).createDODOVendingMachine(
                 address(this),
@@ -113,7 +111,7 @@ contract CPFunding is CPStorage {
 
     // in case something wrong with base token contract
     function emergencySettle() external phaseSettlement preventReentrant {
-        require(block.timestamp > _PHASE_CALM_ENDTIME_.add(_SETTLEMENT_EXPIRE_), "NOT_EMERGENCY");
+        require(block.timestamp >= _PHASE_CALM_ENDTIME_.add(_SETTLEMENT_EXPIRE_), "NOT_EMERGENCY");
         _settle();
         _UNUSED_QUOTE_ = _QUOTE_TOKEN_.balanceOf(address(this));
         _UNUSED_BASE_ = _BASE_TOKEN_.balanceOf(address(this));

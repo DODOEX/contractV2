@@ -41,7 +41,11 @@ interface IDVM {
     //=========== admin ==========
     function setLpFeeRateModel(address newLpFeeRateModel) external;
 
+    function setLpFeeRateValue(uint256 newLpFeeRate) external;
+
     function setMtFeeRateModel(address newMtFeeRateModel) external;
+    
+    function setMtFeeRateValue(uint256 newMtFeeRate) external;
 
     function setTradePermissionManager(address newTradePermissionManager) external;
 

@@ -153,15 +153,11 @@ describe("DODOProxyV2.0", () => {
       assert.equal(beforeState.Q0,mweiStr("30000"));
       await logGas(await ctx.DODOProxyV2.methods.resetDODOPrivatePool(
         dpp_DODO_USDT,
-        config.lpFeeRate,
-        config.mtFeeRate,
-        mweiStr("0.3"),
-        decimalStr("0.2"),
-        decimalStr("1000"),
-        mweiStr("1000"),
-        decimalStr("0"),
-        mweiStr("0"),
+        [config.lpFeeRate, config.mtFeeRate, mweiStr("0.3"), decimalStr("0.2")],
+        [decimalStr("1000"), mweiStr("1000"), decimalStr("0"), mweiStr("0")],
         0,
+        decimalStr("100000"),
+        mweiStr("0"),
         Math.floor(new Date().getTime()/1000 + 60 * 10)
       ),ctx.sendParam(project),"resetDPP");
       var afterState = await DPP_DODO_USDT.methods.getPMMState().call();
@@ -179,15 +175,11 @@ describe("DODOProxyV2.0", () => {
       var b_ETH = await ctx.Web3.eth.getBalance(project);
       var tx = await logGas(await ctx.DODOProxyV2.methods.resetDODOPrivatePool(
         dpp_WETH_USDT,
-        config.lpFeeRate,
-        config.mtFeeRate,
-        mweiStr("600"),
-        decimalStr("0.2"),
-        decimalStr("0"),
-        mweiStr("1000"),
-        decimalStr("1"),
-        mweiStr("0"),
+        [config.lpFeeRate, config.mtFeeRate, mweiStr("600"), decimalStr("0.2")],
+        [decimalStr("0"), mweiStr("1000"), decimalStr("1"), mweiStr("0")],
         3,
+        decimalStr("0"),
+        mweiStr("0"),
         Math.floor(new Date().getTime()/1000 + 60 * 10)
       ),ctx.sendParam(project),"resetDPP-OutETH");
       var afterState = await DPP_WETH_USDT.methods.getPMMState().call();
@@ -209,15 +201,11 @@ describe("DODOProxyV2.0", () => {
       var b_ETH = await ctx.Web3.eth.getBalance(project);
       var tx = await logGas(await ctx.DODOProxyV2.methods.resetDODOPrivatePool(
         dpp_WETH_USDT,
-        config.lpFeeRate,
-        config.mtFeeRate,
-        mweiStr("600"),
-        decimalStr("0.2"),
-        decimalStr("1"),
-        mweiStr("1000"),
+        [config.lpFeeRate, config.mtFeeRate, mweiStr("600"), decimalStr("0.2")],
+        [decimalStr("1"), mweiStr("1000"), decimalStr("0"), mweiStr("0")],
+        1,
         decimalStr("0"),
         mweiStr("0"),
-        1,
         Math.floor(new Date().getTime()/1000 + 60 * 10)
       ),ctx.sendParam(project,"1"),"resetDPP-InETH");
       var afterState = await DPP_WETH_USDT.methods.getPMMState().call();

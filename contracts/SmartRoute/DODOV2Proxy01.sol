@@ -40,11 +40,12 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
     // ============ Events ============
 
     event OrderHistory(
-        address indexed fromToken,
-        address indexed toToken,
-        address indexed sender,
+        address fromToken,
+        address toToken,
+        address sender,
         uint256 fromAmount,
-        uint256 returnAmount
+        uint256 returnAmount,
+        uint8 sourceFlag
     );
 
     // ============ Modifiers ============
@@ -257,44 +258,42 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
 
     function resetDODOPrivatePool(
         address dppAddress,
-        uint256 newLpFeeRate,
-        uint256 newMtFeeRate,
-        uint256 newI,
-        uint256 newK,
-        uint256 baseInAmount,
-        uint256 quoteInAmount,
-        uint256 baseOutAmount,
-        uint256 quoteOutAmount,
+        uint256[] memory paramList,  //0 - newLpFeeRate, 1 - newMtFeeRate, 2 - newI, 3 - newK
+        uint256[] memory amountList, //0 - baseInAmount, 1 - quoteInAmount, 2 - baseOutAmount, 3- quoteOutAmount
         uint8 flag, // 0 - ERC20, 1 - baseInETH, 2 - quoteInETH, 3 - baseOutETH, 4 - quoteOutETH
+        uint256 minBaseReserve,
+        uint256 minQuoteReserve,
         uint256 deadLine
     ) external override payable preventReentrant judgeExpired(deadLine) {
         _deposit(
             msg.sender,
             dppAddress,
             IDODOV2(dppAddress)._BASE_TOKEN_(),
-            baseInAmount,
+            amountList[0],
             flag == 1
         );
         _deposit(
             msg.sender,
             dppAddress,
             IDODOV2(dppAddress)._QUOTE_TOKEN_(),
-            quoteInAmount,
+            amountList[1],
             flag == 2
         );
 
-        IDODOV2(IDODOV2(dppAddress)._OWNER_()).reset(
+        require(IDODOV2(IDODOV2(dppAddress)._OWNER_()).reset(
             msg.sender,
-            newLpFeeRate,
-            newMtFeeRate,
-            newI,
-            newK,
-            baseOutAmount,
-            quoteOutAmount
-        );
+            paramList[0],
+            paramList[1],
+            paramList[2],
+            paramList[3],
+            amountList[2],
+            amountList[3],
+            minBaseReserve,
+            minQuoteReserve
+        ), "Reset Failed");
 
-        _withdraw(msg.sender, IDODOV2(dppAddress)._BASE_TOKEN_(), baseOutAmount, flag == 3);
-        _withdraw(msg.sender, IDODOV2(dppAddress)._QUOTE_TOKEN_(), quoteOutAmount, flag == 4);
+        _withdraw(msg.sender, IDODOV2(dppAddress)._BASE_TOKEN_(), amountList[2], flag == 3);
+        _withdraw(msg.sender, IDODOV2(dppAddress)._QUOTE_TOKEN_(), amountList[3], flag == 4);
     }
 
     // ============ Swap ============
@@ -342,7 +341,8 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
             toToken,
             assetTo,
             msg.value,
-            returnAmount
+            returnAmount,
+            0
         );
     }
 
@@ -387,7 +387,8 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
             _ETH_ADDRESS_,
             assetTo,
             fromTokenAmount,
-            returnAmount
+            returnAmount,
+            0
         );
     }
 
@@ -432,7 +433,8 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
             toToken,
             assetTo,
             fromTokenAmount,
-            returnAmount
+            returnAmount,
+            0
         );
     }
 
@@ -487,7 +489,8 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
             toToken,
             msg.sender,
             fromTokenAmount,
-            returnAmount
+            returnAmount,
+            3
         );
     }
 
@@ -538,7 +541,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         require(returnAmount >= minReturnAmount, "DODOV2Proxy01: Return amount is not enough");
         IERC20(toToken).universalTransfer(msg.sender, returnAmount);
 
-        emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount);
+        emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount, 1);
     }
 
     function mixSwapV1(
@@ -594,7 +597,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         returnAmount = IERC20(_toToken).universalBalanceOf(msg.sender).sub(toTokenOriginBalance);
         require(returnAmount >= minReturnAmount, "DODOV2Proxy01: Return amount is not enough");
 
-        emit OrderHistory(_fromToken, _toToken, msg.sender, fromTokenAmount, returnAmount);
+        emit OrderHistory(_fromToken, _toToken, msg.sender, fromTokenAmount, returnAmount, 2);
     }
 
     //============ CrowdPooling Functions (create & bid) ============
