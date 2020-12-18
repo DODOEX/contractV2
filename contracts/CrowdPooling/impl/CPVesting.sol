@@ -31,26 +31,37 @@ contract CPVesting is CPFunding {
         _;
     }
 
-    modifier afterFreeze() {
-        require(block.timestamp >= _SETTLED_TIME_.add(_FREEZE_DURATION_), "FREEZED");
-        _;
-    }
+    // ============ Bidder Functions ============
 
-    // ============ Functions ============
+    function bidderClaim() external afterSettlement {
+        require(!_CLAIMED_[msg.sender], "ALREADY_CLAIMED");
+        _CLAIMED_[msg.sender] = true;
 
-    function claimBase() external afterSettlement {
-        require(!_BASE_CLAIMED_[msg.sender], "BASE_CLAIMED");
-        _BASE_CLAIMED_[msg.sender] = true;
         _transferBaseOut(msg.sender, _UNUSED_BASE_.mul(_SHARES_[msg.sender]).div(_TOTAL_SHARES_));
-    }
-
-    function claimQuote() external afterSettlement {
-        require(!_QUOTE_CLAIMED_[msg.sender], "QUOTE_CLAIMED");
-        _QUOTE_CLAIMED_[msg.sender] = true;
         _transferQuoteOut(msg.sender, _UNUSED_QUOTE_.mul(_SHARES_[msg.sender]).div(_TOTAL_SHARES_));
     }
 
-    function claimLPToken() external onlyOwner afterFreeze {
-        IERC20(_POOL_).safeTransfer(_OWNER_, IERC20(_POOL_).balanceOf(address(this)));
+    // ============ Owner Functions ============
+
+    function claimLPToken() external onlyOwner afterSettlement {
+        IERC20(_POOL_).safeTransfer(_OWNER_, getClaimableLPToken());
+    }
+
+    function getClaimableLPToken() public view afterSettlement returns (uint256) {
+        uint256 remainingLPToken = DecimalMath.mulFloor(
+            getRemainingLPRatio(block.timestamp),
+            _TOTAL_LP_AMOUNT_
+        );
+        return IERC20(_POOL_).balanceOf(address(this)).sub(remainingLPToken);
+    }
+
+    function getRemainingLPRatio(uint256 timestamp) public view afterSettlement returns (uint256) {
+        uint256 timePast = timestamp.sub(_SETTLED_TIME_);
+        if (timePast < _VESTING_DURATION_) {
+            uint256 remainingTime = _VESTING_DURATION_.sub(timePast);
+            return DecimalMath.ONE.sub(_CLIFF_RATE_).mul(remainingTime).div(_VESTING_DURATION_);
+        } else {
+            return 0;
+        }
     }
 }

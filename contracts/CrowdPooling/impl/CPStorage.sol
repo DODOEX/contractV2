@@ -26,7 +26,6 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
     uint256 public _PHASE_BID_ENDTIME_;
     uint256 public _PHASE_CALM_ENDTIME_;
     uint256 public _SETTLED_TIME_;
-    uint256 public _FREEZE_DURATION_;
     bool public _SETTLED_;
 
     // ============ Core Address ============
@@ -50,8 +49,7 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
 
     uint256 public _TOTAL_SHARES_;
     mapping(address => uint256) internal _SHARES_;
-    mapping(address => bool) internal _QUOTE_CLAIMED_;
-    mapping(address => bool) internal _BASE_CLAIMED_;
+    mapping(address => bool) internal _CLAIMED_;
 
     address public _POOL_FACTORY_;
     address public _POOL_;
@@ -67,6 +65,12 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
 
     uint256 public _K_;
     uint256 public _I_;
+
+    // ============ LP Token Vesting ============
+
+    uint256 public _TOTAL_LP_AMOUNT_;
+    uint256 public _VESTING_DURATION_;
+    uint256 public _CLIFF_RATE_;
 
     // ============ Modifiers ============
 

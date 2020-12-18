@@ -48,7 +48,7 @@ contract CP is CPVesting {
         0. phase bid starttime
         1. phase bid duration
         2. phase calm duration
-        3. freeze duration
+        3. vesting duration
         */
 
         require(timeLine.length == 4, "LIST_LENGTH_WRONG");
@@ -57,7 +57,7 @@ contract CP is CPVesting {
         _PHASE_BID_ENDTIME_ = _PHASE_BID_STARTTIME_.add(timeLine[1]);
         _PHASE_CALM_ENDTIME_ = _PHASE_BID_ENDTIME_.add(timeLine[2]);
 
-        _FREEZE_DURATION_ = timeLine[3];
+        _VESTING_DURATION_ = timeLine[3];
 
         require(block.timestamp <= _PHASE_BID_STARTTIME_, "TIMELINE_WRONG");
 
@@ -67,6 +67,7 @@ contract CP is CPVesting {
         1. owner quote ratio
         2. k
         3. i
+        4. cliff rate
         */
 
         require(valueList.length == 4, "LIST_LENGTH_WRONG");
@@ -75,10 +76,12 @@ contract CP is CPVesting {
         _OWNER_QUOTE_RATIO_ = valueList[1];
         _K_ = valueList[2];
         _I_ = valueList[3];
+        _CLIFF_RATE_ = valueList[4];
 
-        require(_I_ > 0 && _I_ <= 10**36, "I_VALUE_WRONG");
-        require(_K_ <= 10**18, "K_VALUE_WRONG");
-        require(_OWNER_QUOTE_RATIO_ <= 10**18, "OWNER_RATIO_WRONG");
+        require(_I_ > 0 && _I_ <= 1e36, "I_VALUE_WRONG");
+        require(_K_ <= 1e18, "K_VALUE_WRONG");
+        require(_OWNER_QUOTE_RATIO_ <= 1e18, "OWNER_RATIO_WRONG");
+        require(_CLIFF_RATE_ <= 1e18, "CLIFF_RATE_WRONG");
 
         _TOTAL_BASE_ = _BASE_TOKEN_.balanceOf(address(this));
     }

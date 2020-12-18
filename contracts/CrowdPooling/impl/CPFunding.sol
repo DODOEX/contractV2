@@ -61,7 +61,7 @@ contract CPFunding is CPStorage {
         _UNUSED_QUOTE_ = _QUOTE_TOKEN_.balanceOf(address(this)).sub(poolQuote).sub(ownerQuote);
         _UNUSED_BASE_ = _BASE_TOKEN_.balanceOf(address(this)).sub(poolBase);
 
-        // 这里的目的是让开盘价尽量等于avgPrice
+        // 这里的目的是让midPrice尽量等于avgPrice
         // 我们统一设定k=1，如果quote和base不平衡，就必然要截断一边
         // DVM截断了quote，所以如果进入池子的quote很多，就要把quote设置成DVM的base
         // m = avgPrice
@@ -79,16 +79,16 @@ contract CPFunding is CPStorage {
                 _poolQuoteToken = address(_QUOTE_TOKEN_);
                 _poolI = 1;
             } else if (poolQuote < baseDepth) {
-                // poolI up round
+                // poolI round up
                 _poolBaseToken = address(_BASE_TOKEN_);
                 _poolQuoteToken = address(_QUOTE_TOKEN_);
-                uint256 ratio = DecimalMath.ONE.sub(DecimalMath.divCeil(poolQuote, baseDepth));
+                uint256 ratio = DecimalMath.ONE.sub(DecimalMath.divFloor(poolQuote, baseDepth));
                 _poolI = avgPrice.mul(ratio).mul(ratio).divCeil(DecimalMath.ONE2);
             } else if (poolQuote > baseDepth) {
-                // poolI down round
+                // poolI round down
                 _poolBaseToken = address(_QUOTE_TOKEN_);
                 _poolQuoteToken = address(_BASE_TOKEN_);
-                uint256 ratio = DecimalMath.ONE.sub(DecimalMath.divFloor(baseDepth, poolQuote));
+                uint256 ratio = DecimalMath.ONE.sub(DecimalMath.divCeil(baseDepth, poolQuote));
                 _poolI = DecimalMath.reciprocalFloor(avgPrice).mul(ratio).mul(ratio).div(
                     DecimalMath.ONE2
                 );
@@ -108,7 +108,7 @@ contract CPFunding is CPStorage {
         _transferQuoteOut(_POOL_, poolQuote);
         _transferQuoteOut(_OWNER_, ownerQuote);
 
-        IDVM(_POOL_).buyShares(address(this));
+        _TOTAL_LP_AMOUNT_ = IDVM(_POOL_).buyShares(address(this));
     }
 
     // in case something wrong with base token contract
