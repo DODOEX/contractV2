@@ -70,7 +70,7 @@ contract CP is CPVesting {
         4. cliff rate
         */
 
-        require(valueList.length == 4, "LIST_LENGTH_WRONG");
+        require(valueList.length == 5, "LIST_LENGTH_WRONG");
 
         _POOL_QUOTE_CAP_ = valueList[0];
         _OWNER_QUOTE_RATIO_ = valueList[1];

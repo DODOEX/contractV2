@@ -35,9 +35,7 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
 
     // ============ Distribution Parameters ============
 
-    uint256 public _OWNER_QUOTE_RATIO_; // 抽取一部分
     uint256 public _TOTAL_BASE_;
-
     uint256 public _POOL_QUOTE_CAP_;
 
     // ============ Settlement ============

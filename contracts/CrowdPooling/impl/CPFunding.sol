@@ -57,8 +57,8 @@ contract CPFunding is CPStorage {
     function settle() external phaseSettlement preventReentrant {
         _settle();
 
-        (uint256 poolBase, uint256 poolQuote, uint256 ownerQuote) = getSettleResult();
-        _UNUSED_QUOTE_ = _QUOTE_TOKEN_.balanceOf(address(this)).sub(poolQuote).sub(ownerQuote);
+        (uint256 poolBase, uint256 poolQuote) = getSettleResult();
+        _UNUSED_QUOTE_ = _QUOTE_TOKEN_.balanceOf(address(this)).sub(poolQuote);
         _UNUSED_BASE_ = _BASE_TOKEN_.balanceOf(address(this)).sub(poolBase);
 
         // 这里的目的是让midPrice尽量等于avgPrice
@@ -69,22 +69,22 @@ contract CPFunding is CPStorage {
         // if quote = m*base i = 1
         // if quote > m*base reverse
         {
-            uint256 avgPrice = DecimalMath.divCeil(poolQuote.add(ownerQuote), _UNUSED_BASE_);
+            uint256 avgPrice = DecimalMath.divCeil(poolQuote, _UNUSED_BASE_);
             uint256 baseDepth = DecimalMath.mulFloor(avgPrice, poolBase);
             address _poolBaseToken;
             address _poolQuoteToken;
             uint256 _poolI;
-            if (poolQuote.mul(_UNUSED_BASE_) == poolQuote.add(ownerQuote).mul(poolBase)) {
+            if (poolQuote.mul(_UNUSED_BASE_) == poolQuote.mul(poolBase)) {
                 _poolBaseToken = address(_BASE_TOKEN_);
                 _poolQuoteToken = address(_QUOTE_TOKEN_);
                 _poolI = 1;
-            } else if (poolQuote.mul(_UNUSED_BASE_) < poolQuote.add(ownerQuote).mul(poolBase)) {
+            } else if (poolQuote.mul(_UNUSED_BASE_) < poolQuote.mul(poolBase)) {
                 // poolI up round
                 _poolBaseToken = address(_BASE_TOKEN_);
                 _poolQuoteToken = address(_QUOTE_TOKEN_);
                 uint256 ratio = DecimalMath.ONE.sub(DecimalMath.divFloor(poolQuote, baseDepth));
                 _poolI = avgPrice.mul(ratio).mul(ratio).divCeil(DecimalMath.ONE2);
-            } else if (poolQuote.mul(_UNUSED_BASE_) > poolQuote.add(ownerQuote).mul(poolBase)) {
+            } else if (poolQuote.mul(_UNUSED_BASE_) > poolQuote.mul(poolBase)) {
                 // poolI down round
                 _poolBaseToken = address(_QUOTE_TOKEN_);
                 _poolQuoteToken = address(_BASE_TOKEN_);
@@ -104,7 +104,6 @@ contract CPFunding is CPStorage {
 
         _transferBaseOut(_POOL_, poolBase);
         _transferQuoteOut(_POOL_, poolQuote);
-        _transferQuoteOut(_OWNER_, ownerQuote);
 
         _TOTAL_LP_AMOUNT_ = IDVM(_POOL_).buyShares(address(this));
     }
@@ -125,23 +124,13 @@ contract CPFunding is CPStorage {
 
     // ============ Pricing ============
 
-    function getSettleResult()
-        public
-        view
-        returns (
-            uint256 poolBase,
-            uint256 poolQuote,
-            uint256 ownerQuote
-        )
-    {
+    function getSettleResult() public view returns (uint256 poolBase, uint256 poolQuote) {
         poolQuote = _QUOTE_TOKEN_.balanceOf(address(this));
         if (poolQuote > _POOL_QUOTE_CAP_) {
             poolQuote = _POOL_QUOTE_CAP_;
         }
         (uint256 soldBase, ) = PMMPricing.sellQuoteToken(_getPMMState(), poolQuote);
         poolBase = _TOTAL_BASE_.sub(soldBase);
-        ownerQuote = DecimalMath.mulFloor(poolQuote, _OWNER_QUOTE_RATIO_);
-        poolQuote = poolQuote.sub(ownerQuote);
     }
 
     function _getPMMState() internal view returns (PMMPricing.PMMState memory state) {
@@ -156,12 +145,8 @@ contract CPFunding is CPStorage {
 
     function getExpectedAvgPrice() external view returns (uint256) {
         require(!_SETTLED_, "ALREADY_SETTLED");
-        (uint256 poolBase, uint256 poolQuote, uint256 ownerQuote) = getSettleResult();
-        return
-            DecimalMath.divCeil(
-                poolQuote.add(ownerQuote),
-                _BASE_TOKEN_.balanceOf(address(this)).sub(poolBase)
-            );
+        (uint256 poolBase, uint256 poolQuote) = getSettleResult();
+        return DecimalMath.divCeil(poolQuote, _BASE_TOKEN_.balanceOf(address(this)).sub(poolBase));
     }
 
     // ============ Asset In ============
