@@ -36,6 +36,12 @@ contract DPPAdmin is InitializableOwnable {
         _DODO_APPROVE_ = dodoApprove;
     }
 
+    //For Rebase Token
+    function sync() external notFreezed onlyOwner {
+        IDPP(_DPP_).sync();
+    }
+
+
     function setFreezeTimestamp(uint256 timestamp) external notFreezed onlyOwner {
         _FREEZE_TIMESTAMP_ = timestamp;
     }

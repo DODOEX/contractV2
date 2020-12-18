@@ -57,6 +57,19 @@ contract DPPVault is DPPStorage {
 
     // ============ Set States ============
 
+    function sync() external preventReentrant onlyOwner {
+        uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
+        uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
+        if (baseBalance != _BASE_RESERVE_) {
+            _BASE_TARGET_ = _BASE_TARGET_.mul(baseBalance).div(_BASE_RESERVE_);
+            _BASE_RESERVE_ = baseBalance;
+        }
+        if (quoteBalance != _QUOTE_RESERVE_) {
+            _QUOTE_TARGET_ = _QUOTE_TARGET_.mul(quoteBalance).div(_QUOTE_RESERVE_);
+            _QUOTE_RESERVE_ = quoteBalance;
+        }
+    }
+
     function setTarget(uint256 baseTarget, uint256 quoteTarget) public preventReentrant onlyOwner {
         _BASE_TARGET_ = baseTarget;
         _QUOTE_TARGET_ = quoteTarget;

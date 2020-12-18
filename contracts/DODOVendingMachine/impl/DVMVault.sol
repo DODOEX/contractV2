@@ -68,6 +68,11 @@ contract DVMVault is DVMStorage {
         }
     }
 
+
+    function sync() external preventReentrant {
+        _sync();
+    }
+
     // ============ Asset Out ============
 
     function _transferBaseOut(address to, uint256 amount) internal {
