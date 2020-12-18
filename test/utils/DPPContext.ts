@@ -92,6 +92,13 @@ export class DPPContext {
     this.Maintainer = allAccounts[1];
     this.SpareAccounts = allAccounts.slice(2, 10);
 
+    await gasPriceSource.methods.init(this.Deployer, MAX_UINT256).send(this.sendParam(this.Deployer))
+    await lpFeeRateModel.methods.init(this.DPP.options.address, config.lpFeeRate).send(this.sendParam(this.Deployer))
+    await mtFeeRateModel.methods.init(this.DPP.options.address, config.mtFeeRate).send(this.sendParam(this.Deployer))
+
+    await kSource.methods.init(this.DPP.options.address, config.k).send(this.sendParam(this.Deployer))
+    await iSource.methods.init(this.DPP.options.address, config.i).send(this.sendParam(this.Deployer))
+
     await this.DPP.methods.init(
       this.Deployer,
       this.Maintainer,
@@ -104,13 +111,6 @@ export class DPPContext {
       gasPriceSource.options.address,
       permissionManager.options.address,
     ).send(this.sendParam(this.Deployer))
-
-    await gasPriceSource.methods.init(this.Deployer, MAX_UINT256).send(this.sendParam(this.Deployer))
-    await lpFeeRateModel.methods.init(this.DPP.options.address, config.lpFeeRate).send(this.sendParam(this.Deployer))
-    await mtFeeRateModel.methods.init(this.DPP.options.address, config.mtFeeRate).send(this.sendParam(this.Deployer))
-
-    await kSource.methods.init(this.DPP.options.address, config.k).send(this.sendParam(this.Deployer))
-    await iSource.methods.init(this.DPP.options.address, config.i).send(this.sendParam(this.Deployer))
 
     console.log(log.blueText("[Init DPP context]"));
   }

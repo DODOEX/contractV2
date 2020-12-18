@@ -7,11 +7,11 @@
 
 // import * as assert from 'assert';
 
-import { decimalStr } from '../utils/Converter';
+import { decimalStr, mweiStr } from '../utils/Converter';
 import { DPPContext, getDPPContext } from '../utils/DPPContext';
 import { assert } from 'chai';
 import { EXTERNAL_VALUE_NAME, getContractWithAddress, MINTABLE_ERC20_CONTRACT_NAME, newContract } from '../utils/Contracts';
-import { sendParam } from '../../script/utils';
+// import { sendParam } from '../../script/utils';
 const truffleAssert = require('truffle-assertions');
 
 let lp: string;
@@ -29,7 +29,7 @@ async function init(ctx: DPPContext): Promise<void> {
   var kValue = decimalStr("0.2")
   await ctx.transferBaseToDPP(lp, baseAmount)
   await ctx.transferQuoteToDPP(lp, quoteAmount)
-  await ctx.DPP.methods.reset(lp, lpFeeRate, mtFeeRate, iValue, kValue, "0", "0").send(ctx.sendParam(ctx.Deployer))
+  await ctx.DPP.methods.reset(lp, lpFeeRate, mtFeeRate, iValue, kValue, "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer))
 }
 
 describe("DPP Trader", () => {
@@ -59,7 +59,7 @@ describe("DPP Trader", () => {
       var kValue = decimalStr("0.3")
       await ctx.transferBaseToDPP(lp, decimalStr("10"))
       await ctx.transferQuoteToDPP(lp, decimalStr("1000"))
-      await ctx.DPP.methods.reset(lp, lpFeeRate, mtFeeRate, iValue, kValue, "0", "0").send(ctx.sendParam(ctx.Deployer))
+      await ctx.DPP.methods.reset(lp, lpFeeRate, mtFeeRate, iValue, kValue, "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer))
 
       var state = await ctx.DPP.methods.getPMMState().call()
       assert.equal(state.B, decimalStr("20"))
@@ -77,7 +77,7 @@ describe("DPP Trader", () => {
       var mtFeeRate = decimalStr("0.02")
       var iValue = decimalStr("300")
       var kValue = decimalStr("0.3")
-      await ctx.DPP.methods.reset(lp, lpFeeRate, mtFeeRate, iValue, kValue, decimalStr("1"), decimalStr("100")).send(ctx.sendParam(ctx.Deployer))
+      await ctx.DPP.methods.reset(lp, lpFeeRate, mtFeeRate, iValue, kValue, decimalStr("1"), decimalStr("100"), "0", "0").send(ctx.sendParam(ctx.Deployer))
 
       var state = await ctx.DPP.methods.getPMMState().call()
       assert.equal(state.B, decimalStr("9"))
@@ -95,7 +95,7 @@ describe("DPP Trader", () => {
       var mtFeeRate = decimalStr("0.02")
       var iValue = decimalStr("300")
       var kValue = decimalStr("0.3")
-      await ctx.DPP.methods.reset(lp, lpFeeRate, mtFeeRate, iValue, kValue, "0", "0").send(ctx.sendParam(ctx.Deployer))
+      await ctx.DPP.methods.reset(lp, lpFeeRate, mtFeeRate, iValue, kValue, "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer))
 
       var state = await ctx.DPP.methods.getPMMState().call()
       assert.equal(state.B, decimalStr("10"))
@@ -138,16 +138,16 @@ describe("DPP Trader", () => {
 
     it("i or k can not out of range", async () => {
       await truffleAssert.reverts(
-        ctx.DPP.methods.reset(lp, "0", "0", "0", decimalStr("1"), "0", "0").send(ctx.sendParam(ctx.Deployer)), "I_OUT_OF_RANGE"
+        ctx.DPP.methods.reset(lp, "0", "0", "0", decimalStr("1"), "0", "0" ,"0", "0").send(ctx.sendParam(ctx.Deployer)), "I_OUT_OF_RANGE"
       )
       await truffleAssert.reverts(
-        ctx.DPP.methods.reset(lp, "0", "0", "10000000000000000000000000000000000000", decimalStr("1"), "0", "0").send(ctx.sendParam(ctx.Deployer)), "I_OUT_OF_RANGE"
+        ctx.DPP.methods.reset(lp, "0", "0", "10000000000000000000000000000000000000", decimalStr("1"), "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer)), "I_OUT_OF_RANGE"
       )
       await truffleAssert.reverts(
-        ctx.DPP.methods.reset(lp, "0", "0", decimalStr("1"), "1", "0", "0").send(ctx.sendParam(ctx.Deployer)), "K_OUT_OF_RANGE"
+        ctx.DPP.methods.reset(lp, "0", "0", decimalStr("1"), "1", "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer)), "K_OUT_OF_RANGE"
       )
       await truffleAssert.reverts(
-        ctx.DPP.methods.reset(lp, "0", "0", decimalStr("1"), decimalStr("2"), "0", "0").send(ctx.sendParam(ctx.Deployer)), "K_OUT_OF_RANGE"
+        ctx.DPP.methods.reset(lp, "0", "0", decimalStr("1"), decimalStr("2"), "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer)), "K_OUT_OF_RANGE"
       )
     })
   })

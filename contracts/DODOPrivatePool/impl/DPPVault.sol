@@ -78,8 +78,11 @@ contract DPPVault is DPPStorage {
         uint256 newI,
         uint256 newK,
         uint256 baseOutAmount,
-        uint256 quoteOutAmount
-    ) public preventReentrant onlyOwner {
+        uint256 quoteOutAmount,
+        uint256 minBaseReserve,
+        uint256 minQuoteReserve
+    ) public preventReentrant onlyOwner returns (bool) {
+        require(_BASE_RESERVE_ >= minBaseReserve && _QUOTE_RESERVE_ >= minQuoteReserve, "Reserve amount is not enough");
         _LP_FEE_RATE_MODEL_.setFeeRate(newLpFeeRate);
         _MT_FEE_RATE_MODEL_.setFeeRate(newMtFeeRate);
         _I_.set(newI);
@@ -89,6 +92,7 @@ contract DPPVault is DPPStorage {
         _resetTargetAndReserve();
         _checkIK();
         emit Reset(newLpFeeRate, newMtFeeRate);
+        return true;
     }
 
     function _setRState() internal {
