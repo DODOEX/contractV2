@@ -68,25 +68,25 @@ module.exports = async (deployer, network, accounts) => {
         //Template
         CloneFactoryAddress = "0xf7959fe661124C49F96CF30Da33729201aEE1b27";
         FeeRateModelTemplateAddress = "0xEF3137780B387313c5889B999D03BdCf9aeEa892";
-        ConstFeeRateModelTemplateAddress = "";
+        ConstFeeRateModelTemplateAddress = "0x2ec9579Cf7ae77B4e538F56274501f518ABFeA2e";
         PermissionManagerTemplateAddress = "0x5D2Da09501d97a7bf0A8F192D2eb2F9Aa80d3241";
         ExternalValueTemplateAddress = "0xe0f813951dE2BB012f7Feb981669F9a7b5250A57";
         //Default Template
         DefaultGasSourceAddress = "0xE0c0df0e0be7ec4f579503304a6C186cA4365407";
-        DefaultMtFeeRateAddress = "";
-        DefaultPermissionAddress = "";
+        DefaultMtFeeRateAddress = "0xEfdE4225AC747136289979e29f1236527b2E4DB1";
+        DefaultPermissionAddress = "0xACc7E23368261e1E02103c4e5ae672E7D01f5797";
         
-        DvmTemplateAddress = "";
-        DvmAdminTemplateAddress = "";
-        DppTemplateAddress = "";
-        DppAdminTemplateAddress = "";
-        CpTemplateAddress = "";
+        DvmTemplateAddress = "0xb509d7BdbC9847a7bc4B73e96F92Ecf4058E3bc0";
+        DvmAdminTemplateAddress = "0x45f455d7E233403F10b7AFCB0d0d0c0d775AFf63";
+        DppTemplateAddress = "0xDaF105aCc7F83ac66dB7085D37123e047D1999c4";
+        DppAdminTemplateAddress = "0xDfdd9e1693C3A6AF25307c9dA561021f9e685878";
+        CpTemplateAddress = "0x59652F06fEdDe7780E8fa5C88CE850F67F26F0Fc";
         //Factory
-        DvmFactoryAddress = "";
-        UnownedDvmFactoryAddress = "";
-        DppFactoryAddress = "";
-        CpFactoryAddress = "";
-        //Proxy
+        DvmFactoryAddress = "0x03db1C1C1Adf27A73DFe9BDc3B21D4c569c2D41e";
+        UnownedDvmFactoryAddress = "0xc8A53F0fE35106762420E3b69866547BB4f389c2";
+        DppFactoryAddress = "0x1B3Ce1Ac27C1C2d05743CE237aAF3406372049b1";
+        CpFactoryAddress = "0x9F90AD19C15d7aF4291EB17b637DF78EaC639EA3";
+        //Approve
         DODOApproveAddress = "";
         //Account
         multiSigAddress = accounts[0];
@@ -268,7 +268,7 @@ module.exports = async (deployer, network, accounts) => {
                 CloneFactoryAddress,
                 DvmTemplateAddress,
                 DvmAdminTemplateAddress,
-                ConstFeeRateModelTemplateAddress,
+                FeeRateModelTemplateAddress,
                 PermissionManagerTemplateAddress,
                 DefaultGasSourceAddress
             );
@@ -284,7 +284,7 @@ module.exports = async (deployer, network, accounts) => {
                 UnownedDvmFactory,
                 CloneFactoryAddress,
                 DvmTemplateAddress,
-                ConstFeeRateModelTemplateAddress,
+                FeeRateModelTemplateAddress,
                 defaultMaintainer,
                 DefaultMtFeeRateAddress,
                 DefaultPermissionAddress,
@@ -319,7 +319,7 @@ module.exports = async (deployer, network, accounts) => {
                 CloneFactoryAddress,
                 CpTemplateAddress,
                 UnownedDvmFactoryAddress,
-                ConstFeeRateModelTemplateAddress,
+                FeeRateModelTemplateAddress,
                 defaultMaintainer,
                 DefaultMtFeeRateAddress,
                 DefaultPermissionAddress,
@@ -344,9 +344,9 @@ module.exports = async (deployer, network, accounts) => {
         var tx = await DODOProxyV2Instance.initOwner(multiSigAddress);
         logger.log("Init DODOProxyV2 Tx:", tx.tx);
 
-
+        
         const DODOApproveInstance = await DODOApprove.at(DODOApproveAddress);
         var tx = await DODOApproveInstance.init(multiSigAddress,DODOProxyV2.address);
-        logger.log("DODOApprovce Init tx: ", tx.tx);
+        logger.log("DODOApprove Init tx: ", tx.tx);
     }
 };
