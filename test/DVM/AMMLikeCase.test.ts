@@ -25,7 +25,6 @@ async function init(ctx: DVMContext): Promise<void> {
   await ctx.transferQuoteToDVM(lp, decimalStr("1000"))
   await ctx.DVM.methods.buyShares(lp).send(ctx.sendParam(lp));
 
-  console.log("deposit")
 }
 
 describe("AMMLikeCase", () => {
@@ -54,7 +53,7 @@ describe("AMMLikeCase", () => {
   describe("trade", () => {
 
     it("basic state", async () => {
-      console.log(await ctx.DVM.methods.getMidPrice().call())
+      console.log("DVM mid price", await ctx.DVM.methods.getMidPrice().call())
     })
 
     it("buy", async () => {
