@@ -151,6 +151,7 @@ contract CrowdPoolingFactory is Ownable {
 
     // ============ Owner Functions ============
     function setXY(uint256 x,uint256 y) public onlyOwner {
+        require(x>0&&x<=100,"between 0,100");
         _X_=x;
         _Y_=y;
     }
