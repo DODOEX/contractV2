@@ -45,14 +45,14 @@ contract CrowdPoolingFactory is Ownable {
         uint256[] memory timeLine,
         uint256[] memory valueList)
     {
-        require(timeLine[2] == 0,"PHASE_CALM_DURATION_ZERO_ONLY");
-        require(timeLine[4] == 0,"VEST_DURATION_ZERO_ONLY");
-        require(valueList[1] == 0,"K_ZERO_ONLY");
-        require(valueList[3] == DecimalMath.ONE,"CLIFF_RATE_DECIMAL_MATH_ONE_ONLY");
+        require(timeLine[2] == 0,"CP_FACTORY_PHASE_CALM_DURATION_ZERO_ONLY");
+        require(timeLine[4] == 0,"CP_FACTORY_VEST_DURATION_ZERO_ONLY");
+        require(valueList[1] == 0,"CP_FACTORY_K_ZERO_ONLY");
+        require(valueList[3] == DecimalMath.ONE,"CP_FACTORY_CLIFF_RATE_DECIMAL_MATH_ONE_ONLY");
 
         uint256 baseTokenBalance = IERC20(baseToken).balanceOf(cpAddress);
-        require(valueList[0].mul(100) <= baseTokenBalance.divCeil(valueList[2]).mul(_X_),"QUOTE_CAPE_INVALID");
-        require(timeLine[3]>= _Y_,"FREEZE_DURATION_INVALID");
+        require(valueList[0].mul(100) <= baseTokenBalance.divCeil(valueList[2]).mul(_X_),"CP_FACTORY_QUOTE_CAPE_INVALID");
+        require(timeLine[3]>= _Y_,"CP_FACTORY_FREEZE_DURATION_INVALID");
         _;
     }
 
@@ -152,7 +152,7 @@ contract CrowdPoolingFactory is Ownable {
 
     // ============ Owner Functions ============
     function setXY(uint256 x,uint256 y) public onlyOwner {
-        require(x>0&&x<=100,"INVALID_X");
+        require(x>0&&x<=100,"CP_FACTORY_INVALID_X");
         _X_=x;
         _Y_=y;
     }
