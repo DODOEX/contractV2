@@ -50,8 +50,8 @@ contract CrowdPoolingFactory is Ownable {
         require(valueList[3] == 1,"cliff rate should be 1");
 
         uint256 baseTokenBalance = IERC20(baseToken).balanceOf(cpAddress);
-        require(valueList[0].mul(100) <= baseTokenBalance.mul(_X_),"pool quote cap should be less then _X_% ");
-        require(timeLine[3]>= _Y_,"freeze duration not less then _Y_");
+        require(valueList[0].mul(100) <= baseTokenBalance.mul(_X_),"pool quote cap should not be greater than _X_% ");
+        require(timeLine[3]>= _Y_,"freeze duration should not be less than _Y_");
         _;
     }
 
