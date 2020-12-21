@@ -69,12 +69,22 @@ contract CPFunding is CPStorage {
         // if quote = m*base i = 1
         // if quote > m*base reverse
         {
-            uint256 avgPrice = DecimalMath.divCeil(poolQuote, _UNUSED_BASE_);
-            uint256 baseDepth = DecimalMath.mulFloor(avgPrice, poolBase);
             address _poolBaseToken;
             address _poolQuoteToken;
             uint256 _poolI;
-            if (poolQuote.mul(_UNUSED_BASE_) == poolQuote.mul(poolBase)) {
+
+            uint256 avgPrice = _UNUSED_BASE_ == 0
+                ? _I_
+                : DecimalMath.divCeil(poolQuote, _UNUSED_BASE_);
+            uint256 baseDepth = DecimalMath.mulFloor(avgPrice, poolBase);
+
+            if (poolQuote == 0) {
+                // ask side only DVM
+                _poolBaseToken = address(_BASE_TOKEN_);
+                _poolQuoteToken = address(_QUOTE_TOKEN_);
+                _poolI = _I_;
+            } else if (poolQuote.mul(_UNUSED_BASE_) == poolQuote.mul(poolBase)) {
+                // standard bonding curve
                 _poolBaseToken = address(_BASE_TOKEN_);
                 _poolQuoteToken = address(_QUOTE_TOKEN_);
                 _poolI = 1;

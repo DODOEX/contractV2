@@ -43,7 +43,7 @@ library DODOMath {
         require(V0 > 0, "TARGET_IS_ZERO");
         uint256 fairAmount = i.mul(V1.sub(V2)); // i*delta
         if (k == 0) {
-            return fairAmount;
+            return fairAmount.div(DecimalMath.ONE);
         }
         uint256 V0V0V1V2 = DecimalMath.divFloor(V0.mul(V0).div(V1), V2);
         uint256 penalty = DecimalMath.mulFloor(k, V0V0V1V2); // k(V0^2/V1/V2)
