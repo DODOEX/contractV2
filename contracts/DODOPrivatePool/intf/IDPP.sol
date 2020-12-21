@@ -45,7 +45,7 @@ interface IDPP {
 
     function setSell(bool open) external;
 
-    function sync() external;
+    function ratioSync() external;
 
     //==============================
 

@@ -9,6 +9,7 @@
 
 import { DVMContext, getDVMContext } from '../utils/DVMContext';
 import { assert } from 'chai';
+import { decimalStr } from '../utils/Converter';
 const truffleAssert = require('truffle-assertions');
 
 async function init(ctx: DVMContext): Promise<void> { }
@@ -57,6 +58,15 @@ describe("Admin Set", () => {
       await truffleAssert.reverts(ctx.DVM.methods.sellQuote(ctx.Deployer).send(ctx.sendParam(ctx.Deployer)), "TRADER_BUY_NOT_ALLOWED")
 
       await truffleAssert.reverts(ctx.DVM.methods.sellBase(ctx.Deployer).send(ctx.sendParam(ctx.Deployer)), "TRADER_SELL_NOT_ALLOWED")
+    })
+
+    it("sync", async () => {
+      await ctx.BASE.methods.mint(ctx.DVM.options.address, decimalStr("123")).send(ctx.sendParam(ctx.Deployer))
+      await ctx.QUOTE.methods.mint(ctx.DVM.options.address, decimalStr("456")).send(ctx.sendParam(ctx.Deployer))
+
+      await ctx.DVM.methods.sync().send(ctx.sendParam(ctx.Deployer))
+      assert.equal(await ctx.DVM.methods._BASE_RESERVE_().call(), decimalStr("123"))
+      assert.equal(await ctx.DVM.methods._QUOTE_RESERVE_().call(), decimalStr("456"))
     })
 
   });
