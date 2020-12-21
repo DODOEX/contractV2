@@ -51,7 +51,7 @@ contract CrowdPoolingFactory is Ownable {
         require(valueList[3] == DecimalMath.ONE,"CP_FACTORY : CLIFF_RATE_DECIMAL_MATH_ONE_ONLY");
 
         uint256 baseTokenBalance = IERC20(baseToken).balanceOf(cpAddress);
-        uint8 decimals = IERC20(baseToken).decimals();
+        uint256 decimals = IERC20(baseToken).decimals();
         require(valueList[0].mul(100) <= baseTokenBalance.div(10**decimals).mul(valueList[2]).mul(_X_),"CP_FACTORY : QUOTE_CAPE_INVALID");
         require(timeLine[3]>= _Y_,"CP_FACTORY : FREEZE_DURATION_INVALID");
         _;
