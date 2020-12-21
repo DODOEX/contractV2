@@ -13,6 +13,7 @@ import {ICloneFactory} from "../lib/CloneFactory.sol";
 import {ICP} from "../CrowdPooling/intf/ICP.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {IERC20} from "../intf/IERC20.sol";
+import {DecimalMath} from "../lib/DecimalMath.sol";
 
 contract CrowdPoolingFactory is Ownable {
     using SafeMath for uint256;
@@ -47,7 +48,7 @@ contract CrowdPoolingFactory is Ownable {
         require(timeLine[2] == 0,"PHASE_CALM_DURATION_ZERO_ONLY");
         require(timeLine[4] == 0,"VEST_DURATION_ZERO_ONLY");
         require(valueList[1] == 0,"K_ZERO_ONLY");
-        require(valueList[3] == 1,"CLIFF_RATE_ONE_ONLY");
+        require(valueList[3] == DecimalMath.ONE,"CLIFF_RATE_DECIMAL_MATH_ONE_ONLY");
 
         uint256 baseTokenBalance = IERC20(baseToken).balanceOf(cpAddress);
         require(valueList[0].mul(100) <= baseTokenBalance.mul(valueList[2]).mul(_X_),"QUOTE_CAPE_INVALID");
