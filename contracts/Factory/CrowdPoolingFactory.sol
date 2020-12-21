@@ -11,8 +11,11 @@ pragma experimental ABIEncoderV2;
 import {Ownable} from "../lib/Ownable.sol";
 import {ICloneFactory} from "../lib/CloneFactory.sol";
 import {ICP} from "../CrowdPooling/intf/ICP.sol";
+import {SafeMath} from "../lib/SafeMath.sol";
+import {IERC20} from "../intf/IERC20.sol";
 
-contract CrowdPoolingFactory {
+contract CrowdPoolingFactory is Ownable {
+    using SafeMath for uint256;
     // ============ Templates ============
 
     address public immutable _CLONE_FACTORY_;
@@ -25,12 +28,32 @@ contract CrowdPoolingFactory {
     address public immutable _DEFAULT_PERMISSION_MANAGER_;
     address public immutable _DEFAULT_GAS_PRICE_SOURCE_;
 
+    uint256 public _X_;
+    uint256 public _Y_;
     // ============ Registry ============
 
     // base -> quote -> CP address list
     mapping(address => mapping(address => address[])) public _REGISTRY_;
     // creator -> CP address list
     mapping(address => address[]) public _USER_REGISTRY_;
+
+    // ============ modifiers ===========
+    modifier valueCheck(
+        address cpAddress,
+        address baseToken,
+        uint256[] memory timeLine,
+        uint256[] memory valueList)
+    {
+        require(timeLine[2] == 0,"phase calm duration should be 0");
+        require(timeLine[4] == 0,"vesting duration should be 0");
+        require(valueList[1] == 0,"k should be 0");
+        require(valueList[3] == 1,"cliff rate should be 1");
+
+        uint256 baseTokenBalance = IERC20(baseToken).balanceOf(cpAddress);
+        require(valueList[0].mul(100) <= baseTokenBalance.mul(_X_),"pool quote cap should be less then _X_% ");
+        require(timeLine[3]>= _Y_,"freeze duration not less then _Y_");
+        _;
+    }
 
     // ============ Events ============
 
@@ -61,6 +84,8 @@ contract CrowdPoolingFactory {
         _DEFAULT_MT_FEE_RATE_MODEL_ = defaultMtFeeRateModel;
         _DEFAULT_PERMISSION_MANAGER_ = defaultPermissionManager;
         _DEFAULT_GAS_PRICE_SOURCE_ = defaultGasPriceSource;
+        _X_ = 50;
+        _Y_ = 30 days;
     }
 
     function createCrowdPooling() external returns (address newCrowdPooling) {
@@ -74,7 +99,7 @@ contract CrowdPoolingFactory {
         address quoteToken,
         uint256[] memory timeLine,
         uint256[] memory valueList
-    ) external {
+    ) external valueCheck(cpAddress,baseToken,timeLine,valueList) {
         {
         address[] memory addressList = new address[](7);
         addressList[0] = creator;
@@ -84,7 +109,7 @@ contract CrowdPoolingFactory {
         addressList[4] = _DEFAULT_PERMISSION_MANAGER_;
         addressList[5] = _DEFAULT_MT_FEE_RATE_MODEL_;
         addressList[6] = _UNOWNED_DVM_FACTORY_;
-        
+
         ICP(cpAddress).init(
             addressList,
             timeLine,
@@ -122,5 +147,11 @@ contract CrowdPoolingFactory {
         returns (address[] memory pools)
     {
         return _USER_REGISTRY_[user];
+    }
+
+    // ============ Owner Functions ============
+    function setXY(uint256 x,uint256 y) public onlyOwner {
+        _X_=x;
+        _Y_=y;
     }
 }
