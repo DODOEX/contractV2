@@ -38,9 +38,8 @@ contract DPPAdmin is InitializableOwnable {
 
     //For Rebase Token
     function sync() external notFreezed onlyOwner {
-        IDPP(_DPP_).sync();
+        IDPP(_DPP_).ratioSync();
     }
-
 
     function setFreezeTimestamp(uint256 timestamp) external notFreezed onlyOwner {
         _FREEZE_TIMESTAMP_ = timestamp;
@@ -111,17 +110,18 @@ contract DPPAdmin is InitializableOwnable {
                     operator == _OPERATOR_),
             "RESET FORBIDDEN！"
         );
-        return IDPP(_DPP_).reset(
-            msg.sender,
-            newLpFeeRate,
-            newMtFeeRate,
-            newI,
-            newK,
-            baseOutAmount,
-            quoteOutAmount,
-            minBaseReserve,
-            minQuoteReserve
-        );
+        return
+            IDPP(_DPP_).reset(
+                msg.sender,
+                newLpFeeRate,
+                newMtFeeRate,
+                newI,
+                newK,
+                baseOutAmount,
+                quoteOutAmount,
+                minBaseReserve,
+                minQuoteReserve
+            );
     }
 
     // ============ Admin Version Control ============

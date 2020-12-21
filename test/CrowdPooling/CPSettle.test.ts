@@ -108,5 +108,26 @@ describe("Funding", () => {
       assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.CP.options.address).call(), decimalStr("49900"))
     })
 
+    it("bid zero", async () => {
+      await ctx.EVM.increaseTime(86400 * 2)
+
+      await logGas(ctx.CP.methods.settle(), ctx.sendParam(ctx.Deployer), "settle")
+
+      var poolAddress = await ctx.CP.methods._POOL_().call()
+      var pool = getContractWithAddress(DVM_NAME, poolAddress)
+
+      assert.equal(await pool.methods.getMidPrice().call(), decimalStr("10"))
+      assert.equal(await ctx.CP.methods._AVG_SETTLED_PRICE_().call(), decimalStr("10"))
+
+      assert.equal(await ctx.CP.methods._UNUSED_QUOTE_().call(), "0")
+      assert.equal(await ctx.CP.methods._UNUSED_BASE_().call(), "0")
+
+      assert.equal(await ctx.BASE.methods.balanceOf(poolAddress).call(), decimalStr("10000"))
+      assert.equal(await ctx.BASE.methods.balanceOf(ctx.CP.options.address).call(), "0")
+
+      assert.equal(await ctx.QUOTE.methods.balanceOf(poolAddress).call(), "0")
+      assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.CP.options.address).call(), "0")
+    })
+
   })
 })

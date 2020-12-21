@@ -23,10 +23,7 @@ contract DPPVault is DPPStorage {
 
     // ============ Events ============
 
-    event Reset(
-        uint256 newLpFeeRate,
-        uint256 newMtFeeRate
-    );
+    event Reset(uint256 newLpFeeRate, uint256 newMtFeeRate);
 
     // ============ View Functions ============
 
@@ -35,14 +32,22 @@ contract DPPVault is DPPStorage {
         quoteReserve = _QUOTE_RESERVE_;
     }
 
-    function getUserFeeRate(address user) external view returns (uint256 lpFeeRate, uint256 mtFeeRate) {
+    function getUserFeeRate(address user)
+        external
+        view
+        returns (uint256 lpFeeRate, uint256 mtFeeRate)
+    {
         lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(user);
         mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(user);
     }
 
-    function getUserTradePermission(address user) external view returns (bool isBuyAllow, bool isSellAllow) {
+    function getUserTradePermission(address user)
+        external
+        view
+        returns (bool isBuyAllow, bool isSellAllow)
+    {
         isBuyAllow = (!_BUYING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(user));
-        isSellAllow =  (!_SELLING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(user));
+        isSellAllow = (!_SELLING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(user));
     }
 
     // ============ Get Input ============
@@ -57,7 +62,7 @@ contract DPPVault is DPPStorage {
 
     // ============ Set States ============
 
-    function sync() external preventReentrant onlyOwner {
+    function ratioSync() external preventReentrant onlyOwner {
         uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
         uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
         if (baseBalance != _BASE_RESERVE_) {
@@ -95,7 +100,10 @@ contract DPPVault is DPPStorage {
         uint256 minBaseReserve,
         uint256 minQuoteReserve
     ) public preventReentrant onlyOwner returns (bool) {
-        require(_BASE_RESERVE_ >= minBaseReserve && _QUOTE_RESERVE_ >= minQuoteReserve, "Reserve amount is not enough");
+        require(
+            _BASE_RESERVE_ >= minBaseReserve && _QUOTE_RESERVE_ >= minQuoteReserve,
+            "RESERVE_AMOUNT_IS_NOT_ENOUGH"
+        );
         _LP_FEE_RATE_MODEL_.setFeeRate(newLpFeeRate);
         _MT_FEE_RATE_MODEL_.setFeeRate(newMtFeeRate);
         _I_.set(newI);
