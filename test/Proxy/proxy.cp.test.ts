@@ -68,14 +68,14 @@ describe("DODOProxyV2.0", () => {
         var timeLine = [
             Math.floor(new Date().getTime() / 1000) + 10,
             60 * 60 * 24,
-            60 * 60 * 24,
+            0,
             60 * 60 * 24 * 30,
-            60 * 60 * 24 * 7
+            0
         ]
         var valueList = [
             mweiStr("10000"),
-            decimalStr("0.5"),
-            decimalStr("10"),
+            decimalStr("0"),
+            mweiStr("10"),
             decimalStr("1")
         ]
         cp_DODO_USDT = await initCreateCP(ctx, ctx.DODO.options.address, ctx.USDT.options.address, decimalStr("100000"), timeLine, valueList);
@@ -100,18 +100,18 @@ describe("DODOProxyV2.0", () => {
         it("createCP", async () => {
             var baseToken = ctx.DODO.options.address;
             var quoteToken = ctx.USDT.options.address;
-            var baseAmount = decimalStr("100000");
+            var baseAmount = decimalStr("1");
             var timeLine = [
                 Math.floor(new Date().getTime() / 1000) + 10,
                 60 * 60 * 24,
-                60 * 60 * 24,
+                0,
                 60 * 60 * 24 * 30,
-                60 * 60 * 24 * 7
+                0
             ]
             var valueList = [
-                mweiStr("10000"),
-                decimalStr("0.5"),
-                decimalStr("10"),
+                mweiStr("5"),
+                decimalStr("0"),
+                mweiStr("10"),
                 decimalStr("1")
             ]
             await logGas(await ctx.DODOProxyV2.methods.createCrowdPooling(

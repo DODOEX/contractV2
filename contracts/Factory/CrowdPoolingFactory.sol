@@ -8,14 +8,14 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {Ownable} from "../lib/Ownable.sol";
+import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 import {ICloneFactory} from "../lib/CloneFactory.sol";
 import {ICP} from "../CrowdPooling/intf/ICP.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {IERC20} from "../intf/IERC20.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
 
-contract CrowdPoolingFactory is Ownable {
+contract CrowdPoolingFactory is InitializableOwnable {
     using SafeMath for uint256;
     // ============ Templates ============
 
@@ -29,8 +29,8 @@ contract CrowdPoolingFactory is Ownable {
     address public immutable _DEFAULT_PERMISSION_MANAGER_;
     address public immutable _DEFAULT_GAS_PRICE_SOURCE_;
 
-    uint256 public _X_;
-    uint256 public _Y_;
+    uint256 public _X_ = 50; //default
+    uint256 public _Y_ = 0; //default
     // ============ Registry ============
 
     // base -> quote -> CP address list
@@ -51,8 +51,7 @@ contract CrowdPoolingFactory is Ownable {
         require(valueList[3] == DecimalMath.ONE,"CP_FACTORY : CLIFF_RATE_DECIMAL_MATH_ONE_ONLY");
 
         uint256 baseTokenBalance = IERC20(baseToken).balanceOf(cpAddress);
-        uint256 decimals = IERC20(baseToken).decimals();
-        require(valueList[0].mul(100) <= baseTokenBalance.div(10**decimals).mul(valueList[2]).mul(_X_),"CP_FACTORY : QUOTE_CAPE_INVALID");
+        require(valueList[0].mul(100) <= baseTokenBalance.mul(valueList[2]).div(10**18).mul(_X_),"CP_FACTORY : QUOTE_CAPE_INVALID");
         require(timeLine[3]>= _Y_,"CP_FACTORY : FREEZE_DURATION_INVALID");
         _;
     }
