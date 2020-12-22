@@ -1,4 +1,5 @@
 const fs = require("fs");
+const { deploySwitch } = require('../truffle-config.js')
 const file = fs.createWriteStream("../deploy-detail-v1.5.txt", { 'flags': 'a' });
 let logger = new console.Console(file, file);
 
@@ -6,8 +7,6 @@ const DODOApprove = artifacts.require("DODOApprove");
 const DODOProxyV1 = artifacts.require("DODOV1Proxy01");
 const DODOSellHelper = artifacts.require("DODOSellHelper");
 const DODOSwapCalcHelper = artifacts.require("DODOSwapCalcHelper");
-
-const DEPLOY_ROUTE = false;
 
 module.exports = async (deployer, network, accounts) => {
   let DODOSellHelperAddress = "";
@@ -39,7 +38,7 @@ module.exports = async (deployer, network, accounts) => {
     ownerAddress = "0x4073f2b9bB95774531b9e23d206a308c614A943a";
   } else return;
 
-  if (DEPLOY_ROUTE) {
+  if (deploySwitch.DEPLOY_V1) {
 
     logger.log("====================================================");
     logger.log("network type: " + network);

@@ -1,4 +1,5 @@
 const fs = require("fs");
+const { deploySwitch } = require('../truffle-config.js')
 const file = fs.createWriteStream("../deploy-detail-v2.0.txt", { 'flags': 'a' });
 let logger = new console.Console(file, file);
 
@@ -23,8 +24,9 @@ const DODOApprove = artifacts.require("DODOApprove");
 const DODOProxyV2 = artifacts.require("DODOV2Proxy01");
 const DODOSellHelper = artifacts.require("DODOSellHelper");
 const DODOCalleeHelper = artifacts.require("DODOCalleeHelper");
+const DODOV2RouteHelper = artifacts.require("DODOV2RouteHelper");
 
-const DEPLOY_V2 = false;
+
 
 module.exports = async (deployer, network, accounts) => {
     //Helper And Common
@@ -76,15 +78,15 @@ module.exports = async (deployer, network, accounts) => {
         DefaultMtFeeRateAddress = "0xEfdE4225AC747136289979e29f1236527b2E4DB1";
         DefaultPermissionAddress = "0xACc7E23368261e1E02103c4e5ae672E7D01f5797";
         
-        DvmTemplateAddress = "0xb509d7BdbC9847a7bc4B73e96F92Ecf4058E3bc0";
+        DvmTemplateAddress = "";
         DvmAdminTemplateAddress = "0x45f455d7E233403F10b7AFCB0d0d0c0d775AFf63";
-        DppTemplateAddress = "0xDaF105aCc7F83ac66dB7085D37123e047D1999c4";
+        DppTemplateAddress = "";
         DppAdminTemplateAddress = "0xDfdd9e1693C3A6AF25307c9dA561021f9e685878";
         CpTemplateAddress = "0x59652F06fEdDe7780E8fa5C88CE850F67F26F0Fc";
         //Factory
-        DvmFactoryAddress = "0x03db1C1C1Adf27A73DFe9BDc3B21D4c569c2D41e";
-        UnownedDvmFactoryAddress = "0xc8A53F0fE35106762420E3b69866547BB4f389c2";
-        DppFactoryAddress = "0x1B3Ce1Ac27C1C2d05743CE237aAF3406372049b1";
+        DvmFactoryAddress = "0x577481Bde7327e732f78e9f6AF44632CB8DDe80e";
+        UnownedDvmFactoryAddress = "";
+        DppFactoryAddress = "0xC510D9c58aa226c698F56b22b86A3031b8cBf551";
         CpFactoryAddress = "0x9F90AD19C15d7aF4291EB17b637DF78EaC639EA3";
         //Approve
         DODOApproveAddress = "";
@@ -158,7 +160,18 @@ module.exports = async (deployer, network, accounts) => {
     } else return;
 
 
-    if (DEPLOY_V2) {
+    if(deploySwitch.HELPER_V2) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
+        logger.log("Deploy type: HELPER V2"); 
+
+        await deployer.deploy(DODOV2RouteHelper,DvmFactoryAddress,DppFactoryAddress);
+        DODOV2RouteHelperAddress = DODOV2RouteHelper.address;
+        logger.log("DODOV2RouteHelper Address: ", DODOV2RouteHelperAddress);
+    }
+
+    if (deploySwitch.DEPLOY_V2) {
         logger.log("====================================================");
         logger.log("network type: " + network);
         logger.log("Deploy time: " + new Date().toLocaleString());

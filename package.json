@@ -8,7 +8,7 @@
   "keywords": [
     "dodo",
     "ethereum",
-    "lmm"
+    "pmm"
   ],
   "scripts": {
     "prettier": "prettier --write **/*.sol",

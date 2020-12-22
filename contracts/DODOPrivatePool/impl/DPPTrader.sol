@@ -267,6 +267,29 @@ contract DPPTrader is DPPVault {
         PMMPricing.adjustedTarget(state);
     }
 
+    function getPMMStateForCall() 
+        external 
+        view 
+        returns (
+            uint256 i,
+            uint256 K,
+            uint256 B,
+            uint256 Q,
+            uint256 B0,
+            uint256 Q0,
+            uint8 R
+        )
+    {
+        PMMPricing.PMMState memory state = getPMMState();
+        i = state.i;
+        K = state.K;
+        B = state.B;
+        Q = state.Q;
+        B0 = state.B0;
+        Q0 = state.Q0;
+        R = uint8(state.R);
+    }
+
     function getMidPrice() public view returns (uint256 midPrice) {
         return PMMPricing.getMidPrice(getPMMState());
     }

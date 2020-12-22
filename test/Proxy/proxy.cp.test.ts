@@ -69,12 +69,13 @@ describe("DODOProxyV2.0", () => {
             Math.floor(new Date().getTime() / 1000) + 10,
             60 * 60 * 24,
             60 * 60 * 24,
-            60 * 60 * 24 * 30
+            60 * 60 * 24 * 30,
+            60 * 60 * 24 * 7
         ]
         var valueList = [
             mweiStr("10000"),
-            decimalStr("0.2"),
             decimalStr("0.5"),
+            decimalStr("10"),
             decimalStr("1")
         ]
         cp_DODO_USDT = await initCreateCP(ctx, ctx.DODO.options.address, ctx.USDT.options.address, decimalStr("100000"), timeLine, valueList);
@@ -104,12 +105,13 @@ describe("DODOProxyV2.0", () => {
                 Math.floor(new Date().getTime() / 1000) + 10,
                 60 * 60 * 24,
                 60 * 60 * 24,
-                60 * 60 * 24 * 30
+                60 * 60 * 24 * 30,
+                60 * 60 * 24 * 7
             ]
             var valueList = [
                 mweiStr("10000"),
-                decimalStr("0.2"),
                 decimalStr("0.5"),
+                decimalStr("10"),
                 decimalStr("1")
             ]
             await logGas(await ctx.DODOProxyV2.methods.createCrowdPooling(

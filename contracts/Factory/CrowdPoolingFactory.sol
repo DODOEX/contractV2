@@ -123,6 +123,8 @@ contract CrowdPoolingFactory is Ownable {
         _USER_REGISTRY_[creator].push(cpAddress);
 
         emit NewCP(baseToken, quoteToken, creator, cpAddress);
+
+        //TODO: 初始存入资金，用于settle补贴
     }
 
     // ============ View Functions ============

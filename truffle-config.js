@@ -37,6 +37,13 @@ module.exports = {
    *
    * $ truffle test --network <network-name>
    */
+  deploySwitch: {
+    DEPLOY_V1: false,
+    DEPLOY_V2: false,
+    MOCK_TOKEN: false,
+    MOCK_V2_POOL: true,
+    HELPER_V2: false,
+  },
 
   networks: {
     // Useful for testing. The `development` name is special - truffle uses it by default
@@ -54,7 +61,7 @@ module.exports = {
     },
     kovan: {
       networkCheckTimeout: 100000,
-      provider: function() {
+      provider: function () {
         return new HDWalletProvider(privKey, "https://kovan.infura.io/v3/" + infuraId);
       },
       gas: 8000000,
@@ -64,7 +71,7 @@ module.exports = {
     },
     live: {
       networkCheckTimeout: 100000,
-      provider: function() {
+      provider: function () {
         return new HDWalletProvider(privKey, "https://mainnet.infura.io/v3/" + infuraId);
       },
       gas: 3000000,
@@ -73,7 +80,7 @@ module.exports = {
       skipDryRun: true
     },
     bsclive: {
-      provider: function() {
+      provider: function () {
         return new HDWalletProvider(privKey, "https://bsc-dataseed1.binance.org");
       },
       network_id: 56,
