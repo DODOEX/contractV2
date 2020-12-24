@@ -16,7 +16,6 @@ const DppAdminTemplate = artifacts.require("DPPAdmin");
 const CpTemplate = artifacts.require("CP");
 
 const DvmFactory = artifacts.require("DVMFactory");
-const UnownedDvmFactory = artifacts.require("UnownedDVMFactory");
 const DppFactory = artifacts.require("DPPFactory");
 const CpFactory = artifacts.require("CrowdPoolingFactory");
 
@@ -34,6 +33,7 @@ module.exports = async (deployer, network, accounts) => {
     let WETHAddress = "";
     let chiAddress = "";
     let DODOCalleeHelperAddress = "";
+    let DODORouteV2HelperAddress = "";
     //Template
     let CloneFactoryAddress = "";
     let FeeRateModelTemplateAddress = "";
@@ -52,7 +52,6 @@ module.exports = async (deployer, network, accounts) => {
     let CpTemplateAddress = "";
     //Facotry
     let DvmFactoryAddress = "";
-    let UnownedDvmFactoryAddress = "";
     let DppFactoryAddress = "";
     let CpFactoryAddress = "";
     //Approve
@@ -67,6 +66,7 @@ module.exports = async (deployer, network, accounts) => {
         WETHAddress = "0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b";
         chiAddress = "0x0000000000004946c0e9f43f4dee607b0ef1fa1c";
         DODOCalleeHelperAddress = "0x507EBbb195CF54E0aF147A2b269C08a38EA36989";
+        DODORouteV2HelperAddress = "";
         //Template
         CloneFactoryAddress = "0xf7959fe661124C49F96CF30Da33729201aEE1b27";
         FeeRateModelTemplateAddress = "0xEF3137780B387313c5889B999D03BdCf9aeEa892";
@@ -82,12 +82,11 @@ module.exports = async (deployer, network, accounts) => {
         DvmAdminTemplateAddress = "0x45f455d7E233403F10b7AFCB0d0d0c0d775AFf63";
         DppTemplateAddress = "";
         DppAdminTemplateAddress = "0xDfdd9e1693C3A6AF25307c9dA561021f9e685878";
-        CpTemplateAddress = "0x59652F06fEdDe7780E8fa5C88CE850F67F26F0Fc";
+        CpTemplateAddress = "";
         //Factory
-        DvmFactoryAddress = "0x577481Bde7327e732f78e9f6AF44632CB8DDe80e";
-        UnownedDvmFactoryAddress = "";
-        DppFactoryAddress = "0xC510D9c58aa226c698F56b22b86A3031b8cBf551";
-        CpFactoryAddress = "0x9F90AD19C15d7aF4291EB17b637DF78EaC639EA3";
+        DvmFactoryAddress = "";
+        DppFactoryAddress = "";
+        CpFactoryAddress = "";
         //Approve
         DODOApproveAddress = "";
         //Account
@@ -117,7 +116,6 @@ module.exports = async (deployer, network, accounts) => {
         CpTemplateAddress = "";
         //Factory
         DvmFactoryAddress = "";
-        UnownedDvmFactoryAddress = "";
         DppFactoryAddress = "";
         CpFactoryAddress = "";
         //Proxy
@@ -149,7 +147,6 @@ module.exports = async (deployer, network, accounts) => {
         CpTemplateAddress = "";
         //Factory
         DvmFactoryAddress = "";
-        UnownedDvmFactoryAddress = "";
         DppFactoryAddress = "";
         CpFactoryAddress = "";
         //Proxy
@@ -166,7 +163,7 @@ module.exports = async (deployer, network, accounts) => {
         logger.log("Deploy time: " + new Date().toLocaleString());
         logger.log("Deploy type: HELPER V2"); 
 
-        await deployer.deploy(DODOV2RouteHelper,DvmFactoryAddress,DppFactoryAddress);
+        await deployer.deploy(DODOV2RouteHelper, "0x6cbAE38DF513356878cF8e859A33E0eA92BfE023","0x92fE64e923d3B2A2479fACfFF7DAE8a3056Dc4E1");
         DODOV2RouteHelperAddress = DODOV2RouteHelper.address;
         logger.log("DODOV2RouteHelper Address: ", DODOV2RouteHelperAddress);
     }
@@ -283,28 +280,16 @@ module.exports = async (deployer, network, accounts) => {
                 DvmAdminTemplateAddress,
                 FeeRateModelTemplateAddress,
                 PermissionManagerTemplateAddress,
-                DefaultGasSourceAddress
+                DefaultGasSourceAddress,
+                defaultMaintainer,
+                DefaultMtFeeRateAddress,
+                DefaultPermissionAddress
             );
             DvmFactoryAddress = DvmFactory.address;
             logger.log("DvmFactoryAddress: ", DvmFactoryAddress);
             const DvmFactoryInstance = await DvmFactory.at(DvmFactoryAddress);
             var tx = await DvmFactoryInstance.initOwner(multiSigAddress);
             logger.log("Init DvmFactory Tx:", tx.tx);
-        }
-
-        if (UnownedDvmFactoryAddress == "") {
-            await deployer.deploy(
-                UnownedDvmFactory,
-                CloneFactoryAddress,
-                DvmTemplateAddress,
-                FeeRateModelTemplateAddress,
-                defaultMaintainer,
-                DefaultMtFeeRateAddress,
-                DefaultPermissionAddress,
-                DefaultGasSourceAddress
-            );
-            UnownedDvmFactoryAddress = UnownedDvmFactory.address;
-            logger.log("UnownedDvmFactoryAddress: ", UnownedDvmFactoryAddress);
         }
 
         if (DppFactoryAddress == "") {
@@ -331,7 +316,7 @@ module.exports = async (deployer, network, accounts) => {
                 CpFactory,
                 CloneFactoryAddress,
                 CpTemplateAddress,
-                UnownedDvmFactoryAddress,
+                DvmFactoryAddress,
                 FeeRateModelTemplateAddress,
                 defaultMaintainer,
                 DefaultMtFeeRateAddress,
@@ -340,6 +325,12 @@ module.exports = async (deployer, network, accounts) => {
             );
             CpFactoryAddress = CpFactory.address;
             logger.log("CpFactoryAddress: ", CpFactoryAddress);
+        }
+
+        if (DODORouteV2HelperAddress == "") {
+            await deployer.deploy(DODOV2RouteHelper, DvmFactoryAddress, DppFactoryAddress);
+            DODOV2RouteHelperAddress = DODOV2RouteHelper.address;
+            logger.log("DODOV2RouteHelper Address: ", DODOV2RouteHelperAddress);
         }
 
         //Proxy 

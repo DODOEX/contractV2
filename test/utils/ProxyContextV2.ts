@@ -27,7 +27,6 @@ export class ProxyContext {
   DVMFactory: Contract;
   DPPFactory: Contract;
   CPFactory: Contract;
-  UnownedDVMFactory: Contract;
   DODOApprove: Contract;
   DODOCalleeHelper: Contract;
   DODOSellHelper: Contract;
@@ -74,21 +73,11 @@ export class ProxyContext {
         dvmAdminTemplate.options.address,
         feeRateModelTemplate.options.address,
         permissionManagerTemplate.options.address,
-        defaultGasSource.options.address
-       ]
-    )
-
-
-    this.UnownedDVMFactory = await contracts.newContract(contracts.UNOWNED_DVM_FACTORY_NAME,
-      [
-        cloneFactory.options.address,
-        dvmTemplate.options.address,
-        feeRateModelTemplate.options.address,
+        defaultGasSource.options.address,
         this.Deployer,
         feeRateModelTemplate.options.address,
-        permissionManagerTemplate.options.address,
-        defaultGasSource.options.address
-      ]
+        permissionManagerTemplate.options.address
+       ]
     )
 
     this.DODOApprove = await contracts.newContract(
@@ -113,7 +102,7 @@ export class ProxyContext {
       [
         cloneFactory.options.address,
         cpTemplate.options.address,
-        this.UnownedDVMFactory.options.address,
+        this.DVMFactory.options.address,
         feeRateModelTemplate.options.address,
         this.Deployer,
         feeRateModelTemplate.options.address,

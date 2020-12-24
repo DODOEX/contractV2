@@ -13,7 +13,7 @@ import {SafeERC20} from "../../lib/SafeERC20.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {IDVM} from "../../DODOVendingMachine/intf/IDVM.sol";
-import {IUnownedDVMFactory} from "../../Factory/UnownedDVMFactory.sol";
+import {IDVMFactory} from "../../Factory/DVMFactory.sol";
 import {CPStorage} from "./CPStorage.sol";
 import {PMMPricing} from "../../lib/PMMPricing.sol";
 
@@ -101,7 +101,7 @@ contract CPFunding is CPStorage {
                 uint256 ratio = DecimalMath.ONE.sub(DecimalMath.divCeil(baseDepth, poolQuote));
                 _poolI = ratio.mul(ratio).div(avgPrice);
             }
-            _POOL_ = IUnownedDVMFactory(_POOL_FACTORY_).createDODOVendingMachine(
+            _POOL_ = IDVMFactory(_POOL_FACTORY_).createUnOwnedDODOVendingMachine(
                 address(this),
                 _poolBaseToken,
                 _poolQuoteToken,

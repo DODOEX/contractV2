@@ -10,7 +10,7 @@ import { logGas } from '../utils/Log';
 import { CPContext, CPContextInitConfig } from '../utils/CrowdPoolingContext';
 import BigNumber from 'bignumber.js';
 // import { assert } from 'chai';
-import { DVM_NAME, getContractWithAddress, UNOWNED_DVM_FACTORY_NAME } from '../utils/Contracts';
+import { DVM_NAME, getContractWithAddress } from '../utils/Contracts';
 import { assert } from 'chai';
 const truffleAssert = require('truffle-assertions');
 

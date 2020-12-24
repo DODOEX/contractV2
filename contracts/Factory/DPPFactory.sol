@@ -44,6 +44,9 @@ contract DPPFactory is InitializableOwnable {
         address dpp
     );
 
+
+    event RemoveDPP(address dpp);
+
     // ============ Functions ============
 
     constructor(
@@ -138,8 +141,48 @@ contract DPPFactory is InitializableOwnable {
         IDPPAdmin(adminModel).init(owner, dpp, operator, dodoSmartApprove);
     }
 
+    // ============ Admin Operation Functions ============
+    
     function updateAdminTemplate(address _newDPPAdminTemplate) external onlyOwner {
         _DPP_ADMIN_TEMPLATE_ = _newDPPAdminTemplate;
+    }
+
+    function addPoolByAdmin(
+        address creator,
+        address baseToken, 
+        address quoteToken,
+        address pool
+    ) external onlyOwner {
+        _REGISTRY_[baseToken][quoteToken].push(pool);
+        _USER_REGISTRY_[creator].push(pool);
+        emit NewDPP(baseToken, quoteToken, creator, pool);
+    }
+
+    function removePoolByAdmin(
+        address creator,
+        address baseToken, 
+        address quoteToken,
+        address pool
+    ) external onlyOwner {
+        address[] memory registryList = _REGISTRY_[baseToken][quoteToken];
+        for (uint256 i = 0; i < registryList.length; i++) {
+            if (registryList[i] == pool) {
+                registryList[i] = registryList[registryList.length - 1];
+                break;
+            }
+        }
+        _REGISTRY_[baseToken][quoteToken] = registryList;
+        _REGISTRY_[baseToken][quoteToken].pop();
+        address[] memory userRegistryList = _USER_REGISTRY_[creator];
+        for (uint256 i = 0; i < userRegistryList.length; i++) {
+            if (userRegistryList[i] == pool) {
+                userRegistryList[i] = userRegistryList[userRegistryList.length - 1];
+                break;
+            }
+        }
+        _USER_REGISTRY_[creator] = userRegistryList;
+        _USER_REGISTRY_[creator].pop();
+        emit RemoveDPP(pool);
     }
 
     // ============ View Functions ============

@@ -109,3 +109,45 @@ network type: kovan
 Deploy time: 2020/12/22 下午1:09:32
 Deploy type: HELPER V2
 DODOV2RouteHelper Address:  0xA5A1699FeDc110606AEF85BD05C961A54686306e
+====================================================
+network type: kovan
+Deploy time: 2020/12/23 下午12:14:58
+Deploy type: HELPER V2
+DODOV2RouteHelper Address:  0xBABB5D327A38120B093878C5Dd809cb0f325bfFd
+====================================================
+network type: kovan
+Deploy time: 2020/12/23 下午9:54:47
+Deploy type: V2
+DvmTemplateAddress:  0x35755759Eb9FCDeA6005e5967e732d67eea68EcF
+DppTemplateAddress:  0x302A19bD1951a828264527FaAbEC8ec2f9de7024
+DODOApprove Address:  0x99821c1a7C32D7A53B81098e20cc0fE07cC44601
+DvmFactoryAddress:  0x6cbAE38DF513356878cF8e859A33E0eA92BfE023
+Init DvmFactory Tx: 0xdbb4374216cd207617596eb991ad26a3fc7a47ba6563adf93b874ea10cd6be39
+UnownedDvmFactoryAddress:  0x392F73cA7C6ec09B0C06B8a55e1490e3399ba3C2
+DppFactoryAddress:  0x92fE64e923d3B2A2479fACfFF7DAE8a3056Dc4E1
+Init DppFactory Tx: 0x407fec4324df2808358852b22f7ec6037d92bdb1e9b880a811e90a334cd6db4e
+DODOProxyV2 Address:  0xdaE7617994772B6B1E3D74c907F7881FE86c7239
+Init DODOProxyV2 Tx: 0x39321c35ccde44b24edc380b3cfba860694624708fa1de34a3c0ff31b7757e72
+DODOApprove Init tx:  0xb02f340245a8a7c5fdd4f5c64e9137793cf238bfda348039eb97d8e2dabaf1ab
+====================================================
+network type: kovan
+Deploy time: 2020/12/23 下午10:02:35
+Deploy type: HELPER V2
+DODOV2RouteHelper Address:  0x2255ca84C5Bc2df159d002d1839f0C018D2BAd63
+====================================================
+network type: kovan
+Deploy time: 2020/12/24 上午11:39:38
+Deploy type: V2
+DvmTemplateAddress:  0x9d37C6BB2e3D62263099faAF2940C0De67a4FD6F
+DppTemplateAddress:  0x75CC454c9771A7f1AF4848C4c3775C98b601563E
+CpTemplateAddress:  0x60580b981f2670C872AF0119b21C6596Ad7C5D51
+DODOApprove Address:  0x9F332B3a07536A2b0caaB3E3b9D2a5dFD6173c6c
+DvmFactoryAddress:  0xF2a62693FB14b326C3719e5aeEF28e8e66dC954e
+Init DvmFactory Tx: 0x111defacfa6730734bcc9fad7a095d1c1f3c058995ebaee7c6cae7545134c56a
+DppFactoryAddress:  0x58Bc8D248AcbE95CE29CF893C6666D58AF92d941
+Init DppFactory Tx: 0xe5d4f8149977021327e90bf5bd9a7857bb524f7fcd882f1bb00ded1652df6370
+CpFactoryAddress:  0xD2d3c70C75E4Bb10eE366C8f54A06cCdDF5F3906
+DODOV2RouteHelper Address:  0x3249f48a507588740d291c154a6b607521e4cDED
+DODOProxyV2 Address:  0xd5C27770E8e2F43B959484971472a0019b17fA56
+Init DODOProxyV2 Tx: 0xdb70bb4355e71060803df0fb9833e03a4e4e657af2afbf1e732cf996614ca8c2
+DODOApprove Init tx:  0x10e6bc3c71ac60145c599acbcfeb7571173445b02756a7d98c7d4e6dbe6f4ecd

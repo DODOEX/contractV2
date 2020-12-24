@@ -18,9 +18,13 @@ interface IDODOV2 {
 
     function getVaultReserve() external view returns (uint256 baseReserve, uint256 quoteReserve);
 
-    function _BASE_TOKEN_() external returns (address);
+    function _BASE_TOKEN_() external view returns (address);
 
-    function _QUOTE_TOKEN_() external returns (address);
+    function _QUOTE_TOKEN_() external view returns (address);
+
+    function _BUYING_CLOSE_() external view returns (bool);
+
+    function _SELLING_CLOSE_() external view returns (bool);
 
     function _OWNER_() external returns (address);
 

@@ -13,7 +13,6 @@ import {IDODOV2} from "../intf/IDODOV2.sol";
 contract DODOV2RouteHelper {
     address public immutable _DVM_FACTORY_;
     address public immutable _DPP_FACTORY_;
-    //TODO:UnownedDVMFactory 去掉可行性 
 
     struct PairDetail {
         uint256 i;
@@ -23,7 +22,10 @@ contract DODOV2RouteHelper {
         uint256 B0;
         uint256 Q0;
         uint8 R;
-        uint256 totalFeeRate;
+        uint256 lpFeeRate;
+        uint256 mtFeeRate;
+        address baseToken;
+        address quoteToken;
     }
 
     constructor(address dvmFactory,address dppFactory) public {
@@ -37,30 +39,40 @@ contract DODOV2RouteHelper {
         uint256 len = baseToken0DVM.length + baseToken1DVM.length + baseToken0DPP.length + baseToken1DPP.length;
         res = new PairDetail[](len);
         for(uint8 i = 0; i < len; i++) {
-            PairDetail memory curRes = PairDetail(0,0,0,0,0,0,0,0);
+            PairDetail memory curRes = PairDetail(0,0,0,0,0,0,0,0,0,address(0),address(0));
             address cur;
             if(i < baseToken0DVM.length) {
                 cur = baseToken0DVM[i];
+                curRes.baseToken = token0;
+                curRes.quoteToken = token1;
             } else if(i < baseToken0DVM.length + baseToken1DVM.length) {
                 cur = baseToken1DVM[i - baseToken0DVM.length];
+                curRes.baseToken = token1;
+                curRes.quoteToken = token0;
             } else if(i < baseToken0DVM.length + baseToken1DVM.length + baseToken0DPP.length) {
                 cur = baseToken0DPP[i - baseToken0DVM.length - baseToken1DVM.length];
+                curRes.baseToken = token0;
+                curRes.quoteToken = token1;
             } else {
                 cur = baseToken1DPP[i - baseToken0DVM.length - baseToken1DVM.length - baseToken0DPP.length];
+                curRes.baseToken = token1;
+                curRes.quoteToken = token0;
             }
-            
-            (            
-                curRes.i,
-                curRes.K,
-                curRes.B,
-                curRes.Q,
-                curRes.B0,
-                curRes.Q0,
-                curRes.R
-            ) = IDODOV2(cur).getPMMStateForCall();
 
-            (uint256 lpFeeRate, uint256 mtFeeRate) = IDODOV2(cur).getUserFeeRate(userAddr);
-            curRes.totalFeeRate = lpFeeRate + mtFeeRate;
+            if(!IDODOV2(cur)._BUYING_CLOSE_() && !IDODOV2(cur)._SELLING_CLOSE_()){
+                (            
+                    curRes.i,
+                    curRes.K,
+                    curRes.B,
+                    curRes.Q,
+                    curRes.B0,
+                    curRes.Q0,
+                    curRes.R
+                ) = IDODOV2(cur).getPMMStateForCall();
+
+                (curRes.lpFeeRate, curRes.mtFeeRate) = IDODOV2(cur).getUserFeeRate(userAddr);
+            }
+    
             res[i] = curRes;
         }
     }

@@ -36,7 +36,7 @@ export interface CPContextInitConfig {
 export class CPContext {
   EVM: EVM;
   Web3: Web3;
-  UnownedDVMFactory: Contract;
+  DVMFactory: Contract;
   CP: Contract;
   BASE: Contract;
   QUOTE: Contract;
@@ -72,15 +72,17 @@ export class CPContext {
       ["TestQuote", "QUOTE", 18]
     );
 
-    this.UnownedDVMFactory = await contracts.newContract(contracts.UNOWNED_DVM_FACTORY_NAME,
+    this.DVMFactory = await contracts.newContract(contracts.DVM_FACTORY_NAME,
       [
         cloneFactory.options.address,
         dvmTemplate.options.address,
+        "0x0000000000000000000000000000000000000000",
         feeRateModel.options.address,
+        "0x0000000000000000000000000000000000000000",
+        defaultGasSource.options.address,
         this.Maintainer,
         feeRateModel.options.address,
-        permissionManager.options.address,
-        defaultGasSource.options.address
+        permissionManager.options.address
       ]
     )
 
@@ -95,7 +97,7 @@ export class CPContext {
         this.QUOTE.options.address,
         permissionManager.options.address,
         feeRateModel.options.address,
-        this.UnownedDVMFactory.options.address
+        this.DVMFactory.options.address
       ],
       [
         (await this.Web3.eth.getBlock(await this.Web3.eth.getBlockNumber())).timestamp,
