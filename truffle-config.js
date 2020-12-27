@@ -41,7 +41,8 @@ module.exports = {
     DEPLOY_V1: false,
     DEPLOY_V2: false,
     MOCK_TOKEN: false,
-    MOCK_V2_POOL: true,
+    MOCK_V2_POOL: false,
+    MOCK_V2_SWAP: true,
     HELPER_V2: false,
   },
 

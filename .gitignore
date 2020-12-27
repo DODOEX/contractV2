@@ -22,3 +22,5 @@ node_modules
 #Hardhat files
 cache
 artifacts
+
+error-v1.5-stat.txt

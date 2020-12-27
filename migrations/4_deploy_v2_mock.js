@@ -9,6 +9,8 @@ const ERC20Template = artifacts.require("InitializableERC20");
 const MintableERC20Template = artifacts.require("InitializableMintableERC20");
 const ERC20Factory = artifacts.require("ERC20Factory");
 const DODOProxyV2 = artifacts.require("DODOV2Proxy01");
+const DVMFactory = artifacts.require("DVMFactory");
+const DPPFactory = artifacts.require("DPPFactory");
 
 const POOL_PARAM = [
     {
@@ -51,6 +53,9 @@ module.exports = async (deployer, network, accounts) => {
     let ERC20TemplateAddress = "0x77d2e257241e6971688b08bdA9F658F065d7bb41";
     let MintableERC20TemplateAddress = "0xA45a64DAba80757432fA4d654Df12f65f020C13C";
     let ERC20FactoryAddress = "0xCb1A2f64EfB02803276BFB5a8D511C4D950282a0";
+
+    let DPPFactoryAddress = "0x58Bc8D248AcbE95CE29CF893C6666D58AF92d941";
+    let DVMFactoryAddress = "0xF2a62693FB14b326C3719e5aeEF28e8e66dC954e";
     let DODOApproveAddress = "0x9F332B3a07536A2b0caaB3E3b9D2a5dFD6173c6c";
     let DODOProxyV2Address = "0xd5C27770E8e2F43B959484971472a0019b17fA56";
 
@@ -65,6 +70,23 @@ module.exports = async (deployer, network, accounts) => {
     logger.log("====================================================");
     logger.log("network type: " + network);
     logger.log("Deploy time: " + new Date().toLocaleString());
+
+
+    if (deploySwitch.MOCK_V2_SWAP) {
+        logger.log("Mock SWAP Tx: V2");
+        const DODOProxyV2Instance = await DODOProxyV2.at(DODOProxyV2Address);
+        var tx = await DODOProxyV2Instance.dodoSwapV2TokenToToken(
+            accounts[0],
+            "0x69c8a7fc6e05d7aa36114b3e35f62deca8e11f6e",
+            "0xd8C30a4E866B188F16aD266dC3333BD47F34ebaE",
+            web3.utils.toWei("10", 'mwei'),
+            0,
+            ['0x1d4f55C99BEF84ED889699Be64A691c6651F847E'],
+            [1],
+            Math.floor(new Date().getTime() / 1000 + 60 * 10)
+        );
+        logger.log("Swap Tx:" + tx.tx);
+    }
 
     if (deploySwitch.MOCK_V2_POOL) {
         logger.log("Mock POOL Tx: V2");
@@ -105,6 +127,9 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("Approve:" + quote1Addr + " Tx:", tx.tx);
         }
         const DODOProxyV2Instance = await DODOProxyV2.at(DODOProxyV2Address);
+        const DVMFactoryInstance = await DVMFactory.at(DVMFactoryAddress);
+        const DPPFactoryInstance = await DPPFactory.at(DPPFactoryAddress);
+
         const assetTo = accounts[0];
         const baseInAmount = web3.utils.toWei("1000", 'ether');
         const quoteInAmount = web3.utils.toWei("100", 'mwei');
@@ -123,7 +148,8 @@ module.exports = async (deployer, network, accounts) => {
                 POOL_PARAM[i].k,
                 deadline
             );
-            logger.log("Create DVM: " + POOL_PARAM[i].baseAddr + "-" + POOL_PARAM[i].quoteAddr + " Tx:", tx.tx);
+            var poolAddress = await DVMFactoryInstance._REGISTRY_(POOL_PARAM[i].baseAddr, POOL_PARAM[i].quoteAddr, 0);
+            logger.log("Create DVM: " + POOL_PARAM[i].baseAddr + "-" + POOL_PARAM[i].quoteAddr + " Pool:" + poolAddress + " Tx:", tx.tx);
         }
         //DVM Pool
         for (var i = 0; i < POOL_PARAM.length; i++) {
@@ -138,7 +164,8 @@ module.exports = async (deployer, network, accounts) => {
                 POOL_PARAM[i].k,
                 deadline
             );
-            logger.log("Create DPP: " + POOL_PARAM[i].baseAddr + "-" + POOL_PARAM[i].quoteAddr + " Tx:", tx.tx);
+            var poolAddress = await DPPFactoryInstance._REGISTRY_(POOL_PARAM[i].baseAddr, POOL_PARAM[i].quoteAddr, 0);
+            logger.log("Create DPP: " + POOL_PARAM[i].baseAddr + "-" + POOL_PARAM[i].quoteAddr + " Pool:" + poolAddress + " Tx:", tx.tx);
         }
     }
 
