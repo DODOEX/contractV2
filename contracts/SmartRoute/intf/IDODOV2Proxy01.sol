@@ -77,7 +77,6 @@ interface IDODOV2Proxy01 is IDODOV1Proxy01 {
         uint256 baseInAmount,
         uint256 quoteInAmount,
         uint256 lpFeeRate,
-        uint256 mtFeeRate,
         uint256 i,
         uint256 k,
         uint256 deadLine
@@ -85,7 +84,7 @@ interface IDODOV2Proxy01 is IDODOV1Proxy01 {
 
     function resetDODOPrivatePool(
         address dppAddress,
-        uint256[] memory paramList,  //0 - newLpFeeRate, 1 - newMtFeeRate, 2 - newI, 3 - newK
+        uint256[] memory paramList,  //0 - newLpFeeRate, 1 - newI, 2 - newK
         uint256[] memory amountList, //0 - baseInAmount, 1 - quoteInAmount, 2 - baseOutAmount, 3 - quoteOutAmount
         uint8 flag, // 0 - ERC20, 1 - baseInETH, 2 - quoteInETH, 3 - baseOutETH, 4 - quoteOutETH
         uint256 minBaseReserve,

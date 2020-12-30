@@ -36,36 +36,15 @@ contract DPPTrader is DPPVault {
 
     event RChange(PMMPricing.RState newRState);
 
-    // ============ Modifiers ============
-
-    modifier isBuyAllow(address trader) {
-        require(!_BUYING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(trader), "TRADER_BUY_NOT_ALLOWED");
-        _;
-    }
-
-    modifier isSellAllow(address trader) {
-        require(
-            !_SELLING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(trader),
-            "TRADER_SELL_NOT_ALLOWED"
-        );
-        _;
-    }
-
-    modifier limitGasPrice() {
-        require(tx.gasprice <= _GAS_PRICE_LIMIT_.get(), "GAS_PRICE_EXCEED");
-        _;
-    }
-
     // ============ Trade Functions ============
 
     function sellBase(address to)
         external
         preventReentrant
-        limitGasPrice
-        isSellAllow(to) // set DVM address in trade permission
         returns (uint256 receiveQuoteAmount)
     {
-        uint256 baseInput = getBaseInput();
+        uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
+        uint256 baseInput = baseBalance.sub(uint256(_BASE_RESERVE_));
         uint256 mtFee;
         uint256 newBaseTarget;
         PMMPricing.RState newRState;
@@ -73,12 +52,13 @@ contract DPPTrader is DPPVault {
 
         _transferQuoteOut(to, receiveQuoteAmount);
         _transferQuoteOut(_MAINTAINER_, mtFee);
-        _sync();
+        _setReserve(baseBalance, _QUOTE_TOKEN_.balanceOf(address(this)));
 
         // update TARGET
-        if (_RState_ != newRState) {
-            _RState_ = newRState;
-            _BASE_TARGET_ = newBaseTarget;
+        if (_RState_ != uint16(newRState)) {
+            _RState_ = uint16(newRState);
+            require(newBaseTarget <= uint120(-1),"OVERFLOW");
+            _BASE_TARGET_ = uint120(newBaseTarget);
             emit RChange(newRState);
         }
 
@@ -94,14 +74,12 @@ contract DPPTrader is DPPVault {
     function sellQuote(address to)
         external
         preventReentrant
-        limitGasPrice
-        isBuyAllow(to)
         returns (uint256 receiveBaseAmount)
     {
-        uint256 quoteInput = getQuoteInput();
+        uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
+        uint256 quoteInput = quoteBalance.sub(uint256(_QUOTE_RESERVE_));
         uint256 mtFee;
         uint256 newQuoteTarget;
-
         PMMPricing.RState newRState;
         (receiveBaseAmount, mtFee, newRState, newQuoteTarget) = querySellQuote(
             tx.origin,
@@ -110,12 +88,13 @@ contract DPPTrader is DPPVault {
 
         _transferBaseOut(to, receiveBaseAmount);
         _transferBaseOut(_MAINTAINER_, mtFee);
-        _sync();
+         _setReserve(_BASE_TOKEN_.balanceOf(address(this)), quoteBalance);
 
         // update TARGET
-        if (_RState_ != newRState) {
-            _RState_ = newRState;
-            _QUOTE_TARGET_ = newQuoteTarget;
+        if (_RState_ != uint16(newRState)) {
+            _RState_ = uint16(newRState);
+            require(newQuoteTarget <= uint120(-1),"OVERFLOW");
+            _QUOTE_TARGET_ = uint120(newQuoteTarget);
             emit RChange(newRState);
         }
 
@@ -133,7 +112,7 @@ contract DPPTrader is DPPVault {
         uint256 quoteAmount,
         address assetTo,
         bytes calldata data
-    ) external preventReentrant isSellAllow(assetTo) isBuyAllow(assetTo) {
+    ) external preventReentrant {
         _transferBaseOut(assetTo, baseAmount);
         _transferQuoteOut(assetTo, quoteAmount);
 
@@ -152,19 +131,20 @@ contract DPPTrader is DPPVault {
         // sell quote case
         // quote input + base output
         if (baseBalance < _BASE_RESERVE_) {
-            uint256 quoteInput = quoteBalance.sub(_QUOTE_RESERVE_);
+            uint256 quoteInput = quoteBalance.sub(uint256(_QUOTE_RESERVE_));
             (
                 uint256 receiveBaseAmount,
                 uint256 mtFee,
                 PMMPricing.RState newRState,
                 uint256 newQuoteTarget
             ) = querySellQuote(tx.origin, quoteInput); // revert if quoteBalance<quoteReserve
-            require(_BASE_RESERVE_.sub(baseBalance) <= receiveBaseAmount, "FLASH_LOAN_FAILED");
+            require(uint256(_BASE_RESERVE_).sub(baseBalance) <= receiveBaseAmount, "FLASH_LOAN_FAILED");
 
             _transferBaseOut(_MAINTAINER_, mtFee);
-            if (_RState_ != newRState) {
-                _RState_ = newRState;
-                _QUOTE_TARGET_ = newQuoteTarget;
+            if (_RState_ != uint16(newRState)) {
+                _RState_ = uint16(newRState);
+                require(newQuoteTarget <= uint120(-1),"OVERFLOW");
+                _QUOTE_TARGET_ = uint120(newQuoteTarget);
                 emit RChange(newRState);
             }
             emit DODOSwap(
@@ -179,19 +159,20 @@ contract DPPTrader is DPPVault {
         // sell base case
         // base input + quote output
         if (quoteBalance < _QUOTE_RESERVE_) {
-            uint256 baseInput = baseBalance.sub(_BASE_RESERVE_);
+            uint256 baseInput = baseBalance.sub(uint256(_BASE_RESERVE_));
             (
                 uint256 receiveQuoteAmount,
                 uint256 mtFee,
                 PMMPricing.RState newRState,
                 uint256 newBaseTarget
             ) = querySellBase(tx.origin, baseInput); // revert if baseBalance<baseReserve
-            require(_QUOTE_RESERVE_.sub(quoteBalance) <= receiveQuoteAmount, "FLASH_LOAN_FAILED");
+            require(uint256(_QUOTE_RESERVE_).sub(quoteBalance) <= receiveQuoteAmount, "FLASH_LOAN_FAILED");
 
             _transferQuoteOut(_MAINTAINER_, mtFee);
-            if (_RState_ != newRState) {
-                _RState_ = newRState;
-                _BASE_TARGET_ = newBaseTarget;
+            if (_RState_ != uint16(newRState)) {
+                _RState_ = uint16(newRState);
+                require(newBaseTarget <= uint120(-1),"OVERFLOW");
+                _BASE_TARGET_ = uint120(newBaseTarget);
                 emit RChange(newRState);
             }
             emit DODOSwap(
@@ -223,7 +204,7 @@ contract DPPTrader is DPPVault {
         PMMPricing.PMMState memory state = getPMMState();
         (receiveQuoteAmount, newRState) = PMMPricing.sellBaseToken(state, payBaseAmount);
 
-        uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(trader);
+        uint256 lpFeeRate = _LP_FEE_RATE_;
         uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(trader);
         mtFee = DecimalMath.mulFloor(receiveQuoteAmount, mtFeeRate);
         receiveQuoteAmount = receiveQuoteAmount
@@ -245,7 +226,7 @@ contract DPPTrader is DPPVault {
         PMMPricing.PMMState memory state = getPMMState();
         (receiveBaseAmount, newRState) = PMMPricing.sellQuoteToken(state, payQuoteAmount);
 
-        uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(trader);
+        uint256 lpFeeRate = _LP_FEE_RATE_;
         uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(trader);
         mtFee = DecimalMath.mulFloor(receiveBaseAmount, mtFeeRate);
         receiveBaseAmount = receiveBaseAmount
@@ -257,13 +238,13 @@ contract DPPTrader is DPPVault {
     // ============ Helper Functions ============
 
     function getPMMState() public view returns (PMMPricing.PMMState memory state) {
-        state.i = _I_.get();
-        state.K = _K_.get();
+        state.i = _I_;
+        state.K = _K_;
         state.B = _BASE_RESERVE_;
         state.Q = _QUOTE_RESERVE_;
         state.B0 = _BASE_TARGET_;
         state.Q0 = _QUOTE_TARGET_;
-        state.R = _RState_;
+        state.R = PMMPricing.RState(_RState_);
         PMMPricing.adjustedTarget(state);
     }
 
@@ -277,7 +258,7 @@ contract DPPTrader is DPPVault {
             uint256 Q,
             uint256 B0,
             uint256 Q0,
-            uint8 R
+            uint256 R
         )
     {
         PMMPricing.PMMState memory state = getPMMState();
@@ -287,21 +268,10 @@ contract DPPTrader is DPPVault {
         Q = state.Q;
         B0 = state.B0;
         Q0 = state.Q0;
-        R = uint8(state.R);
+        R = uint256(state.R);
     }
 
     function getMidPrice() public view returns (uint256 midPrice) {
         return PMMPricing.getMidPrice(getPMMState());
-    }
-
-    function _sync() internal {
-        uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
-        uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
-        if (baseBalance != _BASE_RESERVE_) {
-            _BASE_RESERVE_ = baseBalance;
-        }
-        if (quoteBalance != _QUOTE_RESERVE_) {
-            _QUOTE_RESERVE_ = quoteBalance;
-        }
     }
 }

@@ -150,10 +150,11 @@ contract DVMTrader is DVMVault {
     {
         (receiveQuoteAmount, ) = PMMPricing.sellBaseToken(getPMMState(), payBaseAmount);
 
+        uint256 lpFeeRate = _LP_FEE_RATE_;
         uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(trader);
         mtFee = DecimalMath.mulFloor(receiveQuoteAmount, mtFeeRate);
         receiveQuoteAmount = receiveQuoteAmount
-            .sub(DecimalMath.mulFloor(receiveQuoteAmount, _LP_FEE_RATE_))
+            .sub(DecimalMath.mulFloor(receiveQuoteAmount, lpFeeRate))
             .sub(mtFee);
     }
 
@@ -164,10 +165,11 @@ contract DVMTrader is DVMVault {
     {
         (receiveBaseAmount, ) = PMMPricing.sellQuoteToken(getPMMState(), payQuoteAmount);
 
+        uint256 lpFeeRate = _LP_FEE_RATE_;
         uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(trader);
         mtFee = DecimalMath.mulFloor(receiveBaseAmount, mtFeeRate);
         receiveBaseAmount = receiveBaseAmount
-            .sub(DecimalMath.mulFloor(receiveBaseAmount, _LP_FEE_RATE_))
+            .sub(DecimalMath.mulFloor(receiveBaseAmount, lpFeeRate))
             .sub(mtFee);
     }
 
@@ -194,7 +196,7 @@ contract DVMTrader is DVMVault {
             uint256 Q,
             uint256 B0,
             uint256 Q0,
-            uint8 R
+            uint256 R
         )
     {
         PMMPricing.PMMState memory state = getPMMState();
@@ -204,7 +206,7 @@ contract DVMTrader is DVMVault {
         Q = state.Q;
         B0 = state.B0;
         Q0 = state.Q0;
-        R = uint8(state.R);
+        R = uint256(state.R);
     }
 
     function getMidPrice() public view returns (uint256 midPrice) {

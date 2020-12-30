@@ -213,7 +213,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         uint256 baseInAmount,
         uint256 quoteInAmount,
         uint256 lpFeeRate,
-        uint256 mtFeeRate,
         uint256 i,
         uint256 k,
         uint256 deadLine
@@ -247,7 +246,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
             _baseToken,
             _quoteToken,
             lpFeeRate,
-            mtFeeRate,
             k,
             i
         );
@@ -255,7 +253,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
 
     function resetDODOPrivatePool(
         address dppAddress,
-        uint256[] memory paramList,  //0 - newLpFeeRate, 1 - newMtFeeRate, 2 - newI, 3 - newK
+        uint256[] memory paramList,  //0 - newLpFeeRate, 1 - newI, 2 - newK
         uint256[] memory amountList, //0 - baseInAmount, 1 - quoteInAmount, 2 - baseOutAmount, 3- quoteOutAmount
         uint8 flag, // 0 - ERC20, 1 - baseInETH, 2 - quoteInETH, 3 - baseOutETH, 4 - quoteOutETH
         uint256 minBaseReserve,
@@ -282,7 +280,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
             paramList[0],
             paramList[1],
             paramList[2],
-            paramList[3],
             amountList[2],
             amountList[3],
             minBaseReserve,

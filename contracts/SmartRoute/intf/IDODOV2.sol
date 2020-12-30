@@ -22,12 +22,6 @@ interface IDODOV2 {
 
     function _QUOTE_TOKEN_() external view returns (address);
 
-    function _BUYING_CLOSE_() external view returns (bool);
-
-    function _SELLING_CLOSE_() external view returns (bool);
-
-    function _OWNER_() external returns (address);
-
     function getPMMStateForCall() external view returns (
             uint256 i,
             uint256 K,
@@ -35,7 +29,7 @@ interface IDODOV2 {
             uint256 Q,
             uint256 B0,
             uint256 Q0,
-            uint8 R
+            uint256 R
     );
 
     function getUserFeeRate(address user) external view returns (uint256 lpFeeRate, uint256 mtFeeRate);
@@ -64,7 +58,6 @@ interface IDODOV2 {
         address baseToken,
         address quoteToken,
         uint256 lpFeeRate,
-        uint256 mtFeeRate,
         uint256 k,
         uint256 i
     ) external;
@@ -72,7 +65,6 @@ interface IDODOV2 {
     function reset(
         address operator,
         uint256 newLpFeeRate,
-        uint256 newMtFeeRate,
         uint256 newI,
         uint256 newK,
         uint256 baseOutAmount,
@@ -82,6 +74,8 @@ interface IDODOV2 {
     ) external returns (bool); 
 
     function getPrivatePoolBidirection(address token0, address token1) external view returns (address[] memory baseToken0Pool, address[] memory baseToken1Pool);
+
+    function _OWNER_() external returns (address);
     
     //========== CrowdPooling ===========
 

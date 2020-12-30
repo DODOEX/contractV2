@@ -14,37 +14,15 @@ interface IDPP {
         address maintainer,
         address baseTokenAddress,
         address quoteTokenAddress,
-        address lpFeeRateModel,
+        uint256 lpFeeRate,
         address mtFeeRateModel,
-        address kSource,
-        address iSource,
-        address gasPriceSource,
-        address tradePermissionManager
+        uint256 k,
+        uint256 i
     ) external;
-
-    function _LP_FEE_RATE_MODEL_() external returns (address);
 
     function _MT_FEE_RATE_MODEL_() external returns (address);
 
     //=========== admin ==========
-    function setLpFeeRateModel(address newLpFeeRateModel) external;
-
-    function setMtFeeRateModel(address newMtFeeRateModel) external;
-
-    function setTradePermissionManager(address newTradePermissionManager) external;
-
-    function setMaintainer(address newMaintainer) external;
-
-    function setGasPriceSource(address newGasPriceLimitSource) external;
-
-    function setISource(address newISource) external;
-
-    function setKSource(address newKSource) external;
-
-    function setBuy(bool open) external;
-
-    function setSell(bool open) external;
-
     function ratioSync() external;
 
     //==============================
@@ -58,7 +36,6 @@ interface IDPP {
     function reset(
         address assetTo,
         uint256 newLpFeeRate,
-        uint256 newMtFeeRate,
         uint256 newI,
         uint256 newK,
         uint256 baseOutAmount,

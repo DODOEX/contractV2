@@ -11,21 +11,17 @@ pragma experimental ABIEncoderV2;
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 import {ICloneFactory} from "../lib/CloneFactory.sol";
 import {IFeeRateModel} from "../lib/FeeRateModel.sol";
-import {IExternalValue} from "../lib/ExternalValue.sol";
 import {IDPP} from "../DODOPrivatePool/intf/IDPP.sol";
 import {IDPPAdmin} from "../DODOPrivatePool/intf/IDPPAdmin.sol";
-import {IPermissionManager} from "../lib/PermissionManager.sol";
 
 contract DPPFactory is InitializableOwnable {
     // ============ Templates ============
 
     address public immutable _CLONE_FACTORY_;
     address public immutable _DPP_TEMPLATE_;
-    address public immutable _FEE_RATE_MODEL_TEMPLATE_;
-    address public immutable _PERMISSION_MANAGER_TEMPLATE_;
-    address public immutable _DEFAULT_GAS_PRICE_SOURCE_;
-    address public immutable _VALUE_SOURCE_;
-    address public immutable _DODO_SMART_APPROVE_;
+    address public immutable _DEFAULT_MAINTAINER_;
+    address public immutable _DEFAULT_MT_FEE_RATE_MODEL_;
+    address public immutable _DODO_APPROVE_;
     address public _DPP_ADMIN_TEMPLATE_;
 
     // ============ Registry ============
@@ -53,20 +49,16 @@ contract DPPFactory is InitializableOwnable {
         address cloneFactory,
         address dppTemplate,
         address dppAdminTemplate,
-        address defautFeeRateModelTemplate,
-        address defaultPermissionManagerTemplate,
-        address defaultExternalValueTemplate,
-        address defaultGasPriceSource,
-        address dodoSmartApprove
+        address defaultMaintainer,
+        address defaultMtFeeRateModel,
+        address dodoApprove
     ) public {
         _CLONE_FACTORY_ = cloneFactory;
         _DPP_TEMPLATE_ = dppTemplate;
         _DPP_ADMIN_TEMPLATE_ = dppAdminTemplate;
-        _DODO_SMART_APPROVE_ = dodoSmartApprove;
-        _FEE_RATE_MODEL_TEMPLATE_ = defautFeeRateModelTemplate;
-        _PERMISSION_MANAGER_TEMPLATE_ = defaultPermissionManagerTemplate;
-        _VALUE_SOURCE_ = defaultExternalValueTemplate;
-        _DEFAULT_GAS_PRICE_SOURCE_ = defaultGasPriceSource;
+        _DEFAULT_MAINTAINER_ = defaultMaintainer;
+        _DEFAULT_MT_FEE_RATE_MODEL_ = defaultMtFeeRateModel;
+        _DODO_APPROVE_ = dodoApprove;
     }
 
     function createDODOPrivatePool() external returns (address newPrivatePool) {
@@ -79,7 +71,6 @@ contract DPPFactory is InitializableOwnable {
         address baseToken,
         address quoteToken,
         uint256 lpFeeRate,
-        uint256 mtFeeRate,
         uint256 k,
         uint256 i
     ) external {
@@ -89,19 +80,17 @@ contract DPPFactory is InitializableOwnable {
                 creator,
                 _dppAddress,
                 creator,
-                _DODO_SMART_APPROVE_
+                _DODO_APPROVE_
             );
             IDPP(_dppAddress).init(
                 adminModel,
-                creator,
+                _DEFAULT_MAINTAINER_,
                 baseToken,
                 quoteToken,
-                _createFeeRateModel(_dppAddress, lpFeeRate),
-                _createFeeRateModel(_dppAddress, mtFeeRate),
-                _createExternalValueModel(_dppAddress, k),
-                _createExternalValueModel(_dppAddress, i),
-                _DEFAULT_GAS_PRICE_SOURCE_,
-                _createPermissionManager(adminModel)
+                lpFeeRate,
+                _DEFAULT_MT_FEE_RATE_MODEL_,
+                k,
+                i
             );
         }
 
@@ -110,35 +99,14 @@ contract DPPFactory is InitializableOwnable {
         emit NewDPP(baseToken, quoteToken, creator, dppAddress);
     }
 
-    function _createFeeRateModel(address owner, uint256 feeRate)
-        internal
-        returns (address feeRateModel)
-    {
-        feeRateModel = ICloneFactory(_CLONE_FACTORY_).clone(_FEE_RATE_MODEL_TEMPLATE_);
-        IFeeRateModel(feeRateModel).init(owner, feeRate);
-    }
-
-    function _createPermissionManager(address owner) internal returns (address permissionManager) {
-        permissionManager = ICloneFactory(_CLONE_FACTORY_).clone(_PERMISSION_MANAGER_TEMPLATE_);
-        IPermissionManager(permissionManager).initOwner(owner);
-    }
-
-    function _createExternalValueModel(address owner, uint256 value)
-        internal
-        returns (address valueModel)
-    {
-        valueModel = ICloneFactory(_CLONE_FACTORY_).clone(_VALUE_SOURCE_);
-        IExternalValue(valueModel).init(owner, value);
-    }
-
     function _createDPPAdminModel(
         address owner,
         address dpp,
         address operator,
-        address dodoSmartApprove
+        address dodoApprove
     ) internal returns (address adminModel) {
         adminModel = ICloneFactory(_CLONE_FACTORY_).clone(_DPP_ADMIN_TEMPLATE_);
-        IDPPAdmin(adminModel).init(owner, dpp, operator, dodoSmartApprove);
+        IDPPAdmin(adminModel).init(owner, dpp, operator, dodoApprove);
     }
 
     // ============ Admin Operation Functions ============

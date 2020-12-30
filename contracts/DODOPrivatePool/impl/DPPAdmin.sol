@@ -49,42 +49,6 @@ contract DPPAdmin is InitializableOwnable {
         _OPERATOR_ = newOperator;
     }
 
-    // function setLpFeeRateModel(address newLpFeeRateModel) external notFreezed onlyOwner {
-    //     IDPP(_DPP_).setLpFeeRateModel(newLpFeeRateModel);
-    // }
-
-    // function setMtFeeRateModel(address newMtFeeRateModel) external notFreezed onlyOwner {
-    //     IDPP(_DPP_).setMtFeeRateModel(newMtFeeRateModel);
-    // }
-
-    // function setTradePermissionManager(address newTradePermissionManager) external notFreezed onlyOwner {
-    //     IDPP(_DPP_).setTradePermissionManager(newTradePermissionManager);
-    // }
-
-    function setMaintainer(address newMaintainer) external notFreezed onlyOwner {
-        IDPP(_DPP_).setMaintainer(newMaintainer);
-    }
-
-    // function setGasPriceSource(address newGasPriceLimitSource) external notFreezed onlyOwner {
-    //     IDPP(_DPP_).setGasPriceSource(newGasPriceLimitSource);
-    // }
-
-    // function setISource(address newISource) external notFreezed onlyOwner {
-    //     IDPP(_DPP_).setISource(newISource);
-    // }
-
-    // function setKSource(address newKSource) external notFreezed onlyOwner {
-    //     IDPP(_DPP_).setKSource(newKSource);
-    // }
-
-    function setBuy(bool open) external notFreezed onlyOwner {
-        IDPP(_DPP_).setBuy(open);
-    }
-
-    function setSell(bool open) external notFreezed onlyOwner {
-        IDPP(_DPP_).setSell(open);
-    }
-
     function retrieve(
         address payable to,
         address token,
@@ -96,7 +60,6 @@ contract DPPAdmin is InitializableOwnable {
     function reset(
         address operator,
         uint256 newLpFeeRate,
-        uint256 newMtFeeRate,
         uint256 newI,
         uint256 newK,
         uint256 baseOutAmount,
@@ -114,7 +77,6 @@ contract DPPAdmin is InitializableOwnable {
             IDPP(_DPP_).reset(
                 msg.sender,
                 newLpFeeRate,
-                newMtFeeRate,
                 newI,
                 newK,
                 baseOutAmount,

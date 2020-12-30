@@ -23,7 +23,7 @@ contract DPPVault is DPPStorage {
 
     // ============ Events ============
 
-    event Reset(uint256 newLpFeeRate, uint256 newMtFeeRate);
+    event LpFeeRateChange(uint256 newLpFeeRate);
 
     // ============ View Functions ============
 
@@ -37,17 +37,8 @@ contract DPPVault is DPPStorage {
         view
         returns (uint256 lpFeeRate, uint256 mtFeeRate)
     {
-        lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(user);
+        lpFeeRate = _LP_FEE_RATE_;
         mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(user);
-    }
-
-    function getUserTradePermission(address user)
-        external
-        view
-        returns (bool isBuyAllow, bool isSellAllow)
-    {
-        isBuyAllow = (!_BUYING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(user));
-        isSellAllow = (!_SELLING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(user));
     }
 
     // ============ Get Input ============
@@ -60,39 +51,80 @@ contract DPPVault is DPPStorage {
         return _QUOTE_TOKEN_.balanceOf(address(this)).sub(_QUOTE_RESERVE_);
     }
 
-    // ============ Set States ============
+    // ============ Set Status ============
+
+    function _setReserve(uint256 baseReserve, uint256 quoteReserve) internal {
+        require(baseReserve <= uint120(-1) && quoteReserve <= uint120(-1), "OVERFLOW");
+        _BASE_RESERVE_ = uint128(baseReserve);
+        _QUOTE_RESERVE_ = uint128(quoteReserve);
+    }
+
+    function _sync() internal {
+        uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
+        uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
+        
+        require(baseBalance <= uint120(-1) && quoteBalance <= uint120(-1), "OVERFLOW");
+
+        if (baseBalance != _BASE_RESERVE_) {
+            _BASE_RESERVE_ = uint128(baseBalance);
+        }
+        if (quoteBalance != _QUOTE_RESERVE_) {
+            _QUOTE_RESERVE_ = uint128(quoteBalance);
+        }
+    }
+
+    function _resetTargetAndReserve() internal {
+        uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
+        uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
+
+        require(baseBalance <= uint120(-1) && quoteBalance <= uint120(-1), "OVERFLOW");
+        
+        _BASE_RESERVE_ = uint128(baseBalance);
+        _QUOTE_RESERVE_ = uint128(quoteBalance);
+        _BASE_TARGET_ = uint120(baseBalance);
+        _QUOTE_TARGET_ = uint120(quoteBalance);
+        _setRState();
+    }
+
+    function _setRState() internal {
+        if (_BASE_RESERVE_ == _BASE_TARGET_ && _QUOTE_RESERVE_ == _QUOTE_TARGET_) {
+            _RState_ = uint16(PMMPricing.RState.ONE);
+        } else if (_BASE_RESERVE_ > _BASE_TARGET_ && _QUOTE_RESERVE_ < _QUOTE_TARGET_) {
+            _RState_ = uint16(PMMPricing.RState.BELOW_ONE);
+        } else if (_BASE_RESERVE_ < _BASE_TARGET_ && _QUOTE_RESERVE_ > _QUOTE_TARGET_) {
+            _RState_ = uint16(PMMPricing.RState.ABOVE_ONE);
+        } else {
+            require(false, "R_STATE_WRONG");
+        }
+    }
+
 
     function ratioSync() external preventReentrant onlyOwner {
         uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
         uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
+
+        require(baseBalance <= uint120(-1) && quoteBalance <= uint120(-1), "OVERFLOW");
+
         if (baseBalance != _BASE_RESERVE_) {
-            _BASE_TARGET_ = _BASE_TARGET_.mul(baseBalance).div(_BASE_RESERVE_);
-            _BASE_RESERVE_ = baseBalance;
+            _BASE_TARGET_ = uint120(uint256(_BASE_TARGET_).mul(baseBalance).div(uint256(_BASE_RESERVE_)));
+            _BASE_RESERVE_ = uint128(baseBalance);
         }
         if (quoteBalance != _QUOTE_RESERVE_) {
-            _QUOTE_TARGET_ = _QUOTE_TARGET_.mul(quoteBalance).div(_QUOTE_RESERVE_);
-            _QUOTE_RESERVE_ = quoteBalance;
+            _QUOTE_TARGET_ = uint120(uint256(_QUOTE_TARGET_).mul(quoteBalance).div(uint256(_QUOTE_RESERVE_)));
+            _QUOTE_RESERVE_ = uint128(quoteBalance);
         }
     }
 
     function setTarget(uint256 baseTarget, uint256 quoteTarget) public preventReentrant onlyOwner {
-        _BASE_TARGET_ = baseTarget;
-        _QUOTE_TARGET_ = quoteTarget;
-        _setRState();
-    }
-
-    function _resetTargetAndReserve() internal {
-        _BASE_TARGET_ = _BASE_TOKEN_.balanceOf(address(this));
-        _QUOTE_TARGET_ = _QUOTE_TOKEN_.balanceOf(address(this));
-        _BASE_RESERVE_ = _BASE_TARGET_;
-        _QUOTE_RESERVE_ = _QUOTE_TARGET_;
+        require(baseTarget <= uint120(-1) && quoteTarget <= uint120(-1), "OVERFLOW");
+        _BASE_TARGET_ = uint120(baseTarget);
+        _QUOTE_TARGET_ = uint120(quoteTarget);
         _setRState();
     }
 
     function reset(
         address assetTo,
         uint256 newLpFeeRate,
-        uint256 newMtFeeRate,
         uint256 newI,
         uint256 newK,
         uint256 baseOutAmount,
@@ -104,28 +136,17 @@ contract DPPVault is DPPStorage {
             _BASE_RESERVE_ >= minBaseReserve && _QUOTE_RESERVE_ >= minQuoteReserve,
             "RESERVE_AMOUNT_IS_NOT_ENOUGH"
         );
-        _LP_FEE_RATE_MODEL_.setFeeRate(newLpFeeRate);
-        _MT_FEE_RATE_MODEL_.setFeeRate(newMtFeeRate);
-        _I_.set(newI);
-        _K_.set(newK);
+        require(newLpFeeRate <= 1e18, "LP_FEE_RATE_OUT_OF_RANGE");
+        require(newK <= 1e18, "K_OUT_OF_RANGE");
+        require(newI > 0 && newI <= 1e36, "I_OUT_OF_RANGE");
+        _LP_FEE_RATE_ = uint64(newLpFeeRate);
+        _K_ = uint64(newK);
+        _I_ = uint128(newI);
         _transferBaseOut(assetTo, baseOutAmount);
         _transferQuoteOut(assetTo, quoteOutAmount);
         _resetTargetAndReserve();
-        _checkIK();
-        emit Reset(newLpFeeRate, newMtFeeRate);
+        emit LpFeeRateChange(newLpFeeRate);
         return true;
-    }
-
-    function _setRState() internal {
-        if (_BASE_RESERVE_ == _BASE_TARGET_ && _QUOTE_RESERVE_ == _QUOTE_TARGET_) {
-            _RState_ = PMMPricing.RState.ONE;
-        } else if (_BASE_RESERVE_ > _BASE_TARGET_ && _QUOTE_RESERVE_ < _QUOTE_TARGET_) {
-            _RState_ = PMMPricing.RState.BELOW_ONE;
-        } else if (_BASE_RESERVE_ < _BASE_TARGET_ && _QUOTE_RESERVE_ > _QUOTE_TARGET_) {
-            _RState_ = PMMPricing.RState.ABOVE_ONE;
-        } else {
-            require(false, "R_STATE_WRONG");
-        }
     }
 
     // ============ Asset Out ============

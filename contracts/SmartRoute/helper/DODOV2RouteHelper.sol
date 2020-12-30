@@ -21,7 +21,7 @@ contract DODOV2RouteHelper {
         uint256 Q;
         uint256 B0;
         uint256 Q0;
-        uint8 R;
+        uint256 R;
         uint256 lpFeeRate;
         uint256 mtFeeRate;
         address baseToken;
@@ -60,19 +60,17 @@ contract DODOV2RouteHelper {
                 curRes.quoteToken = token0;
             }
 
-            if(!IDODOV2(cur)._BUYING_CLOSE_() && !IDODOV2(cur)._SELLING_CLOSE_()){
-                (            
-                    curRes.i,
-                    curRes.K,
-                    curRes.B,
-                    curRes.Q,
-                    curRes.B0,
-                    curRes.Q0,
-                    curRes.R
-                ) = IDODOV2(cur).getPMMStateForCall();
+            (            
+                curRes.i,
+                curRes.K,
+                curRes.B,
+                curRes.Q,
+                curRes.B0,
+                curRes.Q0,
+                curRes.R
+            ) = IDODOV2(cur).getPMMStateForCall();
 
-                (curRes.lpFeeRate, curRes.mtFeeRate) = IDODOV2(cur).getUserFeeRate(userAddr);
-            }
+            (curRes.lpFeeRate, curRes.mtFeeRate) = IDODOV2(cur).getUserFeeRate(userAddr);
             curRes.curPair = cur;
             res[i] = curRes;
         }
