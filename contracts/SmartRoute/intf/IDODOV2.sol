@@ -43,11 +43,9 @@ interface IDODOV2 {
     //========== DODOVendingMachine ========
     
     function createDODOVendingMachine(
-        address creator,
         address baseToken,
         address quoteToken,
         uint256 lpFeeRate,
-        uint256 mtFeeRate,
         uint256 i,
         uint256 k
     ) external returns (address newVendingMachine);

@@ -13,38 +13,54 @@ const DVMFactory = artifacts.require("DVMFactory");
 const DPPFactory = artifacts.require("DPPFactory");
 
 const POOL_PARAM = [
+    // {
+    //     baseAddr: "0xd8C30a4E866B188F16aD266dC3333BD47F34ebaE",  //ABC0
+    //     quoteAddr: "0x69c8a7fc6e05d7aa36114b3e35f62deca8e11f6e", //USDC
+    //     lpFeeRate: "3000000000000000", //0.003
+    //     mtFeeRate: "1000000000000000", //0.001
+    //     i: "10000000", //10
+    //     k: "500000000000000000" //0.5
+    // },
+    // {
+    //     baseAddr: "0xd8C30a4E866B188F16aD266dC3333BD47F34ebaE", //ABC0
+    //     quoteAddr: "0x156595bAF85D5C29E91d959889B022d952190A64", //USDT
+    //     lpFeeRate: "3000000000000000", //0.003
+    //     mtFeeRate: "1000000000000000", //0.001
+    //     i: "10000000", //10
+    //     k: "0" //0
+    // },
+    // {
+    //     baseAddr: "0xd7f02D1b4F9495B549787808503Ecfd231C3fbDA", //ABC1
+    //     quoteAddr: "0x69c8a7fc6e05d7aa36114b3e35f62deca8e11f6e", //USDC
+    //     lpFeeRate: "3000000000000000", //0.003
+    //     mtFeeRate: "1000000000000000", //0.001
+    //     i: "5000000", //5
+    //     k: "1000000000000000000" //1
+    // },
+    // {
+    //     baseAddr: "0xd7f02D1b4F9495B549787808503Ecfd231C3fbDA", //ABC1
+    //     quoteAddr: "0x156595bAF85D5C29E91d959889B022d952190A64", //USDT
+    //     lpFeeRate: "3000000000000000", //0.003
+    //     mtFeeRate: "1000000000000000", //0.001
+    //     i: "8000000", //8
+    //     k: "900000000000000000" //0.9
+    // },
     {
         baseAddr: "0xd8C30a4E866B188F16aD266dC3333BD47F34ebaE",  //ABC0
-        quoteAddr: "0x69c8a7fc6e05d7aa36114b3e35f62deca8e11f6e", //USDC
+        quoteAddr: "0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b", //WETH
         lpFeeRate: "3000000000000000", //0.003
         mtFeeRate: "1000000000000000", //0.001
-        i: "10000000", //10
-        k: "500000000000000000" //0.5
-    },
-    {
-        baseAddr: "0xd8C30a4E866B188F16aD266dC3333BD47F34ebaE", //ABC0
-        quoteAddr: "0x156595bAF85D5C29E91d959889B022d952190A64", //USDT
-        lpFeeRate: "3000000000000000", //0.003
-        mtFeeRate: "1000000000000000", //0.001
-        i: "10000000", //10
-        k: "0" //0
+        i: "45000000000000000000", //45
+        k: "800000000000000000" //0.8
     },
     {
         baseAddr: "0xd7f02D1b4F9495B549787808503Ecfd231C3fbDA", //ABC1
-        quoteAddr: "0x69c8a7fc6e05d7aa36114b3e35f62deca8e11f6e", //USDC
+        quoteAddr: "0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b", //WETH
         lpFeeRate: "3000000000000000", //0.003
         mtFeeRate: "1000000000000000", //0.001
-        i: "5000000", //5
-        k: "1000000000000000000" //1
+        i: "30000000000000000000", //30
+        k: "300000000000000000" //0.3
     },
-    {
-        baseAddr: "0xd7f02D1b4F9495B549787808503Ecfd231C3fbDA", //ABC1
-        quoteAddr: "0x156595bAF85D5C29E91d959889B022d952190A64", //USDT
-        lpFeeRate: "3000000000000000", //0.003
-        mtFeeRate: "1000000000000000", //0.001
-        i: "8000000", //8
-        k: "900000000000000000" //0.9
-    }
 ];
 
 module.exports = async (deployer, network, accounts) => {
@@ -56,8 +72,8 @@ module.exports = async (deployer, network, accounts) => {
 
     let DPPFactoryAddress = "0x58Bc8D248AcbE95CE29CF893C6666D58AF92d941";
     let DVMFactoryAddress = "0xF2a62693FB14b326C3719e5aeEF28e8e66dC954e";
-    let DODOApproveAddress = "0x9F332B3a07536A2b0caaB3E3b9D2a5dFD6173c6c";
-    let DODOProxyV2Address = "0xd5C27770E8e2F43B959484971472a0019b17fA56";
+    let DODOApproveAddress = "0xeEA9F08eBfde6915AB1C0051F3eB2612DbA95d5D";
+    let DODOProxyV2Address = "0x97B779AD504bbd5b1BFB50e57584a876Dc65171a";
 
     const provider = new Web3.providers.HttpProvider("https://kovan.infura.io/v3/22d4a3b2df0e47b78d458f43fe50a199");
 
@@ -71,6 +87,17 @@ module.exports = async (deployer, network, accounts) => {
     logger.log("network type: " + network);
     logger.log("Deploy time: " + new Date().toLocaleString());
 
+    if(deploySwitch.MANUAL_ADD_POOL) {
+        logger.log("Manual add Pool: V2"); 
+        const DPPFactoryInstance = await DPPFactory.at(DPPFactoryAddress);
+        var tx = await DPPFactoryInstance.addPoolByAdmin(
+            "0x7e83d9d94837ee82f0cc18a691da6f42f03f1d86",
+            "0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b",
+            "0x69c8a7fc6e05d7aa36114b3e35f62deca8e11f6e",
+            "0x5e6e4B49bd79B76850650DB670Ca470ccC19d854"
+        );
+        logger.log("Manual add Pool Tx:" + tx.tx);
+    }
 
     if (deploySwitch.MOCK_V2_SWAP) {
         logger.log("Mock SWAP Tx: V2");
@@ -132,7 +159,8 @@ module.exports = async (deployer, network, accounts) => {
 
         const assetTo = accounts[0];
         const baseInAmount = web3.utils.toWei("1000", 'ether');
-        const quoteInAmount = web3.utils.toWei("100", 'mwei');
+        // const quoteInAmount = web3.utils.toWei("100", 'mwei');
+        const quoteInAmount = web3.utils.toWei("0", 'ether');
         const deadline = Math.floor(new Date().getTime() / 1000 + 60 * 10);
         //DVM Pool
         for (var i = 0; i < POOL_PARAM.length; i++) {

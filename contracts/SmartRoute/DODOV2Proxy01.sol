@@ -45,7 +45,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         address sender,
         uint256 fromAmount,
         uint256 returnAmount,
-        uint8 sourceFlag
+        uint256 sourceFlag
     );
 
     // ============ Modifiers ============
@@ -92,7 +92,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         uint256 baseInAmount,
         uint256 quoteInAmount,
         uint256 lpFeeRate,
-        uint256 mtFeeRate,
         uint256 i,
         uint256 k,
         uint256 deadLine
@@ -108,11 +107,9 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
             address _baseToken = baseToken == _ETH_ADDRESS_ ? _WETH_ : baseToken;
             address _quoteToken = quoteToken == _ETH_ADDRESS_ ? _WETH_ : quoteToken;
             newVendingMachine = IDODOV2(_DVM_FACTORY_).createDODOVendingMachine(
-                msg.sender,
                 _baseToken,
                 _quoteToken,
                 lpFeeRate,
-                mtFeeRate,
                 i,
                 k
             );
@@ -303,7 +300,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         address toToken,
         uint256 minReturnAmount,
         address[] memory dodoPairs,
-        uint8[] memory directions,
+        uint256 directions,
         uint256 deadLine
     )
         external
@@ -312,7 +309,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         judgeExpired(deadLine)
         returns (uint256 returnAmount)
     {
-        require(dodoPairs.length == directions.length, "DODOV2Proxy01: PARAMS_LENGTH_NOT_MATCH");
         uint256 originToTokenBalance = IERC20(toToken).balanceOf(msg.sender);
 
         IWETH(_WETH_).deposit{value: msg.value}();
@@ -320,18 +316,19 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
 
         for (uint256 i = 0; i < dodoPairs.length; i++) {
             if (i == dodoPairs.length - 1) {
-                if (directions[i] == 0) {
+                if (directions & 1 == 0) {
                     IDODOV2(dodoPairs[i]).sellBase(assetTo);
                 } else {
                     IDODOV2(dodoPairs[i]).sellQuote(assetTo);
                 }
             } else {
-                if (directions[i] == 0) {
+                if (directions & 1 == 0) {
                     IDODOV2(dodoPairs[i]).sellBase(dodoPairs[i + 1]);
                 } else {
                     IDODOV2(dodoPairs[i]).sellQuote(dodoPairs[i + 1]);
                 }
             }
+            directions = directions >> 1;
         }
 
         returnAmount = IERC20(toToken).balanceOf(msg.sender).sub(originToTokenBalance);
@@ -352,7 +349,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
         address[] memory dodoPairs,
-        uint8[] memory directions,
+        uint256 directions,
         uint256 deadLine
     )
         external
@@ -360,23 +357,23 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         judgeExpired(deadLine)
         returns (uint256 returnAmount)
     {
-        require(dodoPairs.length == directions.length, "DODOV2Proxy01: PARAMS_LENGTH_NOT_MATCH");
         IDODOApprove(_DODO_APPROVE_).claimTokens(fromToken, msg.sender, dodoPairs[0], fromTokenAmount);
 
         for (uint256 i = 0; i < dodoPairs.length; i++) {
             if (i == dodoPairs.length - 1) {
-                if (directions[i] == 0) {
+                if (directions & 1 == 0) {
                     IDODOV2(dodoPairs[i]).sellBase(address(this));
                 } else {
                     IDODOV2(dodoPairs[i]).sellQuote(address(this));
                 }
             } else {
-                if (directions[i] == 0) {
+                if (directions & 1 == 0) {
                     IDODOV2(dodoPairs[i]).sellBase(dodoPairs[i + 1]);
                 } else {
                     IDODOV2(dodoPairs[i]).sellQuote(dodoPairs[i + 1]);
                 }
             }
+            directions = directions >> 1;
         }
         returnAmount = IWETH(_WETH_).balanceOf(address(this));
         require(returnAmount >= minReturnAmount, "DODOV2Proxy01: Return amount is not enough");
@@ -399,7 +396,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
         address[] memory dodoPairs,
-        uint8[] memory directions,
+        uint256 directions,
         uint256 deadLine
     )
         external
@@ -407,24 +404,24 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         judgeExpired(deadLine)
         returns (uint256 returnAmount)
     {
-        require(dodoPairs.length == directions.length, "DODOV2Proxy01: PARAMS_LENGTH_NOT_MATCH");
         uint256 originToTokenBalance = IERC20(toToken).balanceOf(msg.sender);
         IDODOApprove(_DODO_APPROVE_).claimTokens(fromToken, msg.sender, dodoPairs[0], fromTokenAmount);
 
         for (uint256 i = 0; i < dodoPairs.length; i++) {
             if (i == dodoPairs.length - 1) {
-                if (directions[i] == 0) {
+                if (directions & 1 == 0) {
                     IDODOV2(dodoPairs[i]).sellBase(assetTo);
                 } else {
                     IDODOV2(dodoPairs[i]).sellQuote(assetTo);
                 }
             } else {
-                if (directions[i] == 0) {
+                if (directions& 1 == 0) {
                     IDODOV2(dodoPairs[i]).sellBase(dodoPairs[i + 1]);
                 } else {
                     IDODOV2(dodoPairs[i]).sellQuote(dodoPairs[i + 1]);
                 }
             }
+            directions = directions >> 1;
         }
         returnAmount = IERC20(toToken).balanceOf(msg.sender).sub(originToTokenBalance);
         require(returnAmount >= minReturnAmount, "DODOV2Proxy01: Return amount is not enough");

@@ -9,8 +9,6 @@ pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
 import {IFeeRateModel} from "../../lib/FeeRateModel.sol";
-import {IPermissionManager} from "../../lib/PermissionManager.sol";
-import {IExternalValue} from "../../lib/ExternalValue.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {DVMTrader} from "./DVMTrader.sol";
 import {DVMFunding} from "./DVMFunding.sol";
@@ -18,19 +16,14 @@ import {DVMVault} from "./DVMVault.sol";
 
 contract DVM is DVMTrader, DVMFunding {
     function init(
-        address owner,
         address maintainer,
         address baseTokenAddress,
         address quoteTokenAddress,
-        address lpFeeRateModel,
+        uint256 lpFeeRate,
         address mtFeeRateModel,
-        address tradePermissionManager,
-        address gasPriceSource,
         uint256 i,
         uint256 k
     ) external {
-        initOwner(owner);
-
         require(baseTokenAddress != quoteTokenAddress, "BASE_QUOTE_CAN_NOT_BE_SAME");
         _BASE_TOKEN_ = IERC20(baseTokenAddress);
         _QUOTE_TOKEN_ = IERC20(quoteTokenAddress);
@@ -41,10 +34,8 @@ contract DVM is DVMTrader, DVMFunding {
         require(k <= 10**18);
         _K_ = k;
 
-        _LP_FEE_RATE_MODEL_ = IFeeRateModel(lpFeeRateModel);
+        _LP_FEE_RATE_ = lpFeeRate;
         _MT_FEE_RATE_MODEL_ = IFeeRateModel(mtFeeRateModel);
-        _TRADE_PERMISSION_ = IPermissionManager(tradePermissionManager);
-        _GAS_PRICE_LIMIT_ = IExternalValue(gasPriceSource);
         _MAINTAINER_ = maintainer;
 
         string memory connect = "_";

@@ -151,3 +151,21 @@ DODOV2RouteHelper Address:  0x3249f48a507588740d291c154a6b607521e4cDED
 DODOProxyV2 Address:  0xd5C27770E8e2F43B959484971472a0019b17fA56
 Init DODOProxyV2 Tx: 0xdb70bb4355e71060803df0fb9833e03a4e4e657af2afbf1e732cf996614ca8c2
 DODOApprove Init tx:  0x10e6bc3c71ac60145c599acbcfeb7571173445b02756a7d98c7d4e6dbe6f4ecd
+====================================================
+network type: kovan
+Deploy time: 2020/12/29 上午11:08:34
+Deploy type: HELPER V2
+DODOV2RouteHelper Address:  0x3aAfE7c2643807718EFE35D6D529A74255cA4319
+====================================================
+network type: kovan
+Deploy time: 2020/12/29 下午3:32:59
+Deploy type: HELPER V2
+DODOV2RouteHelper Address:  0x3579B9f85B83C06B227CAAe5F22fC05afA223552
+====================================================
+network type: kovan
+Deploy time: 2020/12/29 下午3:33:16
+Deploy type: V2
+DODOApprove Address:  0xeEA9F08eBfde6915AB1C0051F3eB2612DbA95d5D
+DODOProxyV2 Address:  0x97B779AD504bbd5b1BFB50e57584a876Dc65171a
+Init DODOProxyV2 Tx: 0xd04c400fb46a0dd1e30ac04e9bce3e353869ffcb8ab7de622e2a936a3344d7b0
+DODOApprove Init tx:  0xa78fe0b42e29489c1395e4574531902e1bc7348268bb102b001e4f3ffd47e83a

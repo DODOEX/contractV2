@@ -36,13 +36,8 @@ contract DVMVault is DVMStorage {
     }
 
     function getUserFeeRate(address user) external view returns (uint256 lpFeeRate, uint256 mtFeeRate) {
-        lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(user);
+        lpFeeRate = _LP_FEE_RATE_;
         mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(user);
-    }
-
-    function getUserTradePermission(address user) external view returns (bool isBuyAllow, bool isSellAllow) {
-        isBuyAllow = (!_BUYING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(user));
-        isSellAllow =  (!_SELLING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(user));
     }
 
     // ============ Asset In ============
@@ -57,14 +52,21 @@ contract DVMVault is DVMStorage {
 
     // ============ Set States ============
 
+    function _setReserve(uint256 baseReserve, uint256 quoteReserve) internal {
+        require(baseReserve <= uint128(-1) && quoteReserve <= uint128(-1), "OVERFLOW");
+        _BASE_RESERVE_ = uint128(baseReserve);
+        _QUOTE_RESERVE_ = uint128(quoteReserve);
+    }
+
     function _sync() internal {
         uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
         uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
+        require(baseBalance <= uint128(-1) && quoteBalance <= uint128(-1), "OVERFLOW");
         if (baseBalance != _BASE_RESERVE_) {
-            _BASE_RESERVE_ = baseBalance;
+            _BASE_RESERVE_ = uint128(baseBalance);
         }
         if (quoteBalance != _QUOTE_RESERVE_) {
-            _QUOTE_RESERVE_ = quoteBalance;
+            _QUOTE_RESERVE_ = uint128(quoteBalance);
         }
     }
 

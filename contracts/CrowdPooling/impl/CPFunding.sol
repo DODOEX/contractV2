@@ -101,11 +101,10 @@ contract CPFunding is CPStorage {
                 uint256 ratio = DecimalMath.ONE.sub(DecimalMath.divCeil(baseDepth, poolQuote));
                 _poolI = ratio.mul(ratio).div(avgPrice);
             }
-            _POOL_ = IDVMFactory(_POOL_FACTORY_).createUnOwnedDODOVendingMachine(
-                address(this),
+            _POOL_ = IDVMFactory(_POOL_FACTORY_).createDODOVendingMachine(
                 _poolBaseToken,
                 _poolQuoteToken,
-                3e15, // 0.3%
+                3e15, // 0.3% lp feeRate
                 _poolI,
                 DecimalMath.ONE
             );

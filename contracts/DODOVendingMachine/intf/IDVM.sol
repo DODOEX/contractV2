@@ -10,14 +10,11 @@ pragma experimental ABIEncoderV2;
 
 interface IDVM {
     function init(
-        address owner,
         address maintainer,
         address baseTokenAddress,
         address quoteTokenAddress,
-        address lpFeeRateModel,
+        uint256 lpFeeRate,
         address mtFeeRateModel,
-        address tradePermissionManager,
-        address gasPriceSource,
         uint256 i,
         uint256 k
     ) external;
@@ -25,8 +22,6 @@ interface IDVM {
     function _BASE_TOKEN_() external returns (address);
 
     function _QUOTE_TOKEN_() external returns (address);
-
-    function _LP_FEE_RATE_MODEL_() external returns (address);
 
     function _MT_FEE_RATE_MODEL_() external returns (address);
 
@@ -38,23 +33,4 @@ interface IDVM {
 
     function buyShares(address to) external returns (uint256);
 
-    //=========== admin ==========
-    function setLpFeeRateModel(address newLpFeeRateModel) external;
-
-    function setLpFeeRateValue(uint256 newLpFeeRate) external;
-
-    function setMtFeeRateModel(address newMtFeeRateModel) external;
-    
-    function setMtFeeRateValue(uint256 newMtFeeRate) external;
-
-    function setTradePermissionManager(address newTradePermissionManager) external;
-
-    function setMaintainer(address newMaintainer) external;
-
-    function setGasPriceSource(address newGasPriceLimitSource) external;
-
-    function setBuy(bool open) external;
-
-    function setSell(bool open) external;
-    //==============================
 }

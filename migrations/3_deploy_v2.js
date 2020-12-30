@@ -66,7 +66,7 @@ module.exports = async (deployer, network, accounts) => {
         WETHAddress = "0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b";
         chiAddress = "0x0000000000004946c0e9f43f4dee607b0ef1fa1c";
         DODOCalleeHelperAddress = "0x507EBbb195CF54E0aF147A2b269C08a38EA36989";
-        DODORouteV2HelperAddress = "";
+        DODORouteV2HelperAddress = "0x3aAfE7c2643807718EFE35D6D529A74255cA4319";
         //Template
         CloneFactoryAddress = "0xf7959fe661124C49F96CF30Da33729201aEE1b27";
         FeeRateModelTemplateAddress = "0xEF3137780B387313c5889B999D03BdCf9aeEa892";
@@ -78,15 +78,15 @@ module.exports = async (deployer, network, accounts) => {
         DefaultMtFeeRateAddress = "0xEfdE4225AC747136289979e29f1236527b2E4DB1";
         DefaultPermissionAddress = "0xACc7E23368261e1E02103c4e5ae672E7D01f5797";
         
-        DvmTemplateAddress = "";
+        DvmTemplateAddress = "0x9d37C6BB2e3D62263099faAF2940C0De67a4FD6F";
         DvmAdminTemplateAddress = "0x45f455d7E233403F10b7AFCB0d0d0c0d775AFf63";
-        DppTemplateAddress = "";
+        DppTemplateAddress = "0x75CC454c9771A7f1AF4848C4c3775C98b601563E";
         DppAdminTemplateAddress = "0xDfdd9e1693C3A6AF25307c9dA561021f9e685878";
-        CpTemplateAddress = "";
+        CpTemplateAddress = "0x60580b981f2670C872AF0119b21C6596Ad7C5D51";
         //Factory
-        DvmFactoryAddress = "";
-        DppFactoryAddress = "";
-        CpFactoryAddress = "";
+        DvmFactoryAddress = "0xF2a62693FB14b326C3719e5aeEF28e8e66dC954e";
+        DppFactoryAddress = "0x58Bc8D248AcbE95CE29CF893C6666D58AF92d941";
+        CpFactoryAddress = "0xD2d3c70C75E4Bb10eE366C8f54A06cCdDF5F3906";
         //Approve
         DODOApproveAddress = "";
         //Account
@@ -163,7 +163,7 @@ module.exports = async (deployer, network, accounts) => {
         logger.log("Deploy time: " + new Date().toLocaleString());
         logger.log("Deploy type: HELPER V2"); 
 
-        await deployer.deploy(DODOV2RouteHelper, "0x6cbAE38DF513356878cF8e859A33E0eA92BfE023","0x92fE64e923d3B2A2479fACfFF7DAE8a3056Dc4E1");
+        await deployer.deploy(DODOV2RouteHelper, "0xF2a62693FB14b326C3719e5aeEF28e8e66dC954e","0x58Bc8D248AcbE95CE29CF893C6666D58AF92d941");
         DODOV2RouteHelperAddress = DODOV2RouteHelper.address;
         logger.log("DODOV2RouteHelper Address: ", DODOV2RouteHelperAddress);
     }

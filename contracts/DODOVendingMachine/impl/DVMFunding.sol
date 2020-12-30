@@ -58,7 +58,7 @@ contract DVMFunding is DVMVault {
             shares = DecimalMath.mulFloor(totalSupply, mintRatio);
         }
         _mint(to, shares);
-        _sync();
+        _setReserve(baseBalance, quoteBalance);
         emit BuyShares(to, shares, _SHARES_[to]);
     }
 

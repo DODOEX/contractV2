@@ -10,24 +10,10 @@ pragma experimental ABIEncoderV2;
 
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 import {ICloneFactory} from "../lib/CloneFactory.sol";
-import {IFeeRateModel} from "../lib/FeeRateModel.sol";
 import {IDVM} from "../DODOVendingMachine/intf/IDVM.sol";
-import {IDVMAdmin} from "../DODOVendingMachine/intf/IDVMAdmin.sol";
-import {IPermissionManager} from "../lib/PermissionManager.sol";
 
 interface IDVMFactory {
     function createDODOVendingMachine(
-        address creator,
-        address baseToken,
-        address quoteToken,
-        uint256 lpFeeRate,
-        uint256 mtFeeRate,
-        uint256 i,
-        uint256 k
-    ) external returns (address newVendingMachine);
-    
-    function createUnOwnedDODOVendingMachine(
-        address creator,
         address baseToken,
         address quoteToken,
         uint256 lpFeeRate,
@@ -41,16 +27,8 @@ contract DVMFactory is InitializableOwnable {
 
     address public immutable _CLONE_FACTORY_;
     address public immutable _DVM_TEMPLATE_;
-    address public immutable _FEE_RATE_MODEL_TEMPLATE_;
-    address public immutable _PERMISSION_MANAGER_TEMPLATE_;
-    address public _DVM_ADMIN_TEMPLATE_;
-    
     address public immutable _DEFAULT_MAINTAINER_;
     address public immutable _DEFAULT_MT_FEE_RATE_MODEL_;
-    address public immutable _DEFAULT_PERMISSION_MANAGER_;
-    address public immutable _DEFAULT_GAS_PRICE_SOURCE_;
-
-    address internal constant _EMPTY_ = 0x0000000000000000000000000000000000000000;
 
     // ============ Registry ============
 
@@ -75,59 +53,16 @@ contract DVMFactory is InitializableOwnable {
     constructor(
         address cloneFactory,
         address dvmTemplate,
-        address dvmAdminTemplate,
-        address feeRateModelTemplate,
-        address permissionManagerTemplate,
-        address defaultGasPriceSource,
         address defaultMaintainer,
-        address defaultMtFeeRateModel,
-        address defaultPermissionManager
+        address defaultMtFeeRateModel
     ) public {
         _CLONE_FACTORY_ = cloneFactory;
         _DVM_TEMPLATE_ = dvmTemplate;
-        _DVM_ADMIN_TEMPLATE_ = dvmAdminTemplate;
-        _FEE_RATE_MODEL_TEMPLATE_ = feeRateModelTemplate;
-        _PERMISSION_MANAGER_TEMPLATE_ = permissionManagerTemplate;
-        
         _DEFAULT_MAINTAINER_ = defaultMaintainer;
         _DEFAULT_MT_FEE_RATE_MODEL_ = defaultMtFeeRateModel;
-        _DEFAULT_PERMISSION_MANAGER_ = defaultPermissionManager;
-        _DEFAULT_GAS_PRICE_SOURCE_ = defaultGasPriceSource;
     }
 
     function createDODOVendingMachine(
-        address creator,
-        address baseToken,
-        address quoteToken,
-        uint256 lpFeeRate,
-        uint256 mtFeeRate,
-        uint256 i,
-        uint256 k
-    ) external returns (address newVendingMachine) {
-        newVendingMachine = ICloneFactory(_CLONE_FACTORY_).clone(_DVM_TEMPLATE_);
-        {
-            address adminModel = _createDVMAdminModel(creator, newVendingMachine);
-            IDVM(newVendingMachine).init(
-                adminModel,
-                creator,
-                baseToken,
-                quoteToken,
-                _createFeeRateModel(adminModel, lpFeeRate),
-                _createFeeRateModel(adminModel, mtFeeRate),
-                _createPermissionManager(adminModel),
-                _DEFAULT_GAS_PRICE_SOURCE_,
-                i,
-                k
-            );
-        }
-        _REGISTRY_[baseToken][quoteToken].push(newVendingMachine);
-        _USER_REGISTRY_[creator].push(newVendingMachine);
-        emit NewDVM(baseToken, quoteToken, creator, newVendingMachine);
-    }
-
-
-    function createUnOwnedDODOVendingMachine(
-        address creator,
         address baseToken,
         address quoteToken,
         uint256 lpFeeRate,
@@ -137,49 +72,21 @@ contract DVMFactory is InitializableOwnable {
         newVendingMachine = ICloneFactory(_CLONE_FACTORY_).clone(_DVM_TEMPLATE_);
         {
             IDVM(newVendingMachine).init(
-                _EMPTY_,
                 _DEFAULT_MAINTAINER_,
                 baseToken,
                 quoteToken,
-                _createFeeRateModel(_EMPTY_, lpFeeRate),
+                lpFeeRate,
                 _DEFAULT_MT_FEE_RATE_MODEL_,
-                _DEFAULT_PERMISSION_MANAGER_,
-                _DEFAULT_GAS_PRICE_SOURCE_,
                 i,
                 k
             );
         }
         _REGISTRY_[baseToken][quoteToken].push(newVendingMachine);
-        _USER_REGISTRY_[creator].push(newVendingMachine);
-        emit NewDVM(baseToken, quoteToken, creator, newVendingMachine);
-    }
-
-
-    function _createFeeRateModel(address owner, uint256 feeRate)
-        internal
-        returns (address feeRateModel)
-    {
-        feeRateModel = ICloneFactory(_CLONE_FACTORY_).clone(_FEE_RATE_MODEL_TEMPLATE_);
-        IFeeRateModel(feeRateModel).init(owner, feeRate);
-    }
-
-    function _createPermissionManager(address owner) internal returns (address permissionManager) {
-        permissionManager = ICloneFactory(_CLONE_FACTORY_).clone(_PERMISSION_MANAGER_TEMPLATE_);
-        IPermissionManager(permissionManager).initOwner(owner);
-    }
-
-    function _createDVMAdminModel(address owner, address dvm)
-        internal
-        returns (address adminModel)
-    {
-        adminModel = ICloneFactory(_CLONE_FACTORY_).clone(_DVM_ADMIN_TEMPLATE_);
-        IDVMAdmin(adminModel).init(owner, dvm);
+        _USER_REGISTRY_[msg.sender].push(newVendingMachine);
+        emit NewDVM(baseToken, quoteToken, msg.sender, newVendingMachine);
     }
 
     // ============ Admin Operation Functions ============
-    function updateAdminTemplate(address _newDVMAdminTemplate) external onlyOwner {
-        _DVM_ADMIN_TEMPLATE_ = _newDVMAdminTemplate;
-    }
 
     function addPoolByAdmin(
         address creator,

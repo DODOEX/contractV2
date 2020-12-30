@@ -35,42 +35,21 @@ contract DVMTrader is DVMVault {
         uint256 quoteAmount
     );
 
-    // ============ Modifiers ============
-
-    modifier isBuyAllow(address trader) {
-        require(!_BUYING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(trader), "TRADER_BUY_NOT_ALLOWED");
-        _;
-    }
-
-    modifier isSellAllow(address trader) {
-        require(
-            !_SELLING_CLOSE_ && _TRADE_PERMISSION_.isAllowed(trader),
-            "TRADER_SELL_NOT_ALLOWED"
-        );
-        _;
-    }
-
-    modifier limitGasPrice() {
-        require(tx.gasprice <= _GAS_PRICE_LIMIT_.get(), "GAS_PRICE_EXCEED");
-        _;
-    }
-
     // ============ Execute ============
 
     function sellBase(address to)
         external
         preventReentrant
-        limitGasPrice
-        isSellAllow(to) // set DVM address in trade permission
         returns (uint256 receiveQuoteAmount)
     {
-        uint256 baseInput = getBaseInput();
+        uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
+        uint256 baseInput = baseBalance.sub(uint256(_BASE_RESERVE_));
         uint256 mtFee;
         (receiveQuoteAmount, mtFee) = querySellBase(tx.origin, baseInput);
 
         _transferQuoteOut(to, receiveQuoteAmount);
         _transferQuoteOut(_MAINTAINER_, mtFee);
-        _sync();
+        _setReserve(baseBalance, _QUOTE_TOKEN_.balanceOf(address(this)));
 
         emit DODOSwap(
             address(_BASE_TOKEN_),
@@ -84,17 +63,16 @@ contract DVMTrader is DVMVault {
     function sellQuote(address to)
         external
         preventReentrant
-        limitGasPrice
-        isBuyAllow(to)
         returns (uint256 receiveBaseAmount)
     {
-        uint256 quoteInput = getQuoteInput();
+        uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
+        uint256 quoteInput = quoteBalance.sub(uint256(_QUOTE_RESERVE_));
         uint256 mtFee;
         (receiveBaseAmount, mtFee) = querySellQuote(tx.origin, quoteInput);
 
         _transferBaseOut(to, receiveBaseAmount);
         _transferBaseOut(_MAINTAINER_, mtFee);
-        _sync();
+        _setReserve(_BASE_TOKEN_.balanceOf(address(this)), quoteBalance);
 
         emit DODOSwap(
             address(_QUOTE_TOKEN_),
@@ -110,7 +88,7 @@ contract DVMTrader is DVMVault {
         uint256 quoteAmount,
         address assetTo,
         bytes calldata data
-    ) external preventReentrant isSellAllow(assetTo) isBuyAllow(assetTo) {
+    ) external preventReentrant {
         _transferBaseOut(assetTo, baseAmount);
         _transferQuoteOut(assetTo, quoteAmount);
 
@@ -128,9 +106,9 @@ contract DVMTrader is DVMVault {
 
         // sell quote
         if (baseBalance < _BASE_RESERVE_) {
-            uint256 quoteInput = quoteBalance.sub(_QUOTE_RESERVE_);
+            uint256 quoteInput = quoteBalance.sub(uint256(_QUOTE_RESERVE_));
             (uint256 receiveBaseAmount, uint256 mtFee) = querySellQuote(tx.origin, quoteInput);
-            require(_BASE_RESERVE_.sub(baseBalance) <= receiveBaseAmount, "FLASH_LOAN_FAILED");
+            require(uint256(_BASE_RESERVE_).sub(baseBalance) <= receiveBaseAmount, "FLASH_LOAN_FAILED");
 
             _transferBaseOut(_MAINTAINER_, mtFee);
             emit DODOSwap(
@@ -138,15 +116,15 @@ contract DVMTrader is DVMVault {
                 address(_BASE_TOKEN_),
                 quoteInput,
                 receiveBaseAmount,
-                tx.origin
+                msg.sender
             );
         }
 
         // sell base
         if (quoteBalance < _QUOTE_RESERVE_) {
-            uint256 baseInput = baseBalance.sub(_BASE_RESERVE_);
+            uint256 baseInput = baseBalance.sub(uint256(_BASE_RESERVE_));
             (uint256 receiveQuoteAmount, uint256 mtFee) = querySellBase(tx.origin, baseInput);
-            require(_QUOTE_RESERVE_.sub(quoteBalance) <= receiveQuoteAmount, "FLASH_LOAN_FAILED");
+            require(uint256(_QUOTE_RESERVE_).sub(quoteBalance) <= receiveQuoteAmount, "FLASH_LOAN_FAILED");
 
             _transferQuoteOut(_MAINTAINER_, mtFee);
             emit DODOSwap(
@@ -172,11 +150,10 @@ contract DVMTrader is DVMVault {
     {
         (receiveQuoteAmount, ) = PMMPricing.sellBaseToken(getPMMState(), payBaseAmount);
 
-        uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(trader);
         uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(trader);
         mtFee = DecimalMath.mulFloor(receiveQuoteAmount, mtFeeRate);
         receiveQuoteAmount = receiveQuoteAmount
-            .sub(DecimalMath.mulFloor(receiveQuoteAmount, lpFeeRate))
+            .sub(DecimalMath.mulFloor(receiveQuoteAmount, _LP_FEE_RATE_))
             .sub(mtFee);
     }
 
@@ -187,11 +164,10 @@ contract DVMTrader is DVMVault {
     {
         (receiveBaseAmount, ) = PMMPricing.sellQuoteToken(getPMMState(), payQuoteAmount);
 
-        uint256 lpFeeRate = _LP_FEE_RATE_MODEL_.getFeeRate(trader);
         uint256 mtFeeRate = _MT_FEE_RATE_MODEL_.getFeeRate(trader);
         mtFee = DecimalMath.mulFloor(receiveBaseAmount, mtFeeRate);
         receiveBaseAmount = receiveBaseAmount
-            .sub(DecimalMath.mulFloor(receiveBaseAmount, lpFeeRate))
+            .sub(DecimalMath.mulFloor(receiveBaseAmount, _LP_FEE_RATE_))
             .sub(mtFee);
     }
 
