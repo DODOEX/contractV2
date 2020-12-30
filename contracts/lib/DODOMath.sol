@@ -74,7 +74,8 @@ library DODOMath {
         // V0 = V1*(1+(sqrt-1)/2k)
         // sqrt = √(1+4kidelta/V1)
         // premium = 1+(sqrt-1)/2k
-        uint256 sqrt = (4 * k).mul(i).mul(delta).div(V1).add(DecimalMath.ONE2).sqrt();
+        uint256 sqrt = DecimalMath.multiMulWithDiv((4 * k).mul(i),delta,V1).add(DecimalMath.ONE2).sqrt();
+        // uint256 sqrt = (4 * k).mul(i).mul(delta).div(V1).add(DecimalMath.ONE2).sqrt();
         uint256 premium = DecimalMath.divFloor(sqrt.sub(DecimalMath.ONE), k * 2).add(
             DecimalMath.ONE
         );
@@ -128,7 +129,8 @@ library DODOMath {
             // Q2=Q1/(1+ideltaBQ1/Q0/Q0)
             // temp = ideltaBQ1/Q0/Q0
             // Q1-Q2 = Q1*(temp/(1+temp))
-            uint256 temp = i.mul(delta).mul(V1).div(V0.mul(V0));
+            uint256 temp = DecimalMath.multiMulWithDiv(i.mul(delta),V1,V0).div(V0);
+            // uint256 temp = i.mul(delta).mul(V1).div(V0.mul(V0));
             return V1.mul(temp).div(temp.add(DecimalMath.ONE));
         }
 
