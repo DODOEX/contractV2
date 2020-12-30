@@ -85,7 +85,7 @@ interface IDODOV2 {
     
     //========== CrowdPooling ===========
 
-    function createCrowdPooling() external returns (address newCrowdPooling);
+    function createCrowdPooling() external returns (address payable newCrowdPooling);
 
     function initCrowdPooling(
         address cpAddress,

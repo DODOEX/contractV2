@@ -115,6 +115,8 @@ contract CPFunding is CPStorage {
         _transferQuoteOut(_POOL_, poolQuote);
 
         _TOTAL_LP_AMOUNT_ = IDVM(_POOL_).buyShares(address(this));
+
+        msg.sender.transfer(_SETTEL_FUND_);
     }
 
     // in case something wrong with base token contract

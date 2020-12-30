@@ -19,6 +19,7 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
 
     uint256 internal constant _SETTLEMENT_EXPIRE_ = 86400 * 7;
+    uint256 internal constant _SETTEL_FUND_ = 200 finney;
 
     // ============ Timeline ============
 

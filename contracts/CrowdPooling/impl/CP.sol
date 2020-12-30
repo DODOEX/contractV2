@@ -17,6 +17,10 @@ import {SafeMath} from "../../lib/SafeMath.sol";
 contract CP is CPVesting {
     using SafeMath for uint256;
 
+    receive() external payable {
+        require(_INITIALIZED_ == false, "WE_NOT_SAVE_ETH_AFTER_INIT");
+    }
+
     function init(
         address[] calldata addressList,
         uint256[] calldata timeLine,
@@ -83,5 +87,7 @@ contract CP is CPVesting {
         require(_CLIFF_RATE_ <= 1e18, "CLIFF_RATE_WRONG");
 
         _TOTAL_BASE_ = _BASE_TOKEN_.balanceOf(address(this));
+
+        require(address(this).balance == _SETTEL_FUND_, "SETTLE_FUND_NOT_MATCH");
     }
 }

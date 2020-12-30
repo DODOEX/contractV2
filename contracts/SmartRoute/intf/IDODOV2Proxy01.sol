@@ -100,7 +100,7 @@ interface IDODOV2Proxy01 is IDODOV1Proxy01 {
         uint256[] memory timeLine,
         uint256[] memory valueList,
         uint256 deadLine
-    ) external returns (address newCrowdPooling);
+    ) external payable returns (address payable newCrowdPooling);
 
     function bid(
         address assetTo,

@@ -606,7 +606,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         uint256[] memory timeLine,
         uint256[] memory valueList,
         uint256 deadLine
-    ) external override judgeExpired(deadLine) returns (address newCrowdPooling) {
+    ) external override payable judgeExpired(deadLine) returns (address payable newCrowdPooling) {
         address _baseToken = baseToken;
         address _quoteToken = quoteToken == _ETH_ADDRESS_ ? _WETH_ : quoteToken;
         
@@ -620,6 +620,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
             false
         );
 
+        newCrowdPooling.transfer(msg.value);
 
         IDODOV2(_CP_FACTORY_).initCrowdPooling(
             newCrowdPooling,
