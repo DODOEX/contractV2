@@ -33,6 +33,7 @@ export class ProxyContext {
 
   //token
   DODO: Contract;
+  USDC: Contract;
   USDT: Contract;
   WETH: Contract;
 
@@ -58,25 +59,17 @@ export class ProxyContext {
     var dvmTemplate = await contracts.newContract(contracts.DVM_NAME)
     var dppTemplate = await contracts.newContract(contracts.DPP_NAME)
     var cpTemplate = await contracts.newContract(contracts.CROWD_POOLING_NAME)
-    var dvmAdminTemplate = await contracts.newContract(contracts.DVM_ADMIN_NAME)
     var dppAdminTemplate = await contracts.newContract(contracts.DPP_ADMIN_NAME)
-    var feeRateModelTemplate = await contracts.newContract(contracts.FEE_RATE_MODEL_NAME)
     var permissionManagerTemplate = await contracts.newContract(contracts.PERMISSION_MANAGER_NAME)
-    var vauleSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME)
-    var defaultGasSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME)
-    await defaultGasSource.methods.init(this.Deployer,MAX_UINT256).send(this.sendParam(this.Deployer));
+    var mtFeeRateModelTemplate = await contracts.newContract(contracts.FEE_RATE_MODEL_NAME)
+    await mtFeeRateModelTemplate.methods.init(this.Deployer,decimalStr("0.01")).send(this.sendParam(this.Deployer));
 
     this.DVMFactory = await contracts.newContract(contracts.DVM_FACTORY_NAME,
       [
         cloneFactory.options.address,
         dvmTemplate.options.address,
-        dvmAdminTemplate.options.address,
-        feeRateModelTemplate.options.address,
-        permissionManagerTemplate.options.address,
-        defaultGasSource.options.address,
         this.Deployer,
-        feeRateModelTemplate.options.address,
-        permissionManagerTemplate.options.address
+        mtFeeRateModelTemplate.options.address
        ]
     )
 
@@ -90,10 +83,8 @@ export class ProxyContext {
         cloneFactory.options.address,
         dppTemplate.options.address,
         dppAdminTemplate.options.address,
-        feeRateModelTemplate.options.address,
-        permissionManagerTemplate.options.address,
-        vauleSource.options.address,
-        defaultGasSource.options.address,
+        this.Deployer,
+        mtFeeRateModelTemplate.options.address,
         this.DODOApprove.options.address
       ]
     )
@@ -103,11 +94,9 @@ export class ProxyContext {
         cloneFactory.options.address,
         cpTemplate.options.address,
         this.DVMFactory.options.address,
-        feeRateModelTemplate.options.address,
         this.Deployer,
-        feeRateModelTemplate.options.address,
-        permissionManagerTemplate.options.address,
-        defaultGasSource.options.address
+        mtFeeRateModelTemplate.options.address,
+        permissionManagerTemplate.options.address
       ]  
     )
 
@@ -137,6 +126,10 @@ export class ProxyContext {
       contracts.MINTABLE_ERC20_CONTRACT_NAME,
       ["USDT Token", "USDT", 6]
     );
+    this.USDC = await contracts.newContract(
+      contracts.MINTABLE_ERC20_CONTRACT_NAME,
+      ["USDC Token", "USDC", 6]
+    );
 
     this.DODOCalleeHelper = await contracts.newContract(
       contracts.DODO_CALLEE_HELPER_NAME,
@@ -164,6 +157,9 @@ export class ProxyContext {
       .approve(this.DODOApprove.options.address, MAX_UINT256)
       .send(this.sendParam(account));
     await this.USDT.methods
+      .approve(this.DODOApprove.options.address, MAX_UINT256)
+      .send(this.sendParam(account));
+    await this.USDC.methods
       .approve(this.DODOApprove.options.address, MAX_UINT256)
       .send(this.sendParam(account));
     await this.WETH.methods
