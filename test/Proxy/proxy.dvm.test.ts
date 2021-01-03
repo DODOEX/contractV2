@@ -82,7 +82,7 @@ describe("DODOProxyV2.0", () => {
     await init(ctx);
     dvm_DODO_USDT = await initCreateDVM(ctx, ctx.DODO.options.address, ctx.USDT.options.address, decimalStr("100000"), mweiStr("20000"), "0", mweiStr("0.2"));
     DVM_DODO_USDT = contracts.getContractWithAddress(contracts.DVM_NAME, dvm_DODO_USDT);
-    dvm_USDT_USDC = await initCreateDVM(ctx, ctx.USDT.options.address, ctx.USDC.options.address, mweiStr("100000"), mweiStr("100000"), "0", mweiStr("1"));
+    dvm_USDT_USDC = await initCreateDVM(ctx, ctx.USDT.options.address, ctx.USDC.options.address, mweiStr("100000"), mweiStr("1000"), "0", decimalStr("1"));
     DVM_USDT_USDC = contracts.getContractWithAddress(contracts.DVM_NAME, dvm_USDT_USDC);
     dvm_WETH_USDT = await initCreateDVM(ctx, '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', ctx.USDT.options.address, decimalStr("5"), mweiStr("3000"), "5", mweiStr("600"));
     DVM_WETH_USDT = contracts.getContractWithAddress(contracts.DVM_NAME, dvm_WETH_USDT);
@@ -190,7 +190,7 @@ describe("DODOProxyV2.0", () => {
       var b_quoteReserve = await DVM_WETH_USDT.methods._QUOTE_RESERVE_().call();
       var b_dlp = await DVM_WETH_USDT.methods.balanceOf(lp).call();
       assert.equal(b_baseReserve, decimalStr("5"));
-      assert.equal(b_quoteReserve, mweiStr("30000"));
+      assert.equal(b_quoteReserve, mweiStr("3000"));
       assert.equal(b_dlp, decimalStr("0"));
       await logGas(await ctx.DODOProxyV2.methods.addDVMLiquidity(
         dvm_WETH_USDT,
@@ -206,7 +206,7 @@ describe("DODOProxyV2.0", () => {
       var a_quoteReserve = await DVM_WETH_USDT.methods._QUOTE_RESERVE_().call();
       var a_dlp = await DVM_WETH_USDT.methods.balanceOf(lp).call();
       assert.equal(a_baseReserve, decimalStr("6"));
-      assert.equal(a_quoteReserve, mweiStr("36000"));
+      assert.equal(a_quoteReserve, mweiStr("3600"));
       assert.equal(a_dlp, "1000000000000000000");
     });
 
@@ -236,10 +236,10 @@ describe("DODOProxyV2.0", () => {
       var a_ETH = await ctx.Web3.eth.getBalance(project);
       // console.log("a_baseReserve:" + a_baseReserve + " a_quoteReserve:" + a_quoteReserve + " a_dlp:" + a_dlp + " a_WETH:" + a_WETH + " a_USDT:" + a_USDT + " a_ETH:" + a_ETH);
       assert.equal(a_baseReserve, decimalStr("4"));
-      assert.equal(a_quoteReserve, mweiStr("24000"));
+      assert.equal(a_quoteReserve, mweiStr("2400"));
       assert.equal(a_dlp, decimalStr("4"));
       assert.equal(a_WETH, decimalStr("0"));
-      assert.equal(a_USDT, mweiStr("856000"));
+      assert.equal(a_USDT, mweiStr("877600"));
       assert.equal(new BigNumber(b_ETH).isGreaterThan(new BigNumber(a_ETH).minus(decimalStr("1"))), true);
     })
 
@@ -268,10 +268,10 @@ describe("DODOProxyV2.0", () => {
       var a_ETH = await ctx.Web3.eth.getBalance(project);
       // console.log("a_baseReserve:" + a_baseReserve + " a_quoteReserve:" + a_quoteReserve + " a_dlp:" + a_dlp + " a_WETH:" + a_WETH + " a_USDT:" + a_USDT + " a_ETH:" + a_ETH);
       assert.equal(a_baseReserve, decimalStr("4"));
-      assert.equal(a_quoteReserve, mweiStr("24000"));
+      assert.equal(a_quoteReserve, mweiStr("2400"));
       assert.equal(a_dlp, decimalStr("4"));
       assert.equal(a_WETH, decimalStr("1"));
-      assert.equal(a_USDT, mweiStr("856000"));
+      assert.equal(a_USDT, mweiStr("877600"));
     })
 
     it("swap - one jump", async () => {
@@ -283,7 +283,7 @@ describe("DODOProxyV2.0", () => {
       ]
       var directions = 0
 
-      var tx = await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
+      await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
         trader,
         ctx.DODO.options.address,
         ctx.USDT.options.address,
@@ -292,13 +292,23 @@ describe("DODOProxyV2.0", () => {
         dodoPairs,
         directions,
         Math.floor(new Date().getTime() / 1000 + 60 * 10)
-      ), ctx.sendParam(trader), "swap - one jump");
+      ), ctx.sendParam(trader), "swap - one jump first");
       var a_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
       var a_USDT = await ctx.USDT.methods.balanceOf(trader).call();
-      console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
-      console.log("b_USDT:" + b_USDT + " a_USDT:" + a_USDT);
+      // console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
+      // console.log("b_USDT:" + b_USDT + " a_USDT:" + a_USDT);
       assert.equal(a_DOOD, decimalStr("500"));
-      assert.equal(a_USDT, "124886061");
+      assert.equal(a_USDT, "126151370");
+      await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
+        trader,
+        ctx.DODO.options.address,
+        ctx.USDT.options.address,
+        decimalStr("500"),
+        1,
+        dodoPairs,
+        directions,
+        Math.floor(new Date().getTime() / 1000 + 60 * 10)
+      ), ctx.sendParam(trader), "swap - one jump second");
     });
 
 
@@ -311,7 +321,7 @@ describe("DODOProxyV2.0", () => {
         dvm_WETH_USDT
       ]
       var directions = 2
-      var tx = await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
+      await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
         trader,
         ctx.DODO.options.address,
         ctx.WETH.options.address,
@@ -320,13 +330,23 @@ describe("DODOProxyV2.0", () => {
         dodoPairs,
         directions,
         Math.floor(new Date().getTime() / 1000 + 60 * 10)
-      ), ctx.sendParam(trader), "swap - two jump");
+      ), ctx.sendParam(trader), "swap - two jump first");
       var a_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
       var a_WETH = await ctx.WETH.methods.balanceOf(trader).call();
-      console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
-      console.log("b_WETH:" + b_WETH + " a_WETH:" + a_WETH);
+      // console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
+      // console.log("b_WETH:" + b_WETH + " a_WETH:" + a_WETH);
       assert.equal(a_DOOD, decimalStr("500"));
-      assert.equal(a_WETH, "160562971834401560");
+      assert.equal(a_WETH, "163816613646287588");
+      await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
+        trader,
+        ctx.DODO.options.address,
+        ctx.WETH.options.address,
+        decimalStr("500"),
+        1,
+        dodoPairs,
+        directions,
+        Math.floor(new Date().getTime() / 1000 + 60 * 10)
+      ), ctx.sendParam(trader), "swap - two jump second");
     });
 
     it("swap - two jump - inETH", async () => {
@@ -338,29 +358,34 @@ describe("DODOProxyV2.0", () => {
         dvm_DODO_USDT
       ]
       var directions = 2
-      var tx = await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2ETHToToken(
+      await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2ETHToToken(
         trader,
         ctx.DODO.options.address,
         1,
         dodoPairs,
         directions,
         Math.floor(new Date().getTime() / 1000 + 60 * 10)
-      ), ctx.sendParam(trader, "1"), "swap - two jump - inETH");
+      ), ctx.sendParam(trader, "1"), "swap - two jump - inETH - first");
       var a_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
       var a_WETH = await ctx.WETH.methods.balanceOf(trader).call();
       var a_ETH = await ctx.Web3.eth.getBalance(trader);
-      console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
-      console.log("b_WETH:" + b_WETH + " a_WETH:" + a_WETH);
-      console.log("b_ETH:" + b_ETH + " a_ETH:" + a_ETH);
-      assert.equal(a_DOOD, "2758402621041673925359");
+      // console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
+      // console.log("b_WETH:" + b_WETH + " a_WETH:" + a_WETH);
+      // console.log("b_ETH:" + b_ETH + " a_ETH:" + a_ETH);
+      assert.equal(a_DOOD, "2814340111190341070680");
+      await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2ETHToToken(
+        trader,
+        ctx.DODO.options.address,
+        1,
+        dodoPairs,
+        directions,
+        Math.floor(new Date().getTime() / 1000 + 60 * 10)
+      ), ctx.sendParam(trader, "1"), "swap - two jump - inETH - second");
     });
 
 
     it("swap - two jump - outETH", async () => {
-      await ctx.mintTestToken(trader, ctx.DODO, decimalStr("1000"));
-      var b_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
-      var b_WETH = await ctx.WETH.methods.balanceOf(trader).call();
-      var b_ETH = await ctx.Web3.eth.getBalance(trader);
+      await ctx.mintTestToken(trader, ctx.DODO, decimalStr("2000"));
       var dodoPairs = [
         dvm_DODO_USDT,
         dvm_WETH_USDT
@@ -374,32 +399,33 @@ describe("DODOProxyV2.0", () => {
         dodoPairs,
         directions,
         Math.floor(new Date().getTime() / 1000 + 60 * 10)
-      ), ctx.sendParam(trader), "swap - two jump - outETH");
+      ), ctx.sendParam(trader), "swap - two jump - outETH first");
       var a_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
-      var a_WETH = await ctx.WETH.methods.balanceOf(trader).call();
-      var a_ETH = await ctx.Web3.eth.getBalance(trader);
-      console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
-      console.log("b_WETH:" + b_WETH + " a_WETH:" + a_WETH);
-      console.log("b_ETH:" + b_ETH + " a_ETH:" + a_ETH);
-      assert.equal(a_DOOD, decimalStr("0"));
+      assert.equal(a_DOOD, decimalStr("1000"));
       assert.equal(
         tx.events['OrderHistory'].returnValues['returnAmount'],
-        "317467466094549770"
+        "323865907568573497"
       )
+      await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToETH(
+        trader,
+        ctx.DODO.options.address,
+        decimalStr("1000"),
+        1,
+        dodoPairs,
+        directions,
+        Math.floor(new Date().getTime() / 1000 + 60 * 10)
+      ), ctx.sendParam(trader), "swap - two jump - outETH second");
     });
-
 
     it("swap - three jump", async () => {
       await ctx.mintTestToken(trader, ctx.DODO, decimalStr("1000"));
-      var b_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
-      var b_WETH = await ctx.WETH.methods.balanceOf(trader).call();
       var dodoPairs = [
         dvm_DODO_USDT,
         dvm_USDT_USDC,
         dvm_WETH_USDC
       ]
       var directions = 4
-      var tx = await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
+      await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
         trader,
         ctx.DODO.options.address,
         ctx.WETH.options.address,
@@ -408,13 +434,21 @@ describe("DODOProxyV2.0", () => {
         dodoPairs,
         directions,
         Math.floor(new Date().getTime() / 1000 + 60 * 10)
-      ), ctx.sendParam(trader), "swap - two jump");
+      ), ctx.sendParam(trader), "swap - three jump first");
       var a_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
       var a_WETH = await ctx.WETH.methods.balanceOf(trader).call();
-      console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
-      console.log("b_WETH:" + b_WETH + " a_WETH:" + a_WETH);
       assert.equal(a_DOOD, decimalStr("500"));
-      assert.equal(a_WETH, "158299831331715351");
+      assert.equal(a_WETH, "163633965833613187");
+      await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
+        trader,
+        ctx.DODO.options.address,
+        ctx.WETH.options.address,
+        decimalStr("500"),
+        1,
+        dodoPairs,
+        directions,
+        Math.floor(new Date().getTime() / 1000 + 60 * 10)
+      ), ctx.sendParam(trader), "swap - three jump second");
     });
 
   });
