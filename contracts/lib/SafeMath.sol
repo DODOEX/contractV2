@@ -32,11 +32,6 @@ library SafeMath {
         return a / b;
     }
 
-    function mod(uint256 a, uint256 b) internal pure returns (uint256) {
-        require(b > 0, "MOD_ERROR");
-        return a % b;
-    }
-
     function divCeil(uint256 a, uint256 b) internal pure returns (uint256) {
         uint256 quotient = div(a, b);
         uint256 remainder = a - quotient * b;

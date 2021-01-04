@@ -47,7 +47,6 @@ async function initCreateDPP(ctx: ProxyContext, token0: string, token1: string, 
         token0Amount,
         token1Amount,
         config.lpFeeRate,
-        config.mtFeeRate,
         i,
         config.k,
         Math.floor(new Date().getTime() / 1000 + 60 * 10)
@@ -67,7 +66,6 @@ async function initCreateDVM(ctx: ProxyContext, token0: string, token1: string, 
         token0Amount,
         token1Amount,
         config.lpFeeRate,
-        config.mtFeeRate,
         i,
         config.k,
         Math.floor(new Date().getTime() / 1000 + 60 * 10)
@@ -90,8 +88,8 @@ describe("DODOProxyV2.0", () => {
         );
         ctx = await getProxyContext(ETH.options.address);
         await init(ctx);
-        dpp_DODO_USDT = await initCreateDPP(ctx, ctx.DODO.options.address, ctx.USDT.options.address, decimalStr("100000"), mweiStr("30000"), "0", mweiStr("0.3"));
-        dvm_WETH_USDT = await initCreateDVM(ctx, '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', ctx.USDT.options.address, decimalStr("5"), mweiStr("30000"), "5", mweiStr("600"));
+        dpp_DODO_USDT = await initCreateDPP(ctx, ctx.DODO.options.address, ctx.USDT.options.address, decimalStr("100000"), mweiStr("20000"), "0", mweiStr("0.2"));
+        dvm_WETH_USDT = await initCreateDVM(ctx, '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', ctx.USDT.options.address, decimalStr("5"), mweiStr("3000"), "5", mweiStr("600"));
         console.log("dpp_DODO_USDT:", dpp_DODO_USDT);
         console.log("dvm_WETH_USDT:", dvm_WETH_USDT);
     });
@@ -114,11 +112,8 @@ describe("DODOProxyV2.0", () => {
                 dpp_DODO_USDT,
                 dvm_WETH_USDT
             ]
-            var directions = [
-                0,
-                1
-            ]
-            var tx = await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
+            var directions = 2
+            await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
                 trader,
                 ctx.DODO.options.address,
                 ctx.WETH.options.address,
@@ -133,7 +128,7 @@ describe("DODOProxyV2.0", () => {
             console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
             console.log("b_WETH:" + b_WETH + " a_WETH:" + a_WETH);
             assert.equal(a_DOOD, decimalStr("500"));
-            assert.equal(a_WETH, "40729644076866177");
+            assert.equal(a_WETH, "129932374904193666");
         });
 
         it("swap - two jump - inETH", async () => {
@@ -144,11 +139,8 @@ describe("DODOProxyV2.0", () => {
                 dvm_WETH_USDT,
                 dpp_DODO_USDT
             ]
-            var directions = [
-                0,
-                1
-            ]
-            var tx = await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2ETHToToken(
+            var directions = 2
+            await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2ETHToToken(
                 trader,
                 ctx.DODO.options.address,
                 1,
@@ -162,7 +154,7 @@ describe("DODOProxyV2.0", () => {
             console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
             console.log("b_WETH:" + b_WETH + " a_WETH:" + a_WETH);
             console.log("b_ETH:" + b_ETH + " a_ETH:" + a_ETH);
-            assert.equal(a_DOOD, "10214032255413753721651");
+            assert.equal(a_DOOD, "3589987832148472935171");
         });
 
 
@@ -175,10 +167,7 @@ describe("DODOProxyV2.0", () => {
                 dpp_DODO_USDT,
                 dvm_WETH_USDT
             ]
-            var directions = [
-                0,
-                1
-            ]
+            var directions = 2
             var tx = await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToETH(
                 trader,
                 ctx.DODO.options.address,
@@ -197,7 +186,7 @@ describe("DODOProxyV2.0", () => {
             assert.equal(a_DOOD, decimalStr("90000"));
             assert.equal(
                 tx.events['OrderHistory'].returnValues['returnAmount'],
-                "711081782556285356"
+                "2131271397594357833"
             )
         });
     });

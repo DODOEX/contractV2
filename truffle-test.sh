@@ -30,5 +30,3 @@ if [ "$1"x = "route"x ]
 then
 	truffle test ./test/Route/route.test.ts
 fi
-
-	

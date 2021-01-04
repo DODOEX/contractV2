@@ -45,10 +45,4 @@ library DecimalMath {
     function reciprocalCeil(uint256 target) internal pure returns (uint256) {
         return uint256(10**36).divCeil(target);
     }
-
-    function multiMulWithDiv(uint256 x, uint256 y, uint256 z) internal pure returns (uint256) {
-        uint256 a = x.div(z); uint256 b = x.mod(z); // x = a * z + b
-        uint256 c = y.div(z); uint256 d = y.mod(z); // y = c * z + d
-        return a.mul(b).mul(z).add(a.mul(d)).add(b.mul(c)).add(b.mul(d).div(z));
-    }
 }
