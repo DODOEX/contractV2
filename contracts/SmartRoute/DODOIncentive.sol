@@ -38,6 +38,7 @@ contract DODOIncentive is InitializableOwnable {
 
     event SetBoost(address token, uint256 boostRate);
     event SetSwitch(bool isOpen);
+    event SetNewProxy(address dodoProxy);
     event SetPerReward(uint256 dodoPerBlock);
     event SetDefaultRate(uint256 defaultRate);
     event Incentive(address user,uint256 reward, address fromToken, address toToken);
@@ -72,6 +73,11 @@ contract DODOIncentive is InitializableOwnable {
     function changeDefaultRate(uint256 _defaultRate) public onlyOwner {
         defaultRate = _defaultRate;
         emit SetDefaultRate(defaultRate);
+    }
+
+    function changeDODOProxy(address _dodoProxy) public onlyOwner {
+        _DODO_PROXY_ = _dodoProxy;
+        emit SetNewProxy(_DODO_PROXY_);
     }
 
     function emptyReward(address assetTo) public onlyOwner {
