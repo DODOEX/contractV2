@@ -10,7 +10,6 @@ const PermissionManagerTemplate = artifacts.require("PermissionManager");
 const ExternalValueTemplate = artifacts.require("ExternalValue");
 
 const DvmTemplate = artifacts.require("DVM");
-const DvmAdminTemplate = artifacts.require("DVMAdmin");
 const DppTemplate = artifacts.require("DPP");
 const DppAdminTemplate = artifacts.require("DPPAdmin");
 const CpTemplate = artifacts.require("CP");
@@ -26,7 +25,6 @@ const DODOCalleeHelper = artifacts.require("DODOCalleeHelper");
 const DODOV2RouteHelper = artifacts.require("DODOV2RouteHelper");
 
 
-
 module.exports = async (deployer, network, accounts) => {
     //Helper And Common
     let DODOSellHelperAddress = "";
@@ -36,17 +34,16 @@ module.exports = async (deployer, network, accounts) => {
     let DODORouteV2HelperAddress = "";
     //Template
     let CloneFactoryAddress = "";
-    let FeeRateModelTemplateAddress = "";
-    let ConstFeeRateModelTemplateAddress = "";
-    let PermissionManagerTemplateAddress = "";
-    let ExternalValueTemplateAddress = "";
+    // let FeeRateModelTemplateAddress = "";
+    // let ConstFeeRateModelTemplateAddress = "";
+    // let PermissionManagerTemplateAddress = "";
+    // let ExternalValueTemplateAddress = "";
     //Default Template
-    let DefaultGasSourceAddress = "";
+    // let DefaultGasSourceAddress = "";
     let DefaultMtFeeRateAddress = "";
     let DefaultPermissionAddress = "";
 
     let DvmTemplateAddress = "";
-    let DvmAdminTemplateAddress = "";
     let DppTemplateAddress = "";
     let DppAdminTemplateAddress = "";
     let CpTemplateAddress = "";
@@ -69,24 +66,23 @@ module.exports = async (deployer, network, accounts) => {
         DODORouteV2HelperAddress = "0x3aAfE7c2643807718EFE35D6D529A74255cA4319";
         //Template
         CloneFactoryAddress = "0xf7959fe661124C49F96CF30Da33729201aEE1b27";
-        FeeRateModelTemplateAddress = "0xEF3137780B387313c5889B999D03BdCf9aeEa892";
-        ConstFeeRateModelTemplateAddress = "0x2ec9579Cf7ae77B4e538F56274501f518ABFeA2e";
-        PermissionManagerTemplateAddress = "0x5D2Da09501d97a7bf0A8F192D2eb2F9Aa80d3241";
-        ExternalValueTemplateAddress = "0xe0f813951dE2BB012f7Feb981669F9a7b5250A57";
+        // FeeRateModelTemplateAddress = "0xEF3137780B387313c5889B999D03BdCf9aeEa892";
+        // ConstFeeRateModelTemplateAddress = "0x2ec9579Cf7ae77B4e538F56274501f518ABFeA2e";
+        // PermissionManagerTemplateAddress = "0x5D2Da09501d97a7bf0A8F192D2eb2F9Aa80d3241";
+        // ExternalValueTemplateAddress = "0xe0f813951dE2BB012f7Feb981669F9a7b5250A57";
         //Default Template
-        DefaultGasSourceAddress = "0xE0c0df0e0be7ec4f579503304a6C186cA4365407";
+        // DefaultGasSourceAddress = "0xE0c0df0e0be7ec4f579503304a6C186cA4365407";
         DefaultMtFeeRateAddress = "0xEfdE4225AC747136289979e29f1236527b2E4DB1";
         DefaultPermissionAddress = "0xACc7E23368261e1E02103c4e5ae672E7D01f5797";
         
-        DvmTemplateAddress = "0x9d37C6BB2e3D62263099faAF2940C0De67a4FD6F";
-        DvmAdminTemplateAddress = "0x45f455d7E233403F10b7AFCB0d0d0c0d775AFf63";
-        DppTemplateAddress = "0x75CC454c9771A7f1AF4848C4c3775C98b601563E";
-        DppAdminTemplateAddress = "0xDfdd9e1693C3A6AF25307c9dA561021f9e685878";
-        CpTemplateAddress = "0x60580b981f2670C872AF0119b21C6596Ad7C5D51";
+        DvmTemplateAddress = "";
+        DppTemplateAddress = "";
+        DppAdminTemplateAddress = "";
+        CpTemplateAddress = "";
         //Factory
-        DvmFactoryAddress = "0xF2a62693FB14b326C3719e5aeEF28e8e66dC954e";
-        DppFactoryAddress = "0x58Bc8D248AcbE95CE29CF893C6666D58AF92d941";
-        CpFactoryAddress = "0xD2d3c70C75E4Bb10eE366C8f54A06cCdDF5F3906";
+        DvmFactoryAddress = "";
+        DppFactoryAddress = "";
+        CpFactoryAddress = "";
         //Approve
         DODOApproveAddress = "";
         //Account
@@ -100,17 +96,16 @@ module.exports = async (deployer, network, accounts) => {
         DODOCalleeHelperAddress = "";
         //Template
         CloneFactoryAddress = "";
-        FeeRateModelTemplateAddress = "";
-        ConstFeeRateModelTemplateAddress = "";
-        PermissionManagerTemplateAddress = "";
-        ExternalValueTemplateAddress = "";
+        // FeeRateModelTemplateAddress = "";
+        // ConstFeeRateModelTemplateAddress = "";
+        // PermissionManagerTemplateAddress = "";
+        // ExternalValueTemplateAddress = "";
         //Default Template
-        DefaultGasSourceAddress = "";
+        // DefaultGasSourceAddress = "";
         DefaultMtFeeRateAddress = "";
         DefaultPermissionAddress = "";
 
         DvmTemplateAddress = "";
-        DvmAdminTemplateAddress = "";
         DppTemplateAddress = "";
         DppAdminTemplateAddress = "";
         CpTemplateAddress = "";
@@ -131,17 +126,16 @@ module.exports = async (deployer, network, accounts) => {
         DODOCalleeHelperAddress = "";
         //Template
         CloneFactoryAddress = "";
-        FeeRateModelTemplateAddress = "";
-        ConstFeeRateModelTemplateAddress = "";
-        PermissionManagerTemplateAddress = "";
-        ExternalValueTemplateAddress = "";
+        // FeeRateModelTemplateAddress = "";
+        // ConstFeeRateModelTemplateAddress = "";
+        // PermissionManagerTemplateAddress = "";
+        // ExternalValueTemplateAddress = "";
         //Default Template
-        DefaultGasSourceAddress = "";
+        // DefaultGasSourceAddress = "";
         DefaultMtFeeRateAddress = "";
         DefaultPermissionAddress = "";
 
         DvmTemplateAddress = "";
-        DvmAdminTemplateAddress = "";
         DppTemplateAddress = "";
         DppAdminTemplateAddress = "";
         CpTemplateAddress = "";
@@ -190,35 +184,37 @@ module.exports = async (deployer, network, accounts) => {
             await deployer.deploy(CloneFactory);
             CloneFactoryAddress = CloneFactory.address;
             logger.log("CloneFactoryAddress: ", CloneFactoryAddress);
+
         }
-        if (FeeRateModelTemplateAddress == "") {
-            await deployer.deploy(FeeRateModelTemplate);
-            FeeRateModelTemplateAddress = FeeRateModelTemplate.address;
-            logger.log("FeeRateModelTemplateAddress: ", FeeRateModelTemplateAddress);
-        }
-        if (ConstFeeRateModelTemplateAddress == "") {
-            await deployer.deploy(ConstFeeRateModelTemplate);
-            ConstFeeRateModelTemplateAddress = ConstFeeRateModelTemplate.address;
-            logger.log("ConstFeeRateModelTemplateAddress: ", ConstFeeRateModelTemplateAddress);
-        }
-        if (PermissionManagerTemplateAddress == "") {
-            await deployer.deploy(PermissionManagerTemplate);
-            PermissionManagerTemplateAddress = PermissionManagerTemplate.address;
-            logger.log("PermissionManagerTemplateAddress: ", PermissionManagerTemplateAddress);
-        }
-        if (ExternalValueTemplateAddress == "") {
-            await deployer.deploy(ExternalValueTemplate);
-            ExternalValueTemplateAddress = ExternalValueTemplate.address;
-            logger.log("ExternalValueTemplateAddress: ", ExternalValueTemplateAddress);
-        }
-        if (DefaultGasSourceAddress == "") {
-            await deployer.deploy(ExternalValueTemplate);
-            DefaultGasSourceAddress = ExternalValueTemplate.address;
-            logger.log("DefaultGasSourceAddress: ", DefaultGasSourceAddress);
-            const defaultGasSourceInstance = await ExternalValueTemplate.at(DefaultGasSourceAddress);
-            var tx = await defaultGasSourceInstance.init(multiSigAddress, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-            logger.log("Init DefaultGasSource Tx:", tx.tx);
-        }
+
+        // if (FeeRateModelTemplateAddress == "") {
+        //     await deployer.deploy(FeeRateModelTemplate);
+        //     FeeRateModelTemplateAddress = FeeRateModelTemplate.address;
+        //     logger.log("FeeRateModelTemplateAddress: ", FeeRateModelTemplateAddress);
+        // }
+        // if (ConstFeeRateModelTemplateAddress == "") {
+        //     await deployer.deploy(ConstFeeRateModelTemplate);
+        //     ConstFeeRateModelTemplateAddress = ConstFeeRateModelTemplate.address;
+        //     logger.log("ConstFeeRateModelTemplateAddress: ", ConstFeeRateModelTemplateAddress);
+        // }
+        // if (PermissionManagerTemplateAddress == "") {
+        //     await deployer.deploy(PermissionManagerTemplate);
+        //     PermissionManagerTemplateAddress = PermissionManagerTemplate.address;
+        //     logger.log("PermissionManagerTemplateAddress: ", PermissionManagerTemplateAddress);
+        // }
+        // if (ExternalValueTemplateAddress == "") {
+        //     await deployer.deploy(ExternalValueTemplate);
+        //     ExternalValueTemplateAddress = ExternalValueTemplate.address;
+        //     logger.log("ExternalValueTemplateAddress: ", ExternalValueTemplateAddress);
+        // }
+        // if (DefaultGasSourceAddress == "") {
+        //     await deployer.deploy(ExternalValueTemplate);
+        //     DefaultGasSourceAddress = ExternalValueTemplate.address;
+        //     logger.log("DefaultGasSourceAddress: ", DefaultGasSourceAddress);
+        //     const defaultGasSourceInstance = await ExternalValueTemplate.at(DefaultGasSourceAddress);
+        //     var tx = await defaultGasSourceInstance.init(multiSigAddress, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+        //     logger.log("Init DefaultGasSource Tx:", tx.tx);
+        // }
 
         if (DefaultMtFeeRateAddress == "") {
             await deployer.deploy(ConstFeeRateModelTemplate);
@@ -242,11 +238,6 @@ module.exports = async (deployer, network, accounts) => {
             await deployer.deploy(DvmTemplate);
             DvmTemplateAddress = DvmTemplate.address;
             logger.log("DvmTemplateAddress: ", DvmTemplateAddress);
-        }
-        if (DvmAdminTemplateAddress == "") {
-            await deployer.deploy(DvmAdminTemplate);
-            DvmAdminTemplateAddress = DvmAdminTemplate.address;
-            logger.log("DvmAdminTemplateAddress: ", DvmAdminTemplateAddress);
         }
         if (DppTemplateAddress == "") {
             await deployer.deploy(DppTemplate);
@@ -277,13 +268,8 @@ module.exports = async (deployer, network, accounts) => {
                 DvmFactory,
                 CloneFactoryAddress,
                 DvmTemplateAddress,
-                DvmAdminTemplateAddress,
-                FeeRateModelTemplateAddress,
-                PermissionManagerTemplateAddress,
-                DefaultGasSourceAddress,
                 defaultMaintainer,
-                DefaultMtFeeRateAddress,
-                DefaultPermissionAddress
+                DefaultMtFeeRateAddress
             );
             DvmFactoryAddress = DvmFactory.address;
             logger.log("DvmFactoryAddress: ", DvmFactoryAddress);
@@ -298,10 +284,8 @@ module.exports = async (deployer, network, accounts) => {
                 CloneFactoryAddress,
                 DppTemplateAddress,
                 DppAdminTemplateAddress,
-                FeeRateModelTemplateAddress,
-                PermissionManagerTemplateAddress,
-                ExternalValueTemplateAddress,
-                DefaultGasSourceAddress,
+                defaultMaintainer,
+                DefaultMtFeeRateAddress,
                 DODOApproveAddress
             );
             DppFactoryAddress = DppFactory.address;
@@ -317,11 +301,9 @@ module.exports = async (deployer, network, accounts) => {
                 CloneFactoryAddress,
                 CpTemplateAddress,
                 DvmFactoryAddress,
-                FeeRateModelTemplateAddress,
                 defaultMaintainer,
                 DefaultMtFeeRateAddress,
-                DefaultPermissionAddress,
-                DefaultGasSourceAddress
+                DefaultPermissionAddress
             );
             CpFactoryAddress = CpFactory.address;
             logger.log("CpFactoryAddress: ", CpFactoryAddress);

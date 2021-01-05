@@ -171,7 +171,6 @@ module.exports = async (deployer, network, accounts) => {
                 baseInAmount,
                 0,
                 POOL_PARAM[i].lpFeeRate,
-                POOL_PARAM[i].mtFeeRate,
                 POOL_PARAM[i].i,
                 POOL_PARAM[i].k,
                 deadline
@@ -187,7 +186,6 @@ module.exports = async (deployer, network, accounts) => {
                 baseInAmount,
                 quoteInAmount,
                 POOL_PARAM[i].lpFeeRate,
-                POOL_PARAM[i].mtFeeRate,
                 POOL_PARAM[i].i,
                 POOL_PARAM[i].k,
                 deadline
