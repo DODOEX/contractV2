@@ -52,6 +52,7 @@ contract DODOIncentive is InitializableOwnable {
         }else {
             require(block.number <= _startBlock);
             startBlock = _startBlock;
+            lastRewardBlock = startBlock;
         }
         _update();
         emit SetSwitch(startBlock == 0 ? false: true);
