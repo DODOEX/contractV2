@@ -32,14 +32,14 @@ describe("Funding", () => {
     config = {
       totalBase: decimalStr("10000"),
       poolQuoteCap: decimalStr("50000"),
-      k: decimalStr("0.5"),
+      k: decimalStr("0"),
       i: decimalStr("10"),
       lpFeeRate: decimalStr("0.002"),
       bidDuration: new BigNumber(86400),
       calmDuration: new BigNumber(86400),
       freezeDuration: new BigNumber(86400),
       vestingDuration: new BigNumber(86400),
-      cliffRate: decimalStr("0.1"),
+      cliffRate: decimalStr("1"),
     }
     ctx = new CPContext();
     await ctx.init(config);
@@ -69,14 +69,14 @@ describe("Funding", () => {
       var poolAddress = await ctx.CP.methods._POOL_().call()
       var pool = getContractWithAddress(DVM_NAME, poolAddress)
 
-      assert.equal(await pool.methods.getMidPrice().call(), "10050199494025273134")
-      assert.equal(await ctx.CP.methods._AVG_SETTLED_PRICE_().call(), "10050199494025273136")
+      assert.equal(await pool.methods.getMidPrice().call(), "9999999999999999987") //todo 验证这个价格
+      assert.equal(await ctx.CP.methods._AVG_SETTLED_PRICE_().call(), "10000000000000000000")
 
       assert.equal(await ctx.CP.methods._UNUSED_QUOTE_().call(), "0")
-      assert.equal(await ctx.CP.methods._UNUSED_BASE_().call(), "99401011949453729399")
+      assert.equal(await ctx.CP.methods._UNUSED_BASE_().call(), "99900000000000000000")
 
-      assert.equal(await ctx.BASE.methods.balanceOf(poolAddress).call(), "9900598988050546270601")
-      assert.equal(await ctx.BASE.methods.balanceOf(ctx.CP.options.address).call(), "99401011949453729399")
+      assert.equal(await ctx.BASE.methods.balanceOf(poolAddress).call(), "9900100000000000000000")
+      assert.equal(await ctx.BASE.methods.balanceOf(ctx.CP.options.address).call(), "99900000000000000000")
 
       assert.equal(await ctx.QUOTE.methods.balanceOf(poolAddress).call(), decimalStr("999"))
       assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.CP.options.address).call(), "0")
@@ -94,15 +94,15 @@ describe("Funding", () => {
       var poolAddress = await ctx.CP.methods._POOL_().call()
       var pool = getContractWithAddress(DVM_NAME, poolAddress)
 
-      assert.equal(await pool.methods.getMidPrice().call(), "13090169943749474228")
-      assert.equal(await ctx.CP.methods._AVG_SETTLED_PRICE_().call(), "13090169943749474242")
+      assert.equal(await pool.methods.getMidPrice().call(), "10000000003162277660")
+      assert.equal(await ctx.CP.methods._AVG_SETTLED_PRICE_().call(), "10000000000000000000")
 
       assert.equal(await ctx.CP.methods._UNUSED_QUOTE_().call(), decimalStr("49900"))
-      assert.equal(await ctx.CP.methods._UNUSED_BASE_().call(), "3819660112501051517955")
+      assert.equal(await ctx.CP.methods._UNUSED_BASE_().call(), "5000000000000000000000")
 
       assert.equal(await ctx.BASE.methods.balanceOf(ctx.Deployer).call(), "0")
-      assert.equal(await ctx.BASE.methods.balanceOf(poolAddress).call(), "6180339887498948482045")
-      assert.equal(await ctx.BASE.methods.balanceOf(ctx.CP.options.address).call(), "3819660112501051517955")
+      assert.equal(await ctx.BASE.methods.balanceOf(poolAddress).call(), "5000000000000000000000")
+      assert.equal(await ctx.BASE.methods.balanceOf(ctx.CP.options.address).call(), "5000000000000000000000")
 
       assert.equal(await ctx.QUOTE.methods.balanceOf(poolAddress).call(), decimalStr("50000"))
       assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.CP.options.address).call(), decimalStr("49900"))

@@ -19,6 +19,9 @@ import {PMMPricing} from "../../lib/PMMPricing.sol";
 
 contract CPFunding is CPStorage {
     using SafeERC20 for IERC20;
+    // ============ Events ============
+    event Bid(address to, uint256 amount, uint256 fee);
+    event Cancel(address to,uint256 amount);
 
     // ============ BID & CALM PHASE ============
 
@@ -33,6 +36,7 @@ contract CPFunding is CPStorage {
         _transferQuoteOut(_MAINTAINER_, mtFee);
         _mintShares(to, input.sub(mtFee));
         _sync();
+        emit Bid(to, input, mtFee);
     }
 
     function cancel(address assetTo, uint256 amount) external phaseBidOrCalm preventReentrant {
@@ -40,6 +44,7 @@ contract CPFunding is CPStorage {
         _burnShares(msg.sender, amount);
         _transferQuoteOut(assetTo, amount);
         _sync();
+        emit Cancel(assetTo,amount);
     }
 
     function _mintShares(address to, uint256 amount) internal {
@@ -74,8 +79,8 @@ contract CPFunding is CPStorage {
             uint256 _poolI;
 
             uint256 avgPrice = _UNUSED_BASE_ == 0
-                ? _I_
-                : DecimalMath.divCeil(poolQuote, _UNUSED_BASE_);
+            ? _I_
+            : DecimalMath.divCeil(poolQuote, _UNUSED_BASE_);
             uint256 baseDepth = DecimalMath.mulFloor(avgPrice, poolBase);
 
             if (poolQuote == 0) {
@@ -140,7 +145,7 @@ contract CPFunding is CPStorage {
         if (poolQuote > _POOL_QUOTE_CAP_) {
             poolQuote = _POOL_QUOTE_CAP_;
         }
-        (uint256 soldBase, ) = PMMPricing.sellQuoteToken(_getPMMState(), poolQuote);
+        (uint256 soldBase,) = PMMPricing.sellQuoteToken(_getPMMState(), poolQuote);
         poolBase = _TOTAL_BASE_.sub(soldBase);
     }
 
