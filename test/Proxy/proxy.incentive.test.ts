@@ -104,19 +104,11 @@ describe("DODOProxyV2.0", () => {
 
     describe("DODOIncentive", () => {
         
-        it("incentive-switch", async () => {
+        it("incentive-switch with trade", async () => {
 
         });
 
-        it("incentive-changeBoost", async () => {
-
-        });
-
-        it("incentive-changeDefaultRate", async () => {
-
-        });
-
-        it("incentive-emptyReward", async () => {
+        it("incentive-changeBoost with trade", async () => {
 
         });
 
