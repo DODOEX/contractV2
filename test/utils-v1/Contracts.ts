@@ -28,11 +28,13 @@ const DODOMineReader = require(`${jsonPath}DODOMineReader.json`)
 const LockedTokenVault = require(`${jsonPath}LockedTokenVault.json`)
 /*v1.5 */
 const SmartSwap = require(`${jsonPath2}DODOV1Proxy01.json`)
+const SmartSwap02 = require(`${jsonPath2}DODOV1Proxy02.json`)
 const SmartApprove = require(`${jsonPath2}DODOApprove.json`)
 const DODOSellHelper = require(`${jsonPath2}DODOSellHelper.json`)
 const WETH = require(`${jsonPath2}WETH9.json`)
 const CHI = require(`${jsonPath2}ChiToken.json`)
 const DODOSwapCalcHelper = require(`${jsonPath2}DODOSwapCalcHelper.json`)
+const DODOIncentive = require(`${jsonPath2}DODOIncentive.json`)
 /******/
 
 import { getDefaultWeb3 } from './EVM';
@@ -55,10 +57,12 @@ export const DODO_MINE_NAME = "DODOMine"
 export const DODO_MINE_READER_NAME = "DODOMineReader"
 /*v1.5 */
 export const SMART_SWAP = "DODOV1Proxy01"
+export const SMART_SWAP_02 = "DODOV1Proxy02"
 export const SMART_APPROVE = "DODOApprove"
 export const DODO_SELL_HELPER = "DODOSellHelper"
 export const CHI_TOKEN = "ChiToken"
 export const DODO_SWAP_CALC_HELPER = "DODOSwapCalcHelper"
+export const DODO_INCENTIVE = "DODOIncentive"
 /******/
 
 var contractMap: { [name: string]: any } = {}
@@ -78,10 +82,12 @@ contractMap[DODO_MINE_NAME] = DODOMine
 contractMap[DODO_MINE_READER_NAME] = DODOMineReader
 /*v1.5 */
 contractMap[SMART_SWAP] = SmartSwap
+contractMap[SMART_SWAP_02] = SmartSwap02
 contractMap[SMART_APPROVE] = SmartApprove
 contractMap[DODO_SELL_HELPER] = DODOSellHelper
 contractMap[CHI_TOKEN] = CHI
 contractMap[DODO_SWAP_CALC_HELPER] = DODOSwapCalcHelper
+contractMap[DODO_INCENTIVE] = DODOIncentive
 /******/
 
 interface ContractJson {

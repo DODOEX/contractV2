@@ -26,9 +26,9 @@ then
 	truffle test ./test/Proxy/proxy.cp.test.ts
 fi
 
-if [ "$1"x = "proxy-incentive"x ]
+if [ "$1"x = "route-incentive"x ]
 then
-	truffle test ./test/Proxy/proxy.incentive.test.ts
+	truffle test ./test/Route/Incentive.test.ts
 fi
 
 if [ "$1"x = "route"x ]
