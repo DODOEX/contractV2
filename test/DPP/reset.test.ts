@@ -29,7 +29,7 @@ async function init(ctx: DPPContext): Promise<void> {
   var kValue = decimalStr("0.2")
   await ctx.transferBaseToDPP(lp, baseAmount)
   await ctx.transferQuoteToDPP(lp, quoteAmount)
-  await ctx.DPP.methods.reset(lp, lpFeeRate, mtFeeRate, iValue, kValue, "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer))
+  await ctx.DPP.methods.reset(lp, lpFeeRate, iValue, kValue, "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer))
 }
 
 describe("DPP Reset", () => {
@@ -54,13 +54,11 @@ describe("DPP Reset", () => {
     it("reset with asset input", async () => {
 
       var lpFeeRate = decimalStr("0.01")
-      var mtFeeRate = decimalStr("0.02")
       var iValue = decimalStr("300")
       var kValue = decimalStr("0.3")
       await ctx.transferBaseToDPP(lp, decimalStr("10"))
       await ctx.transferQuoteToDPP(lp, decimalStr("1000"))
-      await ctx.DPP.methods.reset(lp, lpFeeRate, mtFeeRate, iValue, kValue, "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer))
-
+      await ctx.DPP.methods.reset(lp, lpFeeRate, iValue, kValue, "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer))
       var state = await ctx.DPP.methods.getPMMState().call()
       assert.equal(state.B, decimalStr("20"))
       assert.equal(state.Q, decimalStr("2000"))
@@ -71,15 +69,13 @@ describe("DPP Reset", () => {
 
       var feeRate = await ctx.DPP.methods.getUserFeeRate(lp).call()
       assert.equal(feeRate[0], lpFeeRate)
-      assert.equal(feeRate[1], mtFeeRate)
     });
 
     it("reset with asset output", async () => {
       var lpFeeRate = decimalStr("0.01")
-      var mtFeeRate = decimalStr("0.02")
       var iValue = decimalStr("300")
       var kValue = decimalStr("0.3")
-      await ctx.DPP.methods.reset(lp, lpFeeRate, mtFeeRate, iValue, kValue, decimalStr("1"), decimalStr("100"), "0", "0").send(ctx.sendParam(ctx.Deployer))
+      await ctx.DPP.methods.reset(lp, lpFeeRate, iValue, kValue, decimalStr("1"), decimalStr("100"), "0", "0").send(ctx.sendParam(ctx.Deployer))
 
       var state = await ctx.DPP.methods.getPMMState().call()
       assert.equal(state.B, decimalStr("9"))
@@ -91,15 +87,13 @@ describe("DPP Reset", () => {
 
       var feeRate = await ctx.DPP.methods.getUserFeeRate(lp).call()
       assert.equal(feeRate[0], lpFeeRate)
-      assert.equal(feeRate[1], mtFeeRate)
     })
 
     it("reset without asset input/output", async () => {
       var lpFeeRate = decimalStr("0.01")
-      var mtFeeRate = decimalStr("0.02")
       var iValue = decimalStr("300")
       var kValue = decimalStr("0.3")
-      await ctx.DPP.methods.reset(lp, lpFeeRate, mtFeeRate, iValue, kValue, "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer))
+      await ctx.DPP.methods.reset(lp, lpFeeRate, iValue, kValue, "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer))
 
       var state = await ctx.DPP.methods.getPMMState().call()
       assert.equal(state.B, decimalStr("10"))
@@ -111,7 +105,6 @@ describe("DPP Reset", () => {
 
       var feeRate = await ctx.DPP.methods.getUserFeeRate(lp).call()
       assert.equal(feeRate[0], lpFeeRate)
-      assert.equal(feeRate[1], mtFeeRate)
     })
 
   });
@@ -144,13 +137,13 @@ describe("DPP Reset", () => {
 
     it("i or k can not out of range", async () => {
       await truffleAssert.reverts(
-        ctx.DPP.methods.reset(lp, "0", "0", "0", decimalStr("1"), "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer)), "I_OUT_OF_RANGE"
+        ctx.DPP.methods.reset(lp, "0", "0", decimalStr("1"), "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer)), "I_OUT_OF_RANGE"
       )
       await truffleAssert.reverts(
-        ctx.DPP.methods.reset(lp, "0", "0", "10000000000000000000000000000000000000", decimalStr("1"), "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer)), "I_OUT_OF_RANGE"
+        ctx.DPP.methods.reset(lp, "0", "10000000000000000000000000000000000000", decimalStr("1"), "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer)), "I_OUT_OF_RANGE"
       )
       await truffleAssert.reverts(
-        ctx.DPP.methods.reset(lp, "0", "0", decimalStr("1"), decimalStr("2"), "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer)), "K_OUT_OF_RANGE"
+        ctx.DPP.methods.reset(lp, "0", decimalStr("1"), decimalStr("2"), "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer)), "K_OUT_OF_RANGE"
       )
     })
 
@@ -161,12 +154,12 @@ describe("DPP Reset", () => {
       await ctx.BASE.methods.mint(ctx.DPP.options.address, decimalStr("1")).send(ctx.sendParam(ctx.Deployer))
       await ctx.DPP.methods.sellBase(ctx.Deployer).send(ctx.sendParam(ctx.Deployer))
 
-      await truffleAssert.reverts(ctx.DPP.methods.reset(lp, "0", "0", decimalStr("1"), decimalStr("2"), "0", "0", baseReserve, quoteReserve).send(ctx.sendParam(ctx.Deployer)), "RESERVE_AMOUNT_IS_NOT_ENOUGH")
+      await truffleAssert.reverts(ctx.DPP.methods.reset(lp, "0", decimalStr("1"), decimalStr("2"), "0", "0", baseReserve, quoteReserve).send(ctx.sendParam(ctx.Deployer)), "RESERVE_AMOUNT_IS_NOT_ENOUGH")
 
       await ctx.QUOTE.methods.mint(ctx.DPP.options.address, decimalStr("200")).send(ctx.sendParam(ctx.Deployer))
       await ctx.DPP.methods.sellQuote(ctx.Deployer).send(ctx.sendParam(ctx.Deployer))
 
-      await truffleAssert.reverts(ctx.DPP.methods.reset(lp, "0", "0", decimalStr("1"), decimalStr("2"), "0", "0", baseReserve, quoteReserve).send(ctx.sendParam(ctx.Deployer)), "RESERVE_AMOUNT_IS_NOT_ENOUGH")
+      await truffleAssert.reverts(ctx.DPP.methods.reset(lp, "0", decimalStr("1"), decimalStr("2"), "0", "0", baseReserve, quoteReserve).send(ctx.sendParam(ctx.Deployer)), "RESERVE_AMOUNT_IS_NOT_ENOUGH")
     })
   })
 

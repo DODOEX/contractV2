@@ -89,7 +89,7 @@ export class DPPContext {
 
     const allAccounts = await this.Web3.eth.getAccounts();
     this.Deployer = allAccounts[0];
-    this.Maintainer = allAccounts[1];
+    this.Maintainer = allAccounts[2];
     this.SpareAccounts = allAccounts.slice(2, 10);
 
     await gasPriceSource.methods.init(this.Deployer, MAX_UINT256).send(this.sendParam(this.Deployer))
@@ -104,12 +104,10 @@ export class DPPContext {
       this.Maintainer,
       this.BASE.options.address,
       this.QUOTE.options.address,
-      lpFeeRateModel.options.address,
+      config.lpFeeRate,
       mtFeeRateModel.options.address,
-      kSource.options.address,
-      iSource.options.address,
-      gasPriceSource.options.address,
-      permissionManager.options.address,
+      config.k,
+      config.i,
     ).send(this.sendParam(this.Deployer))
 
     console.log(log.blueText("[Init DPP context]"));

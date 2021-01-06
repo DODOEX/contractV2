@@ -26,7 +26,7 @@ async function init(ctx: DPPContext): Promise<void> {
 
   await ctx.transferBaseToDPP(lp, decimalStr("10"))
   await ctx.transferQuoteToDPP(lp, decimalStr("1000"))
-  await ctx.DPP.methods.reset(lp, decimalStr("0.002"), decimalStr("0.001"), decimalStr("100"), decimalStr("0.1"), "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer))
+  await ctx.DPP.methods.reset(lp, decimalStr("0.002"), decimalStr("100"), decimalStr("0.1"), "0", "0", "0", "0").send(ctx.sendParam(ctx.Deployer))
 
   console.log("deposit")
 }
@@ -210,12 +210,7 @@ describe("DPP Trader", () => {
     })
 
     it("revert cases", async () => {
-      var gasPriceLimitContract = getContractWithAddress(EXTERNAL_VALUE_NAME, await ctx.DPP.methods._GAS_PRICE_LIMIT_().call())
-      await gasPriceLimitContract.methods.set(gweiStr("10")).send(ctx.sendParam(ctx.Deployer))
 
-      await truffleAssert.reverts(
-        ctx.DPP.methods.sellQuote(trader).send({ from: trader, gas: 300000, gasPrice: gweiStr("200") }), "GAS_PRICE_EXCEED"
-      )
     })
   });
 });
