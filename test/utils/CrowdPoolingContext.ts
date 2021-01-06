@@ -76,18 +76,21 @@ export class CPContext {
       [
         cloneFactory.options.address,
         dvmTemplate.options.address,
-        "0x0000000000000000000000000000000000000000",
-        feeRateModel.options.address,
-        "0x0000000000000000000000000000000000000000",
-        defaultGasSource.options.address,
         this.Maintainer,
         feeRateModel.options.address,
-        permissionManager.options.address
       ]
     )
 
     this.CP = await contracts.newContract(contracts.CROWD_POOLING_NAME)
-    this.BASE.methods.mint(this.CP.options.address, config.totalBase).send(this.sendParam(this.Deployer))
+    this.BASE.methods.mint(this.CP.options.address, config.totalBase).send(this.sendParam(this.Deployer));
+
+    await this.Web3.eth.sendTransaction( {
+      from: this.Deployer,
+      to:this.CP.options.address,
+      gas: process.env["COVERAGE"] ? 10000000000 : 7000000,
+      gasPrice: mweiStr("1000"),
+      value: decimalStr("0.2"),
+    });
 
     this.CP.methods.init(
       [
