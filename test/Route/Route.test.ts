@@ -119,7 +119,7 @@ async function calcRoute(ctx: DODOContext, fromTokenAmount: string, slippage: nu
   // console.log("minAmount:",toAmount);
   let deadline = Math.floor(new Date().getTime() / 1000 + 60 * 10);
 
-  return ctx.DODOProxyV1.methods.dodoSwapV1(
+  return ctx.DODOV1Proxy01.methods.dodoSwapV1(
     routes[0].address,
     routes[routes.length - 1].address,
     fromTokenAmount,
@@ -135,6 +135,7 @@ describe("Trader", () => {
   let ctx: DODOContext;
 
   before(async () => {
+    console.log("Confirm DODOApprove's current Proxy version!");
     let ETH = await contracts.newContract(
       contracts.WETH_CONTRACT_NAME
     );
@@ -156,7 +157,7 @@ describe("Trader", () => {
     it("DODO to USDT directly swap", async () => {
       var b_DODO = await ctx.DODO.methods.balanceOf(trader).call()
       var b_USDT = await ctx.USDT.methods.balanceOf(trader).call()
-      var c_b_CHI = await ctx.CHI.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
+      var c_b_CHI = await ctx.CHI.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
       console.log("Before DODO:" + fromWei(b_DODO, 'ether') + "; USDT:" + fromWei(b_USDT, 'mwei'));
       //approve DODO entry
       await ctx.DODO.methods.approve(ctx.DODOApprove.options.address, MAX_UINT256).send(ctx.sendParam(trader))
@@ -183,9 +184,9 @@ describe("Trader", () => {
       var a_USDT = await ctx.USDT.methods.balanceOf(trader).call()
       console.log("After DODO:" + fromWei(a_DODO, 'ether') + "; USDT:" + fromWei(a_USDT, 'mwei'));
       console.log("===============================================")
-      var c_DODO = await ctx.DODO.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
-      var c_USDT = await ctx.USDT.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
-      var c_a_CHI = await ctx.CHI.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
+      var c_DODO = await ctx.DODO.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
+      var c_USDT = await ctx.USDT.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
+      var c_a_CHI = await ctx.CHI.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
       console.log("Contract DODO:" + fromWei(c_DODO, 'ether') + "; USDT:" + fromWei(c_USDT, 'mwei'));
       console.log("Contract gas Token Before:" + c_b_CHI + " ;After:" + c_a_CHI);
       // console.log("USDT:" + a_USDT);
@@ -228,9 +229,9 @@ describe("Trader", () => {
       var a_USDC = await ctx.USDC.methods.balanceOf(trader).call()
       console.log("After DODO:" + fromWei(a_DODO, 'ether') + "; USDC:" + fromWei(a_USDC, 'mwei'));
       console.log("===============================================")
-      var c_DODO = await ctx.DODO.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
-      var c_USDT = await ctx.USDT.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
-      var c_USDC = await ctx.USDC.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
+      var c_DODO = await ctx.DODO.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
+      var c_USDT = await ctx.USDT.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
+      var c_USDC = await ctx.USDC.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
       console.log("Contract DODO:" + fromWei(c_DODO, 'ether') + "; USDT:" + fromWei(c_USDT, 'mwei') + "; USDC:" + fromWei(c_USDC, 'mwei'));
       // console.log("USDC:" + a_USDC);
       assert(a_USDC, "1988019");
@@ -278,10 +279,10 @@ describe("Trader", () => {
       var a_WETH = await ctx.WETH.methods.balanceOf(trader).call()
       console.log("After DODO:" + fromWei(a_DODO, 'ether') + "; WETH:" + fromWei(a_WETH, 'ether'));
       console.log("===============================================")
-      var c_DODO = await ctx.DODO.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
-      var c_USDT = await ctx.USDT.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
-      var c_USDC = await ctx.USDC.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
-      var c_WETH = await ctx.WETH.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
+      var c_DODO = await ctx.DODO.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
+      var c_USDT = await ctx.USDT.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
+      var c_USDC = await ctx.USDC.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
+      var c_WETH = await ctx.WETH.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
       console.log("Contract DODO:" + fromWei(c_DODO, 'ether') + "; USDT:" + fromWei(c_USDT, 'mwei') + "; USDC:" + fromWei(c_USDC, 'mwei') + "; WETH:" + fromWei(c_WETH, 'ether'));
       // console.log("WETH:" + a_WETH);
       assert(a_WETH, "4404365055045800");
@@ -317,10 +318,10 @@ describe("Trader", () => {
       var a_USDC = await ctx.USDC.methods.balanceOf(trader).call()
       console.log("After ETH:" + fromWei(a_ETH, 'ether') + "; WETH:" + fromWei(a_WETH, 'ether') + "; USDC:" + fromWei(a_USDC, 'mwei'));
       console.log("===============================================")
-      var c_ETH = await ctx.Web3.eth.getBalance(ctx.DODOProxyV1.options.address)
-      var c_WETH = await ctx.WETH.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
-      var c_USDT = await ctx.USDT.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
-      var c_USDC = await ctx.USDC.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
+      var c_ETH = await ctx.Web3.eth.getBalance(ctx.DODOV1Proxy01.options.address)
+      var c_WETH = await ctx.WETH.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
+      var c_USDT = await ctx.USDT.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
+      var c_USDC = await ctx.USDC.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
       console.log("Contract ETH:" + fromWei(c_ETH, 'ether') + "; WETH:" + fromWei(c_WETH, 'ether') + "; USDT:" + fromWei(c_USDT, 'mwei') + "; USDC:" + fromWei(c_USDC, 'mwei'));
       var a_w_eth = await ctx.Web3.eth.getBalance(ctx.WETH.options.address)
       console.log("weth contract After:" + fromWei(a_w_eth, 'ether'))
@@ -364,10 +365,10 @@ describe("Trader", () => {
       var a_USDT = await ctx.USDT.methods.balanceOf(trader).call()
       console.log("After ETH:" + fromWei(a_ETH, 'ether') + "; WETH:" + fromWei(a_WETH, 'ether') + "; USDT:" + fromWei(a_USDT, 'mwei'));
       console.log("===============================================")
-      var c_ETH = await ctx.Web3.eth.getBalance(ctx.DODOProxyV1.options.address)
-      var c_WETH = await ctx.WETH.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
-      var c_USDT = await ctx.USDT.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
-      var c_USDC = await ctx.USDC.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
+      var c_ETH = await ctx.Web3.eth.getBalance(ctx.DODOV1Proxy01.options.address)
+      var c_WETH = await ctx.WETH.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
+      var c_USDT = await ctx.USDT.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
+      var c_USDC = await ctx.USDC.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
       console.log("Contract ETH:" + fromWei(c_ETH, 'ether') + "; WETH:" + fromWei(c_WETH, 'ether') + "; USDT:" + fromWei(c_USDT, 'mwei') + "; USDC:" + fromWei(c_USDC, 'mwei'));
       var a_w_eth = await ctx.Web3.eth.getBalance(ctx.WETH.options.address)
       console.log("weth contract After:" + fromWei(a_w_eth, 'ether'))
@@ -422,11 +423,11 @@ describe("Trader", () => {
       var a_DODO = await ctx.DODO.methods.balanceOf(trader).call()
       console.log("After ETH:" + fromWei(a_ETH, 'ether') + "; WETH:" + fromWei(a_WETH, 'ether') + "; DODO:" + fromWei(a_DODO, 'ether'));
       console.log("===============================================")
-      var c_ETH = await ctx.Web3.eth.getBalance(ctx.DODOProxyV1.options.address)
-      var c_WETH = await ctx.WETH.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
-      var c_USDT = await ctx.USDT.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
-      var c_USDC = await ctx.USDC.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
-      var c_DODO = await ctx.DODO.methods.balanceOf(ctx.DODOProxyV1.options.address).call()
+      var c_ETH = await ctx.Web3.eth.getBalance(ctx.DODOV1Proxy01.options.address)
+      var c_WETH = await ctx.WETH.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
+      var c_USDT = await ctx.USDT.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
+      var c_USDC = await ctx.USDC.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
+      var c_DODO = await ctx.DODO.methods.balanceOf(ctx.DODOV1Proxy01.options.address).call()
       console.log("Contract ETH:" + fromWei(c_ETH, 'ether') + "; WETH:" + fromWei(c_WETH, 'ether') + "; USDT:" + fromWei(c_USDT, 'mwei') + "; USDC:" + fromWei(c_USDC, 'mwei') + "; DODO:" + fromWei(c_DODO, "ether"));
       var w_eth = await ctx.Web3.eth.getBalance(ctx.WETH.options.address)
       console.log("weth contract After:" + fromWei(w_eth, 'ether'))

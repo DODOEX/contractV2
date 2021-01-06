@@ -12,6 +12,9 @@ import {SafeERC20} from "../lib/SafeERC20.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {IERC20} from "../intf/IERC20.sol";
 
+interface IDODOIncentive {
+    function triggerIncentive(address fromToken,address toToken, address assetTo) external;
+}
 
 contract DODOIncentive is InitializableOwnable {
     using SafeMath for uint256;
@@ -20,18 +23,18 @@ contract DODOIncentive is InitializableOwnable {
     // ============ Storage ============
     address public immutable _DODO_TOKEN_;
     address public _DODO_PROXY_;
-    uint256 public dodoPerBlock;
-    uint256 public defaultRate;
-    uint256 public startBlock; 
+    uint256 public dodoPerBlock = 10 * 10**18;
+    uint256 public defaultRate = 10;
     mapping(address => uint256) public boosts;
+    uint256 public startBlock; 
+
     
     uint32 public lastRewardBlock;
     uint112 public totalReward;
     uint112 public totalDistribution;
 
-    constructor(address _dodoToken, address _dodoProxy) public {
+    constructor(address _dodoToken) public {
         _DODO_TOKEN_ = _dodoToken;
-        _DODO_PROXY_ = _dodoProxy;
     }
 
     // ============ Events ============
@@ -41,14 +44,14 @@ contract DODOIncentive is InitializableOwnable {
     event SetNewProxy(address dodoProxy);
     event SetPerReward(uint256 dodoPerBlock);
     event SetDefaultRate(uint256 defaultRate);
-    event Incentive(address user,uint256 reward, address fromToken, address toToken);
+    event Incentive(address user,uint256 reward);
 
     // ============ Ownable ============
 
     function switchIncentive(uint256 _startBlock) public onlyOwner {
         if(startBlock != 0) {
             require(block.number >= startBlock);
-            _update();
+            _update(0,totalDistribution);
             startBlock = 0;
         }else {
             require(block.number <= _startBlock && _startBlock < uint32(-1));
@@ -66,7 +69,7 @@ contract DODOIncentive is InitializableOwnable {
     }
 
     function changePerReward(uint256 _dodoPerBlock) public onlyOwner {
-        _update();
+        _update(0,totalDistribution);
         dodoPerBlock = _dodoPerBlock;
         emit SetPerReward(dodoPerBlock);
     }
@@ -90,28 +93,36 @@ contract DODOIncentive is InitializableOwnable {
     // ============ Incentive  function============
     function triggerIncentive(address fromToken,address toToken, address assetTo) external {
         require(msg.sender == _DODO_PROXY_, "DODOIncentive:Access restricted");
-        if(startBlock == 0 || block.number < startBlock) return;
+        uint256 _startBlock = startBlock;
+        if(_startBlock == 0 || block.number < _startBlock) return;
 
         uint256 curTotalDistribution = totalDistribution;
         uint256 fromRate = boosts[fromToken];
         uint256 toRate = boosts[toToken];
-        uint256 rate = (fromRate >= toRate ? fromRate : toRate).add(defaultRate);
-        _update();
-        uint256 reward = uint256(totalReward).sub(curTotalDistribution).mul(rate).div(1000);
+        // uint256 rate = (fromRate >= toRate ? fromRate : toRate).add(defaultRate);
+        uint256 rate = (fromRate >= toRate ? fromRate : toRate) + defaultRate;
 
-        uint256 _totalDistribution = curTotalDistribution.add(reward);
-        require(_totalDistribution < uint112(-1), "OVERFLOW");
-        totalDistribution = uint112(_totalDistribution);
+        // uint256 _totalReward = uint256(totalReward).add(block.number.sub(uint256(lastRewardBlock)).mul(dodoPerBlock));
+        uint256 _totalReward = totalReward + (block.number - lastRewardBlock) * dodoPerBlock;
+        // uint256 reward = _totalReward.sub(curTotalDistribution).mul(rate).div(1000);
+        uint256 reward = (_totalReward - curTotalDistribution) * rate / 1000;
+        // uint256 _totalDistribution = curTotalDistribution.add(reward);
+        uint256 _totalDistribution = curTotalDistribution + reward;
 
+        _update(_totalReward,_totalDistribution);
         IERC20(_DODO_TOKEN_).transfer(assetTo,reward);
-        emit Incentive(assetTo,reward,fromToken,toToken);
+
+        emit Incentive(assetTo,reward);
     }
 
         
-    function _update() internal {
-        uint256 _totalReward = uint256(totalReward).add(block.number.sub(uint256(lastRewardBlock)).mul(dodoPerBlock));
-        require(_totalReward < uint112(-1) && block.number < uint32(-1), "OVERFLOW");
-        totalReward = uint112(_totalReward);
+    function _update(uint256 _totalReward, uint256 _totalDistribution) internal {
+        if(_totalReward == 0) 
+            // _totalReward = uint256(totalReward).add(block.number.sub(uint256(lastRewardBlock)).mul(dodoPerBlock));
+            _totalReward = totalReward + (block.number - lastRewardBlock) * dodoPerBlock;
+        require(_totalReward < uint112(-1) && _totalDistribution < uint112(-1) && block.number < uint32(-1), "OVERFLOW");
         lastRewardBlock = uint32(block.number);
+        totalReward = uint112(_totalReward);
+        totalDistribution = uint112(_totalDistribution);
     }
 }
