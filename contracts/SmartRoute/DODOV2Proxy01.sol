@@ -642,7 +642,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
 
 
     function addLiquidityToV1(
-        address to,
+        address assetTo,
         address pair,
         uint256 baseAmount,
         uint256 quoteAmount,
@@ -660,11 +660,11 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         
         if(baseAmount > 0) {
             IERC20(_baseToken).universalApproveMax(pair, baseAmount);
-            baseShares = IDODOV1(pair).depositBaseTo(to, baseAmount);
+            baseShares = IDODOV1(pair).depositBaseTo(assetTo, baseAmount);
         }
         if(quoteAmount > 0) {
             IERC20(_quoteToken).universalApproveMax(pair, quoteAmount);
-            quoteShares = IDODOV1(pair).depositQuoteTo(to, quoteAmount);
+            quoteShares = IDODOV1(pair).depositQuoteTo(assetTo, quoteAmount);
         }
 
         require(baseShares >= baseMinShares && quoteShares >= quoteMinShares,"DODOV2Proxy01: Return DLP is not enough");

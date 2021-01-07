@@ -155,7 +155,7 @@ describe("DODOProxyV2.0", () => {
     //   );
     // });
 
-    it.only("resetDPP", async () => {
+    it("resetDPP", async () => {
       var beforeState = await DPP_DODO_USDT.methods.getPMMState().call();
       assert.equal(beforeState.K, config.k);
       assert.equal(beforeState.B, decimalStr("100000"));
