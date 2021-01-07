@@ -83,14 +83,14 @@ export class DVMContext {
     this.SpareAccounts = allAccounts.slice(2, 10);
 
     await this.DVM.methods.init(
-      this.Deployer,
+      // this.Deployer,
       this.Maintainer,
       this.BASE.options.address,
       this.QUOTE.options.address,
       lpFeeRateModel.options.address,
       mtFeeRateModel.options.address,
-      permissionManager.options.address,
-      gasPriceSource.options.address,
+      // permissionManager.options.address,
+      // gasPriceSource.options.address,
       config.i,
       config.k
     ).send(this.sendParam(this.Deployer))
