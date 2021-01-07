@@ -74,3 +74,11 @@ DODOApprove Address:  0xa128Ba44B2738A558A1fdC06d6303d52D3Cef8c1
 DODOProxyV1 Address:  0x0cA2d4BC266B1ad7a0787409AD7a0331D78Eea90
 Set DODOProxyV1 Owner tx:  0x35c8405b4b4dfbac83971c622f4e086dc0f850ade69da408792eb9a835a683f4
 Set DODOApprove Owner And Init Set Proxy tx:  0xb381ac8a87a834a6ab8cc63064153dd2c65261e7c43e5d1a504bcae11fb42a10
+====================================================
+network type: kovan
+Deploy time: 2021/1/6 下午6:53:44
+Deploy type: Proxy
+DODOApprove Address:  0xE0eE1f72c0Ce4097F204beBD3B7fF508fb26292D
+DODOProxyV1 Address:  0xf63baBc984ff05374dBCF0367Eaa2333663f2262
+Set DODOProxyV1 Owner tx:  0x2d00a39ad1904a34b8baa7d6a69bc634ea2bc2cff0038bec79e922b7d0687e76
+Set DODOApprove Owner And Init Set Proxy tx:  0xf368e47b184b3f0db035fa7a0838eabc46e6f24d98bc44cb0b1b1b8c73e31561

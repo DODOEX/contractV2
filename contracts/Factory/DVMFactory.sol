@@ -26,9 +26,9 @@ contract DVMFactory is InitializableOwnable {
     // ============ Templates ============
 
     address public immutable _CLONE_FACTORY_;
-    address public immutable _DVM_TEMPLATE_;
     address public immutable _DEFAULT_MAINTAINER_;
     address public immutable _DEFAULT_MT_FEE_RATE_MODEL_;
+    address public _DVM_TEMPLATE_;
 
     // ============ Registry ============
 
@@ -87,6 +87,10 @@ contract DVMFactory is InitializableOwnable {
     }
 
     // ============ Admin Operation Functions ============
+
+    function updateDvmTemplate(address _newDVMTemplate) external onlyOwner {
+        _DVM_TEMPLATE_ = _newDVMTemplate;
+    }
 
     function addPoolByAdmin(
         address creator,

@@ -55,7 +55,7 @@ interface IDODOV2Proxy01 is IDODOV1Proxy01 {
 
     function addDVMLiquidity(
         address dvmAddress,
-        address to,
+        address assetTo,
         uint256 baseInAmount,
         uint256 quoteInAmount,
         uint256 baseMinAmount,

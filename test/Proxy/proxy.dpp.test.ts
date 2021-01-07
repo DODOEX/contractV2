@@ -155,11 +155,11 @@ describe("DODOProxyV2.0", () => {
     //   );
     // });
 
-    it("resetDPP", async () => {
+    it.only("resetDPP", async () => {
       var beforeState = await DPP_DODO_USDT.methods.getPMMState().call();
       assert.equal(beforeState.K, config.k);
-      assert.equal(beforeState.B0, decimalStr("100000"));
-      assert.equal(beforeState.Q0, mweiStr("20000"));
+      assert.equal(beforeState.B, decimalStr("100000"));
+      assert.equal(beforeState.Q, mweiStr("20000"));
       await logGas(await ctx.DODOProxyV2.methods.resetDODOPrivatePool(
         dpp_DODO_USDT,
         [config.lpFeeRate, mweiStr("0.2"), decimalStr("0.2")],
@@ -171,8 +171,8 @@ describe("DODOProxyV2.0", () => {
       ), ctx.sendParam(project), "resetDPP");
       var afterState = await DPP_DODO_USDT.methods.getPMMState().call();
       assert.equal(afterState.K, decimalStr("0.2"));
-      assert.equal(afterState.B0, decimalStr("101000"));
-      assert.equal(afterState.Q0, mweiStr("21000"));
+      assert.equal(afterState.B, decimalStr("101000"));
+      assert.equal(afterState.Q, mweiStr("21000"));
     });
 
 

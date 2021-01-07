@@ -20,12 +20,11 @@ contract CrowdPoolingFactory is InitializableOwnable {
     // ============ Templates ============
 
     address public immutable _CLONE_FACTORY_;
-    address public immutable _CP_TEMPLATE_;
     address public immutable _DVM_FACTORY_;
-
     address public immutable _DEFAULT_MAINTAINER_;
     address public immutable _DEFAULT_MT_FEE_RATE_MODEL_;
     address public immutable _DEFAULT_PERMISSION_MANAGER_;
+    address public _CP_TEMPLATE_;
 
     uint256 public _X_ = 50; //default
     uint256 public _Y_ = 0; //default
@@ -145,6 +144,10 @@ contract CrowdPoolingFactory is InitializableOwnable {
     }
 
     // ============ Owner Functions ============
+    function updateCPTemplate(address _newCPTemplate) external onlyOwner {
+        _CP_TEMPLATE_ = _newCPTemplate;
+    }
+
     function setXY(uint256 x,uint256 y) public onlyOwner {
         require(x>0&&x<=100,"CP_FACTORY : INVALID_X");
         _X_=x;

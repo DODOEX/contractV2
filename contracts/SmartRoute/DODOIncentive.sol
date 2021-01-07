@@ -16,6 +16,13 @@ interface IDODOIncentive {
     function triggerIncentive(address fromToken,address toToken, address assetTo) external;
 }
 
+
+/**
+ * @title DODOIncentive
+ * @author DODO Breeder
+ *
+ * @notice Trade Incentive in DODO platform
+ */
 contract DODOIncentive is InitializableOwnable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;

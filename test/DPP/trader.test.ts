@@ -70,7 +70,7 @@ describe("DPP Trader", () => {
     it("first buy and then sell", async () => {
       // buy at R=1
       await ctx.transferQuoteToDPP(trader, decimalStr("100"))
-      await ctx.DPP.methods.sellQuote(trader).send(ctx.sendParam(trader))
+      await logGas(ctx.DPP.methods.sellQuote(trader), ctx.sendParam(trader), "sellQuote - buy at R=1")
       var balances = await ctx.getBalances(trader)
 
       assert.equal(balances.traderBase, "10986174542266106307")
@@ -82,7 +82,7 @@ describe("DPP Trader", () => {
 
       // buy at R>1
       await ctx.transferQuoteToDPP(trader, decimalStr("100"))
-      await ctx.DPP.methods.sellQuote(trader).send(ctx.sendParam(trader))
+      await logGas(ctx.DPP.methods.sellQuote(trader), ctx.sendParam(trader), "sellQuote - buy at R>1")
       balances = await ctx.getBalances(trader)
 
       assert.equal(balances.traderBase, "11946772292527553373")
@@ -94,7 +94,7 @@ describe("DPP Trader", () => {
 
       // sell at R>1 and R not change state
       await ctx.transferBaseToDPP(trader, decimalStr("1"))
-      await ctx.DPP.methods.sellBase(trader).send(ctx.sendParam(trader))
+      await logGas(ctx.DPP.methods.sellBase(trader), ctx.sendParam(trader), "sellBase - sell at R>1 and R not change state")
       balances = await ctx.getBalances(trader)
 
       assert.equal(balances.traderBase, "10946772292527553373")
@@ -106,7 +106,7 @@ describe("DPP Trader", () => {
 
       // sell at R>1 and R change state
       await ctx.transferBaseToDPP(trader, decimalStr("2"))
-      await ctx.DPP.methods.sellBase(trader).send(ctx.sendParam(trader))
+      await logGas(ctx.DPP.methods.sellBase(trader), ctx.sendParam(trader), "sellBase - sell at R>1 and R change state")
       balances = await ctx.getBalances(trader)
 
       assert.equal(balances.traderBase, "8946772292527553373")
@@ -124,7 +124,7 @@ describe("DPP Trader", () => {
     it("first sell and then buy", async () => {
       // sell at R=1
       await ctx.transferBaseToDPP(trader, decimalStr("1"))
-      await ctx.DPP.methods.sellBase(trader).send(ctx.sendParam(trader))
+      await logGas(ctx.DPP.methods.sellBase(trader), ctx.sendParam(trader), "sellBase - sell at R=1")
       var balances = await ctx.getBalances(trader)
 
       assert.equal(balances.traderBase, decimalStr("9"))
@@ -136,7 +136,7 @@ describe("DPP Trader", () => {
 
       // buy at R>1
       await ctx.transferBaseToDPP(trader, decimalStr("1"))
-      await ctx.DPP.methods.sellBase(trader).send(ctx.sendParam(trader))
+      await logGas(ctx.DPP.methods.sellBase(trader), ctx.sendParam(trader), "sellBase - buy at R>1")
       balances = await ctx.getBalances(trader)
 
       assert.equal(balances.traderBase, decimalStr("8"))
@@ -148,7 +148,7 @@ describe("DPP Trader", () => {
 
       // sell at R>1 and R not change state
       await ctx.transferQuoteToDPP(trader, decimalStr("100"))
-      await ctx.DPP.methods.sellQuote(trader).send(ctx.sendParam(trader))
+      await logGas(ctx.DPP.methods.sellQuote(trader), ctx.sendParam(trader), "sell at R>1 and R not change state")
       balances = await ctx.getBalances(trader)
 
       assert.equal(balances.traderBase, "9034218146510053391")
@@ -160,7 +160,7 @@ describe("DPP Trader", () => {
 
       // sell at R>1 and R change state
       await ctx.transferQuoteToDPP(trader, decimalStr("200"))
-      await ctx.DPP.methods.sellQuote(trader).send(ctx.sendParam(trader))
+      await logGas(ctx.DPP.methods.sellQuote(trader), ctx.sendParam(trader), "sell at R>1 and R change state")
       balances = await ctx.getBalances(trader)
 
       assert.equal(balances.traderBase, "11026382738483432812")
