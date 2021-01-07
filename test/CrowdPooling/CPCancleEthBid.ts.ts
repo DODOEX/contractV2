@@ -73,14 +73,14 @@ describe("Funding", () => {
       assert.equal(await ctx.QUOTE.methods.balanceOf(bidder1).call(), decimalStr("0.15"))
 
       let beforeEthBalance = await ctx.Web3.eth.getBalance(bidder1);
-      let recipt = await logGas(ctx.CP.methods.cancel(ctx.DODOCallee.options.address, decimalStr("0.02"),"0x00"), ctx.sendParam(bidder1), "cancel and get 0.02 eth")
+      let receipt = await logGas(ctx.CP.methods.cancel(ctx.DODOCallee.options.address, decimalStr("0.02"),"0x00"), ctx.sendParam(bidder1), "cancel and get 0.02 eth")
       assert.equal(await ctx.CP.methods.getShares(bidder1).call(), decimalStr("0.0299"))
       assert.equal(await ctx.CP.methods._TOTAL_SHARES_().call(), decimalStr("0.0299"))
       assert.equal(await ctx.QUOTE.methods.balanceOf(bidder1).call(), decimalStr("0.15"))
       let afterEthBalance = await ctx.Web3.eth.getBalance(bidder1);
-      assert.equal(Number.parseInt(recipt["events"]["1"]["raw"]["data"],16),Number(decimalStr("0.02")));
+      assert.equal(Number.parseInt(receipt["events"]["1"]["raw"]["data"],16),Number(decimalStr("0.02")));
 
-      // assert.equal(Number(afterEthBalance) - Number(beforeEthBalance) + Number(recipt.gasUsed)*Number(mweiStr("1000")),Number(decimalStr("0.02")));
+      // assert.equal(Number(afterEthBalance) - Number(beforeEthBalance) + Number(receipt.gasUsed)*Number(mweiStr("1000")),Number(decimalStr("0.02")));
 
     })
 
