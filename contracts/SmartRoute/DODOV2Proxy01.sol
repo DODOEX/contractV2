@@ -86,7 +86,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
     // ============ DVM Functions (create & add liquidity) ============
 
     function createDODOVendingMachine(
-        address assetTo,
         address baseToken,
         address quoteToken,
         uint256 baseInAmount,
@@ -134,12 +133,11 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
             );
         }
 
-        (shares, , ) = IDODOV2(newVendingMachine).buyShares(assetTo);
+        (shares, , ) = IDODOV2(newVendingMachine).buyShares(msg.sender);
     }
 
     function addDVMLiquidity(
         address dvmAddress,
-        address assetTo,
         uint256 baseInAmount,
         uint256 quoteInAmount,
         uint256 baseMinAmount,
@@ -172,7 +170,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         _deposit(msg.sender, _dvm, IDODOV2(_dvm)._BASE_TOKEN_(), baseAdjustedInAmount, flag == 1);
         _deposit(msg.sender, _dvm, IDODOV2(_dvm)._QUOTE_TOKEN_(), quoteAdjustedInAmount, flag == 2);
         
-        (shares, , ) = IDODOV2(_dvm).buyShares(assetTo);
+        (shares, , ) = IDODOV2(_dvm).buyShares(msg.sender);
         // refund dust eth
         if (flag == 1 && msg.value > baseAdjustedInAmount) msg.sender.transfer(msg.value - baseAdjustedInAmount);
         if (flag == 2 && msg.value > quoteAdjustedInAmount) msg.sender.transfer(msg.value - quoteAdjustedInAmount);
@@ -293,7 +291,6 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
     // ============ Swap ============
 
     function dodoSwapV2ETHToToken(
-        address payable assetTo,
         address toToken,
         uint256 minReturnAmount,
         address[] memory dodoPairs,
@@ -316,9 +313,9 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         for (uint256 i = 0; i < dodoPairs.length; i++) {
             if (i == dodoPairs.length - 1) {
                 if (directions & 1 == 0) {
-                    IDODOV2(dodoPairs[i]).sellBase(assetTo);
+                    IDODOV2(dodoPairs[i]).sellBase(msg.sender);
                 } else {
-                    IDODOV2(dodoPairs[i]).sellQuote(assetTo);
+                    IDODOV2(dodoPairs[i]).sellQuote(msg.sender);
                 }
             } else {
                 if (directions & 1 == 0) {
@@ -335,14 +332,13 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         emit OrderHistory(
             _ETH_ADDRESS_,
             toToken,
-            assetTo,
+            msg.sender,
             msg.value,
             returnAmount
         );
     }
 
     function dodoSwapV2TokenToETH(
-        address payable assetTo,
         address fromToken,
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
@@ -379,18 +375,17 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         returnAmount = IWETH(_WETH_).balanceOf(address(this));
         require(returnAmount >= minReturnAmount, "DODOV2Proxy01: Return amount is not enough");
         IWETH(_WETH_).withdraw(returnAmount);
-        assetTo.transfer(returnAmount);
+        msg.sender.transfer(returnAmount);
         emit OrderHistory(
             fromToken,
             _ETH_ADDRESS_,
-            assetTo,
+            msg.sender,
             fromTokenAmount,
             returnAmount
         );
     }
 
     function dodoSwapV2TokenToToken(
-        address payable assetTo,
         address fromToken,
         address toToken,
         uint256 fromTokenAmount,
@@ -413,9 +408,9 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         for (uint256 i = 0; i < dodoPairs.length; i++) {
             if (i == dodoPairs.length - 1) {
                 if (directions & 1 == 0) {
-                    IDODOV2(dodoPairs[i]).sellBase(assetTo);
+                    IDODOV2(dodoPairs[i]).sellBase(msg.sender);
                 } else {
-                    IDODOV2(dodoPairs[i]).sellQuote(assetTo);
+                    IDODOV2(dodoPairs[i]).sellQuote(msg.sender);
                 }
             } else {
                 if (directions& 1 == 0) {
@@ -431,7 +426,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         emit OrderHistory(
             fromToken,
             toToken,
-            assetTo,
+            msg.sender,
             fromTokenAmount,
             returnAmount
         );
@@ -603,7 +598,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         uint256[] memory timeLine,
         uint256[] memory valueList,
         uint256 deadLine
-    ) external override payable judgeExpired(deadLine) returns (address payable newCrowdPooling) {
+    ) external override payable preventReentrant judgeExpired(deadLine) returns (address payable newCrowdPooling) {
         address _baseToken = baseToken;
         address _quoteToken = quoteToken == _ETH_ADDRESS_ ? _WETH_ : quoteToken;
         
@@ -630,19 +625,17 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
     }
 
     function bid(
-        address assetTo,
         address cpAddress,
         uint256 quoteAmount,
         uint8 flag, // 0 - ERC20, 1 - quoteInETH
         uint256 deadLine
-    ) external override payable judgeExpired(deadLine) {
+    ) external override payable preventReentrant judgeExpired(deadLine) {
         _deposit(msg.sender, cpAddress, IDODOV2(cpAddress)._QUOTE_TOKEN_(), quoteAmount, flag == 1);
-        IDODOV2(cpAddress).bid(assetTo);
+        IDODOV2(cpAddress).bid(msg.sender);
     }
 
 
     function addLiquidityToV1(
-        address assetTo,
         address pair,
         uint256 baseAmount,
         uint256 quoteAmount,
@@ -650,7 +643,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         uint256 quoteMinShares,
         uint8 flag, // 0 erc20 In  1 baseInETH  2 quoteIn ETH 
         uint256 deadLine
-    ) external override payable judgeExpired(deadLine) returns(uint256 baseShares, uint256 quoteShares) {
+    ) external override payable preventReentrant judgeExpired(deadLine) returns(uint256 baseShares, uint256 quoteShares) {
         address _baseToken = IDODOV1(pair)._BASE_TOKEN_();
         address _quoteToken = IDODOV1(pair)._QUOTE_TOKEN_();
         
@@ -660,11 +653,11 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         
         if(baseAmount > 0) {
             IERC20(_baseToken).universalApproveMax(pair, baseAmount);
-            baseShares = IDODOV1(pair).depositBaseTo(assetTo, baseAmount);
+            baseShares = IDODOV1(pair).depositBaseTo(msg.sender, baseAmount);
         }
         if(quoteAmount > 0) {
             IERC20(_quoteToken).universalApproveMax(pair, quoteAmount);
-            quoteShares = IDODOV1(pair).depositQuoteTo(assetTo, quoteAmount);
+            quoteShares = IDODOV1(pair).depositQuoteTo(msg.sender, quoteAmount);
         }
 
         require(baseShares >= baseMinShares && quoteShares >= quoteMinShares,"DODOV2Proxy01: Return DLP is not enough");

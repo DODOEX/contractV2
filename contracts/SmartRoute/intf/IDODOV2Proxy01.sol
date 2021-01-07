@@ -12,7 +12,6 @@ import {IDODOV1Proxy01} from "./IDODOV1Proxy01.sol";
 
 interface IDODOV2Proxy01 is IDODOV1Proxy01 {
     function dodoSwapV2ETHToToken(
-        address payable assetTo,
         address toToken,
         uint256 minReturnAmount,
         address[] memory dodoPairs,
@@ -21,7 +20,6 @@ interface IDODOV2Proxy01 is IDODOV1Proxy01 {
     ) external payable returns (uint256 returnAmount);
 
     function dodoSwapV2TokenToETH(
-        address payable assetTo,
         address fromToken,
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
@@ -31,7 +29,6 @@ interface IDODOV2Proxy01 is IDODOV1Proxy01 {
     ) external returns (uint256 returnAmount);
 
     function dodoSwapV2TokenToToken(
-        address payable assetTo,
         address fromToken,
         address toToken,
         uint256 fromTokenAmount,
@@ -42,7 +39,6 @@ interface IDODOV2Proxy01 is IDODOV1Proxy01 {
     ) external returns (uint256 returnAmount);
 
     function createDODOVendingMachine(
-        address assetTo,
         address baseToken,
         address quoteToken,
         uint256 baseInAmount,
@@ -55,7 +51,6 @@ interface IDODOV2Proxy01 is IDODOV1Proxy01 {
 
     function addDVMLiquidity(
         address dvmAddress,
-        address assetTo,
         uint256 baseInAmount,
         uint256 quoteInAmount,
         uint256 baseMinAmount,
@@ -102,7 +97,6 @@ interface IDODOV2Proxy01 is IDODOV1Proxy01 {
     ) external payable returns (address payable newCrowdPooling);
 
     function bid(
-        address assetTo,
         address cpAddress,
         uint256 quoteAmount,
         uint8 flag, // 0 - ERC20, 1 - quoteInETH
@@ -110,7 +104,6 @@ interface IDODOV2Proxy01 is IDODOV1Proxy01 {
     ) external payable;
 
     function addLiquidityToV1(
-        address to,
         address pair,
         uint256 baseAmount,
         uint256 quoteAmount,

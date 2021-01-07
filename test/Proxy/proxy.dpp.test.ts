@@ -236,7 +236,6 @@ describe("DODOProxyV2.0", () => {
       ]
       var directions = 0
       await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
-        trader,
         ctx.DODO.options.address,
         ctx.USDT.options.address,
         decimalStr("500"),
@@ -252,7 +251,6 @@ describe("DODOProxyV2.0", () => {
       assert.equal(a_DOOD, decimalStr("500"));
       assert.equal(a_USDT, "99749900");
       await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
-        trader,
         ctx.DODO.options.address,
         ctx.USDT.options.address,
         decimalStr("500"),
@@ -273,7 +271,6 @@ describe("DODOProxyV2.0", () => {
       ]
       var directions = 2
       await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
-        trader,
         ctx.DODO.options.address,
         ctx.WETH.options.address,
         decimalStr("500"),
@@ -289,7 +286,6 @@ describe("DODOProxyV2.0", () => {
       assert.equal(a_DOOD, decimalStr("500"));
       assert.equal(a_WETH, "165350643050738035");
       await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
-        trader,
         ctx.DODO.options.address,
         ctx.WETH.options.address,
         decimalStr("500"),
@@ -310,7 +306,6 @@ describe("DODOProxyV2.0", () => {
       ]
       var directions = 2
       await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2ETHToToken(
-        trader,
         ctx.DODO.options.address,
         1,
         dodoPairs,
@@ -325,7 +320,6 @@ describe("DODOProxyV2.0", () => {
       // console.log("b_ETH:" + b_ETH + " a_ETH:" + a_ETH);
       assert.equal(a_DOOD, "2908497423869401229986");
       await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2ETHToToken(
-        trader,
         ctx.DODO.options.address,
         1,
         dodoPairs,
@@ -346,7 +340,6 @@ describe("DODOProxyV2.0", () => {
       ]
       var directions = 2
       var tx = await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToETH(
-        trader,
         ctx.DODO.options.address,
         decimalStr("500"),
         1,
@@ -366,7 +359,6 @@ describe("DODOProxyV2.0", () => {
         "165350643050738035"
       )
       await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToETH(
-        trader,
         ctx.DODO.options.address,
         decimalStr("500"),
         1,
@@ -388,7 +380,6 @@ describe("DODOProxyV2.0", () => {
       ]
       var directions = 4
       await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
-        trader,
         ctx.DODO.options.address,
         ctx.WETH.options.address,
         decimalStr("500"),
@@ -404,7 +395,6 @@ describe("DODOProxyV2.0", () => {
       assert.equal(a_DOOD, decimalStr("500"));
       assert.equal(a_WETH, "165004688801375425");
       await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
-        trader,
         ctx.DODO.options.address,
         ctx.WETH.options.address,
         decimalStr("500"),

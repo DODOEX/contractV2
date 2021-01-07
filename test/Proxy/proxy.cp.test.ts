@@ -140,7 +140,6 @@ describe("DODOProxyV2.0", () => {
             assert.equal(b_lp_2, decimalStr("0"));
 
             await logGas(await ctx.DODOProxyV2.methods.bid(
-                buyer1,
                 cp_DODO_USDT,
                 mweiStr("50"),
                 0,
@@ -148,7 +147,6 @@ describe("DODOProxyV2.0", () => {
             ), ctx.sendParam(buyer1), "bid");
 
             await logGas(await ctx.DODOProxyV2.methods.bid(
-                buyer2,
                 cp_DODO_USDT,
                 mweiStr("80"),
                 0,
@@ -156,7 +154,6 @@ describe("DODOProxyV2.0", () => {
             ), ctx.sendParam(buyer2), "bid");
 
             await logGas(await ctx.DODOProxyV2.methods.bid(
-                buyer2,
                 cp_DODO_USDT,
                 mweiStr("80"),
                 0,
@@ -164,7 +161,6 @@ describe("DODOProxyV2.0", () => {
             ), ctx.sendParam(buyer2), "bid");
 
             await logGas(await ctx.DODOProxyV2.methods.bid(
-                buyer2,
                 cp_DODO_USDT,
                 mweiStr("80"),
                 0,
@@ -193,7 +189,6 @@ describe("DODOProxyV2.0", () => {
             assert.equal(b_lp_2, decimalStr("0"));
 
             await logGas(await ctx.DODOProxyV2.methods.bid(
-                buyer1,
                 cp_DODO_WETH,
                 decimalStr("2"),
                 1,
@@ -201,7 +196,6 @@ describe("DODOProxyV2.0", () => {
             ), ctx.sendParam(buyer1, "2"), "bid");
 
             await logGas(await ctx.DODOProxyV2.methods.bid(
-                buyer2,
                 cp_DODO_WETH,
                 decimalStr("1"),
                 1,

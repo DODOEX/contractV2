@@ -82,7 +82,7 @@ library DODOMath {
         }else if(ki * delta / ki == delta) {
             sqrt = (ki * delta).div(V1).add(DecimalMath.ONE2).sqrt();
         }else {
-            sqrt = (4 * k).mul(i).div(V1).mul(delta).add(DecimalMath.ONE2).sqrt();
+            sqrt = ki.div(V1).mul(delta).add(DecimalMath.ONE2).sqrt();
         }
         uint256 premium = DecimalMath.divFloor(sqrt.sub(DecimalMath.ONE), k * 2).add(
             DecimalMath.ONE

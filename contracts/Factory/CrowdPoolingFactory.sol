@@ -55,7 +55,7 @@ contract CrowdPoolingFactory is InitializableOwnable {
         require(valueList[3] == _CLIFF_RATE_, "CP_FACTORY : CLIFF_RATE_INVALID");
 
         uint256 baseTokenBalance = IERC20(baseToken).balanceOf(cpAddress);
-        require(valueList[0].mul(100) <= baseTokenBalance.mul(valueList[2]).div(10**18).mul(_CAP_RATIO_),"CP_FACTORY : QUOTE_CAPE_INVALID");
+        require(valueList[0].mul(100) <= baseTokenBalance.mul(valueList[2]).div(10**18).mul(_CAP_RATIO_),"CP_FACTORY : QUOTE_CAP_INVALID");
         require(timeLine[3]>= _FREEZE_DURATION_, "CP_FACTORY : FREEZE_DURATION_INVALID");
         _;
     }
