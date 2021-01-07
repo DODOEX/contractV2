@@ -209,5 +209,14 @@ describe("Trader", () => {
         ctx.DVM.methods.sellBase(trader).send(ctx.sendParam(trader)), "TARGET_IS_ZERO"
       )
     })
+
+    it("sync", async () => {
+      await ctx.BASE.methods.mint(ctx.DVM.options.address, decimalStr("123")).send(ctx.sendParam(ctx.Deployer))
+      await ctx.QUOTE.methods.mint(ctx.DVM.options.address, decimalStr("456")).send(ctx.sendParam(ctx.Deployer))
+
+      await ctx.DVM.methods.sync().send(ctx.sendParam(ctx.Deployer))
+      assert.equal(await ctx.DVM.methods._BASE_RESERVE_().call(), decimalStr("123"))
+      assert.equal(await ctx.DVM.methods._QUOTE_RESERVE_().call(), decimalStr("456"))
+    })
   });
 });
