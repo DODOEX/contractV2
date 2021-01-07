@@ -83,21 +83,8 @@ contract DPPVault is DPPStorage {
         _QUOTE_RESERVE_ = uint128(quoteBalance);
         _BASE_TARGET_ = uint120(baseBalance);
         _QUOTE_TARGET_ = uint120(quoteBalance);
-        _setRState();
+        _RState_ = uint16(PMMPricing.RState.ONE);
     }
-
-    function _setRState() internal {
-        if (_BASE_RESERVE_ == _BASE_TARGET_ && _QUOTE_RESERVE_ == _QUOTE_TARGET_) {
-            _RState_ = uint16(PMMPricing.RState.ONE);
-        } else if (_BASE_RESERVE_ > _BASE_TARGET_ && _QUOTE_RESERVE_ < _QUOTE_TARGET_) {
-            _RState_ = uint16(PMMPricing.RState.BELOW_ONE);
-        } else if (_BASE_RESERVE_ < _BASE_TARGET_ && _QUOTE_RESERVE_ > _QUOTE_TARGET_) {
-            _RState_ = uint16(PMMPricing.RState.ABOVE_ONE);
-        } else {
-            require(false, "R_STATE_WRONG");
-        }
-    }
-
 
     function ratioSync() external preventReentrant onlyOwner {
         uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
@@ -113,13 +100,6 @@ contract DPPVault is DPPStorage {
             _QUOTE_TARGET_ = uint120(uint256(_QUOTE_TARGET_).mul(quoteBalance).div(uint256(_QUOTE_RESERVE_)));
             _QUOTE_RESERVE_ = uint128(quoteBalance);
         }
-    }
-
-    function setTarget(uint256 baseTarget, uint256 quoteTarget) public preventReentrant onlyOwner {
-        require(baseTarget <= uint120(-1) && quoteTarget <= uint120(-1), "OVERFLOW");
-        _BASE_TARGET_ = uint120(baseTarget);
-        _QUOTE_TARGET_ = uint120(quoteTarget);
-        _setRState();
     }
 
     function reset(

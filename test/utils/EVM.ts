@@ -13,6 +13,7 @@ import Web3 from 'web3';
 export function getDefaultWeb3() {
   return new Web3(process.env.RPC_NODE_URI)
 }
+process.env.RPC_NODE_URI="http://127.0.0.1:8545";
 
 export class EVM {
   private provider = new Web3.providers.HttpProvider(process.env.RPC_NODE_URI);

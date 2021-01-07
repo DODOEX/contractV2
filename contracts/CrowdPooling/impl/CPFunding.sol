@@ -88,18 +88,18 @@ contract CPFunding is CPStorage {
                 _poolBaseToken = address(_BASE_TOKEN_);
                 _poolQuoteToken = address(_QUOTE_TOKEN_);
                 _poolI = _I_;
-            } else if (poolQuote.mul(_UNUSED_BASE_) == poolQuote.mul(poolBase)) {
+            } else if (_UNUSED_BASE_== poolBase) {
                 // standard bonding curve
                 _poolBaseToken = address(_BASE_TOKEN_);
                 _poolQuoteToken = address(_QUOTE_TOKEN_);
                 _poolI = 1;
-            } else if (poolQuote.mul(_UNUSED_BASE_) < poolQuote.mul(poolBase)) {
+            } else if (_UNUSED_BASE_ < poolBase) {
                 // poolI up round
                 _poolBaseToken = address(_BASE_TOKEN_);
                 _poolQuoteToken = address(_QUOTE_TOKEN_);
                 uint256 ratio = DecimalMath.ONE.sub(DecimalMath.divFloor(poolQuote, baseDepth));
                 _poolI = avgPrice.mul(ratio).mul(ratio).divCeil(DecimalMath.ONE2);
-            } else if (poolQuote.mul(_UNUSED_BASE_) > poolQuote.mul(poolBase)) {
+            } else if (_UNUSED_BASE_ > poolBase) {
                 // poolI down round
                 _poolBaseToken = address(_QUOTE_TOKEN_);
                 _poolQuoteToken = address(_BASE_TOKEN_);
@@ -129,7 +129,6 @@ contract CPFunding is CPStorage {
         require(block.timestamp >= _PHASE_CALM_ENDTIME_.add(_SETTLEMENT_EXPIRE_), "NOT_EMERGENCY");
         _settle();
         _UNUSED_QUOTE_ = _QUOTE_TOKEN_.balanceOf(address(this));
-        _UNUSED_BASE_ = _BASE_TOKEN_.balanceOf(address(this));
     }
 
     function _settle() internal {
