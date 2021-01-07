@@ -54,6 +54,7 @@ export class DVMContext {
   QUOTE: Contract;
   Deployer: string;
   Maintainer: string;
+  MtFeeRate: string;
   SpareAccounts: string[];
 
   constructor() { }
@@ -65,6 +66,7 @@ export class DVMContext {
     this.DVM = await contracts.newContract(contracts.DVM_NAME)
     var lpFeeRateModel = await contracts.newContract(contracts.CONST_FEE_RATE_MODEL_NAME)
     var mtFeeRateModel = await contracts.newContract(contracts.CONST_FEE_RATE_MODEL_NAME)
+    this.MtFeeRate = mtFeeRateModel.options.address
     var permissionManager = await contracts.newContract(contracts.PERMISSION_MANAGER_NAME)
     var gasPriceSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME)
 
@@ -87,7 +89,8 @@ export class DVMContext {
       this.Maintainer,
       this.BASE.options.address,
       this.QUOTE.options.address,
-      lpFeeRateModel.options.address,
+      // lpFeeRateModel.options.address,
+      0,
       mtFeeRateModel.options.address,
       // permissionManager.options.address,
       // gasPriceSource.options.address,

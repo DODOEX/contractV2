@@ -35,25 +35,24 @@ describe("Admin Set", () => {
 
     it("set addresses", async () => {
 
-      var tempAddress = ctx.SpareAccounts[0]
+      var maintainerAddress = ctx.Maintainer
+      var mtFeeAddress = ctx.MtFeeRate
+      
 
-      await ctx.DVM.methods.setLpFeeRateModel(tempAddress).send(ctx.sendParam(ctx.Deployer))
-      await ctx.DVM.methods.setMtFeeRateModel(tempAddress).send(ctx.sendParam(ctx.Deployer))
-      await ctx.DVM.methods.setTradePermissionManager(tempAddress).send(ctx.sendParam(ctx.Deployer))
-      await ctx.DVM.methods.setMaintainer(tempAddress).send(ctx.sendParam(ctx.Deployer))
-      await ctx.DVM.methods.setGasPriceSource(tempAddress).send(ctx.sendParam(ctx.Deployer))
+      // await ctx.DVM.methods.setLpFeeRateModel(tempAddress).send(ctx.sendParam(ctx.Deployer))
+      // await ctx.DVM.methods.setMtFeeRateModel(tempAddress).send(ctx.sendParam(ctx.Deployer))
+      // await ctx.DVM.methods.setTradePermissionManager(tempAddress).send(ctx.sendParam(ctx.Deployer))
+      // await ctx.DVM.methods.setMaintainer(tempAddress).send(ctx.sendParam(ctx.Deployer))
+      // await ctx.DVM.methods.setGasPriceSource(tempAddress).send(ctx.sendParam(ctx.Deployer))
 
-      assert.equal(await ctx.DVM.methods._LP_FEE_RATE_MODEL_().call(), tempAddress)
-      assert.equal(await ctx.DVM.methods._MT_FEE_RATE_MODEL_().call(), tempAddress)
-      assert.equal(await ctx.DVM.methods._TRADE_PERMISSION_().call(), tempAddress)
-      assert.equal(await ctx.DVM.methods._MAINTAINER_().call(), tempAddress)
-      assert.equal(await ctx.DVM.methods._GAS_PRICE_LIMIT_().call(), tempAddress)
+      assert.equal(await ctx.DVM.methods._MT_FEE_RATE_MODEL_().call(), mtFeeAddress)
+      assert.equal(await ctx.DVM.methods._MAINTAINER_().call(), maintainerAddress)
 
     });
 
     it("set buy sell", async () => {
-      await ctx.DVM.methods.setBuy(false).send(ctx.sendParam(ctx.Deployer))
-      await ctx.DVM.methods.setSell(false).send(ctx.sendParam(ctx.Deployer))
+      // await ctx.DVM.methods.setBuy(false).send(ctx.sendParam(ctx.Deployer))
+      // await ctx.DVM.methods.setSell(false).send(ctx.sendParam(ctx.Deployer))
 
       await truffleAssert.reverts(ctx.DVM.methods.sellQuote(ctx.Deployer).send(ctx.sendParam(ctx.Deployer)), "TRADER_BUY_NOT_ALLOWED")
 

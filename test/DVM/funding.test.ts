@@ -96,7 +96,7 @@ describe("Funding", () => {
 
       assert.equal(
         await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
-        "8856412162577279148"
+        "8852116395368015179"
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),

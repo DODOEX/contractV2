@@ -74,7 +74,7 @@ describe("Trader", () => {
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
-        "11946763594380080789"
+        "11950668837297593488"
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(trader).call(),
@@ -83,7 +83,7 @@ describe("Trader", () => {
       // vault balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
-        "8051283784161162862"
+        "8047378541243650163"
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
@@ -105,20 +105,20 @@ describe("Trader", () => {
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
-        "10946763594380080789"
+        "10950668837297593488"
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(trader).call(),
-        "903421810640399874605"
+        "903631079987679211407"
       );
       // vault balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
-        "9051283784161162862"
+        "9047378541243650163"
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
-        "96474456349930717297"
+        "96265185197518306900"
       );
       // maintainer balances
       assert.equal(
@@ -127,7 +127,7 @@ describe("Trader", () => {
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
-        "103733009669408098"
+        "103734814802481693"
       );
 
       // buy when quoet is not 0
@@ -136,29 +136,29 @@ describe("Trader", () => {
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
-        "12837528824326616014"
+        "12845284163771515535"
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(trader).call(),
-        "703421810640399874605"
+        "703631079987679211407"
       );
       // vault balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
-        "7158622099620899919"
+        "7150866702931415882"
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
-        "296474456349930717297"
+        "296265185197518306900"
       );
       // maintainer balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(),
-        "3849076052484067"
+        "3849133297068583"
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
-        "103733009669408098"
+        "103734814802481693"
       );
     });
 
@@ -196,8 +196,8 @@ describe("Trader", () => {
     })
 
     it("revert cases", async () => {
-      var gasPriceLimitContract = getContractWithAddress(EXTERNAL_VALUE_NAME, await ctx.DVM.methods._GAS_PRICE_LIMIT_().call())
-      await gasPriceLimitContract.methods.set(gweiStr("10")).send(ctx.sendParam(ctx.Deployer))
+      // var gasPriceLimitContract = getContractWithAddress(EXTERNAL_VALUE_NAME, await ctx.DVM.methods._GAS_PRICE_LIMIT_().call())
+      // await gasPriceLimitContract.methods.set(gweiStr("10")).send(ctx.sendParam(ctx.Deployer))
 
 
       await truffleAssert.reverts(
