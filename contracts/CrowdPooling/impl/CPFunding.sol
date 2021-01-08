@@ -16,6 +16,7 @@ import {IDVM} from "../../DODOVendingMachine/intf/IDVM.sol";
 import {IDVMFactory} from "../../Factory/DVMFactory.sol";
 import {CPStorage} from "./CPStorage.sol";
 import {PMMPricing} from "../../lib/PMMPricing.sol";
+import {IDODOCallee} from "../../intf/IDODOCallee.sol";
 
 contract CPFunding is CPStorage {
     using SafeERC20 for IERC20;
@@ -39,12 +40,17 @@ contract CPFunding is CPStorage {
         emit Bid(to, input, mtFee);
     }
 
-    function cancel(address assetTo, uint256 amount) external phaseBidOrCalm preventReentrant {
+    function cancel(address to, uint256 amount, bytes calldata data) external phaseBidOrCalm preventReentrant {
         require(_SHARES_[msg.sender] >= amount, "SHARES_NOT_ENOUGH");
         _burnShares(msg.sender, amount);
-        _transferQuoteOut(assetTo, amount);
+        _transferQuoteOut(to, amount);
         _sync();
-        emit Cancel(assetTo,amount);
+
+        if(data.length > 0){
+            IDODOCallee(to).CPCancelCall(msg.sender,amount,data);
+        }
+
+        emit Cancel(msg.sender,amount);
     }
 
     function _mintShares(address to, uint256 amount) internal {
