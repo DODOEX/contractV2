@@ -163,51 +163,69 @@ describe("Trader", () => {
     });
 
     it("flash loan", async () => {
-      // buy
+      // console.log(await ctx.DVM.methods.getVaultReserve().call())
+      // console.log(await ctx.DVM.methods.getQuoteInput().call())
+      // // buy
       await ctx.transferQuoteToDVM(trader, decimalStr("200"))
+      // await ctx.DVM.methods.sync().send(ctx.sendParam(ctx.Deployer))
+      // console.log(await ctx.DVM.methods.getVaultReserve().call())
+      
+      // console.log(await ctx.DVM.methods.getBaseInput().call())
+      // console.log(await ctx.DVM.methods.getQuoteInput().call())
+      // console.log(await ctx.DVM.methods.getVaultReserve().call())
+
+
+      // 1950668837297593488
+      // 1946763594380080790
+
+      // var quoteInput = await ctx.DVM.methods.getQuoteInput().call()
+      // console.log(await ctx.DVM.methods.querySellQuote(ctx.Deployer, quoteInput).call())
 
       // buy failed
-      await truffleAssert.reverts(ctx.DVM.methods.flashLoan("1946763594380080790", "0", trader, "0x").send(ctx.sendParam(trader)), "FLASH_LOAN_FAILED")
+      await truffleAssert.reverts(ctx.DVM.methods.flashLoan("1950668837297593489", "0", trader, "0x").send(ctx.sendParam(trader)), "FLASH_LOAN_FAILED")
 
       // buy succeed
-      await ctx.DVM.methods.flashLoan("1946763594380080789", "0", trader, "0x").send(ctx.sendParam(trader))
+      await ctx.DVM.methods.flashLoan("1950668837297593488", "0", trader, "0x").send(ctx.sendParam(trader))
 
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
-        "11946763594380080789"
+        "11950668837297593488"
       );
 
       // sell
       await ctx.transferBaseToDVM(trader, decimalStr("1"))
 
+      // var baseInput = await ctx.DVM.methods.getBaseInput().call()
+      // console.log(await ctx.DVM.methods.querySellBase(ctx.Deployer, baseInput).call())
+
+
       // sell failed
-      await truffleAssert.reverts(ctx.DVM.methods.flashLoan("0", "103421810640399874606", trader, "0x").send(ctx.sendParam(trader)), "FLASH_LOAN_FAILED")
+      await truffleAssert.reverts(ctx.DVM.methods.flashLoan("0", "103631079987679211408", trader, "0x").send(ctx.sendParam(trader)), "FLASH_LOAN_FAILED")
 
       // sell succeed
-      await ctx.DVM.methods.flashLoan("0", "103421810640399874605", trader, "0x").send(ctx.sendParam(trader))
+      await ctx.DVM.methods.flashLoan("0", "103631079987679211407", trader, "0x").send(ctx.sendParam(trader))
 
       // trader balances
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(trader).call(),
-        "903421810640399874605"
+        "903631079987679211407"
       );
 
     })
 
     it("revert cases", async () => {
-      // var gasPriceLimitContract = getContractWithAddress(EXTERNAL_VALUE_NAME, await ctx.DVM.methods._GAS_PRICE_LIMIT_().call())
-      // await gasPriceLimitContract.methods.set(gweiStr("10")).send(ctx.sendParam(ctx.Deployer))
 
-
-      await truffleAssert.reverts(
-        ctx.DVM.methods.sellQuote(trader).send({ from: trader, gas: 300000, gasPrice: gweiStr("200") }), "GAS_PRICE_EXCEED"
-      )
-
-      await ctx.transferBaseToDVM(trader, decimalStr("1"))
+      await ctx.transferBaseToDVM(trader, decimalStr("10"))
       await truffleAssert.reverts(
         ctx.DVM.methods.sellBase(trader).send(ctx.sendParam(trader)), "TARGET_IS_ZERO"
       )
+
+      // var gasPriceLimitContract = getContractWithAddress(EXTERNAL_VALUE_NAME, await ctx.DVM.methods._GAS_PRICE_LIMIT_().call())
+      // await gasPriceLimitContract.methods.set(gweiStr("10")).send(ctx.sendParam(ctx.Deployer))
+      // await truffleAssert.reverts(
+      //   ctx.DVM.methods.sellQuote(trader).send({ from: trader, gas: 300000, gasPrice: gweiStr("200") }), "GAS_PRICE_EXCEED"
+      // )
     })
 
     it("sync", async () => {
@@ -215,7 +233,7 @@ describe("Trader", () => {
       await ctx.QUOTE.methods.mint(ctx.DVM.options.address, decimalStr("456")).send(ctx.sendParam(ctx.Deployer))
 
       await ctx.DVM.methods.sync().send(ctx.sendParam(ctx.Deployer))
-      assert.equal(await ctx.DVM.methods._BASE_RESERVE_().call(), decimalStr("123"))
+      assert.equal(await ctx.DVM.methods._BASE_RESERVE_().call(), decimalStr("133"))//after init base is 10,so current should be 10+123=133
       assert.equal(await ctx.DVM.methods._QUOTE_RESERVE_().call(), decimalStr("456"))
     })
   });
