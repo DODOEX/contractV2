@@ -52,6 +52,18 @@ contract DODOCalleeHelper is ReentrancyGuard {
         _withdraw(assetTo, _quoteToken, amount, _quoteToken == _WETH_);
     }
 
+	function CPClaimBidCall(
+        address payable assetTo,
+        uint256 baseAmount,
+        uint256 quoteAmount,
+        bytes calldata
+    ) external preventReentrant {
+        address _baseToken = IDODOV2(msg.sender)._BASE_TOKEN_();
+        address _quoteToken = IDODOV2(msg.sender)._QUOTE_TOKEN_();
+        _withdraw(assetTo, _baseToken, baseAmount, _baseToken == _WETH_);
+        _withdraw(assetTo, _quoteToken, quoteAmount, _quoteToken == _WETH_);
+    }
+
     function _withdraw(
         address payable to,
         address token,

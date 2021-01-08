@@ -72,7 +72,7 @@ describe("Funding", () => {
       assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(), decimalStr("0.15"))
 
       await ctx.EVM.increaseTime(86400)
-      await logGas(ctx.CP.methods.cancel(bidder1, decimalStr("20")), ctx.sendParam(bidder1), "cancel")
+      await logGas(ctx.CP.methods.cancel(bidder1, decimalStr("20"),"0x"), ctx.sendParam(bidder1), "cancel")
       assert.equal(await ctx.CP.methods.getShares(bidder1).call(), decimalStr("79.9"))
       assert.equal(await ctx.CP.methods._TOTAL_SHARES_().call(), decimalStr("129.85"))
       assert.equal(await ctx.QUOTE.methods.balanceOf(bidder1).call(), decimalStr("920"))

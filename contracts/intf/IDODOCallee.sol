@@ -36,4 +36,11 @@ interface IDODOCallee {
         uint256 amount,
         bytes calldata data
     ) external;
+
+	function CPClaimBidCall(
+        address sender,
+        uint256 baseAmount,
+        uint256 quoteAmount,
+        bytes calldata data
+    ) external;
 }

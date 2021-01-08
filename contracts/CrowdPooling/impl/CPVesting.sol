@@ -14,6 +14,7 @@ import {Ownable} from "../../lib/Ownable.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {CPFunding} from "./CPFunding.sol";
+import {IDODOCallee} from "../../intf/IDODOCallee.sol";
 
 /**
  * @title CPVesting
@@ -38,12 +39,20 @@ contract CPVesting is CPFunding {
 
     // ============ Bidder Functions ============
 
-    function bidderClaim() external afterSettlement {
+    function bidderClaim(address to,bytes calldata data) external afterSettlement {
         require(!_CLAIMED_[msg.sender], "ALREADY_CLAIMED");
         _CLAIMED_[msg.sender] = true;
 
-        _transferBaseOut(msg.sender, _UNUSED_BASE_.mul(_SHARES_[msg.sender]).div(_TOTAL_SHARES_));
-        _transferQuoteOut(msg.sender, _UNUSED_QUOTE_.mul(_SHARES_[msg.sender]).div(_TOTAL_SHARES_));
+		uint256 baseAmount = _UNUSED_BASE_.mul(_SHARES_[msg.sender]).div(_TOTAL_SHARES_);
+		uint256 quoteAmount = _UNUSED_QUOTE_.mul(_SHARES_[msg.sender]).div(_TOTAL_SHARES_);
+
+        _transferBaseOut(to, baseAmount);
+        _transferQuoteOut(to, quoteAmount);
+
+		if(data.length>0){
+			IDODOCallee(to).CPClaimBidCall(msg.sender,baseAmount,quoteAmount,data);
+		}
+
     }
 
     // ============ Owner Functions ============
