@@ -12,6 +12,12 @@ import {IFeeRateModel} from "../../lib/FeeRateModel.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {DPPTrader} from "./DPPTrader.sol";
 
+/**
+ * @title DODO PrivatePool
+ * @author DODO Breeder
+ *
+ * @notice DODOPrivatePool initialization
+ */
 contract DPP is DPPTrader {
     function init(
         address owner,

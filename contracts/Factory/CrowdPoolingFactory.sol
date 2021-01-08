@@ -15,6 +15,12 @@ import {SafeMath} from "../lib/SafeMath.sol";
 import {IERC20} from "../intf/IERC20.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
 
+/**
+ * @title CrowdPoolingFacotry
+ * @author DODO Breeder
+ *
+ * @notice Create And Register CP Pools 
+ */
 contract CrowdPoolingFactory is InitializableOwnable {
     using SafeMath for uint256;
     // ============ Templates ============
@@ -27,6 +33,7 @@ contract CrowdPoolingFactory is InitializableOwnable {
     address public _CP_TEMPLATE_;
 
     // ============ Settings =============
+
     uint256 public _CAP_RATIO_ = 50; 
     uint256 public _FREEZE_DURATION_ =  30 days;
     uint256 public _CALM_DURATION_ = 0;
@@ -43,6 +50,7 @@ contract CrowdPoolingFactory is InitializableOwnable {
     mapping(address => address[]) public _USER_REGISTRY_;
 
     // ============ modifiers ===========
+
     modifier valueCheck(
         address cpAddress,
         address baseToken,
@@ -69,8 +77,6 @@ contract CrowdPoolingFactory is InitializableOwnable {
         address cp
     );
 
-    // ============ Functions ============
-
     constructor(
         address cloneFactory,
         address cpTemplate,
@@ -86,6 +92,8 @@ contract CrowdPoolingFactory is InitializableOwnable {
         _DEFAULT_MT_FEE_RATE_MODEL_ = defaultMtFeeRateModel;
         _DEFAULT_PERMISSION_MANAGER_ = defaultPermissionManager;
     }
+
+    // ============ Functions ============
 
     function createCrowdPooling() external returns (address newCrowdPooling) {
         newCrowdPooling = ICloneFactory(_CLONE_FACTORY_).clone(_CP_TEMPLATE_);
@@ -149,6 +157,7 @@ contract CrowdPoolingFactory is InitializableOwnable {
     }
 
     // ============ Owner Functions ============
+    
     function updateCPTemplate(address _newCPTemplate) external onlyOwner {
         _CP_TEMPLATE_ = _newCPTemplate;
     }

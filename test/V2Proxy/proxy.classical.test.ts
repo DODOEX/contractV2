@@ -119,7 +119,8 @@ async function calcRoute(ctx: ProxyContext, fromTokenAmount: string, slippage: n
         fromTokenAmount,
         toAmount,
         dodoPairs,
-        tmpDirections,
+        parseInt(strDirections,2),
+        false,
         deadline
     )
 }

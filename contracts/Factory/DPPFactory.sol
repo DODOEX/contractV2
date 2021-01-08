@@ -14,6 +14,12 @@ import {IFeeRateModel} from "../lib/FeeRateModel.sol";
 import {IDPP} from "../DODOPrivatePool/intf/IDPP.sol";
 import {IDPPAdmin} from "../DODOPrivatePool/intf/IDPPAdmin.sol";
 
+/**
+ * @title DODO PrivatePool Factory
+ * @author DODO Breeder
+ *
+ * @notice Create And Register DPP Pools 
+ */
 contract DPPFactory is InitializableOwnable {
     // ============ Templates ============
 
@@ -43,8 +49,6 @@ contract DPPFactory is InitializableOwnable {
 
     event RemoveDPP(address dpp);
 
-    // ============ Functions ============
-
     constructor(
         address cloneFactory,
         address dppTemplate,
@@ -60,6 +64,8 @@ contract DPPFactory is InitializableOwnable {
         _DEFAULT_MT_FEE_RATE_MODEL_ = defaultMtFeeRateModel;
         _DODO_APPROVE_ = dodoApprove;
     }
+
+    // ============ Functions ============
 
     function createDODOPrivatePool() external returns (address newPrivatePool) {
         newPrivatePool = ICloneFactory(_CLONE_FACTORY_).clone(_DPP_TEMPLATE_);

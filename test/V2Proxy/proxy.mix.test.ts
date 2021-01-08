@@ -119,6 +119,7 @@ describe("DODOProxyV2.0", () => {
                 1,
                 dodoPairs,
                 directions,
+                false,
                 Math.floor(new Date().getTime() / 1000 + 60 * 10)
             ), ctx.sendParam(trader), "swap - two jump");
             var a_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
@@ -143,6 +144,7 @@ describe("DODOProxyV2.0", () => {
                 1,
                 dodoPairs,
                 directions,
+                false,
                 Math.floor(new Date().getTime() / 1000 + 60 * 10)
             ), ctx.sendParam(trader, "1"), "swap - two jump - inETH");
             var a_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
@@ -171,6 +173,7 @@ describe("DODOProxyV2.0", () => {
                 1,
                 dodoPairs,
                 directions,
+                false,
                 Math.floor(new Date().getTime() / 1000 + 60 * 10)
             ), ctx.sendParam(trader), "swap - two jump - outETH");
             var a_DOOD = await ctx.DODO.methods.balanceOf(trader).call();

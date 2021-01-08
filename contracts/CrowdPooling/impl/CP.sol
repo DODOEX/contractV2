@@ -14,6 +14,12 @@ import {IPermissionManager} from "../../lib/PermissionManager.sol";
 import {IFeeRateModel} from "../../lib/FeeRateModel.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 
+/**
+ * @title DODO CrowdPooling
+ * @author DODO Breeder
+ *
+ * @notice CrowdPooling initialization
+ */
 contract CP is CPVesting {
     using SafeMath for uint256;
 

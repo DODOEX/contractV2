@@ -37,6 +37,9 @@ export class ProxyContext {
   USDT: Contract;
   WETH: Contract;
 
+  //Functions
+  DODOIncentive: Contract;
+
   Deployer: string;
   Maintainer: string;
   SpareAccounts: string[];
@@ -52,6 +55,19 @@ export class ProxyContext {
     this.SpareAccounts = allAccounts.slice(2, 10);
 
     this.WETH = contracts.getContractWithAddress(contracts.WETH_CONTRACT_NAME, weth);
+
+    this.DODO = await contracts.newContract(
+      contracts.MINTABLE_ERC20_CONTRACT_NAME,
+      ["DODO Token", "DODO", 18]
+    );
+    this.USDT = await contracts.newContract(
+      contracts.MINTABLE_ERC20_CONTRACT_NAME,
+      ["USDT Token", "USDT", 6]
+    );
+    this.USDC = await contracts.newContract(
+      contracts.MINTABLE_ERC20_CONTRACT_NAME,
+      ["USDC Token", "USDC", 6]
+    );
 
     var cloneFactory = await contracts.newContract(
       contracts.CLONE_FACTORY_CONTRACT_NAME
@@ -78,6 +94,11 @@ export class ProxyContext {
       contracts.SMART_APPROVE
     );
 
+    //DODO Incentive
+    this.DODOIncentive = await contracts.newContract(
+      contracts.DODO_INCENTIVE,
+      [this.DODO.options.address]
+    )
 
     this.DPPFactory = await contracts.newContract(contracts.DPP_FACTORY_NAME,
       [
@@ -112,25 +133,17 @@ export class ProxyContext {
         this.CPFactory.options.address,
         this.WETH.options.address,
         this.DODOApprove.options.address,
-        this.DODOSellHelper.options.address
+        this.DODOSellHelper.options.address,
+        "0x0000000000000000000000000000000000000000",
+        this.DODOIncentive.options.address
       ]
     );
 
     await this.DODOProxyV2.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
     await this.DODOApprove.methods.init(this.Deployer,this.DODOProxyV2.options.address).send(this.sendParam(this.Deployer));
-
-    this.DODO = await contracts.newContract(
-      contracts.MINTABLE_ERC20_CONTRACT_NAME,
-      ["DODO Token", "DODO", 18]
-    );
-    this.USDT = await contracts.newContract(
-      contracts.MINTABLE_ERC20_CONTRACT_NAME,
-      ["USDT Token", "USDT", 6]
-    );
-    this.USDC = await contracts.newContract(
-      contracts.MINTABLE_ERC20_CONTRACT_NAME,
-      ["USDC Token", "USDC", 6]
-    );
+    await this.DODOIncentive.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
+    
+    await this.DODOIncentive.methods.changeDODOProxy(this.DODOProxyV2.options.address).send(this.sendParam(this.Deployer));
 
     this.DODOCalleeHelper = await contracts.newContract(
       contracts.DODO_CALLEE_HELPER_NAME,

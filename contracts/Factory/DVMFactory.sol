@@ -22,6 +22,13 @@ interface IDVMFactory {
     ) external returns (address newVendingMachine);
 }
 
+
+/**
+ * @title DODO VendingMachine Factory
+ * @author DODO Breeder
+ *
+ * @notice Create And Register DVM Pools 
+ */
 contract DVMFactory is InitializableOwnable {
     // ============ Templates ============
 

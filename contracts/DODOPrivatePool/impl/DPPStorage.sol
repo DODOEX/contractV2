@@ -16,12 +16,6 @@ import {IFeeRateModel} from "../../lib/FeeRateModel.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {PMMPricing} from "../../lib/PMMPricing.sol";
 
-/**
- * @title Storage
- * @author DODO Breeder
- *
- * @notice Local Variables
- */
 contract DPPStorage is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
 

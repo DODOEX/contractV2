@@ -179,6 +179,7 @@ contract DVMVault is DVMStorage {
     }
 
     // ============================ Permit ======================================
+    
     function permit(
         address owner,
         address spender,
@@ -205,5 +206,4 @@ contract DVMVault is DVMStorage {
         );
         _approve(owner, spender, value);
     }
-    // ===========================================================================
 }

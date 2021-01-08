@@ -40,10 +40,6 @@ contract DODOIncentive is InitializableOwnable {
     uint112 public totalReward;
     uint112 public totalDistribution;
 
-    constructor(address _dodoToken) public {
-        _DODO_TOKEN_ = _dodoToken;
-    }
-
     // ============ Events ============
 
     event SetBoost(address token, uint256 boostRate);
@@ -52,6 +48,10 @@ contract DODOIncentive is InitializableOwnable {
     event SetPerReward(uint256 dodoPerBlock);
     event SetDefaultRate(uint256 defaultRate);
     event Incentive(address user,uint256 reward);
+
+    constructor(address _dodoToken) public {
+        _DODO_TOKEN_ = _dodoToken;
+    }
 
     // ============ Ownable ============
 
@@ -98,6 +98,7 @@ contract DODOIncentive is InitializableOwnable {
 
 
     // ============ Incentive  function============
+
     function triggerIncentive(address fromToken,address toToken, address assetTo) external {
         require(msg.sender == _DODO_PROXY_, "DODOIncentive:Access restricted");
         uint256 _startBlock = startBlock;
@@ -106,14 +107,10 @@ contract DODOIncentive is InitializableOwnable {
         uint256 curTotalDistribution = totalDistribution;
         uint256 fromRate = boosts[fromToken];
         uint256 toRate = boosts[toToken];
-        // uint256 rate = (fromRate >= toRate ? fromRate : toRate).add(defaultRate);
         uint256 rate = (fromRate >= toRate ? fromRate : toRate) + defaultRate;
 
-        // uint256 _totalReward = uint256(totalReward).add(block.number.sub(uint256(lastRewardBlock)).mul(dodoPerBlock));
         uint256 _totalReward = totalReward + (block.number - lastRewardBlock) * dodoPerBlock;
-        // uint256 reward = _totalReward.sub(curTotalDistribution).mul(rate).div(1000);
         uint256 reward = (_totalReward - curTotalDistribution) * rate / 1000;
-        // uint256 _totalDistribution = curTotalDistribution.add(reward);
         uint256 _totalDistribution = curTotalDistribution + reward;
 
         _update(_totalReward,_totalDistribution);
@@ -125,7 +122,6 @@ contract DODOIncentive is InitializableOwnable {
         
     function _update(uint256 _totalReward, uint256 _totalDistribution) internal {
         if(_totalReward == 0) 
-            // _totalReward = uint256(totalReward).add(block.number.sub(uint256(lastRewardBlock)).mul(dodoPerBlock));
             _totalReward = totalReward + (block.number - lastRewardBlock) * dodoPerBlock;
         require(_totalReward < uint112(-1) && _totalDistribution < uint112(-1) && block.number < uint32(-1), "OVERFLOW");
         lastRewardBlock = uint32(block.number);

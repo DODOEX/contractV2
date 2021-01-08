@@ -45,6 +45,7 @@ export const DPP_ADMIN_NAME = "DPPAdmin"
 export const DODO_CALLEE_HELPER_NAME = "DODOCalleeHelper"
 export const CROWD_POOLING_NAME = "CP"
 export const CROWD_POOLING_FACTORY = "CrowdPoolingFactory"
+export const DODO_INCENTIVE = "DODOIncentive"
 
 interface ContractJson {
   abi: any;

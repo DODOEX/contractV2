@@ -8,14 +8,15 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {IDODOV1Proxy01} from "./IDODOV1Proxy01.sol";
+import {IDODOV1Proxy02} from "./IDODOV1Proxy02.sol";
 
-interface IDODOV2Proxy01 is IDODOV1Proxy01 {
+interface IDODOV2Proxy01 is IDODOV1Proxy02 {
     function dodoSwapV2ETHToToken(
         address toToken,
         uint256 minReturnAmount,
         address[] memory dodoPairs,
         uint256 directions,
+        bool isIncentive,
         uint256 deadLine
     ) external payable returns (uint256 returnAmount);
 
@@ -25,6 +26,7 @@ interface IDODOV2Proxy01 is IDODOV1Proxy01 {
         uint256 minReturnAmount,
         address[] memory dodoPairs,
         uint256 directions,
+        bool isIncentive,
         uint256 deadLine
     ) external returns (uint256 returnAmount);
 
@@ -35,6 +37,7 @@ interface IDODOV2Proxy01 is IDODOV1Proxy01 {
         uint256 minReturnAmount,
         address[] memory dodoPairs,
         uint256 directions,
+        bool isIncentive,
         uint256 deadLine
     ) external returns (uint256 returnAmount);
 

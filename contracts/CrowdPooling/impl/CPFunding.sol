@@ -20,12 +20,14 @@ import {IDODOCallee} from "../../intf/IDODOCallee.sol";
 
 contract CPFunding is CPStorage {
     using SafeERC20 for IERC20;
+    
     // ============ Events ============
+    
     event Bid(address to, uint256 amount, uint256 fee);
     event Cancel(address to,uint256 amount);
 
     // ============ BID & CALM PHASE ============
-
+    
     modifier isBidderAllow(address bidder) {
         require(_BIDDER_PERMISSION_.isAllowed(bidder), "BIDDER_NOT_ALLOWED");
         _;
@@ -72,9 +74,10 @@ contract CPFunding is CPStorage {
         _UNUSED_QUOTE_ = _QUOTE_TOKEN_.balanceOf(address(this)).sub(poolQuote);
         _UNUSED_BASE_ = _BASE_TOKEN_.balanceOf(address(this)).sub(poolBase);
 
-        // 这里的目的是让midPrice尽量等于avgPrice
-        // 我们统一设定k=1，如果quote和base不平衡，就必然要截断一边
-        // DVM截断了quote，所以如果进入池子的quote很多，就要把quote设置成DVM的base
+        // Try to make midPrice equal to avgPrice
+        // k=1, If quote and base are not balanced, one side must be cut off
+        // DVM truncated quote, but if more quote than base entering the pool, we need set the quote to the base
+
         // m = avgPrice
         // i = m (1-quote/(m*base))
         // if quote = m*base i = 1
@@ -198,8 +201,6 @@ contract CPFunding is CPStorage {
             _QUOTE_TOKEN_.safeTransfer(to, amount);
         }
     }
-
-    // ============ Asset Out ============
 
     function getShares(address user) external view returns (uint256) {
         return _SHARES_[user];

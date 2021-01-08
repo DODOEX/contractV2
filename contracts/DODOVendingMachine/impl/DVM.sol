@@ -14,6 +14,12 @@ import {DVMTrader} from "./DVMTrader.sol";
 import {DVMFunding} from "./DVMFunding.sol";
 import {DVMVault} from "./DVMVault.sol";
 
+/**
+ * @title DODO VendingMachine
+ * @author DODO Breeder
+ *
+ * @notice DODOVendingMachine initialization
+ */
 contract DVM is DVMTrader, DVMFunding {
     function init(
         address maintainer,
@@ -76,6 +82,7 @@ contract DVM is DVMTrader, DVMFunding {
     }
 
     // ============ Version Control ============
+    
     function version() external pure returns (string memory) {
         return "DVM 1.0.0";
     }

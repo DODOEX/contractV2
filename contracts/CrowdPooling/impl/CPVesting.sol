@@ -27,6 +27,8 @@ contract CPVesting is CPFunding {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
+    // ================ Modifiers ================
+
     modifier afterSettlement() {
         require(_SETTLED_, "NOT_SETTLED");
         _;
