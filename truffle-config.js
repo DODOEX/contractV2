@@ -43,7 +43,6 @@ module.exports = {
     MOCK_TOKEN:       false,
     MOCK_V2_POOL:     false,
     MOCK_V2_SWAP:     false,
-    HELPER_V2:        false,
     MANUAL_ADD_POOL:  false
   },
 

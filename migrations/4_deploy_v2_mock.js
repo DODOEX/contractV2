@@ -13,54 +13,48 @@ const DVMFactory = artifacts.require("DVMFactory");
 const DPPFactory = artifacts.require("DPPFactory");
 
 const POOL_PARAM = [
-    // {
-    //     baseAddr: "0xd8C30a4E866B188F16aD266dC3333BD47F34ebaE",  //ABC0
-    //     quoteAddr: "0x69c8a7fc6e05d7aa36114b3e35f62deca8e11f6e", //USDC
-    //     lpFeeRate: "3000000000000000", //0.003
-    //     mtFeeRate: "1000000000000000", //0.001
-    //     i: "10000000", //10
-    //     k: "500000000000000000" //0.5
-    // },
-    // {
-    //     baseAddr: "0xd8C30a4E866B188F16aD266dC3333BD47F34ebaE", //ABC0
-    //     quoteAddr: "0x156595bAF85D5C29E91d959889B022d952190A64", //USDT
-    //     lpFeeRate: "3000000000000000", //0.003
-    //     mtFeeRate: "1000000000000000", //0.001
-    //     i: "10000000", //10
-    //     k: "0" //0
-    // },
-    // {
-    //     baseAddr: "0xd7f02D1b4F9495B549787808503Ecfd231C3fbDA", //ABC1
-    //     quoteAddr: "0x69c8a7fc6e05d7aa36114b3e35f62deca8e11f6e", //USDC
-    //     lpFeeRate: "3000000000000000", //0.003
-    //     mtFeeRate: "1000000000000000", //0.001
-    //     i: "5000000", //5
-    //     k: "1000000000000000000" //1
-    // },
-    // {
-    //     baseAddr: "0xd7f02D1b4F9495B549787808503Ecfd231C3fbDA", //ABC1
-    //     quoteAddr: "0x156595bAF85D5C29E91d959889B022d952190A64", //USDT
-    //     lpFeeRate: "3000000000000000", //0.003
-    //     mtFeeRate: "1000000000000000", //0.001
-    //     i: "8000000", //8
-    //     k: "900000000000000000" //0.9
-    // },
     {
         baseAddr: "0xd8C30a4E866B188F16aD266dC3333BD47F34ebaE",  //ABC0
-        quoteAddr: "0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b", //WETH
+        quoteAddr: "0x43688f367eb83697c3ca5d03c5055b6bd6f6ac4b", //USDC
+        lpFeeRate: "0", //0
+        i: "10000000", //10
+        k: "500000000000000000" //0.5
+    },
+    {
+        baseAddr: "0xd8C30a4E866B188F16aD266dC3333BD47F34ebaE", //ABC0
+        quoteAddr: "0x156595bAF85D5C29E91d959889B022d952190A64", //USDT
         lpFeeRate: "3000000000000000", //0.003
-        mtFeeRate: "1000000000000000", //0.001
-        i: "45000000000000000000", //45
-        k: "800000000000000000" //0.8
+        i: "10000000", //10
+        k: "0" //0
     },
     {
         baseAddr: "0xd7f02D1b4F9495B549787808503Ecfd231C3fbDA", //ABC1
-        quoteAddr: "0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b", //WETH
-        lpFeeRate: "3000000000000000", //0.003
-        mtFeeRate: "1000000000000000", //0.001
-        i: "30000000000000000000", //30
-        k: "300000000000000000" //0.3
+        quoteAddr: "0x43688f367eb83697c3ca5d03c5055b6bd6f6ac4b", //USDC
+        lpFeeRate: "0", //0
+        i: "5000000", //5
+        k: "1000000000000000000" //1
     },
+    {
+        baseAddr: "0xd7f02D1b4F9495B549787808503Ecfd231C3fbDA", //ABC1
+        quoteAddr: "0x156595bAF85D5C29E91d959889B022d952190A64", //USDT
+        lpFeeRate: "3000000000000000", //0.003
+        i: "8000000", //8
+        k: "900000000000000000" //0.9
+    },
+    // {
+    //     baseAddr: "0xd8C30a4E866B188F16aD266dC3333BD47F34ebaE",  //ABC0
+    //     quoteAddr: "0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b", //WETH
+    //     lpFeeRate: "3000000000000000", //0.003
+    //     i: "45000000000000000000", //45
+    //     k: "800000000000000000" //0.8
+    // },
+    // {
+    //     baseAddr: "0xd7f02D1b4F9495B549787808503Ecfd231C3fbDA", //ABC1
+    //     quoteAddr: "0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b", //WETH
+    //     lpFeeRate: "0", //0.003
+    //     i: "30000000000000000000", //30
+    //     k: "300000000000000000" //0.3
+    // },
 ];
 
 module.exports = async (deployer, network, accounts) => {
@@ -70,10 +64,10 @@ module.exports = async (deployer, network, accounts) => {
     let MintableERC20TemplateAddress = "0xA45a64DAba80757432fA4d654Df12f65f020C13C";
     let ERC20FactoryAddress = "0xCb1A2f64EfB02803276BFB5a8D511C4D950282a0";
 
-    let DPPFactoryAddress = "0x58Bc8D248AcbE95CE29CF893C6666D58AF92d941";
-    let DVMFactoryAddress = "0xF2a62693FB14b326C3719e5aeEF28e8e66dC954e";
-    let DODOApproveAddress = "0xeEA9F08eBfde6915AB1C0051F3eB2612DbA95d5D";
-    let DODOProxyV2Address = "0x97B779AD504bbd5b1BFB50e57584a876Dc65171a";
+    let DPPFactoryAddress = "0x6D4a70354cd03ae3A8461eDE9A4dAd445a169a6B";
+    let DVMFactoryAddress = "0x0ac46584e4566d5841E7D708Ab4D92Ef191fFe37";
+    let DODOApproveAddress = "0xe51d8085aB43AC8BC98e965b2F7B79b998c23814";
+    let DODOProxyV2Address = "0xB035847e685925647AaA8b9d74e3bFF36f81EBcB";
 
     const provider = new Web3.providers.HttpProvider("https://kovan.infura.io/v3/22d4a3b2df0e47b78d458f43fe50a199");
 
@@ -104,7 +98,7 @@ module.exports = async (deployer, network, accounts) => {
         const DODOProxyV2Instance = await DODOProxyV2.at(DODOProxyV2Address);
         var tx = await DODOProxyV2Instance.dodoSwapV2TokenToToken(
             accounts[0],
-            "0x69c8a7fc6e05d7aa36114b3e35f62deca8e11f6e",
+            "0x43688f367eb83697c3ca5d03c5055b6bd6f6ac4b",
             "0xd8C30a4E866B188F16aD266dC3333BD47F34ebaE",
             web3.utils.toWei("10", 'mwei'),
             0,
@@ -125,7 +119,7 @@ module.exports = async (deployer, network, accounts) => {
             const token3Addr = "0x123ee47BaE3F64d422F2FB18ac444B47c1880F4C";
             const token4Addr = "0x0ab8EF8B19655F32959c83e5fC5cD6536065D28f";
             const token5Addr = "0x6462794c19e6b4543BEC56200212c7c746bbB9eB";
-            const quote0Addr = "0x69c8a7fc6e05d7aa36114b3e35f62deca8e11f6e";
+            const quote0Addr = "0x43688f367eb83697c3ca5d03c5055b6bd6f6ac4b";
             const quote1Addr = "0x156595bAF85D5C29E91d959889B022d952190A64";
             const token0 = await ERC20Template.at(token0Addr);
             const token1 = await ERC20Template.at(token1Addr);
@@ -158,14 +152,13 @@ module.exports = async (deployer, network, accounts) => {
         const DPPFactoryInstance = await DPPFactory.at(DPPFactoryAddress);
 
         const assetTo = accounts[0];
-        const baseInAmount = web3.utils.toWei("1000", 'ether');
-        // const quoteInAmount = web3.utils.toWei("100", 'mwei');
-        const quoteInAmount = web3.utils.toWei("0", 'ether');
+        const baseInAmount = web3.utils.toWei("100000", 'ether');
+        const quoteInAmount = web3.utils.toWei("10000", 'mwei');
+        // const quoteInAmount = web3.utils.toWei("0", 'ether');
         const deadline = Math.floor(new Date().getTime() / 1000 + 60 * 10);
         //DVM Pool
         for (var i = 0; i < POOL_PARAM.length; i++) {
             tx = await DODOProxyV2Instance.createDODOVendingMachine(
-                assetTo,
                 POOL_PARAM[i].baseAddr,
                 POOL_PARAM[i].quoteAddr,
                 baseInAmount,
@@ -226,11 +219,11 @@ module.exports = async (deployer, network, accounts) => {
 
         const ERC20FactoryInstance = await ERC20Factory.at(ERC20FactoryAddress);
 
-        const totalSupply = web3.utils.toWei("100000000", 'mwei');
-        for (let i = 0; i < 8; i++) {
-            var tx = await ERC20FactoryInstance.createStdERC20(totalSupply, 'ABC Token', 'ABC' + i, 18);
+        const totalSupply = web3.utils.toWei("1000000000", 'ether');
+        for (let i = 0; i < 1; i++) {
+            var tx = await ERC20FactoryInstance.createStdERC20(totalSupply, 'DODO Bird', 'DODO', 18);
             // var tx = await ERC20FactoryInstance.createStdERC20(totalSupply, 'USDT Token', 'USDT', 6);
-            logger.log("ERC20 address: ", tx.logs[0].args['erc20'] + "; Symbol:" + 'ABC' + i);
+            logger.log("ERC20 address: ", tx.logs[0].args['erc20'] + "; Symbol:" + 'DODO');
             // logger.log("ERC20 address: ", tx.logs[0].args['erc20'] + "; Symbol:" + 'USDT');
         }
     }
