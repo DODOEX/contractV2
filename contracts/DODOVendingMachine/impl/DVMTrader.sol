@@ -35,7 +35,7 @@ contract DVMTrader is DVMVault {
         uint256 quoteAmount
     );
 
-    // ============ Execute ============
+    // ============ Trade Functions ============
 
     function sellBase(address to)
         external

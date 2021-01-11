@@ -256,7 +256,7 @@ export class DODOContext {
     await this.DODOV1Proxy02.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
     await this.DODOIncentive.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
     
-    await this.DODOApprove.methods.init(this.Deployer,this.DODOV1Proxy02.options.address).send(this.sendParam(this.Deployer));
+    await this.DODOApprove.methods.init(this.Deployer, this.DODOV1Proxy01.options.address).send(this.sendParam(this.Deployer));
     await this.DODOIncentive.methods.changeDODOProxy(this.DODOV1Proxy02.options.address).send(this.sendParam(this.Deployer));
 
     this.DODOSwapCalcHelper = await contracts.newContract(

@@ -1,4 +1,5 @@
 const fs = require("fs");
+const Web3 = require('web3');
 const { deploySwitch } = require('../truffle-config.js')
 const file = fs.createWriteStream("../deploy-detail-v2.0.txt", { 'flags': 'a' });
 let logger = new console.Console(file, file);
@@ -9,6 +10,7 @@ const ConstFeeRateModelTemplate = artifacts.require("ConstFeeRateModel");
 const PermissionManagerTemplate = artifacts.require("PermissionManager");
 const ExternalValueTemplate = artifacts.require("ExternalValue");
 
+const ERC20Template = artifacts.require("InitializableERC20");
 const DvmTemplate = artifacts.require("DVM");
 const DppTemplate = artifacts.require("DPP");
 const DppAdminTemplate = artifacts.require("DPPAdmin");
@@ -20,6 +22,7 @@ const CpFactory = artifacts.require("CrowdPoolingFactory");
 
 const DODOApprove = artifacts.require("DODOApprove");
 const DODOProxyV2 = artifacts.require("DODOV2Proxy01");
+const DODOIncentive = artifacts.require("DODOIncentive");
 const DODOSellHelper = artifacts.require("DODOSellHelper");
 const DODOCalleeHelper = artifacts.require("DODOCalleeHelper");
 const DODOV2RouteHelper = artifacts.require("DODOV2RouteHelper");
@@ -53,6 +56,9 @@ module.exports = async (deployer, network, accounts) => {
     let CpFactoryAddress = "";
     //Approve
     let DODOApproveAddress = "";
+    //Incentive
+    let DODOIncentiveAddress = "";
+    let DODOTokenAddress = "";
     //Account
     let multiSigAddress = "";
     let defaultMaintainer = "";
@@ -74,7 +80,7 @@ module.exports = async (deployer, network, accounts) => {
         // DefaultGasSourceAddress = "0xE0c0df0e0be7ec4f579503304a6C186cA4365407";
         DefaultMtFeeRateAddress = "0xEfdE4225AC747136289979e29f1236527b2E4DB1";
         DefaultPermissionAddress = "0xACc7E23368261e1E02103c4e5ae672E7D01f5797";
-        
+
         DvmTemplateAddress = "";
         DppTemplateAddress = "";
         DppAdminTemplateAddress = "";
@@ -85,6 +91,8 @@ module.exports = async (deployer, network, accounts) => {
         CpFactoryAddress = "";
         //Approve
         DODOApproveAddress = "";
+        DODOIncentiveAddress = "";
+        DODOTokenAddress = "0xfF2985D13953Cb92ecc585aA2B6A4AF8cB46068f";
         //Account
         multiSigAddress = accounts[0];
         defaultMaintainer = accounts[0];
@@ -94,6 +102,7 @@ module.exports = async (deployer, network, accounts) => {
         WETHAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
         chiAddress = "0x0000000000004946c0e9F43F4Dee607b0eF1fA1c";
         DODOCalleeHelperAddress = "";
+        DODORouteV2HelperAddress = "";
         //Template
         CloneFactoryAddress = "";
         // FeeRateModelTemplateAddress = "";
@@ -115,6 +124,8 @@ module.exports = async (deployer, network, accounts) => {
         CpFactoryAddress = "";
         //Proxy
         DODOApproveAddress = "";
+        DODOIncentiveAddress = "";
+        DODOTokenAddress = "0x43Dfc4159D86F3A37A5A4B3D4580b888ad7d4DDd";
         //Account
         multiSigAddress = "0x95C4F5b83aA70810D4f142d58e5F7242Bd891CB0";
         defaultMaintainer = "0x95C4F5b83aA70810D4f142d58e5F7242Bd891CB0";
@@ -124,6 +135,7 @@ module.exports = async (deployer, network, accounts) => {
         WETHAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
         chiAddress = "0x0000000000000000000000000000000000000000";
         DODOCalleeHelperAddress = "";
+        DODORouteV2HelperAddress = "";
         //Template
         CloneFactoryAddress = "";
         // FeeRateModelTemplateAddress = "";
@@ -145,28 +157,20 @@ module.exports = async (deployer, network, accounts) => {
         CpFactoryAddress = "";
         //Proxy
         DODOApproveAddress = "";
+        DODOIncentiveAddress = "";
+        DODOTokenAddress = "";
         //Account
-        multiSigAddress = "";
-        defaultMaintainer = "";
+        multiSigAddress = "0x4073f2b9bB95774531b9e23d206a308c614A943a";
+        defaultMaintainer = "0x4073f2b9bB95774531b9e23d206a308c614A943a";
     } else return;
-
-
-    if(deploySwitch.HELPER_V2) {
-        logger.log("====================================================");
-        logger.log("network type: " + network);
-        logger.log("Deploy time: " + new Date().toLocaleString());
-        logger.log("Deploy type: HELPER V2"); 
-
-        await deployer.deploy(DODOV2RouteHelper, "0xF2a62693FB14b326C3719e5aeEF28e8e66dC954e","0x58Bc8D248AcbE95CE29CF893C6666D58AF92d941");
-        DODOV2RouteHelperAddress = DODOV2RouteHelper.address;
-        logger.log("DODOV2RouteHelper Address: ", DODOV2RouteHelperAddress);
-    }
 
     if (deploySwitch.DEPLOY_V2) {
         logger.log("====================================================");
         logger.log("network type: " + network);
         logger.log("Deploy time: " + new Date().toLocaleString());
         logger.log("Deploy type: V2");
+        if (DODOTokenAddress == "") return;
+
         //Helper
         if (DODOSellHelperAddress == "") {
             await deployer.deploy(DODOSellHelper);
@@ -262,6 +266,16 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("DODOApprove Address: ", DODOApproveAddress);
         }
 
+        //Incentive
+        if (DODOIncentiveAddress == "") {
+            await deployer.deploy(DODOIncentive, DODOTokenAddress);
+            DODOIncentiveAddress = DODOIncentive.address;
+            logger.log("DODOIncentiveAddress: ", DODOIncentiveAddress);
+            const DODOIncentiveInstance = await DODOIncentive.at(DODOIncentiveAddress);
+            var tx = await DODOIncentiveInstance.initOwner(multiSigAddress);
+            logger.log("DODOIncentive Init tx: ", tx.tx);
+        }
+
         //Factory
         if (DvmFactoryAddress == "") {
             await deployer.deploy(
@@ -294,7 +308,7 @@ module.exports = async (deployer, network, accounts) => {
             var tx = await DppFactoryInstance.initOwner(multiSigAddress);
             logger.log("Init DppFactory Tx:", tx.tx);
         }
-        
+
         if (CpFactoryAddress == "") {
             await deployer.deploy(
                 CpFactory,
@@ -323,16 +337,41 @@ module.exports = async (deployer, network, accounts) => {
             CpFactoryAddress,
             WETHAddress,
             DODOApproveAddress,
-            DODOSellHelperAddress
+            DODOSellHelperAddress,
+            chiAddress,
+            DODOIncentiveAddress
         );
         logger.log("DODOProxyV2 Address: ", DODOProxyV2.address);
         const DODOProxyV2Instance = await DODOProxyV2.at(DODOProxyV2.address);
         var tx = await DODOProxyV2Instance.initOwner(multiSigAddress);
         logger.log("Init DODOProxyV2 Tx:", tx.tx);
 
-        
+
         const DODOApproveInstance = await DODOApprove.at(DODOApproveAddress);
-        var tx = await DODOApproveInstance.init(multiSigAddress,DODOProxyV2.address);
+        var tx = await DODOApproveInstance.init(multiSigAddress, DODOProxyV2.address);
         logger.log("DODOApprove Init tx: ", tx.tx);
+
+
+        if (network == 'kovan') {
+            //1. Proxy whiteList
+
+            //2. ChangeDODO Incentive proxy
+            const DODOIncentiveInstance = await DODOIncentive.at(DODOIncentiveAddress);
+            var tx = await DODOIncentiveInstance.changeDODOProxy(DODOProxyV2.address);
+            logger.log("DODOIncentive ChangeProxy tx: ", tx.tx);
+
+            //3. Open trade incentive 
+            // const provider = new Web3.providers.HttpProvider("https://kovan.infura.io/v3/22d4a3b2df0e47b78d458f43fe50a199");
+            // if (!provider) {
+            //     throw new Error(`Unable to find provider for network: ${network}`)
+            // }
+            // const web3 = new Web3(provider)
+            // const blockNum = await web3.eth.getBlockNumber();
+            // var tx = await DODOIncentiveInstance.switchIncentive(blockNum + 1);
+            // logger.log("DODOIncentive OpenSwitch tx: ", tx.tx);
+
+            //4. Transfer DODO to Trade Incentive
+        }
+
     }
 };

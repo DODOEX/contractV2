@@ -25,8 +25,6 @@ interface IDPP {
     //=========== admin ==========
     function ratioSync() external;
 
-    //==============================
-
     function retrieve(
         address payable to,
         address token,

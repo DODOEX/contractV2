@@ -16,7 +16,6 @@ interface IDODOV1Proxy02 {
         uint256 minReturnAmount,
         address[] memory dodoPairs,
         uint256 directions,
-        bool isIncentive,
         uint256 deadLine
     ) external payable returns (uint256 returnAmount);
 
@@ -28,7 +27,6 @@ interface IDODOV1Proxy02 {
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
         bytes memory callDataConcat,
-        bool isIncentive,
         uint256 deadLine
     ) external payable returns (uint256 returnAmount);
 
@@ -40,7 +38,6 @@ interface IDODOV1Proxy02 {
         address[] memory mixPairs,
         uint256[] memory directions,
         address[] memory portionPath,
-        bool isIncentive,
         uint256 deadLine
     ) external payable returns (uint256 returnAmount);
 }

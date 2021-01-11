@@ -30,6 +30,7 @@ export interface CPContextInitConfig {
   freezeDuration: BigNumber;
   vestingDuration: BigNumber;
   cliffRate: string;
+  quoteTokenContract: string;
 }
 
 
@@ -43,6 +44,7 @@ export class CPContext {
   Deployer: string;
   Maintainer: string;
   SpareAccounts: string[];
+  DODOCallee: Contract;
 
   constructor() { }
 
@@ -67,10 +69,18 @@ export class CPContext {
       contracts.MINTABLE_ERC20_CONTRACT_NAME,
       ["TestBase", "BASE", 18]
     );
-    this.QUOTE = await contracts.newContract(
-      contracts.MINTABLE_ERC20_CONTRACT_NAME,
-      ["TestQuote", "QUOTE", 18]
-    );
+    if(config.quoteTokenContract){
+      this.QUOTE = await contracts.newContract(
+        config.quoteTokenContract,
+        ["TestQuote", "QUOTE", 18]
+      );
+    }else{
+      this.QUOTE = await contracts.newContract(
+        contracts.MINTABLE_ERC20_CONTRACT_NAME,
+        ["TestQuote", "QUOTE", 18]
+      );
+    }
+    this.DODOCallee = await contracts.newContract(contracts.DODO_CALLEE_HELPER_NAME,[this.QUOTE.options.address]);
 
     this.DVMFactory = await contracts.newContract(contracts.DVM_FACTORY_NAME,
       [

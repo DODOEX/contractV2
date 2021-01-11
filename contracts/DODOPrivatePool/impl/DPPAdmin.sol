@@ -12,12 +12,18 @@ import {IDPP} from "../intf/IDPP.sol";
 import {IDODOApprove} from "../../intf/IDODOApprove.sol";
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 
+/**
+ * @title DPPAdmin
+ * @author DODO Breeder
+ *
+ * @notice Admin of DODOPrivatePool
+ */
 contract DPPAdmin is InitializableOwnable {
     address public _DPP_;
     address public _OPERATOR_;
     address public _DODO_APPROVE_;
-
     uint256 public _FREEZE_TIMESTAMP_;
+
 
     modifier notFreezed() {
         require(block.timestamp >= _FREEZE_TIMESTAMP_, "ADMIN_FREEZED");
@@ -36,7 +42,6 @@ contract DPPAdmin is InitializableOwnable {
         _DODO_APPROVE_ = dodoApprove;
     }
 
-    //For Rebase Token
     function sync() external notFreezed onlyOwner {
         IDPP(_DPP_).ratioSync();
     }

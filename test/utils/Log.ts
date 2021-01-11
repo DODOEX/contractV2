@@ -13,6 +13,7 @@ export const numberWithCommas = x => x.toString().replace(/\B(?=(\d{3})+(?!\d))/
 
 export async function logGas(funcCall: any, params: any, desc: string) {
   const estimatedGas = await funcCall.estimateGas(params)
+
   const receipt = await funcCall.send(params)
   const gasUsed = receipt.gasUsed;
   let colorFn;

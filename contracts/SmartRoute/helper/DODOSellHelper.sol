@@ -1,9 +1,3 @@
-/**
- *Submitted for verification at Etherscan.io on 2020-10-10
- */
-
-// File: contracts/intf/IDODO.sol
-
 /*
 
     Copyright 2020 DODO ZOO.

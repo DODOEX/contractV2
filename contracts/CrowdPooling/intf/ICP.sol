@@ -15,11 +15,6 @@ interface ICP {
         uint256[] calldata valueList
     ) external;
 
-    //==============================
-
-
-    //==============================
-
     function bid(address to) external;
 
     function cancel(address assetTo, uint256 amount) external;

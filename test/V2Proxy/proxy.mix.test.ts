@@ -60,7 +60,6 @@ async function initCreateDPP(ctx: ProxyContext, token0: string, token1: string, 
 async function initCreateDVM(ctx: ProxyContext, token0: string, token1: string, token0Amount: string, token1Amount: string, ethValue: string, i: string): Promise<string> {
     let PROXY = ctx.DODOProxyV2;
     await PROXY.methods.createDODOVendingMachine(
-        project,
         token0,
         token1,
         token0Amount,
@@ -114,13 +113,13 @@ describe("DODOProxyV2.0", () => {
             ]
             var directions = 2
             await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
-                trader,
                 ctx.DODO.options.address,
                 ctx.WETH.options.address,
                 decimalStr("500"),
                 1,
                 dodoPairs,
                 directions,
+                false,
                 Math.floor(new Date().getTime() / 1000 + 60 * 10)
             ), ctx.sendParam(trader), "swap - two jump");
             var a_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
@@ -141,11 +140,11 @@ describe("DODOProxyV2.0", () => {
             ]
             var directions = 2
             await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2ETHToToken(
-                trader,
                 ctx.DODO.options.address,
                 1,
                 dodoPairs,
                 directions,
+                false,
                 Math.floor(new Date().getTime() / 1000 + 60 * 10)
             ), ctx.sendParam(trader, "1"), "swap - two jump - inETH");
             var a_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
@@ -169,12 +168,12 @@ describe("DODOProxyV2.0", () => {
             ]
             var directions = 2
             var tx = await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToETH(
-                trader,
                 ctx.DODO.options.address,
                 decimalStr("10000"),
                 1,
                 dodoPairs,
                 directions,
+                false,
                 Math.floor(new Date().getTime() / 1000 + 60 * 10)
             ), ctx.sendParam(trader), "swap - two jump - outETH");
             var a_DOOD = await ctx.DODO.methods.balanceOf(trader).call();

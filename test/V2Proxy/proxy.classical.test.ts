@@ -119,7 +119,8 @@ async function calcRoute(ctx: ProxyContext, fromTokenAmount: string, slippage: n
         fromTokenAmount,
         toAmount,
         dodoPairs,
-        tmpDirections,
+        parseInt(strDirections,2),
+        false,
         deadline
     )
 }
@@ -175,7 +176,6 @@ describe("AddLiquidity", () => {
             await ctxV1.DODO.methods.approve(ctxV2.DODOApprove.options.address, MAX_UINT256).send(ctxV2.sendParam(trader));
             await ctxV1.USDT.methods.approve(ctxV2.DODOApprove.options.address, MAX_UINT256).send(ctxV2.sendParam(trader));
             await logGas(await ctxV2.DODOProxyV2.methods.addLiquidityToV1(
-                trader,
                 ctxV1.DODO_USDT.options.address,
                 decimalStr("100"),
                 mweiStr("100"),
@@ -205,7 +205,6 @@ describe("AddLiquidity", () => {
             console.log("weth_lp:" + weth_lp + " usdc_lp:" + usdc_lp);
             await ctxV1.USDC.methods.approve(ctxV2.DODOApprove.options.address, MAX_UINT256).send(ctxV2.sendParam(trader));
             await logGas(await ctxV2.DODOProxyV2.methods.addLiquidityToV1(
-                trader,
                 ctxV1.WETH_USDC.options.address,
                 decimalStr("1"),
                 mweiStr("100"),

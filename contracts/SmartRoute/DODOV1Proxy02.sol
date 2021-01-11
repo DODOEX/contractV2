@@ -18,7 +18,6 @@ import {IUni} from "./intf/IUni.sol";
 import {IDODOApprove} from "../intf/IDODOApprove.sol";
 import {IDODOV1Proxy02} from "./intf/IDODOV1Proxy02.sol";
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
-import {IDODOIncentive} from "./DODOIncentive.sol";
 
 /**
  * @title DODOV1Proxy02
@@ -33,7 +32,6 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
     // ============ Storage ============
 
     address constant _ETH_ADDRESS_ = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
-    address public immutable _DODO_INCENTIVE_;
     address public immutable _DODO_APPROVE_;
     address public immutable _DODO_SELL_HELPER_;
     address public immutable _WETH_;
@@ -63,14 +61,12 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
         address dodoApporve,
         address dodoSellHelper,
         address weth,
-        address chiToken,
-        address dodoIncentive
+        address chiToken
     ) public {
         _DODO_APPROVE_ = dodoApporve;
         _DODO_SELL_HELPER_ = dodoSellHelper;
         _WETH_ = weth;
         _CHI_TOKEN_ = chiToken;
-        _DODO_INCENTIVE_ = dodoIncentive;
     }
 
     fallback() external payable {}
@@ -97,7 +93,6 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
         uint256 minReturnAmount,
         address[] memory dodoPairs,
         uint256 directions,
-        bool isIncentive,
         uint256 deadLine
     ) external override payable judgeExpired(deadLine) returns (uint256 returnAmount) {
         require(dodoPairs.length > 0, "DODOV1Proxy02: PAIRS_EMPTY");
@@ -155,10 +150,6 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
             if(gasleft() > 27710 + gasTokenBurn * 6080)
                 IChi(_CHI_TOKEN_).freeUpTo(gasTokenBurn);
         }
-
-        if(isIncentive) {
-            IDODOIncentive(_DODO_INCENTIVE_).triggerIncentive(fromToken,toToken,msg.sender);
-        }
     }
 
     function externalSwap(
@@ -169,11 +160,11 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
         bytes memory callDataConcat,
-        bool isIncentive,
         uint256 deadLine
     ) external override payable judgeExpired(deadLine) returns (uint256 returnAmount) {
         require(minReturnAmount > 0, "DODOV1Proxy02: RETURN_AMOUNT_ZERO");
-
+        require(fromToken != _CHI_TOKEN_, "DODOV1Proxy02: NOT_SUPPORT_SELL_CHI");
+        
         address _fromToken = fromToken;
         address _toToken = toToken;
         
@@ -208,10 +199,6 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
             if(gasleft() > 27710 + _gasExternalReturn * 6080)
                 IChi(_CHI_TOKEN_).freeUpTo(_gasExternalReturn);
         }
-
-        if(isIncentive) {
-            IDODOIncentive(_DODO_INCENTIVE_).triggerIncentive(_fromToken,_toToken,msg.sender);
-        }
     }
 
 
@@ -223,12 +210,12 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
         address[] memory mixPairs,
         uint256[] memory directions,
         address[] memory portionPath,
-        bool isIncentive,
         uint256 deadLine
     ) external override payable judgeExpired(deadLine) returns (uint256 returnAmount) {
         require(mixPairs.length == directions.length, "DODOV1Proxy02: PARAMS_LENGTH_NOT_MATCH");
         require(mixPairs.length > 0, "DODOV1Proxy02: PAIRS_EMPTY");
         require(minReturnAmount > 0, "DODOV1Proxy02: RETURN_AMOUNT_ZERO");
+        require(fromToken != _CHI_TOKEN_, "DODOV1Proxy02: NOT_SUPPORT_SELL_CHI");
         
         uint256 toTokenOriginBalance = IERC20(toToken).universalBalanceOf(msg.sender);
 
@@ -281,10 +268,6 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
         if(_gasExternalReturn > 0) {
             if(gasleft() > 27710 + _gasExternalReturn * 6080)
                 IChi(_CHI_TOKEN_).freeUpTo(_gasExternalReturn);
-        }
-
-        if(isIncentive) {
-            IDODOIncentive(_DODO_INCENTIVE_).triggerIncentive(fromToken,toToken,msg.sender);
         }
     }
 }

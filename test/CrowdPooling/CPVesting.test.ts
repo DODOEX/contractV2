@@ -39,6 +39,7 @@ describe("Funding", () => {
       freezeDuration: new BigNumber(86400),
       vestingDuration: new BigNumber(86400),
       cliffRate: decimalStr("1"),
+      quoteTokenContract:''
     }
     ctx = new CPContext();
     await ctx.init(config);
@@ -69,11 +70,11 @@ describe("Funding", () => {
       assert.equal(await ctx.BASE.methods.balanceOf(ctx.CP.options.address).call(), "2997000000000000000000")
       assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.CP.options.address).call(), "0")
 
-      await ctx.CP.methods.bidderClaim().send(ctx.sendParam(bidder1))
+      await ctx.CP.methods.bidderClaim(bidder1, "0x").send(ctx.sendParam(bidder1))
       assert.equal(await ctx.BASE.methods.balanceOf(bidder1).call(), "999000000000000000000")
       assert.equal(await ctx.QUOTE.methods.balanceOf(bidder1).call(), "0")
 
-      await ctx.CP.methods.bidderClaim().send(ctx.sendParam(bidder2))
+      await ctx.CP.methods.bidderClaim(bidder2, "0x").send(ctx.sendParam(bidder2))
       assert.equal(await ctx.BASE.methods.balanceOf(bidder2).call(), "1998000000000000000000")
       assert.equal(await ctx.QUOTE.methods.balanceOf(bidder2).call(), "0")
 
@@ -92,11 +93,11 @@ describe("Funding", () => {
       assert.equal(await ctx.BASE.methods.balanceOf(ctx.CP.options.address).call(), "5000000000000000000000")
       assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.CP.options.address).call(), decimalStr("39910"))
 
-      await ctx.CP.methods.bidderClaim().send(ctx.sendParam(bidder1))
+      await ctx.CP.methods.bidderClaim(bidder1, "0x").send(ctx.sendParam(bidder1))
       assert.equal(await ctx.BASE.methods.balanceOf(bidder1).call(), "1666666666666666666666")
       assert.equal(await ctx.QUOTE.methods.balanceOf(bidder1).call(), "13303333333333333333333")
 
-      await ctx.CP.methods.bidderClaim().send(ctx.sendParam(bidder2))
+      await ctx.CP.methods.bidderClaim(bidder2, "0x").send(ctx.sendParam(bidder2))
       assert.equal(await ctx.BASE.methods.balanceOf(bidder2).call(), "3333333333333333333333")
       assert.equal(await ctx.QUOTE.methods.balanceOf(bidder2).call(), "26606666666666666666666")
     })

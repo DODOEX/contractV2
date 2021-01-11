@@ -40,11 +40,10 @@ contract DVMFunding is DVMVault {
         quoteInput = quoteBalance.sub(quoteReserve);
         require(baseInput > 0, "NO_BASE_INPUT");
 
-        // case 1. initial supply
-        // 包含了 baseReserve == 0 && quoteReserve == 0 的情况
-        // 在提币的时候向下取整。因此永远不会出现，balance为0但totalsupply不为0的情况
-        // 但有可能出现，reserve>0但totalSupply=0的场景
+        // Round down when withdrawing. Therefore, never be a situation occuring balance is 0 but totalsupply is not 0
+        // But May Happen，reserve >0 But totalSupply = 0
         if (totalSupply == 0) {
+            // case 1. initial supply
             require(baseBalance >= 10**3, "INSUFFICIENT_LIQUIDITY_MINED");
             shares = baseBalance; // 以免出现balance很大但shares很小的情况
         } else if (baseReserve > 0 && quoteReserve == 0) {

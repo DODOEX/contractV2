@@ -12,6 +12,13 @@ import {ICloneFactory} from "../lib/CloneFactory.sol";
 import {InitializableERC20} from "../external/ERC20/InitializableERC20.sol";
 import {InitializableMintableERC20} from "../external/ERC20/InitializableMintableERC20.sol";
 
+
+/**
+ * @title DODO ERC20Factory
+ * @author DODO Breeder
+ *
+ * @notice Help user to create erc20 token
+ */
 contract ERC20Factory {
     // ============ Templates ============
 
