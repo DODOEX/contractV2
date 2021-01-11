@@ -97,6 +97,7 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
     ) external override payable judgeExpired(deadLine) returns (uint256 returnAmount) {
         require(dodoPairs.length > 0, "DODOV1Proxy02: PAIRS_EMPTY");
         require(minReturnAmount > 0, "DODOV1Proxy02: RETURN_AMOUNT_ZERO");
+        require(fromToken != _CHI_TOKEN_, "DODOV1Proxy02: NOT_SUPPORT_SELL_CHI");
         uint256 originGas = gasleft();
 
         if (fromToken != _ETH_ADDRESS_) {
