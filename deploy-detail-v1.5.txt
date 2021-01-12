@@ -82,3 +82,9 @@ DODOApprove Address:  0xE0eE1f72c0Ce4097F204beBD3B7fF508fb26292D
 DODOProxyV1 Address:  0xf63baBc984ff05374dBCF0367Eaa2333663f2262
 Set DODOProxyV1 Owner tx:  0x2d00a39ad1904a34b8baa7d6a69bc634ea2bc2cff0038bec79e922b7d0687e76
 Set DODOApprove Owner And Init Set Proxy tx:  0xf368e47b184b3f0db035fa7a0838eabc46e6f24d98bc44cb0b1b1b8c73e31561
+====================================================
+network type: live
+Deploy time: 2021/1/11 上午10:23:58
+Deploy type: Proxy
+DODOProxyV2 Address:  0x6ed3fd491F5B10384787B3fb162A72227FaFBf63
+Set DODOProxyV2 Owner tx:  0x438ba2bfcee92e641a3e48709de31bd0e2fcb9866d30f6d73be837e3b42bd551

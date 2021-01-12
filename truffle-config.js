@@ -38,12 +38,13 @@ module.exports = {
    * $ truffle test --network <network-name>
    */
   deploySwitch: {
-    DEPLOY_V1:        true,
+    DEPLOY_V1:        false,
     DEPLOY_V2:        false,
     MOCK_TOKEN:       false,
     MOCK_V2_POOL:     false,
     MOCK_V2_SWAP:     false,
-    MANUAL_ADD_POOL:  false
+    MANUAL_ADD_POOL:  false,
+    ROUTER_HELPER:    false
   },
 
   networks: {

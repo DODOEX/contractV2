@@ -89,8 +89,8 @@ contract DVMFactory is InitializableOwnable {
             );
         }
         _REGISTRY_[baseToken][quoteToken].push(newVendingMachine);
-        _USER_REGISTRY_[msg.sender].push(newVendingMachine);
-        emit NewDVM(baseToken, quoteToken, msg.sender, newVendingMachine);
+        _USER_REGISTRY_[tx.origin].push(newVendingMachine);
+        emit NewDVM(baseToken, quoteToken, tx.origin, newVendingMachine);
     }
 
     // ============ Admin Operation Functions ============
