@@ -57,6 +57,11 @@ export class DVMContext {
   MtFeeRate: string;
   SpareAccounts: string[];
 
+  mtFeeRateModel: Contract;
+
+  MtFeeRateModelLogic: Contract;
+  MtFeeRateModelLogicUpdate: Contract;
+
   constructor() { }
 
   async init(config: DVMContextInitConfig) {
@@ -64,8 +69,9 @@ export class DVMContext {
     this.Web3 = getDefaultWeb3();
 
     this.DVM = await contracts.newContract(contracts.DVM_NAME)
-    var lpFeeRateModel = await contracts.newContract(contracts.CONST_FEE_RATE_MODEL_NAME)
-    var mtFeeRateModel = await contracts.newContract(contracts.CONST_FEE_RATE_MODEL_NAME)
+    var lpFeeRateModel = await contracts.newContract(contracts.FEE_RATE_MODEL_NAME)
+    var mtFeeRateModel = await contracts.newContract(contracts.FEE_RATE_MODEL_NAME)
+    this.mtFeeRateModel = mtFeeRateModel;
     this.MtFeeRate = mtFeeRateModel.options.address
     var permissionManager = await contracts.newContract(contracts.PERMISSION_MANAGER_NAME)
     var gasPriceSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME)
@@ -102,6 +108,10 @@ export class DVMContext {
     await gasPriceSource.methods.set(MAX_UINT256).send(this.sendParam(this.Deployer))
     await lpFeeRateModel.methods.init(this.Deployer, config.lpFeeRate).send(this.sendParam(this.Deployer))
     await mtFeeRateModel.methods.init(this.Deployer, config.mtFeeRate).send(this.sendParam(this.Deployer))
+
+
+    this.MtFeeRateModelLogic = await contracts.newContract(contracts.FEE_RATE_MODEL_LOGIC_NAME)
+    this.MtFeeRateModelLogicUpdate = await contracts.newContract(contracts.FEE_RATE_MODEL_LOGIC_UPDATE_NAME)
 
     console.log(log.blueText("[Init DVM context]"));
   }

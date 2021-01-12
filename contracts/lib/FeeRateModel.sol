@@ -8,6 +8,7 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
+import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 
 interface IFeeRateModel {
@@ -16,23 +17,28 @@ interface IFeeRateModel {
     function setFeeRate(uint256 newFeeRate) external;
 }
 
-contract FeeRateModel is InitializableOwnable {
+contract FeeRateModel is ReentrancyGuard,InitializableOwnable {
     //DEFAULT
     uint256 public _FEE_RATE_;
     mapping(address => uint256) feeMapping;
+    event Log(string str, bool result);
 
     function init(address owner, uint256 feeRate) external {
         initOwner(owner);
         _FEE_RATE_ = feeRate;
     }
 
-    function setSpecificFeeRate(address trader, uint256 feeRate) external onlyOwner {
-        require(trader != address(0), "INVALID ADDRESS!");
-        feeMapping[trader] = feeRate;
+    function setSpecificFeeRate(address trader, uint256 feeRate, address logicContractAddr) external onlyOwner {
+        bool r;
+        (r, ) = logicContractAddr.delegatecall(abi.encodeWithSignature("setSpecificFeeRate(address,uint256)", trader,feeRate));
+        emit Log("delegatecall return ", r);
     }
 
-    function setFeeRate(uint256 newFeeRate) external onlyOwner {
-        _FEE_RATE_ = newFeeRate;
+    function setFeeRate(uint256 newFeeRate, address logicContractAddr) external onlyOwner {
+        bool r;
+        (r, ) = logicContractAddr.delegatecall(abi.encodeWithSignature("setFeeRate(uint256)", newFeeRate));
+        emit Log("delegatecall return ", r); 
+        
     }
 
     function getFeeRate(address trader) external view returns (uint256) {

@@ -39,6 +39,8 @@ export class ProxyContext {
 
   //Functions
   DODOIncentive: Contract;
+  MtFeeRateModelLogic: Contract;
+  MtFeeRateModelLogicUpdate: Contract;
 
   Deployer: string;
   Maintainer: string;
@@ -78,8 +80,8 @@ export class ProxyContext {
     var dppAdminTemplate = await contracts.newContract(contracts.DPP_ADMIN_NAME)
     var permissionManagerTemplate = await contracts.newContract(contracts.PERMISSION_MANAGER_NAME)
     var mtFeeRateModelTemplate = await contracts.newContract(contracts.FEE_RATE_MODEL_NAME)
-    // await mtFeeRateModelTemplate.methods.init(this.Deployer,decimalStr("0.01")).send(this.sendParam(this.Deployer));
-    await mtFeeRateModelTemplate.methods.init(this.Deployer,decimalStr("0")).send(this.sendParam(this.Deployer));
+    await mtFeeRateModelTemplate.methods.init(this.Deployer,decimalStr("0.01")).send(this.sendParam(this.Deployer));
+    // await mtFeeRateModelTemplate.methods.init(this.Deployer,decimalStr("0")).send(this.sendParam(this.Deployer));
 
     this.DVMFactory = await contracts.newContract(contracts.DVM_FACTORY_NAME,
       [
@@ -149,6 +151,11 @@ export class ProxyContext {
       contracts.DODO_CALLEE_HELPER_NAME,
       [this.WETH.options.address]
     )
+
+
+    this.MtFeeRateModelLogic = await contracts.newContract(contracts.FEE_RATE_MODEL_LOGIC_NAME)
+    this.MtFeeRateModelLogicUpdate = await contracts.newContract(contracts.FEE_RATE_MODEL_LOGIC_UPDATE_NAME)
+
 
     console.log(log.blueText("[Init DVM context]"));
   }
