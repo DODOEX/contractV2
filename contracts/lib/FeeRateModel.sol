@@ -21,7 +21,9 @@ contract FeeRateModel is ReentrancyGuard,InitializableOwnable {
     //DEFAULT
     uint256 public _FEE_RATE_;
     mapping(address => uint256) feeMapping;
-    event Log(string str, bool result);
+    event SetSpecificFeeRate(bool result);
+    event SetFeeRate(bool result);
+    
 
     function init(address owner, uint256 feeRate) external {
         initOwner(owner);
@@ -31,13 +33,13 @@ contract FeeRateModel is ReentrancyGuard,InitializableOwnable {
     function setSpecificFeeRate(address trader, uint256 feeRate, address logicContractAddr) external onlyOwner {
         bool r;
         (r, ) = logicContractAddr.delegatecall(abi.encodeWithSignature("setSpecificFeeRate(address,uint256)", trader,feeRate));
-        emit Log("delegatecall return ", r);
+        emit SetSpecificFeeRate(r);
     }
 
     function setFeeRate(uint256 newFeeRate, address logicContractAddr) external onlyOwner {
         bool r;
         (r, ) = logicContractAddr.delegatecall(abi.encodeWithSignature("setFeeRate(uint256)", newFeeRate));
-        emit Log("delegatecall return ", r); 
+        emit SetFeeRate(r); 
         
     }
 
