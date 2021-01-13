@@ -645,17 +645,22 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
                 IUni(curPair).swapExactTokensForTokens(curAmountIn,0,portionPath,address(this),deadLine);
             }
         }
+
+        IERC20(_toToken).universalTransfer(
+            msg.sender,
+            IERC20(_toToken).universalBalanceOf(address(this))
+        );
         
-        {
-        uint256 toBalance;
-        if (_toToken == _ETH_ADDRESS_) {
-            toBalance = IWETH(_WETH_).balanceOf(address(this));
-            IWETH(_WETH_).withdraw(toBalance);
-        } else {
-            toBalance = IERC20(_toToken).tokenBalanceOf(address(this));
-        }
-        IERC20(_toToken).universalTransfer(msg.sender,toBalance);
-        }
+        // {
+        // uint256 toBalance;
+        // if (_toToken == _ETH_ADDRESS_) {
+        //     toBalance = IWETH(_WETH_).balanceOf(address(this));
+        //     IWETH(_WETH_).withdraw(toBalance);
+        // } else {
+        //     toBalance = IERC20(_toToken).tokenBalanceOf(address(this));
+        // }
+        // IERC20(_toToken).universalTransfer(msg.sender,toBalance);
+        // }
 
         returnAmount = IERC20(_toToken).universalBalanceOf(msg.sender).sub(toTokenOriginBalance);
         require(returnAmount >= minReturnAmount, "DODOV2Proxy01: Return amount is not enough");

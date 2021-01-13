@@ -50,7 +50,7 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
 
     uint256 public _TOTAL_SHARES_;
     mapping(address => uint256) internal _SHARES_;
-    mapping(address => bool) internal _CLAIMED_;
+    mapping(address => bool) public _CLAIMED_;
 
     address public _POOL_FACTORY_;
     address public _POOL_;

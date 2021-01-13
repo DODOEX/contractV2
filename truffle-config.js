@@ -39,7 +39,7 @@ module.exports = {
    */
   deploySwitch: {
     DEPLOY_V1:        false,
-    DEPLOY_V2:        false,
+    DEPLOY_V2:        true,
     MOCK_TOKEN:       false,
     MOCK_V2_POOL:     false,
     MOCK_V2_SWAP:     false,
@@ -66,7 +66,7 @@ module.exports = {
       provider: function () {
         return new HDWalletProvider(privKey, "https://kovan.infura.io/v3/" + infuraId);
       },
-      gas: 8000000,
+      gas: 12000000,
       gasPrice: 1000000000,
       network_id: 42,
       skipDryRun: true

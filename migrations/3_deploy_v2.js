@@ -81,17 +81,17 @@ module.exports = async (deployer, network, accounts) => {
         DefaultMtFeeRateAddress = "0xEfdE4225AC747136289979e29f1236527b2E4DB1";
         DefaultPermissionAddress = "0xACc7E23368261e1E02103c4e5ae672E7D01f5797";
 
-        DvmTemplateAddress = "0xB13662Fcb9140dD573e74D76BACF2085A853C779";
-        DppTemplateAddress = "0x5121e563d6f091945244d02cfE68b1b617206d76";
-        DppAdminTemplateAddress = "0x59Fd9F2065b9aA717a51111c31B3cA89291BB866";
-        CpTemplateAddress = "0x7b10eE056D1FBeABd0174477418f90032807b06E";
+        DvmTemplateAddress = "";
+        DppTemplateAddress = "";
+        DppAdminTemplateAddress = "";
+        CpTemplateAddress = "";
         //Factory
         DvmFactoryAddress = "";
-        DppFactoryAddress = "0x6D4a70354cd03ae3A8461eDE9A4dAd445a169a6B";
-        CpFactoryAddress = "0x3a4Cdaf1796b985826CF1Ee451CACA991c2f79E1";
+        DppFactoryAddress = "";
+        CpFactoryAddress = "";
         //Approve
         DODOApproveAddress = "";
-        DODOIncentiveAddress = "0xe7F4bd2a486DE815824335353973B2f4B94BaCeA";
+        DODOIncentiveAddress = "";
         DODOTokenAddress = "0xfF2985D13953Cb92ecc585aA2B6A4AF8cB46068f";
         //Account
         multiSigAddress = accounts[0];

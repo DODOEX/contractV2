@@ -206,3 +206,54 @@ Init DODOProxyV2 Tx: 0xc3d8815852219d5a33b8377389f2f9862010c741f9041b3bfb1f97295
 DODOApprove Init tx:  0x0fd68e3a962d04ae71815fecff10ae65b09a74fe995ecf064022ae299a6525a1
 DODOIncentive ChangeProxy tx:  0xe9e4dc61df5a36b11459530a29f7213b05f1611f043d56d733bf9c725f001782
 DODOV2RouteHelper Address:  0x9007007b1923C264088Fa23920109F5297bAd8c7
+====================================================
+network type: kovan
+Deploy time: 2021/1/13 下午1:37:29
+Deploy type: V2
+CpTemplateAddress:  0x777e548caf1689cbbF45bc8d6108B5D6102E8d6b
+CpFactoryAddress:  0x230399caC89E371A05bC133a671c9882ABEFD828
+====================================================
+network type: kovan
+Deploy time: 2021/1/13 下午1:50:37
+Deploy type: V2
+DODOApprove Address:  0x8d11670EFE43E37d05111d63337C51e7bCA212e5
+DODOProxyV2 Address:  0x9543Ab4fd525cb95A736888078cCdE042521103C
+Init DODOProxyV2 Tx: 0xefe6930e0eda7f845f2ef66a52692bbe22135a8daff722a64eb3ec5cb0214c5d
+DODOApprove Init tx:  0xc6235b0625200e920643a63baed27d1ccee109be9deeb00638e054a3af1fa66c
+DODOIncentive ChangeProxy tx:  0x30873957ac46d7bd1056c07b4beaf86813b6aeca92bcf38c47d92943d2a09310
+====================================================
+network type: kovan
+Deploy time: 2021/1/13 下午2:43:41
+Deploy type: V2
+DODOApprove Address:  0x2F3512cEf28E2f0ae13832D811d7228E3c27aeBf
+DODOIncentiveAddress:  0x51Ff5E4f890d1fdc7407e95FA9F2AD06A32d13Ad
+DODOIncentive Init tx:  0xe7232abd0f9cb722cd485dd1c63c853f671bd68a6f28d9b3fe5a1794ef007fa3
+DODOProxyV2 Address:  0x63815694141f87E5D45760E98477f248478818Bd
+Init DODOProxyV2 Tx: 0x230685707582e8b282d7c028b9689752b134e28f9c5580208cbd834cfa64c168
+DODOApprove Init tx:  0x2ec35578244751fc06e8037659669b9d1b1b0632dd383c9f0775d6cea426429f
+DODOIncentive ChangeProxy tx:  0x9c960a96734e4e21b7e4f8df42b8cc3924bced7dc8f292c0888b831361f1aecc
+====================================================
+network type: kovan
+Deploy time: 2021/1/13 下午8:21:28
+Deploy type: V2
+====================================================
+network type: kovan
+Deploy time: 2021/1/13 下午8:25:38
+Deploy type: V2
+DvmTemplateAddress:  0xC61dD1a8C0242785E290CA41bA84AB319c94FF55
+DppTemplateAddress:  0xF89DBd5e716748A5C0d8a081bED1BF554B50dc59
+DppAdminTemplateAddress:  0xe39E02c4f269c4E235Ca8979a125608644c8924a
+CpTemplateAddress:  0x55f940C2244Bb16735baCF7D090134fe636d47ea
+DODOApprove Address:  0xFa3C805fDE678E93C3d0954F20471799f892F81d
+DODOIncentiveAddress:  0x0b8fa3Bb6E352d74803018e934f742198f6bf68B
+DODOIncentive Init tx:  0x7376534859db56c94632d6c75861637b23c4f649e298ad52b5dbdb1273ba3947
+DvmFactoryAddress:  0xdd3dDDaae565E7745b2cAcD980B8a98546bAb978
+Init DvmFactory Tx: 0x67c6573ce7de14878924a916777d325ee0231a878d54a04482b0aecb4d1d1304
+DppFactoryAddress:  0x36ab096ADBfd1491FE90F56a9C782dE7b1019f7c
+Init DppFactory Tx: 0x57b1a2794e36b3da85b21aa668c66c390e5cbaa7ab85436df8b4dbe1e4d0ed66
+CpFactoryAddress:  0xDaB9B619A78Fca5FC2f562C5b41Bf44f74c1c239
+DODOV2RouteHelper Address:  0xcA79C9431aB16857f78f9F7EE56Ff698bD518533
+DODOProxyV2 Address:  0x06B5D7590297F7b0DcEcC5E382938EB562D91e1a
+Init DODOProxyV2 Tx: 0x1951bece5f30c090c6e6cdd121ddb5cfa17a5ca610e30173ec2e12e8698a6c21
+DODOApprove Init tx:  0xf3a9ff215e335405086c44d11e377cddeef39cb8b028f011cb6ffc1362c03f6e
+DODOIncentive ChangeProxy tx:  0xc722cf182f24e03b6ccbc19f261452f1a6019f77b32c4350be8df26c069290f0

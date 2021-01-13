@@ -97,7 +97,7 @@ contract DODOIncentive is InitializableOwnable {
     }
 
 
-    // ============ Incentive  function============
+    // ============ Incentive  function ============
 
     function triggerIncentive(address fromToken,address toToken, address assetTo) external {
         require(msg.sender == _DODO_PROXY_, "DODOIncentive:Access restricted");
@@ -127,5 +127,24 @@ contract DODOIncentive is InitializableOwnable {
         lastRewardBlock = uint32(block.number);
         totalReward = uint112(_totalReward);
         totalDistribution = uint112(_totalDistribution);
+    }
+
+    // ============= Helper function ===============
+
+    function incentiveStatus(address fromToken, address toToken) external view returns (bool isOpen, uint256 reward, uint256 baseRate, uint256 totalRate)  {
+        if(startBlock != 0 && block.number >= startBlock) {
+            isOpen = true;
+            baseRate = defaultRate;
+            uint256 fromRate = boosts[fromToken];
+            uint256 toRate = boosts[toToken];
+            totalRate = (fromRate >= toRate ? fromRate : toRate) + defaultRate;
+            uint256 _totalReward = totalReward + (block.number - lastRewardBlock) * dodoPerBlock;
+            reward = (_totalReward - totalDistribution) * totalRate / 1000;
+        }else {
+            isOpen = false;
+            reward = 0;
+            baseRate = 0;
+            totalRate = 0;
+        }
     }
 }

@@ -68,6 +68,9 @@ library DODOMath {
         uint256 i,
         uint256 k
     ) internal pure returns (uint256) {
+        if (V1 == 0) {
+            return 0;
+        }
         if (k == 0) {
             return V1.add(DecimalMath.mulFloor(i, delta));
         }
