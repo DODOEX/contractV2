@@ -23,6 +23,7 @@ import {DecimalMath} from "../lib/DecimalMath.sol";
 import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 import {IDODOIncentive} from "./DODOIncentive.sol";
+import {IDODOAdapter} from "./intf/IDODOAdapter.sol";
 
 /**
  * @title DODOV2Proxy01
@@ -602,76 +603,70 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         emit OrderHistory(_fromToken, _toToken, msg.sender, fromTokenAmount, returnAmount);
     }
 
-    function mixSwapV1(
+
+    function mixSwap(
         address fromToken,
         address toToken,
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
+        address[] memory mixAdapters,
         address[] memory mixPairs,
-        uint256[] memory directions,
-        address[] memory portionPath,
+        uint256 directions,
         bool isIncentive,
         uint256 deadLine
     ) external override payable judgeExpired(deadLine) returns (uint256 returnAmount) {
-        require(mixPairs.length == directions.length, "DODOV2Proxy01: PARAMS_LENGTH_NOT_MATCH");
         require(mixPairs.length > 0, "DODOV2Proxy01: PAIRS_EMPTY");
+        require(mixPairs.length == mixAdapters.length, "DODOV2Proxy01: ADAPTER_PAIR_NOT_MATCH");
         require(minReturnAmount > 0, "DODOV2Proxy01: RETURN_AMOUNT_ZERO");
         
         uint256 toTokenOriginBalance = IERC20(toToken).universalBalanceOf(msg.sender);
-
+        
+        {
         address _fromToken = fromToken;
-        address _toToken = toToken;
-        _deposit(msg.sender, address(this), _fromToken, fromTokenAmount, _fromToken == _ETH_ADDRESS_);
+        _deposit(msg.sender, mixPairs[0], _fromToken, fromTokenAmount, _fromToken == _ETH_ADDRESS_);
+        }
 
-        for (uint8 i = 0; i < mixPairs.length; i++) {
-            address curPair = mixPairs[i];
-            if (directions[i] == 0) {
-                address curDodoBase = IDODOV1(curPair)._BASE_TOKEN_();
-                uint256 curAmountIn = IERC20(curDodoBase).balanceOf(address(this));
-                IERC20(curDodoBase).universalApproveMax(curPair, curAmountIn);
-                IDODOV1(curPair).sellBaseToken(curAmountIn, 0, "");
-            } else if(directions[i] == 1){
-                address curDodoQuote = IDODOV1(curPair)._QUOTE_TOKEN_();
-                uint256 curAmountIn = IERC20(curDodoQuote).balanceOf(address(this));
-                IERC20(curDodoQuote).universalApproveMax(curPair, curAmountIn);
-                uint256 canBuyBaseAmount = IDODOSellHelper(_DODO_SELL_HELPER_).querySellQuoteToken(
-                    curPair,
-                    curAmountIn
-                );
-                IDODOV1(curPair).buyBaseToken(canBuyBaseAmount, curAmountIn, "");
+        address assetTo = toToken == _ETH_ADDRESS_ ? address(this): msg.sender; 
+        for (uint256 i = 0; i < mixPairs.length; i++) {
+            if (i == mixPairs.length - 1) {
+                if (directions & 1 == 0) {
+                    IDODOAdapter(mixAdapters[i]).sellBase(assetTo,mixPairs[i]);
+                } else {
+                    IDODOAdapter(mixAdapters[i]).sellQuote(assetTo,mixPairs[i]);
+                }
             } else {
-                uint256 curAmountIn = IERC20(portionPath[0]).balanceOf(address(this));
-                IERC20(portionPath[0]).universalApproveMax(curPair, curAmountIn);
-                IUni(curPair).swapExactTokensForTokens(curAmountIn,0,portionPath,address(this),deadLine);
+                if (directions& 1 == 0) {
+                    IDODOAdapter(mixAdapters[i]).sellBase(mixPairs[i + 1],mixPairs[i]);
+                } else {
+                    IDODOAdapter(mixAdapters[i]).sellQuote(mixPairs[i + 1],mixPairs[i]);
+                }
             }
+            directions = directions >> 1;
         }
 
-        IERC20(_toToken).universalTransfer(
-            msg.sender,
-            IERC20(_toToken).universalBalanceOf(address(this))
-        );
-        
-        // {
-        // uint256 toBalance;
-        // if (_toToken == _ETH_ADDRESS_) {
-        //     toBalance = IWETH(_WETH_).balanceOf(address(this));
-        //     IWETH(_WETH_).withdraw(toBalance);
-        // } else {
-        //     toBalance = IERC20(_toToken).tokenBalanceOf(address(this));
-        // }
-        // IERC20(_toToken).universalTransfer(msg.sender,toBalance);
-        // }
+        if(toToken == _ETH_ADDRESS_) {
+            returnAmount = IWETH(_WETH_).balanceOf(address(this));
+            IWETH(_WETH_).withdraw(returnAmount);
+            msg.sender.transfer(returnAmount);
+        }else {
+            returnAmount = IERC20(toToken).tokenBalanceOf(msg.sender).sub(toTokenOriginBalance);
+        }
 
-        returnAmount = IERC20(_toToken).universalBalanceOf(msg.sender).sub(toTokenOriginBalance);
         require(returnAmount >= minReturnAmount, "DODOV2Proxy01: Return amount is not enough");
-       
+        
         _externalGasReturn();
-        
+
         if(isIncentive) {
-            IDODOIncentive(_DODO_INCENTIVE_).triggerIncentive(_fromToken,_toToken,msg.sender);
+            IDODOIncentive(_DODO_INCENTIVE_).triggerIncentive(fromToken,toToken,msg.sender);
         }
-        
-        emit OrderHistory(_fromToken, _toToken, msg.sender, fromTokenAmount, returnAmount);
+
+        emit OrderHistory(
+            fromToken,
+            toToken,
+            msg.sender,
+            fromTokenAmount,
+            returnAmount
+        );
     }
 
     //============ CrowdPooling Functions (create & bid) ============

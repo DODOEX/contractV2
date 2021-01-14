@@ -16,9 +16,6 @@ contract FeeRateModelLogic is ReentrancyGuard,InitializableOwnable {
     uint256 public _FEE_RATE_;
     mapping(address => uint256) feeMapping;
 
-
-    event Log(string str, bool result);
-
     function setSpecificFeeRate(address trader, uint256 feeRate) external onlyOwner {
         require(trader != address(0), "INVALID ADDRESS!");
         feeMapping[trader] = feeRate;
