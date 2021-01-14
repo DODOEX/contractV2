@@ -33,7 +33,7 @@ contract DODOIncentive is InitializableOwnable {
     // ============ Storage ============
     address public immutable _DODO_TOKEN_;
     address public _DODO_PROXY_;
-    uint256 public dodoPerBlock = 10 * 10**18;
+    uint256 public dodoPerBlock;
     uint256 public defaultRate = 10;
     mapping(address => uint256) public boosts;
 
@@ -44,7 +44,6 @@ contract DODOIncentive is InitializableOwnable {
     // ============ Events ============
 
     event SetBoost(address token, uint256 boostRate);
-    event SetSwitch(bool isOpen);
     event SetNewProxy(address dodoProxy);
     event SetPerReward(uint256 dodoPerBlock);
     event SetDefaultRate(uint256 defaultRate);
@@ -63,6 +62,7 @@ contract DODOIncentive is InitializableOwnable {
         emit SetBoost(_token, _boostRate);
     }
 
+    //switch
     function changePerReward(uint256 _dodoPerBlock) public onlyOwner {
         _updateTotalReward();
         dodoPerBlock = _dodoPerBlock;
@@ -110,8 +110,8 @@ contract DODOIncentive is InitializableOwnable {
     }
 
     function _updateTotalReward() internal {
-        lastRewardBlock = uint32(block.number);
         totalReward = uint112(_getTotalReward());
+        lastRewardBlock = uint32(block.number);
     }
 
     function _update(uint256 _totalReward, uint256 _totalDistribution) internal {
@@ -127,7 +127,7 @@ contract DODOIncentive is InitializableOwnable {
     }
 
     function _getTotalReward() internal view returns (uint256) {
-        if (block.number < lastRewardBlock || lastRewardBlock == 0) {
+        if (lastRewardBlock == 0) {
             return totalReward;
         } else {
             return totalReward + (block.number - lastRewardBlock) * dodoPerBlock;

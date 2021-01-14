@@ -126,19 +126,19 @@ describe("DODOProxyV2.0", () => {
         await ctx.USDT.methods.balanceOf(addrs[1]).call(),
         quoteAmount
       );
-      
+
 
     });
     it("updateFeeRateModel", async () => {
       var feeRate = await DVM_DODO_USDT.methods.getUserFeeRate(project).call()
       assert.equal(
-        feeRate[1],
-        "10000000000000000"
+        feeRate[1], //mtFee
+        "0"
       );
-      var mtFeeResult0 =  await DVM_DODO_USDT.methods.querySellQuote(ctx.Deployer, decimalStr("10")).call()
+      var mtFeeResult0 = await DVM_DODO_USDT.methods.querySellQuote(ctx.Deployer, decimalStr("10")).call()
       assert.equal(
         mtFeeResult0[1],
-        "999999999265727652176"
+        "0"
       );
 
       var feerateLogicAddress = ctx.MtFeeRateModelLogic.options.address;
@@ -151,30 +151,11 @@ describe("DODOProxyV2.0", () => {
         feeRateSet[1],
         "30000000000000000"
       );
-      var mtFeeResult1 =  await DVM_DODO_USDT.methods.querySellQuote(ctx.Deployer, decimalStr("10")).call()
+      var mtFeeResult1 = await DVM_DODO_USDT.methods.querySellQuote(ctx.Deployer, decimalStr("10")).call()
       assert.equal(
         mtFeeResult1[1],
         "2999999997797182956530"
       );
-      
-
-      var feerateLogicUpdateAddress = ctx.MtFeeRateModelLogicUpdate.options.address;
-      await logGas(await ctx.mtFeeRateModel.methods.setFeeRate(
-        decimalStr("0.01"),
-        feerateLogicUpdateAddress
-      ), ctx.sendParam(ctx.Deployer), "setFeeRateUpdate");
-      var feeRateUpdate = await DVM_DODO_USDT.methods.getUserFeeRate(lp).call()
-      assert.equal(
-        feeRateUpdate[1],
-        "40000000000000000"
-      );
-    var mtFeeResult2 =  await DVM_DODO_USDT.methods.querySellQuote(ctx.Deployer, decimalStr("10")).call()
-    assert.equal(
-      mtFeeResult2[1],
-      "3999999997062910608707"
-    );
-    
-
     });
 
     // it("createDVM - ETH", async () => {
@@ -341,7 +322,7 @@ describe("DODOProxyV2.0", () => {
       // console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
       // console.log("b_USDT:" + b_USDT + " a_USDT:" + a_USDT);
       assert.equal(a_DOOD, decimalStr("500"));
-      assert.equal(a_USDT, "124886061");
+      assert.equal(a_USDT, "126151370");
       await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
         ctx.DODO.options.address,
         ctx.USDT.options.address,
@@ -379,7 +360,7 @@ describe("DODOProxyV2.0", () => {
       // console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
       // console.log("b_WETH:" + b_WETH + " a_WETH:" + a_WETH);
       assert.equal(a_DOOD, decimalStr("500"));
-      assert.equal(a_WETH, "160562971834401560");
+      assert.equal(a_WETH, "163816613646287588");
       await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
         ctx.DODO.options.address,
         ctx.WETH.options.address,
@@ -415,7 +396,7 @@ describe("DODOProxyV2.0", () => {
       // console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
       // console.log("b_WETH:" + b_WETH + " a_WETH:" + a_WETH);
       // console.log("b_ETH:" + b_ETH + " a_ETH:" + a_ETH);
-      assert.equal(a_DOOD, "2758402621041673925359");
+      assert.equal(a_DOOD, "2814340111190341070680");
       await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2ETHToToken(
         ctx.DODO.options.address,
         1,
@@ -447,7 +428,7 @@ describe("DODOProxyV2.0", () => {
       assert.equal(a_DOOD, decimalStr("1000"));
       assert.equal(
         tx.events['OrderHistory'].returnValues['returnAmount'],
-        "317467466094549770"
+        "323865907568573497"
       )
       await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToETH(
         ctx.DODO.options.address,
@@ -481,7 +462,7 @@ describe("DODOProxyV2.0", () => {
       var a_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
       var a_WETH = await ctx.WETH.methods.balanceOf(trader).call();
       assert.equal(a_DOOD, decimalStr("500"));
-      assert.equal(a_WETH, "158791178116238085");
+      assert.equal(a_WETH, "163633965833613187");
       await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
         ctx.DODO.options.address,
         ctx.WETH.options.address,
