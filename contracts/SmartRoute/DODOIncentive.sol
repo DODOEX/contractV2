@@ -13,9 +13,12 @@ import {SafeMath} from "../lib/SafeMath.sol";
 import {IERC20} from "../intf/IERC20.sol";
 
 interface IDODOIncentive {
-    function triggerIncentive(address fromToken,address toToken, address assetTo) external;
+    function triggerIncentive(
+        address fromToken,
+        address toToken,
+        address assetTo
+    ) external;
 }
-
 
 /**
  * @title DODOIncentive
@@ -26,16 +29,14 @@ interface IDODOIncentive {
 contract DODOIncentive is InitializableOwnable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
-    
+
     // ============ Storage ============
     address public immutable _DODO_TOKEN_;
     address public _DODO_PROXY_;
     uint256 public dodoPerBlock = 10 * 10**18;
     uint256 public defaultRate = 10;
     mapping(address => uint256) public boosts;
-    uint256 public startBlock; 
 
-    
     uint32 public lastRewardBlock;
     uint112 public totalReward;
     uint112 public totalDistribution;
@@ -47,7 +48,7 @@ contract DODOIncentive is InitializableOwnable {
     event SetNewProxy(address dodoProxy);
     event SetPerReward(uint256 dodoPerBlock);
     event SetDefaultRate(uint256 defaultRate);
-    event Incentive(address user,uint256 reward);
+    event Incentive(address user, uint256 reward);
 
     constructor(address _dodoToken) public {
         _DODO_TOKEN_ = _dodoToken;
@@ -55,28 +56,15 @@ contract DODOIncentive is InitializableOwnable {
 
     // ============ Ownable ============
 
-    function switchIncentive(uint256 _startBlock) public onlyOwner {
-        if(startBlock != 0) {
-            require(block.number >= startBlock);
-            _update(0,totalDistribution);
-            startBlock = 0;
-        }else {
-            require(block.number <= _startBlock && _startBlock < uint32(-1));
-            startBlock = _startBlock;
-            lastRewardBlock = uint32(_startBlock);
-        }
-        emit SetSwitch(startBlock == 0 ? false: true);
-    }
-
     function changeBoost(address _token, uint256 _boostRate) public onlyOwner {
         require(_token != address(0));
-        require(_boostRate <= 1000);
+        require(_boostRate + defaultRate <= 1000);
         boosts[_token] = _boostRate;
-        emit SetBoost(_token,_boostRate);
+        emit SetBoost(_token, _boostRate);
     }
 
     function changePerReward(uint256 _dodoPerBlock) public onlyOwner {
-        _update(0,totalDistribution);
+        _updateTotalReward();
         dodoPerBlock = _dodoPerBlock;
         emit SetPerReward(dodoPerBlock);
     }
@@ -96,55 +84,74 @@ contract DODOIncentive is InitializableOwnable {
         IERC20(_DODO_TOKEN_).transfer(assetTo, balance);
     }
 
-
     // ============ Incentive  function ============
 
-    function triggerIncentive(address fromToken,address toToken, address assetTo) external {
+    function triggerIncentive(
+        address fromToken,
+        address toToken,
+        address assetTo
+    ) external {
         require(msg.sender == _DODO_PROXY_, "DODOIncentive:Access restricted");
-        uint256 _startBlock = startBlock;
-        if(_startBlock == 0 || block.number < _startBlock) return;
 
         uint256 curTotalDistribution = totalDistribution;
         uint256 fromRate = boosts[fromToken];
         uint256 toRate = boosts[toToken];
         uint256 rate = (fromRate >= toRate ? fromRate : toRate) + defaultRate;
 
-        uint256 _totalReward = totalReward + (block.number - lastRewardBlock) * dodoPerBlock;
-        uint256 reward = (_totalReward - curTotalDistribution) * rate / 1000;
+        uint256 _totalReward = _getTotalReward();
+        uint256 reward = ((_totalReward - curTotalDistribution) * rate) / 1000;
         uint256 _totalDistribution = curTotalDistribution + reward;
 
-        _update(_totalReward,_totalDistribution);
-        IERC20(_DODO_TOKEN_).transfer(assetTo,reward);
-
-        emit Incentive(assetTo,reward);
+        _update(_totalReward, _totalDistribution);
+        if (reward != 0) {
+            IERC20(_DODO_TOKEN_).transfer(assetTo, reward);
+            emit Incentive(assetTo, reward);
+        }
     }
 
-        
+    function _updateTotalReward() internal {
+        lastRewardBlock = uint32(block.number);
+        totalReward = uint112(_getTotalReward());
+    }
+
     function _update(uint256 _totalReward, uint256 _totalDistribution) internal {
-        if(_totalReward == 0) 
-            _totalReward = totalReward + (block.number - lastRewardBlock) * dodoPerBlock;
-        require(_totalReward < uint112(-1) && _totalDistribution < uint112(-1) && block.number < uint32(-1), "OVERFLOW");
+        require(
+            _totalReward < uint112(-1) &&
+                _totalDistribution < uint112(-1) &&
+                block.number < uint32(-1),
+            "OVERFLOW"
+        );
         lastRewardBlock = uint32(block.number);
         totalReward = uint112(_totalReward);
         totalDistribution = uint112(_totalDistribution);
     }
 
+    function _getTotalReward() internal view returns (uint256) {
+        if (block.number < lastRewardBlock || lastRewardBlock == 0) {
+            return totalReward;
+        } else {
+            return totalReward + (block.number - lastRewardBlock) * dodoPerBlock;
+        }
+    }
+
     // ============= Helper function ===============
 
-    function incentiveStatus(address fromToken, address toToken) external view returns (bool isOpen, uint256 reward, uint256 baseRate, uint256 totalRate)  {
-        if(startBlock != 0 && block.number >= startBlock) {
-            isOpen = true;
-            baseRate = defaultRate;
-            uint256 fromRate = boosts[fromToken];
-            uint256 toRate = boosts[toToken];
-            totalRate = (fromRate >= toRate ? fromRate : toRate) + defaultRate;
-            uint256 _totalReward = totalReward + (block.number - lastRewardBlock) * dodoPerBlock;
-            reward = (_totalReward - totalDistribution) * totalRate / 1000;
-        }else {
-            isOpen = false;
-            reward = 0;
-            baseRate = 0;
-            totalRate = 0;
-        }
+    function incentiveStatus(address fromToken, address toToken)
+        external
+        view
+        returns (
+            uint256 reward,
+            uint256 baseRate,
+            uint256 totalRate,
+            uint256 curTotalReward
+        )
+    {
+        baseRate = defaultRate;
+        uint256 fromRate = boosts[fromToken];
+        uint256 toRate = boosts[toToken];
+        totalRate = (fromRate >= toRate ? fromRate : toRate) + defaultRate;
+        uint256 _totalReward = _getTotalReward();
+        reward = ((_totalReward - totalDistribution) * totalRate) / 1000;
+        curTotalReward = _totalReward - totalDistribution;
     }
 }
