@@ -32,7 +32,7 @@ module.exports = async (deployer, network, accounts) => {
   } else if (network == "bsclive") {
     DODOSellHelperAddress = "0x0F859706AeE7FcF61D5A8939E8CB9dBB6c1EDA33";
     WETHAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
-    DODOApproveAddress = "";
+    DODOApproveAddress = "0xa128Ba44B2738A558A1fdC06d6303d52D3Cef8c1";
     chiAddress = "0x0000000000000000000000000000000000000000";
     DODOSwapCalcHelperAddress = "0xb0199C2c8ADF1E6c1e41De60A62E993406Cb8C02";
     ownerAddress = "0x4073f2b9bB95774531b9e23d206a308c614A943a";

@@ -69,7 +69,7 @@ module.exports = async (deployer, network, accounts) => {
         WETHAddress = "0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b";
         chiAddress = "0x0000000000004946c0e9f43f4dee607b0ef1fa1c";
         DODOCalleeHelperAddress = "0x507EBbb195CF54E0aF147A2b269C08a38EA36989";
-        DODORouteV2HelperAddress = "0xcA79C9431aB16857f78f9F7EE56Ff698bD518533";
+        DODORouteV2HelperAddress = "";
         //Template
         CloneFactoryAddress = "0xf7959fe661124C49F96CF30Da33729201aEE1b27";
         // FeeRateModelTemplateAddress = "0xEF3137780B387313c5889B999D03BdCf9aeEa892";
@@ -81,14 +81,14 @@ module.exports = async (deployer, network, accounts) => {
         DefaultMtFeeRateAddress = "0xEfdE4225AC747136289979e29f1236527b2E4DB1";
         DefaultPermissionAddress = "0xACc7E23368261e1E02103c4e5ae672E7D01f5797";
 
-        DvmTemplateAddress = "0xC61dD1a8C0242785E290CA41bA84AB319c94FF55";
-        DppTemplateAddress = "0xF89DBd5e716748A5C0d8a081bED1BF554B50dc59";
+        DvmTemplateAddress = "";
+        DppTemplateAddress = "";
         DppAdminTemplateAddress = "0xe39E02c4f269c4E235Ca8979a125608644c8924a";
-        CpTemplateAddress = "0x55f940C2244Bb16735baCF7D090134fe636d47ea";
+        CpTemplateAddress = "";
         //Factory
-        DvmFactoryAddress = "0xdd3dDDaae565E7745b2cAcD980B8a98546bAb978";
-        DppFactoryAddress = "0x36ab096ADBfd1491FE90F56a9C782dE7b1019f7c";
-        CpFactoryAddress = "0xDaB9B619A78Fca5FC2f562C5b41Bf44f74c1c239";
+        DvmFactoryAddress = "";
+        DppFactoryAddress = "";
+        CpFactoryAddress = "";
         //Approve
         DODOApproveAddress = "";
         DODOIncentiveAddress = "";
@@ -367,14 +367,8 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("DODOIncentive ChangeProxy tx: ", tx.tx);
 
             //3. Open trade incentive 
-            // const provider = new Web3.providers.HttpProvider("https://kovan.infura.io/v3/22d4a3b2df0e47b78d458f43fe50a199");
-            // if (!provider) {
-            //     throw new Error(`Unable to find provider for network: ${network}`)
-            // }
-            // const web3 = new Web3(provider)
-            // const blockNum = await web3.eth.getBlockNumber();
-            // var tx = await DODOIncentiveInstance.switchIncentive(blockNum + 1);
-            // logger.log("DODOIncentive OpenSwitch tx: ", tx.tx);
+            var tx = await DODOIncentiveInstance.changePerReward(10);
+            logger.log("DODOIncentive OpenSwitch tx: ", tx.tx);
 
             //4. Transfer DODO to Trade Incentive
         }
