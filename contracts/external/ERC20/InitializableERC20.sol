@@ -39,6 +39,7 @@ contract InitializableERC20 {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
+        emit Transfer(address(0), _creator, _totalSupply);
     }
 
     function transfer(address to, uint256 amount) public returns (bool) {

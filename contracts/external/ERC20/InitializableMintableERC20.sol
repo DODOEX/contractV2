@@ -39,6 +39,7 @@ contract InitializableMintableERC20 is InitializableOwnable {
         decimals = _decimals;
         totalSupply = _initSupply;
         balances[_creator] = _initSupply;
+        emit Transfer(address(0), _creator, _initSupply);
     }
 
     function transfer(address to, uint256 amount) public returns (bool) {
