@@ -82,8 +82,8 @@ export class ProxyContext {
     var permissionManagerTemplate = await contracts.newContract(contracts.PERMISSION_MANAGER_NAME)
     var mtFeeRateModelTemplate = await contracts.newContract(contracts.FEE_RATE_MODEL_NAME)
     this.mtFeeRateModel = mtFeeRateModelTemplate;
-    await mtFeeRateModelTemplate.methods.init(this.Deployer,decimalStr("0.01")).send(this.sendParam(this.Deployer));
-    // await mtFeeRateModelTemplate.methods.init(this.Deployer,decimalStr("0")).send(this.sendParam(this.Deployer));
+    // await mtFeeRateModelTemplate.methods.init(this.Deployer,decimalStr("0.01")).send(this.sendParam(this.Deployer));
+    await mtFeeRateModelTemplate.methods.init(this.Deployer,decimalStr("0")).send(this.sendParam(this.Deployer));
 
     this.DVMFactory = await contracts.newContract(contracts.DVM_FACTORY_NAME,
       [

@@ -138,14 +138,14 @@ interface IDODOV2Proxy01 {
         uint256 deadLine
     ) external payable returns (uint256 returnAmount);
 
-    function mixSwapV1(
+    function mixSwap(
         address fromToken,
         address toToken,
         uint256 fromTokenAmount,
         uint256 minReturnAmount,
+        address[] memory mixAdapters,
         address[] memory mixPairs,
-        uint256[] memory directions,
-        address[] memory portionPath,
+        uint256 directions,
         bool isIncentive,
         uint256 deadLine
     ) external payable returns (uint256 returnAmount);

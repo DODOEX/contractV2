@@ -25,7 +25,8 @@ contract DVMTrader is DVMVault {
         address toToken,
         uint256 fromAmount,
         uint256 toAmount,
-        address trader
+        address trader,
+        address receiver
     );
 
     event DODOFlashLoan(
@@ -56,7 +57,8 @@ contract DVMTrader is DVMVault {
             address(_QUOTE_TOKEN_),
             baseInput,
             receiveQuoteAmount,
-            msg.sender
+            msg.sender,
+            to
         );
     }
 
@@ -79,7 +81,8 @@ contract DVMTrader is DVMVault {
             address(_BASE_TOKEN_),
             quoteInput,
             receiveBaseAmount,
-            msg.sender
+            msg.sender,
+            to
         );
     }
 
@@ -116,7 +119,8 @@ contract DVMTrader is DVMVault {
                 address(_BASE_TOKEN_),
                 quoteInput,
                 receiveBaseAmount,
-                msg.sender
+                msg.sender,
+                assetTo
             );
         }
 
@@ -132,7 +136,8 @@ contract DVMTrader is DVMVault {
                 address(_QUOTE_TOKEN_),
                 baseInput,
                 receiveQuoteAmount,
-                msg.sender
+                msg.sender,
+                assetTo
             );
         }
 

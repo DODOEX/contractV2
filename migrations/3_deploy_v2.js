@@ -83,7 +83,7 @@ module.exports = async (deployer, network, accounts) => {
 
         DvmTemplateAddress = "";
         DppTemplateAddress = "";
-        DppAdminTemplateAddress = "";
+        DppAdminTemplateAddress = "0xe39E02c4f269c4E235Ca8979a125608644c8924a";
         CpTemplateAddress = "";
         //Factory
         DvmFactoryAddress = "";
@@ -367,14 +367,8 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("DODOIncentive ChangeProxy tx: ", tx.tx);
 
             //3. Open trade incentive 
-            // const provider = new Web3.providers.HttpProvider("https://kovan.infura.io/v3/22d4a3b2df0e47b78d458f43fe50a199");
-            // if (!provider) {
-            //     throw new Error(`Unable to find provider for network: ${network}`)
-            // }
-            // const web3 = new Web3(provider)
-            // const blockNum = await web3.eth.getBlockNumber();
-            // var tx = await DODOIncentiveInstance.switchIncentive(blockNum + 1);
-            // logger.log("DODOIncentive OpenSwitch tx: ", tx.tx);
+            var tx = await DODOIncentiveInstance.changePerReward(10);
+            logger.log("DODOIncentive OpenSwitch tx: ", tx.tx);
 
             //4. Transfer DODO to Trade Incentive
         }
