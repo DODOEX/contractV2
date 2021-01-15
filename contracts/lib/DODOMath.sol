@@ -165,10 +165,10 @@ library DODOMath {
 
         bool bSig;
         if (bAbs >= part2) {
-            bAbs = bAbs.sub(part2);
+            bAbs = bAbs - part2;
             bSig = false;
         } else {
-            bAbs = part2.sub(bAbs);
+            bAbs = part2 - bAbs;
             bSig = true;
         }
         bAbs = bAbs.div(DecimalMath.ONE);
@@ -190,6 +190,11 @@ library DODOMath {
             numerator = bAbs.add(squareRoot);
         }
 
-        return V1.sub(DecimalMath.divCeil(numerator, denominator));
+        uint256 V2 = DecimalMath.divCeil(numerator, denominator);
+        if (V2 > V1) {
+            return 0;
+        } else {
+            return V1 - V2;
+        }
     }
 }
