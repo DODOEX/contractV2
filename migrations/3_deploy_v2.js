@@ -26,6 +26,11 @@ const DODOIncentive = artifacts.require("DODOIncentive");
 const DODOSellHelper = artifacts.require("DODOSellHelper");
 const DODOCalleeHelper = artifacts.require("DODOCalleeHelper");
 const DODOV2RouteHelper = artifacts.require("DODOV2RouteHelper");
+const DODOV1PmmHelper = artifacts.require("DODOV1PmmHelper");
+
+const DODOV1Adapter = artifacts.require("DODOV1Adapter");
+const DODOV2Adapter = artifacts.require("DODOV2Adapter");
+const UniAdapter = artifacts.require("UniAdapter");
 
 
 module.exports = async (deployer, network, accounts) => {
@@ -69,7 +74,7 @@ module.exports = async (deployer, network, accounts) => {
         WETHAddress = "0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b";
         chiAddress = "0x0000000000004946c0e9f43f4dee607b0ef1fa1c";
         DODOCalleeHelperAddress = "0x507EBbb195CF54E0aF147A2b269C08a38EA36989";
-        DODORouteV2HelperAddress = "";
+        DODORouteV2HelperAddress = "0x0546641b5288942675A36345E25210695d1d4d50";
         //Template
         CloneFactoryAddress = "0xf7959fe661124C49F96CF30Da33729201aEE1b27";
         // FeeRateModelTemplateAddress = "0xEF3137780B387313c5889B999D03BdCf9aeEa892";
@@ -81,13 +86,13 @@ module.exports = async (deployer, network, accounts) => {
         DefaultMtFeeRateAddress = "0xEfdE4225AC747136289979e29f1236527b2E4DB1";
         DefaultPermissionAddress = "0xACc7E23368261e1E02103c4e5ae672E7D01f5797";
 
-        DvmTemplateAddress = "";
-        DppTemplateAddress = "";
+        DvmTemplateAddress = "0xD47B0782EDdAc44Bd2B6a51C949feaE9Af382A51";
+        DppTemplateAddress = "0xA0C3C6Ad75fBfaCb490E315BA762A6D20084b5a8";
         DppAdminTemplateAddress = "0xe39E02c4f269c4E235Ca8979a125608644c8924a";
         CpTemplateAddress = "";
         //Factory
-        DvmFactoryAddress = "";
-        DppFactoryAddress = "";
+        DvmFactoryAddress = "0x01B7fCc1890Ab90Da33dE2F0dC54aDF3C7501F04";
+        DppFactoryAddress = "0x67c4765D04C3848FFa7967231fc7B7E58f67A887";
         CpFactoryAddress = "";
         //Approve
         DODOApproveAddress = "";
@@ -134,40 +139,59 @@ module.exports = async (deployer, network, accounts) => {
         DODOSellHelperAddress = "0x0F859706AeE7FcF61D5A8939E8CB9dBB6c1EDA33";
         WETHAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
         chiAddress = "0x0000000000000000000000000000000000000000";
-        DODOCalleeHelperAddress = "";
-        DODORouteV2HelperAddress = "";
+
+        DODOCalleeHelperAddress = "0x0000000000000000000000000000000000000000";
+        DODORouteV2HelperAddress = "0x0000000000000000000000000000000000000000";
         //Template
-        CloneFactoryAddress = "";
+        CloneFactoryAddress = "0x03E2427859119E497EB856a166F616a2Ce5f8c88";
         // FeeRateModelTemplateAddress = "";
         // ConstFeeRateModelTemplateAddress = "";
         // PermissionManagerTemplateAddress = "";
         // ExternalValueTemplateAddress = "";
         //Default Template
         // DefaultGasSourceAddress = "";
-        DefaultMtFeeRateAddress = "";
-        DefaultPermissionAddress = "";
+        DefaultMtFeeRateAddress = "0x1Cc229Ac0ef9ba932e4dEbB898C77901C9AFB694";
+        DefaultPermissionAddress = "0x50C86A07457E99389d7b49761a4237B70f0824E9";
 
-        DvmTemplateAddress = "";
-        DppTemplateAddress = "";
-        DppAdminTemplateAddress = "";
-        CpTemplateAddress = "";
+        DvmTemplateAddress = "0x0000000000000000000000000000000000000000";
+        DppTemplateAddress = "0x0000000000000000000000000000000000000000";
+        DppAdminTemplateAddress = "0x0000000000000000000000000000000000000000";
+        CpTemplateAddress = "0x0000000000000000000000000000000000000000";
         //Factory
-        DvmFactoryAddress = "";
-        DppFactoryAddress = "";
-        CpFactoryAddress = "";
+        DvmFactoryAddress = "0x0000000000000000000000000000000000000000";
+        DppFactoryAddress = "0x0000000000000000000000000000000000000000";
+        CpFactoryAddress = "0x0000000000000000000000000000000000000000";
         //Proxy
         DODOApproveAddress = "";
-        DODOIncentiveAddress = "";
-        DODOTokenAddress = "";
+        DODOIncentiveAddress = "0x0000000000000000000000000000000000000000";
+        DODOTokenAddress = "0x0000000000000000000000000000000000000000";
         //Account
-        multiSigAddress = "0x4073f2b9bB95774531b9e23d206a308c614A943a";
-        defaultMaintainer = "0x4073f2b9bB95774531b9e23d206a308c614A943a";
+        // multiSigAddress = "0x4073f2b9bB95774531b9e23d206a308c614A943a";
+        // defaultMaintainer = "0x4073f2b9bB95774531b9e23d206a308c614A943a";
+        //For Test
+        multiSigAddress = accounts[0];
+        defaultMaintainer = accounts[0];
     } else return;
 
     if (deploySwitch.ROUTER_HELPER) {
-        await deployer.deploy(DODOV2RouteHelper, "0x369279f8e1cc936f7f9513559897B183d4B2F0Bd", "0x6D4a70354cd03ae3A8461eDE9A4dAd445a169a6B");
-        DODOV2RouteHelperAddress = DODOV2RouteHelper.address;
-        logger.log("DODOV2RouteHelper Address: ", DODOV2RouteHelperAddress);
+        await deployer.deploy(DODOV1PmmHelper);
+        logger.log("DODOV1RouterHelper Address: ", DODOV1PmmHelper.address);
+        // await deployer.deploy(DODOV2RouteHelper, "0x01B7fCc1890Ab90Da33dE2F0dC54aDF3C7501F04", "0x67c4765D04C3848FFa7967231fc7B7E58f67A887");
+        // DODOV2RouteHelperAddress = DODOV2RouteHelper.address;
+        // logger.log("DODOV2RouteHelper Address: ", DODOV2RouteHelperAddress);
+    }
+
+    if (deploySwitch.ADAPTER) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
+        logger.log("Deploy type: V2 - Adapter");
+        await deployer.deploy(DODOV1Adapter, DODOSellHelperAddress)
+        logger.log("DODOV1Adapter Address: ", DODOV1Adapter.address);
+        await deployer.deploy(DODOV2Adapter)
+        logger.log("DODOV2Adapter Address: ", DODOV2Adapter.address);
+        await deployer.deploy(UniAdapter)
+        logger.log("UniAdapter Address: ", UniAdapter.address);
     }
 
     if (deploySwitch.DEPLOY_V2) {
@@ -327,6 +351,9 @@ module.exports = async (deployer, network, accounts) => {
             );
             CpFactoryAddress = CpFactory.address;
             logger.log("CpFactoryAddress: ", CpFactoryAddress);
+            const CpFactoryInstance = await CpFactory.at(CpFactoryAddress);
+            var tx = await CpFactoryInstance.initOwner(multiSigAddress);
+            logger.log("Init CpFactory Tx:", tx.tx);
         }
 
         if (DODORouteV2HelperAddress == "") {
@@ -367,7 +394,7 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("DODOIncentive ChangeProxy tx: ", tx.tx);
 
             //3. Open trade incentive 
-            var tx = await DODOIncentiveInstance.changePerReward(10);
+            var tx = await DODOIncentiveInstance.changePerReward("10000000000000000000");
             logger.log("DODOIncentive OpenSwitch tx: ", tx.tx);
 
             //4. Transfer DODO to Trade Incentive

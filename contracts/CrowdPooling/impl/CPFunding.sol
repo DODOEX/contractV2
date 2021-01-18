@@ -25,6 +25,7 @@ contract CPFunding is CPStorage {
     
     event Bid(address to, uint256 amount, uint256 fee);
     event Cancel(address to,uint256 amount);
+    event Settle();
 
     // ============ BID & CALM PHASE ============
     
@@ -102,6 +103,8 @@ contract CPFunding is CPStorage {
         _TOTAL_LP_AMOUNT_ = IDVM(_POOL_).buyShares(address(this));
 
         msg.sender.transfer(_SETTEL_FUND_);
+
+        emit Settle();
     }
 
     // in case something wrong with base token contract

@@ -143,7 +143,8 @@ contract DODOIncentive is InitializableOwnable {
             uint256 reward,
             uint256 baseRate,
             uint256 totalRate,
-            uint256 curTotalReward
+            uint256 curTotalReward,
+            uint256 perBlockReward
         )
     {
         baseRate = defaultRate;
@@ -153,5 +154,6 @@ contract DODOIncentive is InitializableOwnable {
         uint256 _totalReward = _getTotalReward();
         reward = ((_totalReward - totalDistribution) * totalRate) / 1000;
         curTotalReward = _totalReward - totalDistribution;
+        perBlockReward = dodoPerBlock;
     }
 }

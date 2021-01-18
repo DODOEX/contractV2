@@ -29,7 +29,7 @@ contract DODOV1Adapter is IDODOAdapter {
         uint256 curAmountIn = IERC20(curBase).balanceOf(address(this));
         IERC20(curBase).universalApproveMax(pool, curAmountIn);
         IDODOV1(pool).sellBaseToken(curAmountIn, 0, "");
-        if(to == msg.sender) {
+        if(to != address(this)) {
             address curQuote = IDODOV1(pool)._QUOTE_TOKEN_();
             IERC20(curQuote).transfer(to,IERC20(curQuote).balanceOf(address(this)));
         }
@@ -44,7 +44,7 @@ contract DODOV1Adapter is IDODOAdapter {
             curAmountIn
         );
         IDODOV1(pool).buyBaseToken(canBuyBaseAmount, curAmountIn, "");
-        if(to == msg.sender) {
+        if(to != address(this)) {
             address curBase = IDODOV1(pool)._BASE_TOKEN_();
             IERC20(curBase).transfer(to,IERC20(curBase).balanceOf(address(this)));
         }

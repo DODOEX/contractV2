@@ -27,6 +27,7 @@ contract DODOV2RouteHelper {
         address baseToken;
         address quoteToken;
         address curPair;
+        uint256 pairVersion;
     }
 
     constructor(address dvmFactory,address dppFactory) public {
@@ -40,7 +41,7 @@ contract DODOV2RouteHelper {
         uint256 len = baseToken0DVM.length + baseToken1DVM.length + baseToken0DPP.length + baseToken1DPP.length;
         res = new PairDetail[](len);
         for(uint8 i = 0; i < len; i++) {
-            PairDetail memory curRes = PairDetail(0,0,0,0,0,0,0,0,0,address(0),address(0),address(0));
+            PairDetail memory curRes = PairDetail(0,0,0,0,0,0,0,0,0,address(0),address(0),address(0),2);
             address cur;
             if(i < baseToken0DVM.length) {
                 cur = baseToken0DVM[i];

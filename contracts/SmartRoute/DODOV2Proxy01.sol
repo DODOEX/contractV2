@@ -355,9 +355,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
 
         _dodoGasReturn(originGas);
 
-        if(isIncentive) {
-            IDODOIncentive(_DODO_INCENTIVE_).triggerIncentive(_ETH_ADDRESS_,toToken,msg.sender);
-        }
+        _execIncentive(isIncentive, _ETH_ADDRESS_, toToken);
 
         emit OrderHistory(
             _ETH_ADDRESS_,
@@ -411,9 +409,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
 
         _dodoGasReturn(originGas);
 
-        if(isIncentive) {
-            IDODOIncentive(_DODO_INCENTIVE_).triggerIncentive(fromToken,_ETH_ADDRESS_,msg.sender);
-        }
+        _execIncentive(isIncentive, fromToken, _ETH_ADDRESS_);
 
         emit OrderHistory(
             fromToken,
@@ -467,9 +463,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         
         _dodoGasReturn(originGas);
 
-        if(isIncentive) {
-            IDODOIncentive(_DODO_INCENTIVE_).triggerIncentive(fromToken,toToken,msg.sender);
-        }
+        _execIncentive(isIncentive, fromToken, toToken);
 
         emit OrderHistory(
             fromToken,
@@ -525,9 +519,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
 
         _externalGasReturn();
 
-        if(isIncentive) {
-            IDODOIncentive(_DODO_INCENTIVE_).triggerIncentive(fromToken,toToken,msg.sender);
-        }
+        _execIncentive(isIncentive, fromToken, toToken);
 
         emit OrderHistory(
             fromToken,
@@ -596,9 +588,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
 
         _dodoGasReturn(originGas);
 
-        if(isIncentive) {
-            IDODOIncentive(_DODO_INCENTIVE_).triggerIncentive(_fromToken,_toToken,msg.sender);
-        }
+        _execIncentive(isIncentive, _fromToken, _toToken);
 
         emit OrderHistory(_fromToken, _toToken, msg.sender, fromTokenAmount, returnAmount);
     }
@@ -611,35 +601,28 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         uint256 minReturnAmount,
         address[] memory mixAdapters,
         address[] memory mixPairs,
+        address[] memory assetTo,
         uint256 directions,
         bool isIncentive,
         uint256 deadLine
     ) external override payable judgeExpired(deadLine) returns (uint256 returnAmount) {
         require(mixPairs.length > 0, "DODOV2Proxy01: PAIRS_EMPTY");
-        require(mixPairs.length == mixAdapters.length, "DODOV2Proxy01: ADAPTER_PAIR_NOT_MATCH");
+        require(mixPairs.length == mixAdapters.length, "DODOV2Proxy01: PAIR_ADAPTER_NOT_MATCH");
+        require(mixPairs.length == assetTo.length - 1, "DODOV2Proxy01: PAIR_ASSETTO_NOT_MATCH");
         require(minReturnAmount > 0, "DODOV2Proxy01: RETURN_AMOUNT_ZERO");
         
         uint256 toTokenOriginBalance = IERC20(toToken).universalBalanceOf(msg.sender);
         
         {
         address _fromToken = fromToken;
-        _deposit(msg.sender, mixPairs[0], _fromToken, fromTokenAmount, _fromToken == _ETH_ADDRESS_);
+        _deposit(msg.sender, assetTo[0], _fromToken, fromTokenAmount, _fromToken == _ETH_ADDRESS_);
         }
 
-        address assetTo = toToken == _ETH_ADDRESS_ ? address(this): msg.sender; 
         for (uint256 i = 0; i < mixPairs.length; i++) {
-            if (i == mixPairs.length - 1) {
-                if (directions & 1 == 0) {
-                    IDODOAdapter(mixAdapters[i]).sellBase(assetTo,mixPairs[i]);
-                } else {
-                    IDODOAdapter(mixAdapters[i]).sellQuote(assetTo,mixPairs[i]);
-                }
+            if (directions & 1 == 0) {
+                IDODOAdapter(mixAdapters[i]).sellBase(assetTo[i + 1],mixPairs[i]);
             } else {
-                if (directions& 1 == 0) {
-                    IDODOAdapter(mixAdapters[i]).sellBase(mixPairs[i + 1],mixPairs[i]);
-                } else {
-                    IDODOAdapter(mixAdapters[i]).sellQuote(mixPairs[i + 1],mixPairs[i]);
-                }
+                IDODOAdapter(mixAdapters[i]).sellQuote(assetTo[i + 1],mixPairs[i]);
             }
             directions = directions >> 1;
         }
@@ -656,9 +639,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         
         _externalGasReturn();
 
-        if(isIncentive) {
-            IDODOIncentive(_DODO_INCENTIVE_).triggerIncentive(fromToken,toToken,msg.sender);
-        }
+        _execIncentive(isIncentive, fromToken, toToken);
 
         emit OrderHistory(
             fromToken,
@@ -794,4 +775,11 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
                 IChi(_CHI_TOKEN_).freeUpTo(_gasExternalReturn);
         }
     }
+
+    function _execIncentive(bool isIncentive, address fromToken,address toToken) internal {
+        if(isIncentive && gasleft() > 30000) {
+            IDODOIncentive(_DODO_INCENTIVE_).triggerIncentive(fromToken, toToken, msg.sender);
+        }
+    }
+
 }

@@ -145,6 +145,7 @@ interface IDODOV2Proxy01 {
         uint256 minReturnAmount,
         address[] memory mixAdapters,
         address[] memory mixPairs,
+        address[] memory assetTo,
         uint256 directions,
         bool isIncentive,
         uint256 deadLine
