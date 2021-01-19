@@ -74,7 +74,7 @@ module.exports = async (deployer, network, accounts) => {
         WETHAddress = "0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b";
         chiAddress = "0x0000000000004946c0e9f43f4dee607b0ef1fa1c";
         DODOCalleeHelperAddress = "0x507EBbb195CF54E0aF147A2b269C08a38EA36989";
-        DODORouteV2HelperAddress = "0x0546641b5288942675A36345E25210695d1d4d50";
+        DODORouteV2HelperAddress = "";
         //Template
         CloneFactoryAddress = "0xf7959fe661124C49F96CF30Da33729201aEE1b27";
         // FeeRateModelTemplateAddress = "0xEF3137780B387313c5889B999D03BdCf9aeEa892";
@@ -89,10 +89,10 @@ module.exports = async (deployer, network, accounts) => {
         DvmTemplateAddress = "0xD47B0782EDdAc44Bd2B6a51C949feaE9Af382A51";
         DppTemplateAddress = "0xA0C3C6Ad75fBfaCb490E315BA762A6D20084b5a8";
         DppAdminTemplateAddress = "0xe39E02c4f269c4E235Ca8979a125608644c8924a";
-        CpTemplateAddress = "";
+        CpTemplateAddress = "0x6E0c3D0F6f916B8067999c6196A1806d80840a12";
         //Factory
-        DvmFactoryAddress = "0x01B7fCc1890Ab90Da33dE2F0dC54aDF3C7501F04";
-        DppFactoryAddress = "0x67c4765D04C3848FFa7967231fc7B7E58f67A887";
+        DvmFactoryAddress = "";
+        DppFactoryAddress = "";
         CpFactoryAddress = "";
         //Approve
         DODOApproveAddress = "";

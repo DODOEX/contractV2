@@ -28,7 +28,8 @@ contract DVM is DVMTrader, DVMFunding {
         uint256 lpFeeRate,
         address mtFeeRateModel,
         uint256 i,
-        uint256 k
+        uint256 k,
+        bool isOpenTWAP
     ) external {
         require(baseTokenAddress != quoteTokenAddress, "BASE_QUOTE_CAN_NOT_BE_SAME");
         _BASE_TOKEN_ = IERC20(baseTokenAddress);
@@ -43,6 +44,9 @@ contract DVM is DVMTrader, DVMFunding {
         _LP_FEE_RATE_ = lpFeeRate;
         _MT_FEE_RATE_MODEL_ = IFeeRateModel(mtFeeRateModel);
         _MAINTAINER_ = maintainer;
+
+        _IS_OPEN_TWAP_ = isOpenTWAP;
+        if(isOpenTWAP) _BLOCK_TIMESTAMP_LAST_ = uint32(block.timestamp % 2**32);
 
         string memory connect = "_";
         string memory suffix = "DLP";

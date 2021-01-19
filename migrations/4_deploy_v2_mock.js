@@ -64,10 +64,10 @@ module.exports = async (deployer, network, accounts) => {
     let MintableERC20TemplateAddress = "0xA45a64DAba80757432fA4d654Df12f65f020C13C";
     let ERC20FactoryAddress = "0xCb1A2f64EfB02803276BFB5a8D511C4D950282a0";
 
-    let DPPFactoryAddress = "0x67c4765D04C3848FFa7967231fc7B7E58f67A887";
-    let DVMFactoryAddress = "0x01B7fCc1890Ab90Da33dE2F0dC54aDF3C7501F04";
-    let DODOApproveAddress = "0x5e56Db19C3f52594876E2A3e1a47d15acD8DC570";
-    let DODOProxyV2Address = "0xA730229607b710cd06AEAad1eDc644Dbb70A5E85";
+    let DPPFactoryAddress = "0x29d2feD26D37167d775f3eCAafAEe3e62B5f4fF6";
+    let DVMFactoryAddress = "0xFcD6835a9490Dc673944d4AB30F73D7FB8f4fbaA";
+    let DODOApproveAddress = "0x25b5C731822E534A1df126985bb8781f1b979eF9";
+    let DODOProxyV2Address = "0x3566c45117438485331c0628e10bA7bE09a1fFCB";
 
     const provider = new Web3.providers.HttpProvider("https://kovan.infura.io/v3/22d4a3b2df0e47b78d458f43fe50a199");
 
@@ -81,8 +81,42 @@ module.exports = async (deployer, network, accounts) => {
     logger.log("network type: " + network);
     logger.log("Deploy time: " + new Date().toLocaleString());
 
-    if(deploySwitch.MANUAL_ADD_POOL) {
-        logger.log("Manual add Pool: V2"); 
+
+    if (deploySwitch.MOCK_TARGET_POOL) {
+        logger.log("Manual add target Pool: V2");
+        var tx;
+        const token0Addr = "0xCcf0733cA7B6299D59b1Bddf87f3a8AAaD87461F";
+        const quote0Addr = "0x43688f367eb83697c3ca5d03c5055b6bd6f6ac4b";
+        const token0 = await ERC20Template.at(token0Addr);
+        const quote0 = await ERC20Template.at(quote0Addr);
+
+        tx = await token0.approve(DODOApproveAddress, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+        logger.log("Approve:" + token0Addr + " Tx:", tx.tx);
+        tx = await quote0.approve(DODOApproveAddress, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+        logger.log("Approve:" + quote0Addr + " Tx:", tx.tx);
+        const DODOProxyV2Instance = await DODOProxyV2.at(DODOProxyV2Address);
+        const DPPFactoryInstance = await DPPFactory.at(DPPFactoryAddress);
+
+        const baseInAmount = web3.utils.toWei("0", 'ether');
+        const quoteInAmount = web3.utils.toWei("0", 'mwei');
+        const deadline = Math.floor(new Date().getTime() / 1000 + 60 * 10);
+        //DPP Pool
+        tx = await DODOProxyV2Instance.createDODOPrivatePool(
+            token0Addr,
+            quote0Addr,
+            baseInAmount,
+            quoteInAmount,
+            '0',
+            '1000000',
+            '1000000000000000000',
+            deadline
+        );
+        var poolAddress = await DPPFactoryInstance._REGISTRY_(token0Addr, quote0Addr, 0);
+        logger.log("Create DPP: " + token0Addr + "-" + quote0Addr + " Pool:" + poolAddress + " Tx:", tx.tx);
+    }
+
+    if (deploySwitch.MANUAL_ADD_POOL) {
+        logger.log("Manual add Pool: V2");
         const DPPFactoryInstance = await DPPFactory.at(DPPFactoryAddress);
         var tx = await DPPFactoryInstance.addPoolByAdmin(
             "0x7e83d9d94837ee82f0cc18a691da6f42f03f1d86",

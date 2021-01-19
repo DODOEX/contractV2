@@ -91,7 +91,8 @@ contract CPFunding is CPStorage {
             _poolQuoteToken,
             3e15, // 0.3% lp feeRate
             poolI,
-            DecimalMath.ONE
+            DecimalMath.ONE,
+            _IS_OPEN_TWAP_
         );
 
         uint256 avgPrice = unUsedBase == 0 ? _I_ : DecimalMath.divCeil(poolQuote, unUsedBase);

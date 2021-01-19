@@ -85,6 +85,7 @@ export class ProxyContext {
     // await mtFeeRateModelTemplate.methods.init(this.Deployer,decimalStr("0.01")).send(this.sendParam(this.Deployer));
     await mtFeeRateModelTemplate.methods.init(this.Deployer,decimalStr("0")).send(this.sendParam(this.Deployer));
 
+
     this.DVMFactory = await contracts.newContract(contracts.DVM_FACTORY_NAME,
       [
         cloneFactory.options.address,
@@ -129,6 +130,7 @@ export class ProxyContext {
     this.DODOSellHelper = await contracts.newContract(
       contracts.DODO_SELL_HELPER
     );
+
 
     this.DODOProxyV2 = await contracts.newContract(contracts.DODO_PROXY_NAME,
       [

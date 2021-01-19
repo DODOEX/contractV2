@@ -30,7 +30,8 @@ contract CP is CPVesting {
     function init(
         address[] calldata addressList,
         uint256[] calldata timeLine,
-        uint256[] calldata valueList
+        uint256[] calldata valueList,
+        bool isOpenTWAP
     ) external {
         /*
         Address List
@@ -93,6 +94,8 @@ contract CP is CPVesting {
         require(_CLIFF_RATE_ <= 1e18, "CLIFF_RATE_WRONG");
 
         _TOTAL_BASE_ = _BASE_TOKEN_.balanceOf(address(this));
+
+        _IS_OPEN_TWAP_ = isOpenTWAP;
 
         require(address(this).balance == _SETTEL_FUND_, "SETTLE_FUND_NOT_MATCH");
     }

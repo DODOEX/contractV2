@@ -38,6 +38,7 @@ async function initCreateCP(ctx: ProxyContext, token0: string, token1: string, t
         token0Amount,
         timeLine,
         valueList,
+        false,
         Math.floor(new Date().getTime() / 1000 + 60 * 10)
     ).send(ctx.sendParam(project, "0.2"));
     if (token0 == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') token0 = ctx.WETH.options.address;
@@ -120,6 +121,7 @@ describe("DODOProxyV2.0", () => {
                 baseAmount,
                 timeLine,
                 valueList,
+                false,
                 Math.floor(new Date().getTime() / 1000 + 60 * 10)
             ), ctx.sendParam(project, "0.2"), "createCP");
             var addrs = await ctx.CPFactory.methods.getCrowdPooling(baseToken, quoteToken).call();

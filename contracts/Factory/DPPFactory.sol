@@ -78,7 +78,8 @@ contract DPPFactory is InitializableOwnable {
         address quoteToken,
         uint256 lpFeeRate,
         uint256 k,
-        uint256 i
+        uint256 i,
+        bool isOpenTwap
     ) external {
         {
             address _dppAddress = dppAddress;
@@ -96,7 +97,8 @@ contract DPPFactory is InitializableOwnable {
                 lpFeeRate,
                 _DEFAULT_MT_FEE_RATE_MODEL_,
                 k,
-                i
+                i,
+                isOpenTwap
             );
         }
 

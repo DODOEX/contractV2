@@ -45,7 +45,8 @@ module.exports = {
     MOCK_V2_POOL:     false,
     MOCK_V2_SWAP:     false,
     MANUAL_ADD_POOL:  false,
-    ROUTER_HELPER:    true
+    ROUTER_HELPER:    false,
+    MOCK_TARGET_POOL: false
   },
 
   networks: {

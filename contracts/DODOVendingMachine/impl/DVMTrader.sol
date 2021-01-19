@@ -177,44 +177,4 @@ contract DVMTrader is DVMVault {
             .sub(DecimalMath.mulFloor(receiveBaseAmount, lpFeeRate))
             .sub(mtFee);
     }
-
-    // ============ Helper Functions ============
-
-    function getPMMState() public view returns (PMMPricing.PMMState memory state) {
-        state.i = _I_;
-        state.K = _K_;
-        state.B = _BASE_RESERVE_;
-        state.Q = _QUOTE_RESERVE_;
-        state.B0 = 0; // will be calculated in adjustedTarget
-        state.Q0 = 0;
-        state.R = PMMPricing.RState.ABOVE_ONE;
-        PMMPricing.adjustedTarget(state);
-    }
-
-    function getPMMStateForCall() 
-        external 
-        view 
-        returns (
-            uint256 i,
-            uint256 K,
-            uint256 B,
-            uint256 Q,
-            uint256 B0,
-            uint256 Q0,
-            uint256 R
-        )
-    {
-        PMMPricing.PMMState memory state = getPMMState();
-        i = state.i;
-        K = state.K;
-        B = state.B;
-        Q = state.Q;
-        B0 = state.B0;
-        Q0 = state.Q0;
-        R = uint256(state.R);
-    }
-
-    function getMidPrice() public view returns (uint256 midPrice) {
-        return PMMPricing.getMidPrice(getPMMState());
-    }
 }

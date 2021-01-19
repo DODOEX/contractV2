@@ -105,7 +105,8 @@ contract CrowdPoolingFactory is InitializableOwnable {
         address baseToken,
         address quoteToken,
         uint256[] memory timeLine,
-        uint256[] memory valueList
+        uint256[] memory valueList,
+        bool isOpenTWAP
     ) external valueCheck(cpAddress,baseToken,timeLine,valueList) {
         {
         address[] memory addressList = new address[](7);
@@ -120,7 +121,8 @@ contract CrowdPoolingFactory is InitializableOwnable {
         ICP(cpAddress).init(
             addressList,
             timeLine,
-            valueList
+            valueList,
+            isOpenTWAP
         );
         }
 

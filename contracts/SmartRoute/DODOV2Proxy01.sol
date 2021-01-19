@@ -114,6 +114,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         uint256 lpFeeRate,
         uint256 i,
         uint256 k,
+        bool isOpenTWAP,
         uint256 deadLine
     )
         external
@@ -131,7 +132,8 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
                 _quoteToken,
                 lpFeeRate,
                 i,
-                k
+                k,
+                isOpenTWAP
             );
         }
 
@@ -234,6 +236,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         uint256 lpFeeRate,
         uint256 i,
         uint256 k,
+        bool isOpenTwap,
         uint256 deadLine
     )
         external
@@ -266,7 +269,8 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
             _quoteToken,
             lpFeeRate,
             k,
-            i
+            i,
+            isOpenTwap
         );
     }
 
@@ -658,6 +662,7 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         uint256 baseInAmount,
         uint256[] memory timeLine,
         uint256[] memory valueList,
+        bool isOpenTWAP,
         uint256 deadLine
     ) external override payable preventReentrant judgeExpired(deadLine) returns (address payable newCrowdPooling) {
         address _baseToken = baseToken;
@@ -681,7 +686,8 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
             _baseToken,
             _quoteToken,
             timeLine,
-            valueList
+            valueList,
+            isOpenTWAP
         );
     }
 

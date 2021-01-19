@@ -18,7 +18,8 @@ interface IDVMFactory {
         address quoteToken,
         uint256 lpFeeRate,
         uint256 i,
-        uint256 k
+        uint256 k,
+        bool isOpenTWAP
     ) external returns (address newVendingMachine);
 }
 
@@ -74,7 +75,8 @@ contract DVMFactory is InitializableOwnable {
         address quoteToken,
         uint256 lpFeeRate,
         uint256 i,
-        uint256 k
+        uint256 k,
+        bool isOpenTWAP
     ) external returns (address newVendingMachine) {
         newVendingMachine = ICloneFactory(_CLONE_FACTORY_).clone(_DVM_TEMPLATE_);
         {
@@ -85,7 +87,8 @@ contract DVMFactory is InitializableOwnable {
                 lpFeeRate,
                 _DEFAULT_MT_FEE_RATE_MODEL_,
                 i,
-                k
+                k,
+                isOpenTWAP
             );
         }
         _REGISTRY_[baseToken][quoteToken].push(newVendingMachine);

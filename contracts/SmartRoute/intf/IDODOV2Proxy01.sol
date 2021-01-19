@@ -48,6 +48,7 @@ interface IDODOV2Proxy01 {
         uint256 lpFeeRate,
         uint256 i,
         uint256 k,
+        bool isOpenTWAP,
         uint256 deadLine
     ) external payable returns (address newVendingMachine, uint256 shares);
 
@@ -76,6 +77,7 @@ interface IDODOV2Proxy01 {
         uint256 lpFeeRate,
         uint256 i,
         uint256 k,
+        bool isOpenTwap,
         uint256 deadLine
     ) external payable returns (address newPrivatePool);
 
@@ -95,6 +97,7 @@ interface IDODOV2Proxy01 {
         uint256 baseInAmount,
         uint256[] memory timeLine,
         uint256[] memory valueList,
+        bool isOpenTWAP,
         uint256 deadLine
     ) external payable returns (address payable newCrowdPooling);
 
@@ -111,7 +114,7 @@ interface IDODOV2Proxy01 {
         uint256 quoteAmount,
         uint256 baseMinShares,
         uint256 quoteMinShares,
-        uint8 flag, // 0 erc20 Out  1 baseOutETH  2 quoteOut ETH 
+        uint8 flag, // 0 erc20 Out  1 baseInETH  2 quoteInETH 
         uint256 deadLine
     ) external payable returns(uint256, uint256);
 

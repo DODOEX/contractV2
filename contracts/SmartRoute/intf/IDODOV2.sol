@@ -41,7 +41,8 @@ interface IDODOV2 {
         address quoteToken,
         uint256 lpFeeRate,
         uint256 i,
-        uint256 k
+        uint256 k,
+        bool isOpenTWAP
     ) external returns (address newVendingMachine);
     
     function buyShares(address to) external returns (uint256,uint256,uint256);
@@ -59,7 +60,8 @@ interface IDODOV2 {
         address quoteToken,
         uint256 lpFeeRate,
         uint256 k,
-        uint256 i
+        uint256 i,
+        bool isOpenTwap
     ) external;
 
     function reset(
@@ -87,7 +89,8 @@ interface IDODOV2 {
         address baseToken,
         address quoteToken,
         uint256[] memory timeLine,
-        uint256[] memory valueList
+        uint256[] memory valueList,
+        bool isOpenTWAP
     ) external;
 
     function bid(address to) external;

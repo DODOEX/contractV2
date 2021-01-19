@@ -77,8 +77,7 @@ export class DODOContext {
   DODOSellHelper: Contract;
   //Helper
   DODOSwapCalcHelper: Contract;
-  //Functions
-  DODOIncentive: Contract;
+
 
   constructor() { }
 
@@ -227,12 +226,6 @@ export class DODOContext {
       contracts.SMART_APPROVE
     );
 
-    //DODO Incentive
-    this.DODOIncentive = await contracts.newContract(
-      contracts.DODO_INCENTIVE,
-      [this.DODO.options.address]
-    )
-
     //Gas Token 
     this.CHI = await contracts.newContract(
       contracts.CHI_TOKEN
@@ -248,16 +241,14 @@ export class DODOContext {
 
     this.DODOV1Proxy02 = await contracts.newContract(
       contracts.SMART_SWAP_02,
-      [this.DODOApprove.options.address, this.DODOSellHelper.options.address, this.WETH.options.address, this.CHI.options.address,this.DODOIncentive.options.address]
+      [this.DODOApprove.options.address, this.DODOSellHelper.options.address, this.WETH.options.address, this.CHI.options.address]
       // [this.DODOApprove.options.address, this.DODOSellHelper.options.address, this.WETH.options.address, "0x0000000000000000000000000000000000000000"]
     );
 
     await this.DODOV1Proxy01.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
     await this.DODOV1Proxy02.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
-    await this.DODOIncentive.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
     
     await this.DODOApprove.methods.init(this.Deployer, this.DODOV1Proxy01.options.address).send(this.sendParam(this.Deployer));
-    await this.DODOIncentive.methods.changeDODOProxy(this.DODOV1Proxy02.options.address).send(this.sendParam(this.Deployer));
 
     this.DODOSwapCalcHelper = await contracts.newContract(
       contracts.DODO_SWAP_CALC_HELPER,[this.DODOSellHelper.options.address]

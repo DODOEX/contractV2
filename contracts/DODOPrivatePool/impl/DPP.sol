@@ -27,7 +27,8 @@ contract DPP is DPPTrader {
         uint256 lpFeeRate,
         address mtFeeRateModel,
         uint256 k,
-        uint256 i
+        uint256 i,
+        bool isOpenTWAP
     ) external {
         initOwner(owner);
 
@@ -44,6 +45,10 @@ contract DPP is DPPTrader {
         _LP_FEE_RATE_ = uint64(lpFeeRate);
         _K_ = uint64(k);
         _I_ = uint128(i);
+
+        _IS_OPEN_TWAP_ = isOpenTWAP;
+        if(isOpenTWAP) _BLOCK_TIMESTAMP_LAST_ = uint32(block.timestamp % 2**32);
+        
         _resetTargetAndReserve();
     }
 

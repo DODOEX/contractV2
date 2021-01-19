@@ -52,6 +52,7 @@ async function initCreateDVM(ctx: ProxyContext, token0: string, token1: string, 
     config.lpFeeRate,
     i,
     config.k,
+    true,
     Math.floor(new Date().getTime() / 1000 + 60 * 10)
   ).send(ctx.sendParam(project, ethValue));
   if (token0 == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') token0 = ctx.WETH.options.address;
@@ -115,6 +116,7 @@ describe("DODOProxyV2.0", () => {
         config.lpFeeRate,
         config.i,
         config.k,
+        false,
         Math.floor(new Date().getTime() / 1000 + 60 * 10)
       ), ctx.sendParam(project), "createDVM");
       var addrs = await ctx.DVMFactory.methods.getVendingMachine(baseToken, quoteToken).call();

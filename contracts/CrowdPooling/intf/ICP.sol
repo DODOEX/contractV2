@@ -12,7 +12,8 @@ interface ICP {
     function init(
         address[] calldata addressList,
         uint256[] calldata timeLine,
-        uint256[] calldata valueList
+        uint256[] calldata valueList,
+        bool isOpenTWAP
     ) external;
 
     function bid(address to) external;

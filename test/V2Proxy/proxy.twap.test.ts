@@ -49,7 +49,7 @@ async function initCreateDPP(ctx: ProxyContext, token0: string, token1: string, 
         config.lpFeeRate,
         i,
         config.k,
-        false,
+        true,
         Math.floor(new Date().getTime() / 1000 + 60 * 10)
     ).send(ctx.sendParam(project, ethValue));
     if (token0 == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') token0 = ctx.WETH.options.address;
@@ -68,7 +68,7 @@ async function initCreateDVM(ctx: ProxyContext, token0: string, token1: string, 
         config.lpFeeRate,
         i,
         config.k,
-        false,
+        true,
         Math.floor(new Date().getTime() / 1000 + 60 * 10)
     ).send(ctx.sendParam(project, ethValue));
     if (token0 == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') token0 = ctx.WETH.options.address;
@@ -106,7 +106,21 @@ describe("DODOProxyV2.0", () => {
     describe("DODOProxy", () => {
 
         it("swap - two jump", async () => {
+            let WETH_USDT_INSTANCE = contracts.getContractWithAddress(contracts.DVM_NAME, dvm_WETH_USDT);
+
+            var firstPriceCumulative = await WETH_USDT_INSTANCE.methods._BASE_PRICE_CUMULATIVE_LAST_().call();
+            var firstBlockTimestampLast = await WETH_USDT_INSTANCE.methods._BLOCK_TIMESTAMP_LAST_().call();
+            console.log("0 - WETH-USDT - priceCumulative:" + firstPriceCumulative + ";blockTimestampLast:" + firstBlockTimestampLast)
+
+
             await ctx.mintTestToken(trader, ctx.DODO, decimalStr("1000"));
+
+            //Aim to increase block
+            await ctx.mintTestToken(lp, ctx.DODO, decimalStr("1000"));
+            await ctx.mintTestToken(lp, ctx.DODO, decimalStr("1000"));
+            await ctx.mintTestToken(lp, ctx.DODO, decimalStr("1000"));
+
+
             var b_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
             var b_WETH = await ctx.WETH.methods.balanceOf(trader).call();
             var dodoPairs = [
@@ -124,71 +138,47 @@ describe("DODOProxyV2.0", () => {
                 false,
                 Math.floor(new Date().getTime() / 1000 + 60 * 10)
             ), ctx.sendParam(trader), "swap - two jump");
+
+
+
+            var priceCumulative = await WETH_USDT_INSTANCE.methods._BASE_PRICE_CUMULATIVE_LAST_().call();
+            var blockTimestampLast = await WETH_USDT_INSTANCE.methods._BLOCK_TIMESTAMP_LAST_().call();
+            console.log("1 - WETH-USDT - priceCumulative:" + priceCumulative + ";blockTimestampLast:" + blockTimestampLast)
+
             var a_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
             var a_WETH = await ctx.WETH.methods.balanceOf(trader).call();
             console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
             console.log("b_WETH:" + b_WETH + " a_WETH:" + a_WETH);
             assert.equal(a_DOOD, decimalStr("500"));
             assert.equal(a_WETH, "129932374904193666");
-        });
 
-        it("swap - two jump - inETH", async () => {
-            var b_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
-            var b_WETH = await ctx.WETH.methods.balanceOf(trader).call();
-            var b_ETH = await ctx.Web3.eth.getBalance(trader);
-            var dodoPairs = [
-                dvm_WETH_USDT,
-                dpp_DODO_USDT
-            ]
-            var directions = 2
-            await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2ETHToToken(
+            await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
                 ctx.DODO.options.address,
+                ctx.WETH.options.address,
+                decimalStr("500"),
                 1,
                 dodoPairs,
                 directions,
                 false,
                 Math.floor(new Date().getTime() / 1000 + 60 * 10)
-            ), ctx.sendParam(trader, "1"), "swap - two jump - inETH");
-            var a_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
-            var a_WETH = await ctx.WETH.methods.balanceOf(trader).call();
-            var a_ETH = await ctx.Web3.eth.getBalance(trader);
-            console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
-            console.log("b_WETH:" + b_WETH + " a_WETH:" + a_WETH);
-            console.log("b_ETH:" + b_ETH + " a_ETH:" + a_ETH);
-            assert.equal(a_DOOD, "3589987832148472935171");
-        });
+            ), ctx.sendParam(trader), "swap - two jump");
 
+            var lastPriceCumulative = await WETH_USDT_INSTANCE.methods._BASE_PRICE_CUMULATIVE_LAST_().call();
+            var lastBlockTimestampLast = await WETH_USDT_INSTANCE.methods._BLOCK_TIMESTAMP_LAST_().call();
+            var midPrice = await WETH_USDT_INSTANCE.methods.getMidPrice().call();
 
-        it("swap - two jump - outETH", async () => {
-            await ctx.mintTestToken(trader, ctx.DODO, decimalStr("100000"));
-            var b_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
-            var b_WETH = await ctx.WETH.methods.balanceOf(trader).call();
-            var b_ETH = await ctx.Web3.eth.getBalance(trader);
-            var dodoPairs = [
-                dpp_DODO_USDT,
-                dvm_WETH_USDT
-            ]
-            var directions = 2
-            var tx = await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToETH(
-                ctx.DODO.options.address,
-                decimalStr("10000"),
-                1,
-                dodoPairs,
-                directions,
-                false,
-                Math.floor(new Date().getTime() / 1000 + 60 * 10)
-            ), ctx.sendParam(trader), "swap - two jump - outETH");
-            var a_DOOD = await ctx.DODO.methods.balanceOf(trader).call();
-            var a_WETH = await ctx.WETH.methods.balanceOf(trader).call();
-            var a_ETH = await ctx.Web3.eth.getBalance(trader);
-            console.log("b_DOOD:" + b_DOOD + " a_DODO:" + a_DOOD);
-            console.log("b_WETH:" + b_WETH + " a_WETH:" + a_WETH);
-            console.log("b_ETH:" + b_ETH + " a_ETH:" + a_ETH);
-            assert.equal(a_DOOD, decimalStr("90000"));
-            assert.equal(
-                tx.events['OrderHistory'].returnValues['returnAmount'],
-                "2131271397594357833"
-            )
+            console.log("2 - WETH-USDT - priceCumulative:" + lastPriceCumulative + ";blockTimestampLast:" + lastBlockTimestampLast)
+
+            var blockNumber = await ctx.Web3.eth.getBlockNumber();
+            var blockInfo = await ctx.Web3.eth.getBlock(blockNumber);
+            var curTimeStamp = blockInfo['timestamp']
+
+            lastPriceCumulative += (parseInt(curTimeStamp + "") - parseInt(lastBlockTimestampLast)) * midPrice
+
+            console.log("twap:", (lastPriceCumulative - firstPriceCumulative) / (parseInt(curTimeStamp + "") - firstBlockTimestampLast))
+
+            assert((lastPriceCumulative - firstPriceCumulative) / (parseInt(curTimeStamp + "") - firstBlockTimestampLast) + "", "7722062520")
         });
     });
+
 });

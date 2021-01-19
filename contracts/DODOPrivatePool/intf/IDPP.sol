@@ -17,7 +17,8 @@ interface IDPP {
         uint256 lpFeeRate,
         address mtFeeRateModel,
         uint256 k,
-        uint256 i
+        uint256 i,
+        bool isOpenTWAP
     ) external;
 
     function _MT_FEE_RATE_MODEL_() external returns (address);
