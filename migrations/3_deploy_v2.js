@@ -86,10 +86,10 @@ module.exports = async (deployer, network, accounts) => {
         DefaultMtFeeRateAddress = "0xEfdE4225AC747136289979e29f1236527b2E4DB1";
         DefaultPermissionAddress = "0xACc7E23368261e1E02103c4e5ae672E7D01f5797";
 
-        DvmTemplateAddress = "0xD47B0782EDdAc44Bd2B6a51C949feaE9Af382A51";
-        DppTemplateAddress = "0xA0C3C6Ad75fBfaCb490E315BA762A6D20084b5a8";
-        DppAdminTemplateAddress = "0xe39E02c4f269c4E235Ca8979a125608644c8924a";
-        CpTemplateAddress = "0x6E0c3D0F6f916B8067999c6196A1806d80840a12";
+        DvmTemplateAddress = "";
+        DppTemplateAddress = "";
+        DppAdminTemplateAddress = "";
+        CpTemplateAddress = "";
         //Factory
         DvmFactoryAddress = "";
         DppFactoryAddress = "";

@@ -39,7 +39,7 @@ module.exports = {
    */
   deploySwitch: {
     DEPLOY_V1:        false,
-    DEPLOY_V2:        false,
+    DEPLOY_V2:        true,
     ADAPTER:          false,
     MOCK_TOKEN:       false,
     MOCK_V2_POOL:     false,
