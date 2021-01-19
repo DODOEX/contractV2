@@ -64,10 +64,10 @@ module.exports = async (deployer, network, accounts) => {
     let MintableERC20TemplateAddress = "0xA45a64DAba80757432fA4d654Df12f65f020C13C";
     let ERC20FactoryAddress = "0xCb1A2f64EfB02803276BFB5a8D511C4D950282a0";
 
-    let DPPFactoryAddress = "0x29d2feD26D37167d775f3eCAafAEe3e62B5f4fF6";
-    let DVMFactoryAddress = "0xFcD6835a9490Dc673944d4AB30F73D7FB8f4fbaA";
-    let DODOApproveAddress = "0x25b5C731822E534A1df126985bb8781f1b979eF9";
-    let DODOProxyV2Address = "0x3566c45117438485331c0628e10bA7bE09a1fFCB";
+    let DPPFactoryAddress = "0x2D7F071415480eE7721eBB48c3147e347b980fEe";
+    let DVMFactoryAddress = "0x1C0435b87B3772E994adA2D0194be91EaC85FDb0";
+    let DODOApproveAddress = "0x5319f1CF056496e7E13D5653C3C7f338DE127a11";
+    let DODOProxyV2Address = "0xe8836EB6EaE9Bc4Db880D4b9C0912E5db817e41D";
 
     const provider = new Web3.providers.HttpProvider("https://kovan.infura.io/v3/22d4a3b2df0e47b78d458f43fe50a199");
 
@@ -109,6 +109,7 @@ module.exports = async (deployer, network, accounts) => {
             '0',
             '1000000',
             '1000000000000000000',
+            false,
             deadline
         );
         var poolAddress = await DPPFactoryInstance._REGISTRY_(token0Addr, quote0Addr, 0);
@@ -185,7 +186,6 @@ module.exports = async (deployer, network, accounts) => {
         const DVMFactoryInstance = await DVMFactory.at(DVMFactoryAddress);
         const DPPFactoryInstance = await DPPFactory.at(DPPFactoryAddress);
 
-        const assetTo = accounts[0];
         const baseInAmount = web3.utils.toWei("100000", 'ether');
         const quoteInAmount = web3.utils.toWei("10000", 'mwei');
         // const quoteInAmount = web3.utils.toWei("0.5", 'ether');
@@ -200,6 +200,7 @@ module.exports = async (deployer, network, accounts) => {
                 POOL_PARAM[i].lpFeeRate,
                 POOL_PARAM[i].i,
                 POOL_PARAM[i].k,
+                false,
                 deadline
             );
             var poolAddress = await DVMFactoryInstance._REGISTRY_(POOL_PARAM[i].baseAddr, POOL_PARAM[i].quoteAddr, 0);
@@ -215,6 +216,7 @@ module.exports = async (deployer, network, accounts) => {
                 POOL_PARAM[i].lpFeeRate,
                 POOL_PARAM[i].i,
                 POOL_PARAM[i].k,
+                false,
                 deadline
             );
             var poolAddress = await DPPFactoryInstance._REGISTRY_(POOL_PARAM[i].baseAddr, POOL_PARAM[i].quoteAddr, 0);
