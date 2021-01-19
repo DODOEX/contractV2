@@ -119,7 +119,7 @@ describe("DODOProxyV2.0", () => {
         false,
         Math.floor(new Date().getTime() / 1000 + 60 * 10)
       ), ctx.sendParam(project), "createDVM");
-      var addrs = await ctx.DVMFactory.methods.getVendingMachine(baseToken, quoteToken).call();
+      var addrs = await ctx.DVMFactory.methods.getDODOPool(baseToken, quoteToken).call();
       assert.equal(
         await ctx.DODO.methods.balanceOf(addrs[1]).call(),
         baseAmount
@@ -175,7 +175,7 @@ describe("DODOProxyV2.0", () => {
     //     config.k,
     //     Math.floor(new Date().getTime() / 1000 + 60 * 10)
     //   ), ctx.sendParam(project, '5'), "createDVM - Wrap ETH");
-    //   var addrs = await ctx.DVMFactory.methods.getVendingMachine(ctx.WETH.options.address, quoteToken).call();
+    //   var addrs = await ctx.DVMFactory.methods.getDODOPool(ctx.WETH.options.address, quoteToken).call();
     //   assert.equal(
     //     await ctx.WETH.methods.balanceOf(addrs[1]).call(),
     //     baseAmount

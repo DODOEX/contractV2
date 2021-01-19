@@ -34,6 +34,9 @@ interface IDODOV2 {
 
     function getUserFeeRate(address user) external view returns (uint256 lpFeeRate, uint256 mtFeeRate);
 
+    
+    function getDODOPoolBidirection(address token0, address token1) external view returns (address[] memory, address[] memory);
+
     //========== DODOVendingMachine ========
     
     function createDODOVendingMachine(
@@ -47,7 +50,6 @@ interface IDODOV2 {
     
     function buyShares(address to) external returns (uint256,uint256,uint256);
 
-    function getVendingMachineBidirection(address token0, address token1) external view returns (address[] memory baseToken0Machines, address[] memory baseToken1Machines);
 
     //========== DODOPrivatePool ===========
 
@@ -75,7 +77,6 @@ interface IDODOV2 {
         uint256 minQuoteReserve
     ) external returns (bool); 
 
-    function getPrivatePoolBidirection(address token0, address token1) external view returns (address[] memory baseToken0Pool, address[] memory baseToken1Pool);
 
     function _OWNER_() external returns (address);
     

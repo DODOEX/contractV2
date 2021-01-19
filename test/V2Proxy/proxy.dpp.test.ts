@@ -119,7 +119,7 @@ describe("DODOProxyV2.0", () => {
         false,
         Math.floor(new Date().getTime() / 1000 + 60 * 10)
       ), ctx.sendParam(project), "createDPP");
-      var addrs = await ctx.DPPFactory.methods.getPrivatePool(baseToken, quoteToken).call();
+      var addrs = await ctx.DPPFactory.methods.getDODOPool(baseToken, quoteToken).call();
       assert.equal(
         await ctx.DODO.methods.balanceOf(addrs[1]).call(),
         baseAmount

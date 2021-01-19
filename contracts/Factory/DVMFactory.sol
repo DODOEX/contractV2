@@ -142,7 +142,7 @@ contract DVMFactory is InitializableOwnable {
 
     // ============ View Functions ============
 
-    function getVendingMachine(address baseToken, address quoteToken)
+    function getDODOPool(address baseToken, address quoteToken)
         external
         view
         returns (address[] memory machines)
@@ -150,7 +150,7 @@ contract DVMFactory is InitializableOwnable {
         return _REGISTRY_[baseToken][quoteToken];
     }
 
-    function getVendingMachineBidirection(address token0, address token1)
+    function getDODOPoolBidirection(address token0, address token1)
         external
         view
         returns (address[] memory baseToken0Machines, address[] memory baseToken1Machines)
@@ -158,7 +158,7 @@ contract DVMFactory is InitializableOwnable {
         return (_REGISTRY_[token0][token1], _REGISTRY_[token1][token0]);
     }
 
-    function getVendingMachineByUser(address user)
+    function getDODOPoolByUser(address user)
         external
         view
         returns (address[] memory machines)
