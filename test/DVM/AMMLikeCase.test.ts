@@ -58,75 +58,75 @@ describe("AMMLikeCase", () => {
 
     it("buy", async () => {
       // buy
-      // await ctx.transferQuoteToDVM(trader, decimalStr("200"))
-      // await ctx.DVM.methods.sellQuote(trader).send(ctx.sendParam(trader))
+      await ctx.transferQuoteToDVM(trader, decimalStr("200"))
+      await ctx.DVM.methods.sellQuote(trader).send(ctx.sendParam(trader))
 
-      // // trader balances
-      // assert.equal(
-      //   await ctx.BASE.methods.balanceOf(trader).call(),
-      //   "11661666666528194445"
-      // );
-      // assert.equal(
-      //   await ctx.QUOTE.methods.balanceOf(trader).call(),
-      //   decimalStr("800")
-      // );
+      // trader balances
+      assert.equal(
+        await ctx.BASE.methods.balanceOf(trader).call(),
+        "11664999999861250000"
+      );
+      assert.equal(
+        await ctx.QUOTE.methods.balanceOf(trader).call(),
+        decimalStr("800")
+      );
 
-      // // vault balances
-      // assert.equal(
-      //   await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
-      //   "8336666666805277778"
-      // );
-      // assert.equal(
-      //   await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
-      //   decimalStr("1200")
-      // );
+      // vault balances
+      assert.equal(
+        await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
+        "8333333333472222223"
+      );
+      assert.equal(
+        await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
+        decimalStr("1200")
+      );
 
-      // // maintainer balances
-      // assert.equal(
-      //   await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(),
-      //   "1666666666527777"
-      // );
-      // assert.equal(
-      //   await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
-      //   decimalStr("0")
-      // );
+      // maintainer balances
+      assert.equal(
+        await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(),
+        "1666666666527777"
+      );
+      assert.equal(
+        await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
+        decimalStr("0")
+      );
     });
 
     it("sell", async () => {
 
-    //   // sell
-      // await ctx.transferBaseToDVM(trader, decimalStr("1"))
-      // await ctx.DVM.methods.sellBase(trader).send(ctx.sendParam(trader))
+      // sell
+      await ctx.transferBaseToDVM(trader, decimalStr("1"))
+      await ctx.DVM.methods.sellBase(trader).send(ctx.sendParam(trader))
 
-    //   // trader balances
-      // assert.equal(
-      //   await ctx.BASE.methods.balanceOf(trader).call(),
-      //   decimalStr("9")
-      // );
-      // assert.equal(
-      //   await ctx.QUOTE.methods.balanceOf(trader).call(),
-      //   "1090636363645427272728"
-      // );
+      // trader balances
+      assert.equal(
+        await ctx.BASE.methods.balanceOf(trader).call(),
+        decimalStr("9")
+      );
+      assert.equal(
+        await ctx.QUOTE.methods.balanceOf(trader).call(),
+        "1090818181827263636364"
+      );
 
-    //   // vault balances
-      // assert.equal(
-      //   await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
-      //   decimalStr("11")
-      // );
-    //   assert.equal(
-    //     await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
-    //     "909272727263654545454"
-    //   );
+      // vault balances
+      assert.equal(
+        await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
+        decimalStr("11")
+      );
+      assert.equal(
+        await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
+        "909090909081818181818"
+      );
 
-    //   // maintainer balances
-      // assert.equal(
-      //   await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(),
-      //   "0"
-      // );
-    //   assert.equal(
-    //     await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
-    //     "90909090918181818"
-    //   );
+      // maintainer balances
+      assert.equal(
+        await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(),
+        "0"
+      );
+      assert.equal(
+        await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
+        "90909090918181818"
+      );
     });
   });
 });
