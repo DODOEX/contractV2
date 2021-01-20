@@ -4,7 +4,7 @@ const file = fs.createWriteStream("../deploy-detail-v1.5.txt", { 'flags': 'a' })
 let logger = new console.Console(file, file);
 
 const DODOApprove = artifacts.require("DODOApprove");
-const DODOProxyV2 = artifacts.require("DODOV1Proxy02");
+const DODOV1Proxy03 = artifacts.require("DODOV1Proxy03");
 const DODOSellHelper = artifacts.require("DODOSellHelper");
 const DODOSwapCalcHelper = artifacts.require("DODOSwapCalcHelper");
 
@@ -62,16 +62,16 @@ module.exports = async (deployer, network, accounts) => {
     }
 
     await deployer.deploy(
-      DODOProxyV2,
+      DODOV1Proxy03,
       DODOApproveAddress,
       DODOSellHelperAddress,
       WETHAddress,
       chiAddress
     );
-    logger.log("DODOProxyV2 Address: ", DODOProxyV2.address);
-    const DODOProxyV2Instance = await DODOProxyV2.at(DODOProxyV2.address);
-    tx = await DODOProxyV2Instance.initOwner(ownerAddress);
-    logger.log("Set DODOProxyV2 Owner tx: ", tx.tx);
+    logger.log("DODOV1Proxy03 Address: ", DODOV1Proxy03.address);
+    const DODOProxyInstance = await DODOV1Proxy03.at(DODOV1Proxy03.address);
+    tx = await DODOProxyInstance.initOwner(ownerAddress);
+    logger.log("Set DODOProxy Owner tx: ", tx.tx);
 
     // const DODOApproveInstance = await DODOApprove.at(DODOApproveAddress);
     // tx = await DODOApproveInstance.init(ownerAddress, DODOProxyV1.address);

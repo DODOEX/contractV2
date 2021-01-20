@@ -38,7 +38,7 @@ module.exports = {
    * $ truffle test --network <network-name>
    */
   deploySwitch: {
-    DEPLOY_V1:        false,
+    DEPLOY_V1:        true,
     DEPLOY_V2:        false,
     ADAPTER:          false,
     MOCK_TOKEN:       false,
@@ -79,7 +79,7 @@ module.exports = {
         return new HDWalletProvider(privKey, "https://mainnet.infura.io/v3/" + infuraId);
       },
       gas: 3000000,
-      gasPrice: 100000000000,
+      gasPrice: 75000000000,
       network_id: 1,
       skipDryRun: true
     },

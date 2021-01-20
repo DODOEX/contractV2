@@ -496,6 +496,8 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         returns (uint256 returnAmount)
     {
         require(minReturnAmount > 0, "DODOV2Proxy01: RETURN_AMOUNT_ZERO");
+        require(fromToken != _CHI_TOKEN_, "DODOV2Proxy01: NOT_SUPPORT_SELL_CHI");
+        require(toToken != _CHI_TOKEN_, "DODOV2Proxy01: NOT_SUPPORT_BUY_CHI");
         
         uint256 toTokenOriginBalance = IERC20(toToken).universalBalanceOf(msg.sender);
         if (fromToken != _ETH_ADDRESS_) {
@@ -552,6 +554,9 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
     {
         require(dodoPairs.length > 0, "DODOV2Proxy01: PAIRS_EMPTY");
         require(minReturnAmount > 0, "DODOV2Proxy01: RETURN_AMOUNT_ZERO");
+        require(fromToken != _CHI_TOKEN_, "DODOV2Proxy01: NOT_SUPPORT_SELL_CHI");
+        require(toToken != _CHI_TOKEN_, "DODOV2Proxy01: NOT_SUPPORT_BUY_CHI");
+        
         uint256 originGas = gasleft();
 
         address _fromToken = fromToken;
@@ -563,11 +568,13 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
             address curDodoPair = dodoPairs[i];
             if (directions & 1 == 0) {
                 address curDodoBase = IDODOV1(curDodoPair)._BASE_TOKEN_();
+                require(curDodoBase != _CHI_TOKEN_, "DODOV2Proxy01: NOT_SUPPORT_CHI");
                 uint256 curAmountIn = IERC20(curDodoBase).balanceOf(address(this));
                 IERC20(curDodoBase).universalApproveMax(curDodoPair, curAmountIn);
                 IDODOV1(curDodoPair).sellBaseToken(curAmountIn, 0, "");
             } else {
                 address curDodoQuote = IDODOV1(curDodoPair)._QUOTE_TOKEN_();
+                require(curDodoQuote != _CHI_TOKEN_, "DODOV2Proxy01: NOT_SUPPORT_CHI");
                 uint256 curAmountIn = IERC20(curDodoQuote).balanceOf(address(this));
                 IERC20(curDodoQuote).universalApproveMax(curDodoPair, curAmountIn);
                 uint256 canBuyBaseAmount = IDODOSellHelper(_DODO_SELL_HELPER_).querySellQuoteToken(
@@ -614,6 +621,8 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         require(mixPairs.length == mixAdapters.length, "DODOV2Proxy01: PAIR_ADAPTER_NOT_MATCH");
         require(mixPairs.length == assetTo.length - 1, "DODOV2Proxy01: PAIR_ASSETTO_NOT_MATCH");
         require(minReturnAmount > 0, "DODOV2Proxy01: RETURN_AMOUNT_ZERO");
+        require(fromToken != _CHI_TOKEN_, "DODOV2Proxy01: NOT_SUPPORT_SELL_CHI");
+        require(toToken != _CHI_TOKEN_, "DODOV2Proxy01: NOT_SUPPORT_BUY_CHI");
         
         uint256 toTokenOriginBalance = IERC20(toToken).universalBalanceOf(msg.sender);
         
