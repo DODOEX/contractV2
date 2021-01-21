@@ -60,7 +60,6 @@ export class DVMContext {
   mtFeeRateModel: Contract;
 
   MtFeeRateModelLogic: Contract;
-  MtFeeRateModelLogicUpdate: Contract;
 
   constructor() { }
 
@@ -101,7 +100,8 @@ export class DVMContext {
       // permissionManager.options.address,
       // gasPriceSource.options.address,
       config.i,
-      config.k
+      config.k,
+      true
     ).send(this.sendParam(this.Deployer))
 
     await gasPriceSource.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer))
@@ -111,7 +111,6 @@ export class DVMContext {
 
 
     this.MtFeeRateModelLogic = await contracts.newContract(contracts.FEE_RATE_MODEL_LOGIC_NAME)
-    this.MtFeeRateModelLogicUpdate = await contracts.newContract(contracts.FEE_RATE_MODEL_LOGIC_UPDATE_NAME)
 
     console.log(log.blueText("[Init DVM context]"));
   }
