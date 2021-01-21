@@ -53,8 +53,7 @@ contract DPPTrader is DPPVault {
 
         _transferQuoteOut(to, receiveQuoteAmount);
         _transferQuoteOut(_MAINTAINER_, mtFee);
-        _setReserve(baseBalance, _QUOTE_TOKEN_.balanceOf(address(this)));
-
+        
         // update TARGET
         if (_RState_ != uint32(newRState)) {
             require(newBaseTarget <= uint112(-1),"OVERFLOW");
@@ -62,6 +61,8 @@ contract DPPTrader is DPPVault {
             _RState_ = uint32(newRState);
             emit RChange(newRState);
         }
+
+        _setReserve(baseBalance, _QUOTE_TOKEN_.balanceOf(address(this)));
 
         emit DODOSwap(
             address(_BASE_TOKEN_),
@@ -90,7 +91,6 @@ contract DPPTrader is DPPVault {
 
         _transferBaseOut(to, receiveBaseAmount);
         _transferBaseOut(_MAINTAINER_, mtFee);
-         _setReserve(_BASE_TOKEN_.balanceOf(address(this)), quoteBalance);
 
         // update TARGET
         if (_RState_ != uint32(newRState)) {
@@ -99,6 +99,8 @@ contract DPPTrader is DPPVault {
             _RState_ = uint32(newRState);
             emit RChange(newRState);
         }
+
+        _setReserve(_BASE_TOKEN_.balanceOf(address(this)), quoteBalance);
 
         emit DODOSwap(
             address(_QUOTE_TOKEN_),
