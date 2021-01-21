@@ -130,7 +130,6 @@ export class CPContext {
     ).send(this.sendParam(this.Deployer))
 
     await defaultGasSource.methods.init(this.Deployer, MAX_UINT256).send(this.sendParam(this.Deployer));
-    await feeRateModel.methods.init(this.Deployer, decimalStr("0.001")).send(this.sendParam(this.Deployer));
 
     console.log(log.blueText("[Init CrowdPooling context]"));
   }

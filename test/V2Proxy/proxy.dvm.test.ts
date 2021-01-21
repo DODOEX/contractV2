@@ -131,35 +131,7 @@ describe("DODOProxyV2.0", () => {
 
 
     });
-    it("updateFeeRateModel", async () => {
-      var feeRate = await DVM_DODO_USDT.methods.getUserFeeRate(project).call()
-      assert.equal(
-        feeRate[1], //mtFee
-        "0"
-      );
-      var mtFeeResult0 = await DVM_DODO_USDT.methods.querySellQuote(ctx.Deployer, decimalStr("10")).call()
-      assert.equal(
-        mtFeeResult0[1],
-        "0"
-      );
-
-      var feerateLogicAddress = ctx.MtFeeRateModelLogic.options.address;
-      await logGas(await ctx.mtFeeRateModel.methods.setFeeRate(
-        decimalStr("0.03"),
-        feerateLogicAddress
-      ), ctx.sendParam(ctx.Deployer), "setFeeRate");
-      var feeRateSet = await DVM_DODO_USDT.methods.getUserFeeRate(project).call()
-      assert.equal(
-        feeRateSet[1],
-        "30000000000000000"
-      );
-      var mtFeeResult1 = await DVM_DODO_USDT.methods.querySellQuote(ctx.Deployer, decimalStr("10")).call()
-      assert.equal(
-        mtFeeResult1[1],
-        "2999999997797182956530"
-      );
-    });
-
+ 
     // it("createDVM - ETH", async () => {
     //   var baseToken = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
     //   var quoteToken = ctx.USDT.options.address;

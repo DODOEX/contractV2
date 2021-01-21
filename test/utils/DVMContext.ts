@@ -59,7 +59,6 @@ export class DVMContext {
 
   mtFeeRateModel: Contract;
 
-  MtFeeRateModelLogic: Contract;
 
   constructor() { }
 
@@ -106,11 +105,7 @@ export class DVMContext {
 
     await gasPriceSource.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer))
     await gasPriceSource.methods.set(MAX_UINT256).send(this.sendParam(this.Deployer))
-    await lpFeeRateModel.methods.init(this.Deployer, config.lpFeeRate).send(this.sendParam(this.Deployer))
-    await mtFeeRateModel.methods.init(this.Deployer, config.mtFeeRate).send(this.sendParam(this.Deployer))
 
-
-    this.MtFeeRateModelLogic = await contracts.newContract(contracts.FEE_RATE_MODEL_LOGIC_NAME)
 
     console.log(log.blueText("[Init DVM context]"));
   }

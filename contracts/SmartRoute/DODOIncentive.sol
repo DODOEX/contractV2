@@ -62,7 +62,6 @@ contract DODOIncentive is InitializableOwnable {
         emit SetBoost(_token, _boostRate);
     }
 
-    //switch
     function changePerReward(uint256 _dodoPerBlock) public onlyOwner {
         _updateTotalReward();
         dodoPerBlock = _dodoPerBlock;
@@ -97,7 +96,8 @@ contract DODOIncentive is InitializableOwnable {
         uint256 fromRate = boosts[fromToken];
         uint256 toRate = boosts[toToken];
         uint256 rate = (fromRate >= toRate ? fromRate : toRate) + defaultRate;
-
+        require(rate <= 1000, "RATE_INVALID");
+        
         uint256 _totalReward = _getTotalReward();
         uint256 reward = ((_totalReward - curTotalDistribution) * rate) / 1000;
         uint256 _totalDistribution = curTotalDistribution + reward;
