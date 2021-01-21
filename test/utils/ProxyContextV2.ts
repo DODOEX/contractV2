@@ -41,7 +41,6 @@ export class ProxyContext {
   DODOIncentive: Contract;
   mtFeeRateModel: Contract;
   MtFeeRateModelLogic: Contract;
-  MtFeeRateModelLogicUpdate: Contract;
 
   Deployer: string;
   Maintainer: string;
@@ -158,7 +157,6 @@ export class ProxyContext {
 
 
     this.MtFeeRateModelLogic = await contracts.newContract(contracts.FEE_RATE_MODEL_LOGIC_NAME)
-    this.MtFeeRateModelLogicUpdate = await contracts.newContract(contracts.FEE_RATE_MODEL_LOGIC_UPDATE_NAME)
 
 
     console.log(log.blueText("[Init DVM context]"));
