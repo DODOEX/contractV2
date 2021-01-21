@@ -5,18 +5,18 @@
 
 */
 
-import BigNumber from 'bignumber.js';
-import Web3 from 'web3';
-import { Contract } from 'web3-eth-contract';
+import BigNumber from "bignumber.js";
+import Web3 from "web3";
+import { Contract } from "web3-eth-contract";
 
-import * as contracts from './Contracts';
-import { decimalStr, MAX_UINT256 } from './Converter';
-import { EVM, getDefaultWeb3 } from './EVM';
-import * as log from './Log';
+import * as contracts from "./Contracts";
+import { decimalStr, MAX_UINT256 } from "./Converter";
+import { EVM, getDefaultWeb3 } from "./EVM";
+import * as log from "./Log";
 
 BigNumber.config({
   EXPONENTIAL_AT: 1000,
-  DECIMAL_PLACES: 80,
+  DECIMAL_PLACES: 80
 });
 
 export interface DPPContextBalances {
@@ -33,6 +33,7 @@ export interface DPPContextInitConfig {
   mtFeeRate: string;
   k: string;
   i: string;
+  isOpenTWAP: boolean
 }
 
 /*
@@ -53,6 +54,7 @@ export let DefaultDPPContextInitConfig = {
   mtFeeRate: decimalStr("0.001"),
   k: decimalStr("0.1"),
   i: decimalStr("100"),
+  isOpenTWAP: true
 };
 
 export class DPPContext {
@@ -65,19 +67,20 @@ export class DPPContext {
   Maintainer: string;
   SpareAccounts: string[];
 
-  constructor() { }
+  constructor() {
+  }
 
   async init(config: DPPContextInitConfig) {
     this.EVM = new EVM();
     this.Web3 = getDefaultWeb3();
 
-    this.DPP = await contracts.newContract(contracts.DPP_NAME)
-    var lpFeeRateModel = await contracts.newContract(contracts.CONST_FEE_RATE_MODEL_NAME)
-    var mtFeeRateModel = await contracts.newContract(contracts.CONST_FEE_RATE_MODEL_NAME)
-    var permissionManager = await contracts.newContract(contracts.PERMISSION_MANAGER_NAME)
-    var gasPriceSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME)
-    var iSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME)
-    var kSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME)
+    this.DPP = await contracts.newContract(contracts.DPP_NAME);
+    var lpFeeRateModel = await contracts.newContract(contracts.CONST_FEE_RATE_MODEL_NAME);
+    var mtFeeRateModel = await contracts.newContract(contracts.CONST_FEE_RATE_MODEL_NAME);
+    var permissionManager = await contracts.newContract(contracts.PERMISSION_MANAGER_NAME);
+    var gasPriceSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME);
+    var iSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME);
+    var kSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME);
     this.BASE = await contracts.newContract(
       contracts.MINTABLE_ERC20_CONTRACT_NAME,
       ["TestBase", "BASE", 18]
@@ -92,12 +95,12 @@ export class DPPContext {
     this.Maintainer = allAccounts[2];
     this.SpareAccounts = allAccounts.slice(2, 10);
 
-    await gasPriceSource.methods.init(this.Deployer, MAX_UINT256).send(this.sendParam(this.Deployer))
-    await lpFeeRateModel.methods.init(this.DPP.options.address, config.lpFeeRate).send(this.sendParam(this.Deployer))
-    await mtFeeRateModel.methods.init(this.DPP.options.address, config.mtFeeRate).send(this.sendParam(this.Deployer))
+    await gasPriceSource.methods.init(this.Deployer, MAX_UINT256).send(this.sendParam(this.Deployer));
+    await lpFeeRateModel.methods.init(this.DPP.options.address, config.lpFeeRate).send(this.sendParam(this.Deployer));
+    await mtFeeRateModel.methods.init(this.DPP.options.address, config.mtFeeRate).send(this.sendParam(this.Deployer));
 
-    await kSource.methods.init(this.DPP.options.address, config.k).send(this.sendParam(this.Deployer))
-    await iSource.methods.init(this.DPP.options.address, config.i).send(this.sendParam(this.Deployer))
+    await kSource.methods.init(this.DPP.options.address, config.k).send(this.sendParam(this.Deployer));
+    await iSource.methods.init(this.DPP.options.address, config.i).send(this.sendParam(this.Deployer));
 
     await this.DPP.methods.init(
       this.Deployer,
@@ -108,7 +111,8 @@ export class DPPContext {
       mtFeeRateModel.options.address,
       config.k,
       config.i,
-    ).send(this.sendParam(this.Deployer))
+      config.isOpenTWAP
+    ).send(this.sendParam(this.Deployer));
 
     console.log(log.blueText("[Init DPP context]"));
   }
@@ -118,7 +122,7 @@ export class DPPContext {
       from: sender,
       gas: process.env["COVERAGE"] ? 10000000000 : 7000000,
       gasPrice: process.env.GAS_PRICE,
-      value: decimalStr(value),
+      value: decimalStr(value)
     };
   }
 
@@ -130,11 +134,11 @@ export class DPPContext {
   }
 
   async transferBaseToDPP(account: string, amount: string) {
-    await this.BASE.methods.transfer(this.DPP.options.address, amount).send(this.sendParam(account))
+    await this.BASE.methods.transfer(this.DPP.options.address, amount).send(this.sendParam(account));
   }
 
   async transferQuoteToDPP(account: string, amount: string) {
-    await this.QUOTE.methods.transfer(this.DPP.options.address, amount).send(this.sendParam(account))
+    await this.QUOTE.methods.transfer(this.DPP.options.address, amount).send(this.sendParam(account));
   }
 
   async getBalances(trader: string) {
@@ -144,9 +148,9 @@ export class DPPContext {
       DPPBase: await this.BASE.methods.balanceOf(this.DPP.options.address).call(),
       DPPQuote: await this.QUOTE.methods.balanceOf(this.DPP.options.address).call(),
       maintainerBase: await this.BASE.methods.balanceOf(this.Maintainer).call(),
-      maintainerQuote: await this.QUOTE.methods.balanceOf(this.Maintainer).call(),
-    }
-    return balances
+      maintainerQuote: await this.QUOTE.methods.balanceOf(this.Maintainer).call()
+    };
+    return balances;
   }
 }
 

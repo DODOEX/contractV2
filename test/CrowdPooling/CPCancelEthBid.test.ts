@@ -41,7 +41,8 @@ describe("Funding", () => {
       freezeDuration: new BigNumber(86400),
       vestingDuration: new BigNumber(86400),
       cliffRate: decimalStr("1"),
-      quoteTokenContract:"WETH9"
+      quoteTokenContract:"WETH9",
+      isOpenTWAP:true
     }
     ctx = new CPContext();
     await ctx.init(config);

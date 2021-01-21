@@ -31,6 +31,7 @@ export interface CPContextInitConfig {
   vestingDuration: BigNumber;
   cliffRate: string;
   quoteTokenContract: string;
+  isOpenTWAP:true
 }
 
 
@@ -124,7 +125,8 @@ export class CPContext {
         config.k,
         config.i,
         config.cliffRate
-      ]
+      ],
+      config.isOpenTWAP
     ).send(this.sendParam(this.Deployer))
 
     await defaultGasSource.methods.init(this.Deployer, MAX_UINT256).send(this.sendParam(this.Deployer));
