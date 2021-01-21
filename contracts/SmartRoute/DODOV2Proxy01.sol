@@ -621,15 +621,18 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         require(mixPairs.length == mixAdapters.length, "DODOV2Proxy01: PAIR_ADAPTER_NOT_MATCH");
         require(mixPairs.length == assetTo.length - 1, "DODOV2Proxy01: PAIR_ASSETTO_NOT_MATCH");
         require(minReturnAmount > 0, "DODOV2Proxy01: RETURN_AMOUNT_ZERO");
-        require(fromToken != _CHI_TOKEN_, "DODOV2Proxy01: NOT_SUPPORT_SELL_CHI");
-        require(toToken != _CHI_TOKEN_, "DODOV2Proxy01: NOT_SUPPORT_BUY_CHI");
-        
-        uint256 toTokenOriginBalance = IERC20(toToken).universalBalanceOf(msg.sender);
-        
-        {
+
         address _fromToken = fromToken;
-        _deposit(msg.sender, assetTo[0], _fromToken, fromTokenAmount, _fromToken == _ETH_ADDRESS_);
-        }
+        address _toToken = toToken;
+        uint256 _fromTokenAmount = fromTokenAmount;
+
+        require(_fromToken != _CHI_TOKEN_, "DODOV2Proxy01: NOT_SUPPORT_SELL_CHI");
+        require(_toToken != _CHI_TOKEN_, "DODOV2Proxy01: NOT_SUPPORT_BUY_CHI");
+        
+        uint256 originGas = gasleft();
+        uint256 toTokenOriginBalance = IERC20(_toToken).universalBalanceOf(msg.sender);
+        
+        _deposit(msg.sender, assetTo[0], _fromToken, _fromTokenAmount, _fromToken == _ETH_ADDRESS_);
 
         for (uint256 i = 0; i < mixPairs.length; i++) {
             if (directions & 1 == 0) {
@@ -640,25 +643,25 @@ contract DODOV2Proxy01 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
             directions = directions >> 1;
         }
 
-        if(toToken == _ETH_ADDRESS_) {
+        if(_toToken == _ETH_ADDRESS_) {
             returnAmount = IWETH(_WETH_).balanceOf(address(this));
             IWETH(_WETH_).withdraw(returnAmount);
             msg.sender.transfer(returnAmount);
         }else {
-            returnAmount = IERC20(toToken).tokenBalanceOf(msg.sender).sub(toTokenOriginBalance);
+            returnAmount = IERC20(_toToken).tokenBalanceOf(msg.sender).sub(toTokenOriginBalance);
         }
 
         require(returnAmount >= minReturnAmount, "DODOV2Proxy01: Return amount is not enough");
         
-        _externalGasReturn();
+        _dodoGasReturn(originGas);
 
-        _execIncentive(isIncentive, fromToken, toToken);
+        _execIncentive(isIncentive, _fromToken, _toToken);
 
         emit OrderHistory(
-            fromToken,
-            toToken,
+            _fromToken,
+            _toToken,
             msg.sender,
-            fromTokenAmount,
+            _fromTokenAmount,
             returnAmount
         );
     }

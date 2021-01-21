@@ -172,7 +172,7 @@ describe("DODOProxyV2.0", () => {
             assert(totalReward, decimalStr("140"));
         });
 
-        it.only("tigger - incentive", async () => {
+        it("tigger - incentive", async () => {
             await ctx.mintTestToken(trader, ctx.DODO, decimalStr("2000"));
             var b_DODO = await ctx.DODO.methods.balanceOf(trader).call()
             var b_USDT = await ctx.USDT.methods.balanceOf(trader).call()

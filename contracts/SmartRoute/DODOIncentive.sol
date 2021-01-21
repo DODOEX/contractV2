@@ -110,18 +110,18 @@ contract DODOIncentive is InitializableOwnable {
     }
 
     function _updateTotalReward() internal {
-        totalReward = uint112(_getTotalReward());
-        lastRewardBlock = uint32(block.number);
+        uint256 _totalReward = _getTotalReward();
+        require(_totalReward < uint112(-1), "OVERFLOW");
+        totalReward = uint112(_totalReward);
+        lastRewardBlock = uint32(block.timestamp % 2**32);
     }
 
     function _update(uint256 _totalReward, uint256 _totalDistribution) internal {
         require(
-            _totalReward < uint112(-1) &&
-                _totalDistribution < uint112(-1) &&
-                block.number < uint32(-1),
+            _totalReward < uint112(-1) && _totalDistribution < uint112(-1),
             "OVERFLOW"
         );
-        lastRewardBlock = uint32(block.number);
+        lastRewardBlock = uint32(block.timestamp % 2**32);
         totalReward = uint112(_totalReward);
         totalDistribution = uint112(_totalDistribution);
     }
