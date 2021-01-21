@@ -139,7 +139,6 @@ module.exports = async (deployer, network, accounts) => {
         DODOSellHelperAddress = "0x0F859706AeE7FcF61D5A8939E8CB9dBB6c1EDA33";
         WETHAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
         chiAddress = "0x0000000000000000000000000000000000000000";
-
         DODOCalleeHelperAddress = "0x0000000000000000000000000000000000000000";
         DODORouteV2HelperAddress = "0x0000000000000000000000000000000000000000";
         //Template
@@ -172,6 +171,10 @@ module.exports = async (deployer, network, accounts) => {
         multiSigAddress = accounts[0];
         defaultMaintainer = accounts[0];
     } else return;
+    
+    logger.log("====================================================");
+    logger.log("network type: " + network);
+    logger.log("Deploy time: " + new Date().toLocaleString());
 
     if (deploySwitch.ROUTER_HELPER) {
         await deployer.deploy(DODOV1PmmHelper);
@@ -181,10 +184,8 @@ module.exports = async (deployer, network, accounts) => {
         // logger.log("DODOV2RouteHelper Address: ", DODOV2RouteHelperAddress);
     }
 
+
     if (deploySwitch.ADAPTER) {
-        logger.log("====================================================");
-        logger.log("network type: " + network);
-        logger.log("Deploy time: " + new Date().toLocaleString());
         logger.log("Deploy type: V2 - Adapter");
         await deployer.deploy(DODOV1Adapter, DODOSellHelperAddress)
         logger.log("DODOV1Adapter Address: ", DODOV1Adapter.address);
@@ -195,12 +196,8 @@ module.exports = async (deployer, network, accounts) => {
     }
 
     if (deploySwitch.DEPLOY_V2) {
-        logger.log("====================================================");
-        logger.log("network type: " + network);
-        logger.log("Deploy time: " + new Date().toLocaleString());
         logger.log("Deploy type: V2");
         if (DODOTokenAddress == "") return;
-
         //Helper
         if (DODOSellHelperAddress == "") {
             await deployer.deploy(DODOSellHelper);
