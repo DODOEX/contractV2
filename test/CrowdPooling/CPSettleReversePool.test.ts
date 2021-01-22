@@ -74,14 +74,14 @@ describe("Funding", () => {
       assert.equal(await pool.methods.getMidPrice().call(), "10000000003162277660")
       assert.equal(await ctx.CP.methods._AVG_SETTLED_PRICE_().call(), "10000000000000000000")
 
-      assert.equal(await ctx.CP.methods._UNUSED_QUOTE_().call(), decimalStr("49900"))
+      assert.equal(await ctx.CP.methods._UNUSED_QUOTE_().call(), decimalStr("50000"))
       assert.equal(await ctx.CP.methods._UNUSED_BASE_().call(), "5000000000000000000000")
 
       assert.equal(await ctx.BASE.methods.balanceOf(poolAddress).call(), "5000000000000000000000")
       assert.equal(await ctx.BASE.methods.balanceOf(ctx.CP.options.address).call(), "5000000000000000000000")
 
       assert.equal(await ctx.QUOTE.methods.balanceOf(poolAddress).call(), decimalStr("50000"))
-      assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.CP.options.address).call(), decimalStr("49900"))
+      assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.CP.options.address).call(), decimalStr("50000"))
     })
 
   })

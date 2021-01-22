@@ -62,20 +62,20 @@ describe("Funding", () => {
     it("bid and cancel", async () => {
       await ctx.QUOTE.methods.transfer(ctx.CP.options.address, decimalStr("100")).send(ctx.sendParam(bidder1))
       await logGas(ctx.CP.methods.bid(bidder1), ctx.sendParam(bidder1), "bid")
-      assert.equal(await ctx.CP.methods.getShares(bidder1).call(), decimalStr("99.9"))
-      assert.equal(await ctx.CP.methods._TOTAL_SHARES_().call(), decimalStr("99.9"))
-      assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(), decimalStr("0.1"))
-
+      assert.equal(await ctx.CP.methods.getShares(bidder1).call(), decimalStr("100"))
+      assert.equal(await ctx.CP.methods._TOTAL_SHARES_().call(), decimalStr("100"))
+	  assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(), decimalStr("0"))
+	  
       await ctx.QUOTE.methods.transfer(ctx.CP.options.address, decimalStr("50")).send(ctx.sendParam(bidder2))
       await ctx.CP.methods.bid(bidder2).send(ctx.sendParam(bidder2))
-      assert.equal(await ctx.CP.methods.getShares(bidder2).call(), decimalStr("49.95"))
-      assert.equal(await ctx.CP.methods._TOTAL_SHARES_().call(), decimalStr("149.85"))
-      assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(), decimalStr("0.15"))
-
+      assert.equal(await ctx.CP.methods.getShares(bidder2).call(), decimalStr("50"))
+      assert.equal(await ctx.CP.methods._TOTAL_SHARES_().call(), decimalStr("150"))
+	  assert.equal(await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(), decimalStr("0"))
+	  
       await ctx.EVM.increaseTime(86400)
       await logGas(ctx.CP.methods.cancel(bidder1, decimalStr("20"),"0x"), ctx.sendParam(bidder1), "cancel")
-      assert.equal(await ctx.CP.methods.getShares(bidder1).call(), decimalStr("79.9"))
-      assert.equal(await ctx.CP.methods._TOTAL_SHARES_().call(), decimalStr("129.85"))
+      assert.equal(await ctx.CP.methods.getShares(bidder1).call(), decimalStr("80"))
+      assert.equal(await ctx.CP.methods._TOTAL_SHARES_().call(), decimalStr("130"))
       assert.equal(await ctx.QUOTE.methods.balanceOf(bidder1).call(), decimalStr("920"))
 
     })

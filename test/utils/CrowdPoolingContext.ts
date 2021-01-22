@@ -73,7 +73,7 @@ export class CPContext {
     if(config.quoteTokenContract){
       this.QUOTE = await contracts.newContract(
         config.quoteTokenContract,
-        ["TestQuote", "QUOTE", 18]
+        ["WETH9", "WETH9", 18]
       );
     }else{
       this.QUOTE = await contracts.newContract(
