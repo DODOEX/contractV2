@@ -64,7 +64,7 @@ module.exports = async (deployer, network, accounts) => {
         DODOSellHelperAddress = "0xbdEae617F2616b45DCB69B287D52940a76035Fe3";
         WETHAddress = "0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b";
         chiAddress = "0x0000000000004946c0e9f43f4dee607b0ef1fa1c";
-        DODOCalleeHelperAddress = "0x507EBbb195CF54E0aF147A2b269C08a38EA36989";
+        DODOCalleeHelperAddress = "";
         DODOV1PmmHelperAddress = "0xC972069473a686b1c11Bd9347D719c87e6745d39";
         DODORouteV2HelperAddress = "";
 
@@ -97,7 +97,7 @@ module.exports = async (deployer, network, accounts) => {
         DODORouteV2HelperAddress = "";
         DODOV1PmmHelperAddress = "";
         //Template
-        CloneFactoryAddress = "";
+        CloneFactoryAddress = "0x5e5a7b76462e4bdf83aa98795644281bdba80b88";
         DefaultMtFeeRateAddress = "";
         DefaultPermissionAddress = "";
 

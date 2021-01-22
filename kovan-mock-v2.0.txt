@@ -401,3 +401,16 @@ network type: bsclive
 Deploy time: 2021/1/22 下午1:57:57
 Mock TOKEN Tx: V2
 ERC20 address:  0x497A44c951fCCF92ADfdeD0a5b0162256F147647; Symbol:DODO
+====================================================
+network type: development
+Deploy time: 2021/1/22 下午2:02:32
+Mock TOKEN Tx: V2
+====================================================
+network type: development
+Deploy time: 2021/1/22 下午2:03:08
+====================================================
+network type: development
+Deploy time: 2021/1/22 下午2:15:43
+====================================================
+network type: development
+Deploy time: 2021/1/22 下午2:17:04

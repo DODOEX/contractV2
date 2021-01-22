@@ -52,7 +52,7 @@ async function initCreateDVM(ctx: ProxyContext, token0: string, token1: string, 
     config.lpFeeRate,
     i,
     config.k,
-    true,
+    false,
     Math.floor(new Date().getTime() / 1000 + 60 * 10)
   ).send(ctx.sendParam(project, ethValue));
   if (token0 == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') token0 = ctx.WETH.options.address;

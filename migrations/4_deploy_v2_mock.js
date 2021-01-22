@@ -58,21 +58,17 @@ const POOL_PARAM = [
 ];
 
 module.exports = async (deployer, network, accounts) => {
-    // if (network != "kovan") return;
-    // let CloneFactoryAddress = "0xf7959fe661124C49F96CF30Da33729201aEE1b27";
-    // let ERC20TemplateAddress = "0x77d2e257241e6971688b08bdA9F658F065d7bb41";
-    // let MintableERC20TemplateAddress = "0xA45a64DAba80757432fA4d654Df12f65f020C13C";
-    // let ERC20FactoryAddress = "0xCb1A2f64EfB02803276BFB5a8D511C4D950282a0";
+    if (network != "kovan") return;
+    let CloneFactoryAddress = "0xf7959fe661124C49F96CF30Da33729201aEE1b27";
+    let ERC20TemplateAddress = "0x77d2e257241e6971688b08bdA9F658F065d7bb41";
+    let MintableERC20TemplateAddress = "0xA45a64DAba80757432fA4d654Df12f65f020C13C";
+    let ERC20FactoryAddress = "0xCb1A2f64EfB02803276BFB5a8D511C4D950282a0";
 
-    // let DPPFactoryAddress = "0x2D7F071415480eE7721eBB48c3147e347b980fEe";
-    // let DVMFactoryAddress = "0x1C0435b87B3772E994adA2D0194be91EaC85FDb0";
-    // let DODOApproveAddress = "0x5319f1CF056496e7E13D5653C3C7f338DE127a11";
-    // let DODOProxyV2Address = "0xe8836EB6EaE9Bc4Db880D4b9C0912E5db817e41D";
+    let DPPFactoryAddress = "0x2D7F071415480eE7721eBB48c3147e347b980fEe";
+    let DVMFactoryAddress = "0x1C0435b87B3772E994adA2D0194be91EaC85FDb0";
+    let DODOApproveAddress = "0x5319f1CF056496e7E13D5653C3C7f338DE127a11";
+    let DODOProxyV2Address = "0xe8836EB6EaE9Bc4Db880D4b9C0912E5db817e41D";
 
-    let CloneFactoryAddress = "0x03E2427859119E497EB856a166F616a2Ce5f8c88";
-    let ERC20TemplateAddress = "0xef49a6DBa1C8DF859E49c17E9A485B439c7689d3";
-    let MintableERC20TemplateAddress = "0x6373ceB657C83C91088d328622573FB766064Ac4";
-    let ERC20FactoryAddress = "0x5e84190a270333aCe5B9202a3F4ceBf11b81bB01";
 
 
     const provider = new Web3.providers.HttpProvider("https://kovan.infura.io/v3/22d4a3b2df0e47b78d458f43fe50a199");
