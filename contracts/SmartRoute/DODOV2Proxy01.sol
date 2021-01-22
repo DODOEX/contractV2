@@ -22,7 +22,7 @@ import {SafeERC20} from "../lib/SafeERC20.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
 import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
-import {IDODOIncentive} from "./DODOIncentive.sol";
+import {IDODOIncentive} from "../DODOToken/DODOIncentive.sol";
 import {IDODOAdapter} from "./intf/IDODOAdapter.sol";
 
 /**

@@ -375,3 +375,29 @@ Manual add target Pool: V2
 Approve:0xCcf0733cA7B6299D59b1Bddf87f3a8AAaD87461F Tx: 0xed6ada30f414d696eee682871e51dac89206dd077055635570d4c5d305c9e437
 Approve:0x43688f367eb83697c3ca5d03c5055b6bd6f6ac4b Tx: 0x7b42c175e29053ead5cef8f922296411d2db63ea753640742672b25969abc598
 Create DPP: 0xCcf0733cA7B6299D59b1Bddf87f3a8AAaD87461F-0x43688f367eb83697c3ca5d03c5055b6bd6f6ac4b Pool:0xE6943d8494378cF463c9bd7cA1Af3eda9ac12649 Tx: 0xab31c5356f2f608d6f0ef369379af507d23f7cb20bc6f59b82541e90b0eb7c95
+====================================================
+network type: bsclive
+Deploy time: 2021/1/22 上午10:56:29
+Mock TOKEN Tx: V2
+ERC20TemplateAddress:  0xef49a6DBa1C8DF859E49c17E9A485B439c7689d3
+MintableERC20TemplateAddress:  0x6373ceB657C83C91088d328622573FB766064Ac4
+ERC20FactoryAddress:  0x5e84190a270333aCe5B9202a3F4ceBf11b81bB01
+ERC20 address:  0x1ceF9A5A4825b46A6Cff6275a382bBA03e60c98A; Symbol:DODO
+====================================================
+network type: bsclive
+Deploy time: 2021/1/22 下午1:51:48
+Mock TOKEN Tx: V2
+ERC20TemplateAddress:  0x9890d0719ebFeeCB5984dc4aA1221C8d70Ec0cFb
+MintableERC20TemplateAddress:  0x6bdBe4Cf19615562aAf743BC8b5Cd2b987Df605F
+ERC20FactoryAddress:  0x0C8A860C61c30Aa963f1dd6dDddCa87bB13741e5
+ERC20 address:  0x0874baAF4a5BA4B1b1FE9DBBc3EbfB4080c5Cf22; Symbol:DODO
+====================================================
+network type: bsclive
+Deploy time: 2021/1/22 下午1:54:25
+Mock TOKEN Tx: V2
+ERC20 address:  0x571c68a358F7376071c21910436895468214DF2a; Symbol:DODO
+====================================================
+network type: bsclive
+Deploy time: 2021/1/22 下午1:57:57
+Mock TOKEN Tx: V2
+ERC20 address:  0x497A44c951fCCF92ADfdeD0a5b0162256F147647; Symbol:DODO

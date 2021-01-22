@@ -16,7 +16,7 @@ import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 
 contract DODOCalleeHelper is ReentrancyGuard {
     using SafeERC20 for IERC20;
-    address public immutable _WETH_;
+    address payable public immutable _WETH_;
 
     fallback() external payable {
         require(msg.sender == _WETH_, "WE_SAVED_YOUR_ETH");
@@ -26,7 +26,7 @@ contract DODOCalleeHelper is ReentrancyGuard {
         require(msg.sender == _WETH_, "WE_SAVED_YOUR_ETH");
     }
 
-    constructor(address weth) public {
+    constructor(address payable weth) public {
         _WETH_ = weth;
     }
 
