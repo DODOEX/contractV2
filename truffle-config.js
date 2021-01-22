@@ -78,8 +78,8 @@ module.exports = {
       provider: function () {
         return new HDWalletProvider(privKey, "https://mainnet.infura.io/v3/" + infuraId);
       },
-      gas: 3000000,
-      gasPrice: 75000000000,
+      gas: 6000000,
+      gasPrice: 80000000000,
       network_id: 1,
       skipDryRun: true
     },

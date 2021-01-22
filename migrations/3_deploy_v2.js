@@ -93,24 +93,24 @@ module.exports = async (deployer, network, accounts) => {
         DODOSellHelperAddress = "0x533da777aedce766ceae696bf90f8541a4ba80eb";
         WETHAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
         chiAddress = "0x0000000000004946c0e9F43F4Dee607b0eF1fA1c";
-        DODOCalleeHelperAddress = "";
+        DODOCalleeHelperAddress = "0xef49a6DBa1C8DF859E49c17E9A485B439c7689d3";
         DODORouteV2HelperAddress = "";
-        DODOV1PmmHelperAddress = "";
+        DODOV1PmmHelperAddress = "0x6373ceB657C83C91088d328622573FB766064Ac4";
         //Template
         CloneFactoryAddress = "0x5e5a7b76462e4bdf83aa98795644281bdba80b88";
-        DefaultMtFeeRateAddress = "";
-        DefaultPermissionAddress = "";
+        DefaultMtFeeRateAddress = "0x5e84190a270333aCe5B9202a3F4ceBf11b81bB01";
+        DefaultPermissionAddress = "0x6B208E08dcF6BD51F50C5Da09d15B2D8E5C46Cf2";
 
-        DvmTemplateAddress = "";
-        DppTemplateAddress = "";
-        DppAdminTemplateAddress = "";
-        CpTemplateAddress = "";
+        DvmTemplateAddress = "0x2BBD66fC4898242BDBD2583BBe1d76E8b8f71445";
+        DppTemplateAddress = "0x18DFdE99F578A0735410797e949E8D3e2AFCB9D2";
+        DppAdminTemplateAddress = "0x729f7f44bf64Ce814716b6261e267DbE6cdf021c";
+        CpTemplateAddress = "0x18b0bD918b55f995Fd404B872404378A62cb403b";
         //Factory
         DvmFactoryAddress = "";
         DppFactoryAddress = "";
         CpFactoryAddress = "";
         //Proxy
-        DODOApproveAddress = "";
+        DODOApproveAddress = "0xC3BeD579CaB3EC29B22D9AB99F4E586af42496b9";
         DODOIncentiveAddress = "";
         DODOTokenAddress = "0x43Dfc4159D86F3A37A5A4B3D4580b888ad7d4DDd";
         //Account
@@ -127,7 +127,7 @@ module.exports = async (deployer, network, accounts) => {
         //Template
         CloneFactoryAddress = "0x03E2427859119E497EB856a166F616a2Ce5f8c88";
         DefaultMtFeeRateAddress = "";
-        DefaultPermissionAddress = "0x50C86A07457E99389d7b49761a4237B70f0824E9";
+        DefaultPermissionAddress = "";
 
         DvmTemplateAddress = "";
         DppTemplateAddress = "";

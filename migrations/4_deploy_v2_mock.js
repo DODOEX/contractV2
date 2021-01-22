@@ -64,10 +64,10 @@ module.exports = async (deployer, network, accounts) => {
     let MintableERC20TemplateAddress = "0xA45a64DAba80757432fA4d654Df12f65f020C13C";
     let ERC20FactoryAddress = "0xCb1A2f64EfB02803276BFB5a8D511C4D950282a0";
 
-    let DPPFactoryAddress = "0x2D7F071415480eE7721eBB48c3147e347b980fEe";
-    let DVMFactoryAddress = "0x1C0435b87B3772E994adA2D0194be91EaC85FDb0";
-    let DODOApproveAddress = "0x5319f1CF056496e7E13D5653C3C7f338DE127a11";
-    let DODOProxyV2Address = "0xe8836EB6EaE9Bc4Db880D4b9C0912E5db817e41D";
+    let DPPFactoryAddress = "0xaFC7F3Ef4f8609411653FbF1Dd6D583A8Ae1f0fA";
+    let DVMFactoryAddress = "0xE842d8c9A54B23C4D0cf208daCA3882c0c311353";
+    let DODOApproveAddress = "0x6FB6313cafaFe38acA19Be0B8151d6354F74A340";
+    let DODOProxyV2Address = "0xfDEDc04A641DE9CEeb4eD2F24d98faa22418Bd94";
 
 
 
