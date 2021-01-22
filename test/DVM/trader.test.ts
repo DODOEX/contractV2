@@ -74,7 +74,7 @@ describe("Trader", () => {
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
-        "11950668837297593488"
+        "11952621458756349837"
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(trader).call(),
@@ -92,7 +92,7 @@ describe("Trader", () => {
       // maintainer balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(),
-        "1952621458756349"
+        "0"
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
@@ -105,11 +105,11 @@ describe("Trader", () => {
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
-        "10950668837297593488"
+        "10952621458756349837"
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(trader).call(),
-        "903631079987679211407"
+        "903734814802481693100"
       );
       // vault balances
       assert.equal(
@@ -123,11 +123,11 @@ describe("Trader", () => {
       // maintainer balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(),
-        "1952621458756349"
+        "0"
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
-        "103734814802481693"
+        "0"
       );
 
       // buy when quoet is not 0
@@ -136,11 +136,11 @@ describe("Trader", () => {
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
-        "12845284163771515535"
+        "12849133297068584118"
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(trader).call(),
-        "703631079987679211407"
+        "703734814802481693100"
       );
       // vault balances
       assert.equal(
@@ -154,11 +154,11 @@ describe("Trader", () => {
       // maintainer balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(),
-        "3849133297068583"
+        "0"
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
-        "103734814802481693"
+        "0"
       );
     });
 
@@ -182,15 +182,15 @@ describe("Trader", () => {
       // console.log(await ctx.DVM.methods.querySellQuote(ctx.Deployer, quoteInput).call())
 
       // buy failed
-      await truffleAssert.reverts(ctx.DVM.methods.flashLoan("1950668837297593489", "0", trader, "0x").send(ctx.sendParam(trader)), "FLASH_LOAN_FAILED")
+      await truffleAssert.reverts(ctx.DVM.methods.flashLoan("1952621458756349838", "0", trader, "0x").send(ctx.sendParam(trader)), "FLASH_LOAN_FAILED")
 
       // buy succeed
-      await ctx.DVM.methods.flashLoan("1950668837297593488", "0", trader, "0x").send(ctx.sendParam(trader))
+      await ctx.DVM.methods.flashLoan("1952621458756349837", "0", trader, "0x").send(ctx.sendParam(trader))
 
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
-        "11950668837297593488"
+        "11952621458756349837"
       );
 
       // sell
@@ -201,15 +201,15 @@ describe("Trader", () => {
 
 
       // sell failed
-      await truffleAssert.reverts(ctx.DVM.methods.flashLoan("0", "103631079987679211408", trader, "0x").send(ctx.sendParam(trader)), "FLASH_LOAN_FAILED")
+      await truffleAssert.reverts(ctx.DVM.methods.flashLoan("0", "103734814802481693101", trader, "0x").send(ctx.sendParam(trader)), "FLASH_LOAN_FAILED")
 
       // sell succeed
-      await ctx.DVM.methods.flashLoan("0", "103631079987679211407", trader, "0x").send(ctx.sendParam(trader))
+      await ctx.DVM.methods.flashLoan("0", "103734814802481693100", trader, "0x").send(ctx.sendParam(trader))
 
       // trader balances
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(trader).call(),
-        "903631079987679211407"
+        "903734814802481693100"
       );
 
     })

@@ -64,7 +64,7 @@ describe("AMMLikeCase", () => {
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
-        "11664999999861250000"
+        "11666666666527777777"
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(trader).call(),
@@ -84,7 +84,7 @@ describe("AMMLikeCase", () => {
       // maintainer balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(),
-        "1666666666527777"
+        "0"
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
@@ -105,7 +105,7 @@ describe("AMMLikeCase", () => {
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(trader).call(),
-        "1090818181827263636364"
+        "1090909090918181818182"
       );
 
       // vault balances
@@ -125,7 +125,7 @@ describe("AMMLikeCase", () => {
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
-        "90909090918181818"
+        "0"
       );
     });
   });
