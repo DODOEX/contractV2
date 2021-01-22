@@ -132,31 +132,32 @@ describe("DODOProxyV2.0", () => {
 
     });
  
-    // it("createDVM - ETH", async () => {
-    //   var baseToken = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
-    //   var quoteToken = ctx.USDT.options.address;
-    //   var baseAmount = decimalStr("5");
-    //   var quoteAmount = mweiStr("10000");
-    //   await logGas(await ctx.DODOProxyV2.methods.createDODOVendingMachine(
-    //     baseToken,
-    //     quoteToken,
-    //     baseAmount,
-    //     quoteAmount,
-    //     config.lpFeeRate,
-    //     config.i,
-    //     config.k,
-    //     Math.floor(new Date().getTime() / 1000 + 60 * 10)
-    //   ), ctx.sendParam(project, '5'), "createDVM - Wrap ETH");
-    //   var addrs = await ctx.DVMFactory.methods.getDODOPool(ctx.WETH.options.address, quoteToken).call();
-    //   assert.equal(
-    //     await ctx.WETH.methods.balanceOf(addrs[1]).call(),
-    //     baseAmount
-    //   );
-    //   assert.equal(
-    //     await ctx.USDT.methods.balanceOf(addrs[1]).call(),
-    //     quoteAmount
-    //   );
-    // });
+    it("createDVM - ETH", async () => {
+      var baseToken = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+      var quoteToken = ctx.USDT.options.address;
+      var baseAmount = decimalStr("5");
+      var quoteAmount = mweiStr("10000");
+      await logGas(await ctx.DODOProxyV2.methods.createDODOVendingMachine(
+        baseToken,
+        quoteToken,
+        baseAmount,
+        quoteAmount,
+        config.lpFeeRate,
+        config.i,
+        config.k,
+        false,
+        Math.floor(new Date().getTime() / 1000 + 60 * 10)
+      ), ctx.sendParam(project, '5'), "createDVM - Wrap ETH");
+      var addrs = await ctx.DVMFactory.methods.getDODOPool(ctx.WETH.options.address, quoteToken).call();
+      assert.equal(
+        await ctx.WETH.methods.balanceOf(addrs[1]).call(),
+        baseAmount
+      );
+      assert.equal(
+        await ctx.USDT.methods.balanceOf(addrs[1]).call(),
+        quoteAmount
+      );
+    });
 
 
     it("addLiquidity", async () => {

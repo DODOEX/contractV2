@@ -131,31 +131,32 @@ describe("DODOProxyV2.0", () => {
     });
 
 
-    // it("createDPP - ETH", async () => {
-    //   var baseToken = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
-    //   var quoteToken = ctx.USDT.options.address;
-    //   var baseAmount = decimalStr("5");
-    //   var quoteAmount = mweiStr("10000");
-    //   await logGas(await ctx.DODOProxyV2.methods.createDODOPrivatePool(
-    //     baseToken,
-    //     quoteToken,
-    //     baseAmount,
-    //     quoteAmount,
-    //     config.lpFeeRate,
-    //     config.i,
-    //     config.k,
-    //     Math.floor(new Date().getTime()/1000 + 60 * 10)
-    //   ),ctx.sendParam(project, "5"),"createDPP - Wrap ETH");
-    //   var addrs = await ctx.DPPFactory.methods.getPrivatePool(ctx.WETH.options.address,quoteToken).call();
-    //   assert.equal(
-    //     await ctx.WETH.methods.balanceOf(addrs[1]).call(),
-    //     baseAmount
-    //   );
-    //   assert.equal(
-    //     await ctx.USDT.methods.balanceOf(addrs[1]).call(),
-    //     quoteAmount
-    //   );
-    // });
+    it("createDPP - ETH", async () => {
+      var baseToken = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+      var quoteToken = ctx.USDT.options.address;
+      var baseAmount = decimalStr("5");
+      var quoteAmount = mweiStr("10000");
+      await logGas(await ctx.DODOProxyV2.methods.createDODOPrivatePool(
+        baseToken,
+        quoteToken,
+        baseAmount,
+        quoteAmount,
+        config.lpFeeRate,
+        config.i,
+        config.k,
+        false,
+        Math.floor(new Date().getTime()/1000 + 60 * 10)
+      ),ctx.sendParam(project, "5"),"createDPP - Wrap ETH");
+      var addrs = await ctx.DPPFactory.methods.getDODOPool(ctx.WETH.options.address,quoteToken).call();
+      assert.equal(
+        await ctx.WETH.methods.balanceOf(addrs[1]).call(),
+        baseAmount
+      );
+      assert.equal(
+        await ctx.USDT.methods.balanceOf(addrs[1]).call(),
+        quoteAmount
+      );
+    });
 
     it("resetDPP", async () => {
       var beforeState = await DPP_DODO_USDT.methods.getPMMState().call();
