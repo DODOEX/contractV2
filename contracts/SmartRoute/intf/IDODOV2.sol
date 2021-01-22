@@ -34,6 +34,9 @@ interface IDODOV2 {
 
     function getUserFeeRate(address user) external view returns (uint256 lpFeeRate, uint256 mtFeeRate);
 
+    
+    function getDODOPoolBidirection(address token0, address token1) external view returns (address[] memory, address[] memory);
+
     //========== DODOVendingMachine ========
     
     function createDODOVendingMachine(
@@ -41,12 +44,12 @@ interface IDODOV2 {
         address quoteToken,
         uint256 lpFeeRate,
         uint256 i,
-        uint256 k
+        uint256 k,
+        bool isOpenTWAP
     ) external returns (address newVendingMachine);
     
     function buyShares(address to) external returns (uint256,uint256,uint256);
 
-    function getVendingMachineBidirection(address token0, address token1) external view returns (address[] memory baseToken0Machines, address[] memory baseToken1Machines);
 
     //========== DODOPrivatePool ===========
 
@@ -59,7 +62,8 @@ interface IDODOV2 {
         address quoteToken,
         uint256 lpFeeRate,
         uint256 k,
-        uint256 i
+        uint256 i,
+        bool isOpenTwap
     ) external;
 
     function reset(
@@ -73,7 +77,6 @@ interface IDODOV2 {
         uint256 minQuoteReserve
     ) external returns (bool); 
 
-    function getPrivatePoolBidirection(address token0, address token1) external view returns (address[] memory baseToken0Pool, address[] memory baseToken1Pool);
 
     function _OWNER_() external returns (address);
     
@@ -87,7 +90,8 @@ interface IDODOV2 {
         address baseToken,
         address quoteToken,
         uint256[] memory timeLine,
-        uint256[] memory valueList
+        uint256[] memory valueList,
+        bool isOpenTWAP
     ) external;
 
     function bid(address to) external;

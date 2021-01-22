@@ -4,7 +4,7 @@ const file = fs.createWriteStream("../deploy-detail-v1.5.txt", { 'flags': 'a' })
 let logger = new console.Console(file, file);
 
 const DODOApprove = artifacts.require("DODOApprove");
-const DODOProxyV1 = artifacts.require("DODOV1Proxy01");
+const DODOV1Proxy03 = artifacts.require("DODOV1Proxy03");
 const DODOSellHelper = artifacts.require("DODOSellHelper");
 const DODOSwapCalcHelper = artifacts.require("DODOSwapCalcHelper");
 
@@ -32,7 +32,7 @@ module.exports = async (deployer, network, accounts) => {
   } else if (network == "bsclive") {
     DODOSellHelperAddress = "0x0F859706AeE7FcF61D5A8939E8CB9dBB6c1EDA33";
     WETHAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
-    DODOApproveAddress = "";
+    DODOApproveAddress = "0xa128Ba44B2738A558A1fdC06d6303d52D3Cef8c1";
     chiAddress = "0x0000000000000000000000000000000000000000";
     DODOSwapCalcHelperAddress = "0xb0199C2c8ADF1E6c1e41De60A62E993406Cb8C02";
     ownerAddress = "0x4073f2b9bB95774531b9e23d206a308c614A943a";
@@ -62,20 +62,20 @@ module.exports = async (deployer, network, accounts) => {
     }
 
     await deployer.deploy(
-      DODOProxyV1,
+      DODOV1Proxy03,
       DODOApproveAddress,
       DODOSellHelperAddress,
       WETHAddress,
       chiAddress
     );
-    logger.log("DODOProxyV1 Address: ", DODOProxyV1.address);
-    const DODOProxyV1Instance = await DODOProxyV1.at(DODOProxyV1.address);
-    tx = await DODOProxyV1Instance.initOwner(ownerAddress);
-    logger.log("Set DODOProxyV1 Owner tx: ", tx.tx);
+    logger.log("DODOV1Proxy03 Address: ", DODOV1Proxy03.address);
+    const DODOProxyInstance = await DODOV1Proxy03.at(DODOV1Proxy03.address);
+    tx = await DODOProxyInstance.initOwner(ownerAddress);
+    logger.log("Set DODOProxy Owner tx: ", tx.tx);
 
-    const DODOApproveInstance = await DODOApprove.at(DODOApproveAddress);
-    tx = await DODOApproveInstance.init(ownerAddress, DODOProxyV1.address);
-    logger.log("Set DODOApprove Owner And Init Set Proxy tx: ", tx.tx);
+    // const DODOApproveInstance = await DODOApprove.at(DODOApproveAddress);
+    // tx = await DODOApproveInstance.init(ownerAddress, DODOProxyV1.address);
+    // logger.log("Set DODOApprove Owner And Init Set Proxy tx: ", tx.tx);
 
     // var tx1 = await DODOProxyV1Instance.addWhiteList("0x111111125434b319222cdbf8c261674adb56f3ae");
     // var tx2 = await DODOProxyV1Instance.addWhiteList("0xdef1c0ded9bec7f1a1670819833240f027b25eff");

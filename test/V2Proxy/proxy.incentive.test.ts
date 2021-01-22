@@ -49,6 +49,7 @@ async function initCreateDPP(ctx: ProxyContext, token0: string, token1: string, 
         config.lpFeeRate,
         i,
         config.k,
+        false,
         Math.floor(new Date().getTime() / 1000 + 60 * 10)
     ).send(ctx.sendParam(project, ethValue));
     if (token0 == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') token0 = ctx.WETH.options.address;
@@ -67,6 +68,7 @@ async function initCreateDVM(ctx: ProxyContext, token0: string, token1: string, 
         config.lpFeeRate,
         i,
         config.k,
+        false,
         Math.floor(new Date().getTime() / 1000 + 60 * 10)
     ).send(ctx.sendParam(project, ethValue));
     if (token0 == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') token0 = ctx.WETH.options.address;
@@ -76,8 +78,7 @@ async function initCreateDVM(ctx: ProxyContext, token0: string, token1: string, 
 }
 
 async function initIncentive(ctx: ProxyContext): Promise<void> {
-    var blockNum = await ctx.Web3.eth.getBlockNumber();
-    await ctx.DODOIncentive.methods.switchIncentive(blockNum + 1).send(ctx.sendParam(ctx.Deployer));
+    await ctx.DODOIncentive.methods.changePerReward(decimalStr("10")).send(ctx.sendParam(ctx.Deployer));
     await ctx.mintTestToken(ctx.DODOIncentive.options.address, ctx.DODO, decimalStr("1000000"));
 }
 
@@ -115,29 +116,23 @@ describe("DODOProxyV2.0", () => {
             await ctx.DODOIncentive.methods.changePerReward(decimalStr("10")).send(ctx.sendParam(ctx.Deployer));
             var totalReward = await ctx.DODOIncentive.methods.totalReward().call();
             var totalDistribution = await ctx.DODOIncentive.methods.totalDistribution().call();
-            var blockNum = await ctx.Web3.eth.getBlockNumber();
-            console.log("Init -  Total Reward:" + totalReward + "; Total distribution:" + totalDistribution + "; BlockNumber:" + blockNum);
+            console.log("Init -  Total Reward:" + totalReward + "; Total distribution:" + totalDistribution);
 
             //Aim to increase block
             await ctx.mintTestToken(lp, ctx.DODO, decimalStr("1000"));
             await ctx.mintTestToken(lp, ctx.DODO, decimalStr("1000"));
             await ctx.mintTestToken(lp, ctx.DODO, decimalStr("1000"));
-            blockNum = await ctx.Web3.eth.getBlockNumber();
-            console.log("Close BlockNumber:", blockNum + 1)
-            await ctx.DODOIncentive.methods.switchIncentive(0).send(ctx.sendParam(ctx.Deployer));
+            await ctx.DODOIncentive.methods.changePerReward(0).send(ctx.sendParam(ctx.Deployer));
             totalReward = await ctx.DODOIncentive.methods.totalReward().call();
             totalDistribution = await ctx.DODOIncentive.methods.totalDistribution().call();
-            blockNum = await ctx.Web3.eth.getBlockNumber();
-            console.log("Close incentive -  Total Reward:" + totalReward + "; Total distribution:" + totalDistribution + "; BlockNumber:" + blockNum);
+            console.log("Close incentive -  Total Reward:" + totalReward + "; Total distribution:" + totalDistribution);
 
             //Aim to increase block
             await ctx.mintTestToken(lp, ctx.DODO, decimalStr("1000"));
             await ctx.mintTestToken(lp, ctx.DODO, decimalStr("1000"));
             await ctx.mintTestToken(lp, ctx.DODO, decimalStr("1000"));
 
-            blockNum = await ctx.Web3.eth.getBlockNumber();
-            await ctx.DODOIncentive.methods.switchIncentive(blockNum + 1).send(ctx.sendParam(ctx.Deployer));
-            console.log("Open BlockNumber:", blockNum + 1)
+            await ctx.DODOIncentive.methods.changePerReward(decimalStr("10")).send(ctx.sendParam(ctx.Deployer));
             //Aim to increase block
             await ctx.mintTestToken(lp, ctx.DODO, decimalStr("1000"));
             await ctx.mintTestToken(lp, ctx.DODO, decimalStr("1000"));
@@ -145,8 +140,7 @@ describe("DODOProxyV2.0", () => {
             await ctx.DODOIncentive.methods.changePerReward(decimalStr("10")).send(ctx.sendParam(ctx.Deployer));
             totalReward = await ctx.DODOIncentive.methods.totalReward().call();
             totalDistribution = await ctx.DODOIncentive.methods.totalDistribution().call();
-            blockNum = await ctx.Web3.eth.getBlockNumber();
-            console.log("End incentive - Total Reward:" + totalReward + "; Total distribution:" + totalDistribution + "; BlockNumber:" + blockNum);
+            console.log("End incentive - Total Reward:" + totalReward + "; Total distribution:" + totalDistribution);
             assert(totalReward, decimalStr("100"));
         });
 
@@ -154,21 +148,17 @@ describe("DODOProxyV2.0", () => {
             await ctx.DODOIncentive.methods.changePerReward(decimalStr("10")).send(ctx.sendParam(ctx.Deployer));
             var totalReward = await ctx.DODOIncentive.methods.totalReward().call();
             var totalDistribution = await ctx.DODOIncentive.methods.totalDistribution().call();
-            var blockNum = await ctx.Web3.eth.getBlockNumber();
-            console.log("Init -  Total Reward:" + totalReward + "; Total distribution:" + totalDistribution + "; BlockNumber:" + blockNum);
+            console.log("Init -  Total Reward:" + totalReward + "; Total distribution:" + totalDistribution);
 
             //Aim to increase block
             await ctx.mintTestToken(lp, ctx.DODO, decimalStr("1000"));
             await ctx.mintTestToken(lp, ctx.DODO, decimalStr("1000"));
             await ctx.mintTestToken(lp, ctx.DODO, decimalStr("1000"));
 
-            blockNum = await ctx.Web3.eth.getBlockNumber();
-            console.log("Change BlockNumber:", blockNum + 1)
             await ctx.DODOIncentive.methods.changePerReward(decimalStr("20")).send(ctx.sendParam(ctx.Deployer));
             totalReward = await ctx.DODOIncentive.methods.totalReward().call();
             totalDistribution = await ctx.DODOIncentive.methods.totalDistribution().call();
-            blockNum = await ctx.Web3.eth.getBlockNumber();
-            console.log("change incentive -  Total Reward:" + totalReward + "; Total distribution:" + totalDistribution + "; BlockNumber:" + blockNum);
+            console.log("change incentive -  Total Reward:" + totalReward + "; Total distribution:" + totalDistribution);
 
             //Aim to increase block
             await ctx.mintTestToken(lp, ctx.DODO, decimalStr("1000"));
@@ -177,8 +167,7 @@ describe("DODOProxyV2.0", () => {
             await ctx.DODOIncentive.methods.changePerReward(decimalStr("10")).send(ctx.sendParam(ctx.Deployer));
             totalReward = await ctx.DODOIncentive.methods.totalReward().call();
             totalDistribution = await ctx.DODOIncentive.methods.totalDistribution().call();
-            blockNum = await ctx.Web3.eth.getBlockNumber();
-            console.log("End incentive - Total Reward:" + totalReward + "; Total distribution:" + totalDistribution + "; BlockNumber:" + blockNum);
+            console.log("End incentive - Total Reward:" + totalReward + "; Total distribution:" + totalDistribution);
 
             assert(totalReward, decimalStr("140"));
         });
@@ -193,15 +182,10 @@ describe("DODOProxyV2.0", () => {
             var b_totalDistribution = await ctx.DODOIncentive.methods.totalDistribution().call();
             console.log("Before Total Reward:" + b_totalReward + "; Total distribution:" + b_totalDistribution)
 
-            var a_DODO = await ctx.DODO.methods.balanceOf(trader).call()
-            var a_USDT = await ctx.USDT.methods.balanceOf(trader).call()
-            console.log("After No Incentive DODO:" + a_DODO + "; USDT:" + a_USDT);
-
             var dodoPairs = [
                 dpp_DODO_USDT
             ]
             var directions = 0
-
 
             await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
                 ctx.DODO.options.address,
@@ -213,7 +197,7 @@ describe("DODOProxyV2.0", () => {
                 false,
                 Math.floor(new Date().getTime() / 1000 + 60 * 10)
             ), ctx.sendParam(trader), "swap without incentive first");
-
+            
             await logGas(await ctx.DODOProxyV2.methods.dodoSwapV2TokenToToken(
                 ctx.DODO.options.address,
                 ctx.USDT.options.address,

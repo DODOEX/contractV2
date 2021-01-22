@@ -8,9 +8,8 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {IDODOV1Proxy02} from "./IDODOV1Proxy02.sol";
 
-interface IDODOV2Proxy01 is IDODOV1Proxy02 {
+interface IDODOV2Proxy01 {
     function dodoSwapV2ETHToToken(
         address toToken,
         uint256 minReturnAmount,
@@ -49,6 +48,7 @@ interface IDODOV2Proxy01 is IDODOV1Proxy02 {
         uint256 lpFeeRate,
         uint256 i,
         uint256 k,
+        bool isOpenTWAP,
         uint256 deadLine
     ) external payable returns (address newVendingMachine, uint256 shares);
 
@@ -77,6 +77,7 @@ interface IDODOV2Proxy01 is IDODOV1Proxy02 {
         uint256 lpFeeRate,
         uint256 i,
         uint256 k,
+        bool isOpenTwap,
         uint256 deadLine
     ) external payable returns (address newPrivatePool);
 
@@ -96,6 +97,7 @@ interface IDODOV2Proxy01 is IDODOV1Proxy02 {
         uint256 baseInAmount,
         uint256[] memory timeLine,
         uint256[] memory valueList,
+        bool isOpenTWAP,
         uint256 deadLine
     ) external payable returns (address payable newCrowdPooling);
 
@@ -112,8 +114,44 @@ interface IDODOV2Proxy01 is IDODOV1Proxy02 {
         uint256 quoteAmount,
         uint256 baseMinShares,
         uint256 quoteMinShares,
-        uint8 flag, // 0 erc20 Out  1 baseOutETH  2 quoteOut ETH 
+        uint8 flag, // 0 erc20 Out  1 baseInETH  2 quoteInETH 
         uint256 deadLine
     ) external payable returns(uint256, uint256);
+
+    function dodoSwapV1(
+        address fromToken,
+        address toToken,
+        uint256 fromTokenAmount,
+        uint256 minReturnAmount,
+        address[] memory dodoPairs,
+        uint256 directions,
+        bool isIncentive,
+        uint256 deadLine
+    ) external payable returns (uint256 returnAmount);
+
+    function externalSwap(
+        address fromToken,
+        address toToken,
+        address approveTarget,
+        address to,
+        uint256 fromTokenAmount,
+        uint256 minReturnAmount,
+        bytes memory callDataConcat,
+        bool isIncentive,
+        uint256 deadLine
+    ) external payable returns (uint256 returnAmount);
+
+    function mixSwap(
+        address fromToken,
+        address toToken,
+        uint256 fromTokenAmount,
+        uint256 minReturnAmount,
+        address[] memory mixAdapters,
+        address[] memory mixPairs,
+        address[] memory assetTo,
+        uint256 directions,
+        bool isIncentive,
+        uint256 deadLine
+    ) external payable returns (uint256 returnAmount);
 
 }

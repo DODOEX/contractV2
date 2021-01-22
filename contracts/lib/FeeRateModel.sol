@@ -10,35 +10,24 @@ pragma experimental ABIEncoderV2;
 
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 
+interface IFeeRateImpl {
+    function getFeeRate(address pool, address trader) external view returns (uint256);
+}
+
 interface IFeeRateModel {
     function getFeeRate(address trader) external view returns (uint256);
-    function init(address owner, uint256 feeRate) external;
-    function setFeeRate(uint256 newFeeRate) external;
 }
 
 contract FeeRateModel is InitializableOwnable {
-    //DEFAULT
-    uint256 public _FEE_RATE_;
-    mapping(address => uint256) feeMapping;
+    address public feeRateImpl;
 
-    function init(address owner, uint256 feeRate) external {
-        initOwner(owner);
-        _FEE_RATE_ = feeRate;
+    function setFeeProxy(address _feeRateImpl) public onlyOwner {
+        feeRateImpl = _feeRateImpl;
     }
-
-    function setSpecificFeeRate(address trader, uint256 feeRate) external onlyOwner {
-        require(trader != address(0), "INVALID ADDRESS!");
-        feeMapping[trader] = feeRate;
-    }
-
-    function setFeeRate(uint256 newFeeRate) external onlyOwner {
-        _FEE_RATE_ = newFeeRate;
-    }
-
+    
     function getFeeRate(address trader) external view returns (uint256) {
-        uint256 feeRate = feeMapping[trader];
-        if(feeRate == 0)
-            return _FEE_RATE_;
-        return feeRate;
+        if(feeRateImpl == address(0))
+            return 0;
+        return IFeeRateImpl(feeRateImpl).getFeeRate(msg.sender,trader);
     }
 }

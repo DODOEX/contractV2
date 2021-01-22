@@ -16,7 +16,8 @@ interface IDVM {
         uint256 lpFeeRate,
         address mtFeeRateModel,
         uint256 i,
-        uint256 k
+        uint256 k,
+        bool isOpenTWAP
     ) external;
 
     function _BASE_TOKEN_() external returns (address);

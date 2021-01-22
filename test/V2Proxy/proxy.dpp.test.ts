@@ -53,6 +53,7 @@ async function initCreateDPP(ctx: ProxyContext, token0: string, token1: string, 
     config.lpFeeRate,
     i,
     config.k,
+    false,
     Math.floor(new Date().getTime() / 1000 + 60 * 10)
   ).send(ctx.sendParam(project, ethValue));
   if (token0 == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') token0 = ctx.WETH.options.address;
@@ -115,9 +116,10 @@ describe("DODOProxyV2.0", () => {
         config.lpFeeRate,
         config.i,
         config.k,
+        false,
         Math.floor(new Date().getTime() / 1000 + 60 * 10)
       ), ctx.sendParam(project), "createDPP");
-      var addrs = await ctx.DPPFactory.methods.getPrivatePool(baseToken, quoteToken).call();
+      var addrs = await ctx.DPPFactory.methods.getDODOPool(baseToken, quoteToken).call();
       assert.equal(
         await ctx.DODO.methods.balanceOf(addrs[1]).call(),
         baseAmount
@@ -129,31 +131,32 @@ describe("DODOProxyV2.0", () => {
     });
 
 
-    // it("createDPP - ETH", async () => {
-    //   var baseToken = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
-    //   var quoteToken = ctx.USDT.options.address;
-    //   var baseAmount = decimalStr("5");
-    //   var quoteAmount = mweiStr("10000");
-    //   await logGas(await ctx.DODOProxyV2.methods.createDODOPrivatePool(
-    //     baseToken,
-    //     quoteToken,
-    //     baseAmount,
-    //     quoteAmount,
-    //     config.lpFeeRate,
-    //     config.i,
-    //     config.k,
-    //     Math.floor(new Date().getTime()/1000 + 60 * 10)
-    //   ),ctx.sendParam(project, "5"),"createDPP - Wrap ETH");
-    //   var addrs = await ctx.DPPFactory.methods.getPrivatePool(ctx.WETH.options.address,quoteToken).call();
-    //   assert.equal(
-    //     await ctx.WETH.methods.balanceOf(addrs[1]).call(),
-    //     baseAmount
-    //   );
-    //   assert.equal(
-    //     await ctx.USDT.methods.balanceOf(addrs[1]).call(),
-    //     quoteAmount
-    //   );
-    // });
+    it("createDPP - ETH", async () => {
+      var baseToken = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+      var quoteToken = ctx.USDT.options.address;
+      var baseAmount = decimalStr("5");
+      var quoteAmount = mweiStr("10000");
+      await logGas(await ctx.DODOProxyV2.methods.createDODOPrivatePool(
+        baseToken,
+        quoteToken,
+        baseAmount,
+        quoteAmount,
+        config.lpFeeRate,
+        config.i,
+        config.k,
+        false,
+        Math.floor(new Date().getTime()/1000 + 60 * 10)
+      ),ctx.sendParam(project, "5"),"createDPP - Wrap ETH");
+      var addrs = await ctx.DPPFactory.methods.getDODOPool(ctx.WETH.options.address,quoteToken).call();
+      assert.equal(
+        await ctx.WETH.methods.balanceOf(addrs[1]).call(),
+        baseAmount
+      );
+      assert.equal(
+        await ctx.USDT.methods.balanceOf(addrs[1]).call(),
+        quoteAmount
+      );
+    });
 
     it("resetDPP", async () => {
       var beforeState = await DPP_DODO_USDT.methods.getPMMState().call();

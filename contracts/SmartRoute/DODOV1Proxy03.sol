@@ -20,12 +20,12 @@ import {IDODOV1Proxy02} from "./intf/IDODOV1Proxy02.sol";
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 
 /**
- * @title DODOV1Proxy02
+ * @title DODOV1Proxy03
  * @author DODO Breeder
  *
  * @notice Entrance of trading in DODO platform
  */
-contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
+contract DODOV1Proxy03 is IDODOV1Proxy02, InitializableOwnable {
     using SafeMath for uint256;
     using UniversalERC20 for IERC20;
 
@@ -36,8 +36,8 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
     address public immutable _DODO_SELL_HELPER_;
     address public immutable _WETH_;
     address public immutable _CHI_TOKEN_;
-    uint256 public _GAS_DODO_MAX_RETURN_ = 0;
-    uint256 public _GAS_EXTERNAL_RETURN_ = 0;
+    uint256 public _GAS_DODO_MAX_RETURN_ = 10;
+    uint256 public _GAS_EXTERNAL_RETURN_ = 5;
     mapping (address => bool) public isWhiteListed;
 
     // ============ Events ============
@@ -53,7 +53,7 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
     // ============ Modifiers ============
 
     modifier judgeExpired(uint256 deadLine) {
-        require(deadLine >= block.timestamp, "DODOV1Proxy02: EXPIRED");
+        require(deadLine >= block.timestamp, "DODOV1Proxy03: EXPIRED");
         _;
     }
 
@@ -95,9 +95,11 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
         uint256 directions,
         uint256 deadLine
     ) external override payable judgeExpired(deadLine) returns (uint256 returnAmount) {
-        require(dodoPairs.length > 0, "DODOV1Proxy02: PAIRS_EMPTY");
-        require(minReturnAmount > 0, "DODOV1Proxy02: RETURN_AMOUNT_ZERO");
-        require(fromToken != _CHI_TOKEN_, "DODOV1Proxy02: NOT_SUPPORT_SELL_CHI");
+        require(dodoPairs.length > 0, "DODOV1Proxy03: PAIRS_EMPTY");
+        require(minReturnAmount > 0, "DODOV1Proxy03: RETURN_AMOUNT_ZERO");
+        require(fromToken != _CHI_TOKEN_, "DODOV1Proxy03: NOT_SUPPORT_SELL_CHI");
+        require(toToken != _CHI_TOKEN_, "DODOV1Proxy03: NOT_SUPPORT_BUY_CHI");
+
         uint256 originGas = gasleft();
 
         if (fromToken != _ETH_ADDRESS_) {
@@ -108,7 +110,7 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
                 fromTokenAmount
             );
         } else {
-            require(msg.value == fromTokenAmount, "DODOV1Proxy02: ETH_AMOUNT_NOT_MATCH");
+            require(msg.value == fromTokenAmount, "DODOV1Proxy03: ETH_AMOUNT_NOT_MATCH");
             IWETH(_WETH_).deposit{value: fromTokenAmount}();
         }
 
@@ -116,11 +118,13 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
             address curDodoPair = dodoPairs[i];
             if (directions & 1 == 0) {
                 address curDodoBase = IDODOV1(curDodoPair)._BASE_TOKEN_();
+                require(curDodoBase != _CHI_TOKEN_, "DODOV1Proxy03: NOT_SUPPORT_CHI");
                 uint256 curAmountIn = IERC20(curDodoBase).balanceOf(address(this));
                 IERC20(curDodoBase).universalApproveMax(curDodoPair, curAmountIn);
                 IDODOV1(curDodoPair).sellBaseToken(curAmountIn, 0, "");
             } else {
                 address curDodoQuote = IDODOV1(curDodoPair)._QUOTE_TOKEN_();
+                require(curDodoQuote != _CHI_TOKEN_, "DODOV1Proxy03: NOT_SUPPORT_CHI");
                 uint256 curAmountIn = IERC20(curDodoQuote).balanceOf(address(this));
                 IERC20(curDodoQuote).universalApproveMax(curDodoPair, curAmountIn);
                 uint256 canBuyBaseAmount = IDODOSellHelper(_DODO_SELL_HELPER_).querySellQuoteToken(
@@ -139,7 +143,7 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
             returnAmount = IERC20(toToken).tokenBalanceOf(address(this));
         }
         
-        require(returnAmount >= minReturnAmount, "DODOV1Proxy02: Return amount is not enough");
+        require(returnAmount >= minReturnAmount, "DODOV1Proxy03: Return amount is not enough");
         IERC20(toToken).universalTransfer(msg.sender, returnAmount);
         
         emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount);
@@ -163,9 +167,10 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
         bytes memory callDataConcat,
         uint256 deadLine
     ) external override payable judgeExpired(deadLine) returns (uint256 returnAmount) {
-        require(minReturnAmount > 0, "DODOV1Proxy02: RETURN_AMOUNT_ZERO");
-        require(fromToken != _CHI_TOKEN_, "DODOV1Proxy02: NOT_SUPPORT_SELL_CHI");
-        
+        require(minReturnAmount > 0, "DODOV1Proxy03: RETURN_AMOUNT_ZERO");
+        require(fromToken != _CHI_TOKEN_, "DODOV1Proxy03: NOT_SUPPORT_SELL_CHI");
+        require(toToken != _CHI_TOKEN_, "DODOV1Proxy03: NOT_SUPPORT_BUY_CHI");
+
         address _fromToken = fromToken;
         address _toToken = toToken;
         
@@ -181,17 +186,17 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
             IERC20(_fromToken).universalApproveMax(approveTarget, fromTokenAmount);
         }
 
-        require(isWhiteListed[swapTarget], "DODOV1Proxy02: Not Whitelist Contract");
+        require(isWhiteListed[swapTarget], "DODOV1Proxy03: Not Whitelist Contract");
         (bool success, ) = swapTarget.call{value: _fromToken == _ETH_ADDRESS_ ? msg.value : 0}(callDataConcat);
 
-        require(success, "DODOV1Proxy02: External Swap execution Failed");
+        require(success, "DODOV1Proxy03: External Swap execution Failed");
 
         IERC20(_toToken).universalTransfer(
             msg.sender,
             IERC20(_toToken).universalBalanceOf(address(this))
         );
         returnAmount = IERC20(_toToken).universalBalanceOf(msg.sender).sub(toTokenOriginBalance);
-        require(returnAmount >= minReturnAmount, "DODOV1Proxy02: Return amount is not enough");
+        require(returnAmount >= minReturnAmount, "DODOV1Proxy03: Return amount is not enough");
 
         emit OrderHistory(_fromToken, _toToken, msg.sender, fromTokenAmount, returnAmount);
         
@@ -213,11 +218,12 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
         address[] memory portionPath,
         uint256 deadLine
     ) external override payable judgeExpired(deadLine) returns (uint256 returnAmount) {
-        require(mixPairs.length == directions.length, "DODOV1Proxy02: PARAMS_LENGTH_NOT_MATCH");
-        require(mixPairs.length > 0, "DODOV1Proxy02: PAIRS_EMPTY");
-        require(minReturnAmount > 0, "DODOV1Proxy02: RETURN_AMOUNT_ZERO");
-        require(fromToken != _CHI_TOKEN_, "DODOV1Proxy02: NOT_SUPPORT_SELL_CHI");
-        
+        require(mixPairs.length == directions.length, "DODOV1Proxy03: PARAMS_LENGTH_NOT_MATCH");
+        require(mixPairs.length > 0, "DODOV1Proxy03: PAIRS_EMPTY");
+        require(minReturnAmount > 0, "DODOV1Proxy03: RETURN_AMOUNT_ZERO");
+        require(fromToken != _CHI_TOKEN_, "DODOV1Proxy03: NOT_SUPPORT_SELL_CHI");
+        require(toToken != _CHI_TOKEN_, "DODOV1Proxy03: NOT_SUPPORT_BUY_CHI");
+
         uint256 toTokenOriginBalance = IERC20(toToken).universalBalanceOf(msg.sender);
 
         if (fromToken != _ETH_ADDRESS_) {
@@ -228,7 +234,7 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
                 fromTokenAmount
             );
         } else {
-            require(msg.value == fromTokenAmount, "DODOV1Proxy02: ETH_AMOUNT_NOT_MATCH");
+            require(msg.value == fromTokenAmount, "DODOV1Proxy03: ETH_AMOUNT_NOT_MATCH");
             IWETH(_WETH_).deposit{value: fromTokenAmount}();
         }
 
@@ -236,11 +242,13 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
             address curPair = mixPairs[i];
             if (directions[i] == 0) {
                 address curDodoBase = IDODOV1(curPair)._BASE_TOKEN_();
+                require(curDodoBase != _CHI_TOKEN_, "DODOV1Proxy03: NOT_SUPPORT_CHI");
                 uint256 curAmountIn = IERC20(curDodoBase).balanceOf(address(this));
                 IERC20(curDodoBase).universalApproveMax(curPair, curAmountIn);
                 IDODOV1(curPair).sellBaseToken(curAmountIn, 0, "");
             } else if(directions[i] == 1){
                 address curDodoQuote = IDODOV1(curPair)._QUOTE_TOKEN_();
+                require(curDodoQuote != _CHI_TOKEN_, "DODOV1Proxy03: NOT_SUPPORT_CHI");
                 uint256 curAmountIn = IERC20(curDodoQuote).balanceOf(address(this));
                 IERC20(curDodoQuote).universalApproveMax(curPair, curAmountIn);
                 uint256 canBuyBaseAmount = IDODOSellHelper(_DODO_SELL_HELPER_).querySellQuoteToken(
@@ -249,6 +257,7 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
                 );
                 IDODOV1(curPair).buyBaseToken(canBuyBaseAmount, curAmountIn, "");
             } else {
+                require(portionPath[0] != _CHI_TOKEN_, "DODOV1Proxy03: NOT_SUPPORT_CHI");
                 uint256 curAmountIn = IERC20(portionPath[0]).balanceOf(address(this));
                 IERC20(portionPath[0]).universalApproveMax(curPair, curAmountIn);
                 IUni(curPair).swapExactTokensForTokens(curAmountIn,0,portionPath,address(this),deadLine);
@@ -261,7 +270,7 @@ contract DODOV1Proxy02 is IDODOV1Proxy02, InitializableOwnable {
         );
 
         returnAmount = IERC20(toToken).universalBalanceOf(msg.sender).sub(toTokenOriginBalance);
-        require(returnAmount >= minReturnAmount, "DODOV1Proxy02: Return amount is not enough");
+        require(returnAmount >= minReturnAmount, "DODOV1Proxy03: Return amount is not enough");
 
         emit OrderHistory(fromToken, toToken, msg.sender, fromTokenAmount, returnAmount);
         

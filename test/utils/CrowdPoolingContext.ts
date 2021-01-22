@@ -31,6 +31,7 @@ export interface CPContextInitConfig {
   vestingDuration: BigNumber;
   cliffRate: string;
   quoteTokenContract: string;
+  isOpenTWAP:true
 }
 
 
@@ -72,7 +73,7 @@ export class CPContext {
     if(config.quoteTokenContract){
       this.QUOTE = await contracts.newContract(
         config.quoteTokenContract,
-        ["TestQuote", "QUOTE", 18]
+        ["WETH9", "WETH9", 18]
       );
     }else{
       this.QUOTE = await contracts.newContract(
@@ -124,11 +125,11 @@ export class CPContext {
         config.k,
         config.i,
         config.cliffRate
-      ]
+      ],
+      config.isOpenTWAP
     ).send(this.sendParam(this.Deployer))
 
     await defaultGasSource.methods.init(this.Deployer, MAX_UINT256).send(this.sendParam(this.Deployer));
-    await feeRateModel.methods.init(this.Deployer, decimalStr("0.001")).send(this.sendParam(this.Deployer));
 
     console.log(log.blueText("[Init CrowdPooling context]"));
   }

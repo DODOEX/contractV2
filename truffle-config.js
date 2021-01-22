@@ -40,10 +40,13 @@ module.exports = {
   deploySwitch: {
     DEPLOY_V1:        false,
     DEPLOY_V2:        false,
+    ADAPTER:          false,
     MOCK_TOKEN:       false,
     MOCK_V2_POOL:     false,
     MOCK_V2_SWAP:     false,
-    MANUAL_ADD_POOL:  false
+    MANUAL_ADD_POOL:  false,
+    MOCK_TARGET_POOL: false,
+    CALLEE:           false,
   },
 
   networks: {
@@ -57,7 +60,7 @@ module.exports = {
       host: "127.0.0.1",
       port: 8545,
       network_id: 5777,
-      gas: 0xfffffffffff,
+      gas: 1000000000,
       gasPrice: 1,
     },
     kovan: {
@@ -65,7 +68,7 @@ module.exports = {
       provider: function () {
         return new HDWalletProvider(privKey, "https://kovan.infura.io/v3/" + infuraId);
       },
-      gas: 8000000,
+      gas: 12000000,
       gasPrice: 1000000000,
       network_id: 42,
       skipDryRun: true
@@ -76,7 +79,7 @@ module.exports = {
         return new HDWalletProvider(privKey, "https://mainnet.infura.io/v3/" + infuraId);
       },
       gas: 3000000,
-      gasPrice: 100000000000,
+      gasPrice: 75000000000,
       network_id: 1,
       skipDryRun: true
     },

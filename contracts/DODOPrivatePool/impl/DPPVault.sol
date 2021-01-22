@@ -44,62 +44,81 @@ contract DPPVault is DPPStorage {
     // ============ Get Input ============
 
     function getBaseInput() public view returns (uint256 input) {
-        return _BASE_TOKEN_.balanceOf(address(this)).sub(_BASE_RESERVE_);
+        return _BASE_TOKEN_.balanceOf(address(this)).sub(uint256(_BASE_RESERVE_));
     }
 
     function getQuoteInput() public view returns (uint256 input) {
-        return _QUOTE_TOKEN_.balanceOf(address(this)).sub(_QUOTE_RESERVE_);
+        return _QUOTE_TOKEN_.balanceOf(address(this)).sub(uint256(_QUOTE_RESERVE_));
+    }
+
+    // ============ TWAP UPDATE ===========
+    
+    function _twapUpdate() internal {
+        uint32 blockTimestamp = uint32(block.timestamp % 2**32);
+        uint32 timeElapsed = blockTimestamp - _BLOCK_TIMESTAMP_LAST_;
+        if (timeElapsed > 0 && _BASE_RESERVE_ != 0 && _QUOTE_RESERVE_ != 0) {
+            _BASE_PRICE_CUMULATIVE_LAST_ += getMidPrice() * timeElapsed;
+        }
+        _BLOCK_TIMESTAMP_LAST_ = blockTimestamp;
     }
 
     // ============ Set Status ============
 
     function _setReserve(uint256 baseReserve, uint256 quoteReserve) internal {
-        require(baseReserve <= uint120(-1) && quoteReserve <= uint120(-1), "OVERFLOW");
-        _BASE_RESERVE_ = uint128(baseReserve);
-        _QUOTE_RESERVE_ = uint128(quoteReserve);
+        require(baseReserve <= uint112(-1) && quoteReserve <= uint112(-1), "OVERFLOW");
+        _BASE_RESERVE_ = uint112(baseReserve);
+        _QUOTE_RESERVE_ = uint112(quoteReserve);
+
+        if(_IS_OPEN_TWAP_) _twapUpdate();
     }
 
     function _sync() internal {
         uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
         uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
         
-        require(baseBalance <= uint120(-1) && quoteBalance <= uint120(-1), "OVERFLOW");
+        require(baseBalance <= uint112(-1) && quoteBalance <= uint112(-1), "OVERFLOW");
 
         if (baseBalance != _BASE_RESERVE_) {
-            _BASE_RESERVE_ = uint128(baseBalance);
+            _BASE_RESERVE_ = uint112(baseBalance);
         }
         if (quoteBalance != _QUOTE_RESERVE_) {
-            _QUOTE_RESERVE_ = uint128(quoteBalance);
+            _QUOTE_RESERVE_ = uint112(quoteBalance);
         }
+
+        if(_IS_OPEN_TWAP_) _twapUpdate();
     }
 
     function _resetTargetAndReserve() internal {
         uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
         uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
 
-        require(baseBalance <= uint120(-1) && quoteBalance <= uint120(-1), "OVERFLOW");
+        require(baseBalance <= uint112(-1) && quoteBalance <= uint112(-1), "OVERFLOW");
         
-        _BASE_RESERVE_ = uint128(baseBalance);
-        _QUOTE_RESERVE_ = uint128(quoteBalance);
-        _BASE_TARGET_ = uint120(baseBalance);
-        _QUOTE_TARGET_ = uint120(quoteBalance);
-        _RState_ = uint16(PMMPricing.RState.ONE);
+        _BASE_RESERVE_ = uint112(baseBalance);
+        _QUOTE_RESERVE_ = uint112(quoteBalance);
+        _BASE_TARGET_ = uint112(baseBalance);
+        _QUOTE_TARGET_ = uint112(quoteBalance);
+        _RState_ = uint32(PMMPricing.RState.ONE);
+
+        if(_IS_OPEN_TWAP_) _twapUpdate();
     }
 
     function ratioSync() external preventReentrant onlyOwner {
         uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
         uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
 
-        require(baseBalance <= uint120(-1) && quoteBalance <= uint120(-1), "OVERFLOW");
+        require(baseBalance <= uint112(-1) && quoteBalance <= uint112(-1), "OVERFLOW");
 
         if (baseBalance != _BASE_RESERVE_) {
-            _BASE_TARGET_ = uint120(uint256(_BASE_TARGET_).mul(baseBalance).div(uint256(_BASE_RESERVE_)));
-            _BASE_RESERVE_ = uint128(baseBalance);
+            _BASE_TARGET_ = uint112(uint256(_BASE_TARGET_).mul(baseBalance).div(uint256(_BASE_RESERVE_)));
+            _BASE_RESERVE_ = uint112(baseBalance);
         }
         if (quoteBalance != _QUOTE_RESERVE_) {
-            _QUOTE_TARGET_ = uint120(uint256(_QUOTE_TARGET_).mul(quoteBalance).div(uint256(_QUOTE_RESERVE_)));
-            _QUOTE_RESERVE_ = uint128(quoteBalance);
+            _QUOTE_TARGET_ = uint112(uint256(_QUOTE_TARGET_).mul(quoteBalance).div(uint256(_QUOTE_RESERVE_)));
+            _QUOTE_RESERVE_ = uint112(quoteBalance);
         }
+
+        if(_IS_OPEN_TWAP_) _twapUpdate();
     }
 
     function reset(

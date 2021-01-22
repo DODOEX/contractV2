@@ -78,7 +78,8 @@ contract DPPFactory is InitializableOwnable {
         address quoteToken,
         uint256 lpFeeRate,
         uint256 k,
-        uint256 i
+        uint256 i,
+        bool isOpenTwap
     ) external {
         {
             address _dppAddress = dppAddress;
@@ -96,7 +97,8 @@ contract DPPFactory is InitializableOwnable {
                 lpFeeRate,
                 _DEFAULT_MT_FEE_RATE_MODEL_,
                 k,
-                i
+                i,
+                isOpenTwap
             );
         }
 
@@ -165,7 +167,7 @@ contract DPPFactory is InitializableOwnable {
 
     // ============ View Functions ============
 
-    function getPrivatePool(address baseToken, address quoteToken)
+    function getDODOPool(address baseToken, address quoteToken)
         external
         view
         returns (address[] memory pools)
@@ -173,7 +175,7 @@ contract DPPFactory is InitializableOwnable {
         return _REGISTRY_[baseToken][quoteToken];
     }
 
-    function getPrivatePoolBidirection(address token0, address token1)
+    function getDODOPoolBidirection(address token0, address token1)
         external
         view
         returns (address[] memory baseToken0Pool, address[] memory baseToken1Pool)
@@ -181,7 +183,7 @@ contract DPPFactory is InitializableOwnable {
         return (_REGISTRY_[token0][token1], _REGISTRY_[token1][token0]);
     }
 
-    function getPrivatePoolByUser(address user) 
+    function getDODOPoolByUser(address user) 
         external
         view
         returns (address[] memory pools)

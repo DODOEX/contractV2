@@ -27,6 +27,7 @@ contract DODOV2RouteHelper {
         address baseToken;
         address quoteToken;
         address curPair;
+        uint256 pairVersion;
     }
 
     constructor(address dvmFactory,address dppFactory) public {
@@ -35,12 +36,12 @@ contract DODOV2RouteHelper {
     }
 
     function getPairDetail(address token0,address token1,address userAddr) external view returns (PairDetail[] memory res) {
-        (address[] memory baseToken0DVM, address[] memory baseToken1DVM) = IDODOV2(_DVM_FACTORY_).getVendingMachineBidirection(token0,token1);
-        (address[] memory baseToken0DPP, address[] memory baseToken1DPP) = IDODOV2(_DPP_FACTORY_).getPrivatePoolBidirection(token0,token1);
+        (address[] memory baseToken0DVM, address[] memory baseToken1DVM) = IDODOV2(_DVM_FACTORY_).getDODOPoolBidirection(token0,token1);
+        (address[] memory baseToken0DPP, address[] memory baseToken1DPP) = IDODOV2(_DPP_FACTORY_).getDODOPoolBidirection(token0,token1);
         uint256 len = baseToken0DVM.length + baseToken1DVM.length + baseToken0DPP.length + baseToken1DPP.length;
         res = new PairDetail[](len);
         for(uint8 i = 0; i < len; i++) {
-            PairDetail memory curRes = PairDetail(0,0,0,0,0,0,0,0,0,address(0),address(0),address(0));
+            PairDetail memory curRes = PairDetail(0,0,0,0,0,0,0,0,0,address(0),address(0),address(0),2);
             address cur;
             if(i < baseToken0DVM.length) {
                 cur = baseToken0DVM[i];

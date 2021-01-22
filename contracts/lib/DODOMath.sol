@@ -27,7 +27,7 @@ library DODOMath {
         let V1-V2=delta
         res = i*delta*(1-k+k(V0^2/V1/V2))
 
-        i is the price of res-V trading pair
+        i is the price of V-res trading pair
 
         support k=1 & k=0 case
 
@@ -68,6 +68,9 @@ library DODOMath {
         uint256 i,
         uint256 k
     ) internal pure returns (uint256) {
+        if (V1 == 0) {
+            return 0;
+        }
         if (k == 0) {
             return V1.add(DecimalMath.mulFloor(i, delta));
         }
@@ -77,16 +80,15 @@ library DODOMath {
         // uint256 sqrt = (4 * k).mul(i).mul(delta).div(V1).add(DecimalMath.ONE2).sqrt();
         uint256 sqrt;
         uint256 ki = (4 * k).mul(i);
-        if(ki == 0 ) {
+        if (ki == 0) {
             sqrt = DecimalMath.ONE;
-        }else if(ki * delta / ki == delta) {
+        } else if ((ki * delta) / ki == delta) {
             sqrt = (ki * delta).div(V1).add(DecimalMath.ONE2).sqrt();
-        }else {
+        } else {
             sqrt = ki.div(V1).mul(delta).add(DecimalMath.ONE2).sqrt();
         }
-        uint256 premium = DecimalMath.divFloor(sqrt.sub(DecimalMath.ONE), k * 2).add(
-            DecimalMath.ONE
-        );
+        uint256 premium =
+            DecimalMath.divFloor(sqrt.sub(DecimalMath.ONE), k * 2).add(DecimalMath.ONE);
         // V0 is greater than or equal to V1 according to the solution
         return DecimalMath.mulFloor(V1, premium);
     }
@@ -136,16 +138,17 @@ library DODOMath {
             // if k==1
             // Q2=Q1/(1+ideltaBQ1/Q0/Q0)
             // temp = ideltaBQ1/Q0/Q0
-            // Q1-Q2 = Q1*(temp/(1+temp))
+            // Q2 = Q1/(1+temp)
+            // Q1-Q2 = Q1*(1-1/(1+temp)) = Q1*(temp/(1+temp))
             // uint256 temp = i.mul(delta).mul(V1).div(V0.mul(V0));
             uint256 temp;
             uint256 idelta = i.mul(delta);
-            if(idelta == 0) {
+            if (idelta == 0) {
                 temp = 0;
-            }else if(idelta * V1 / idelta == V1) {
+            } else if ((idelta * V1) / idelta == V1) {
                 temp = (idelta * V1).div(V0.mul(V0));
-            }else {
-                temp = delta.mul(V1).div(V0).mul(i).div(V0); 
+            } else {
+                temp = delta.mul(V1).div(V0).mul(i).div(V0);
             }
             return V1.mul(temp).div(temp.add(DecimalMath.ONE));
         }
@@ -162,19 +165,20 @@ library DODOMath {
 
         bool bSig;
         if (bAbs >= part2) {
-            bAbs = bAbs.sub(part2);
+            bAbs = bAbs - part2;
             bSig = false;
         } else {
-            bAbs = part2.sub(bAbs);
+            bAbs = part2 - bAbs;
             bSig = true;
         }
         bAbs = bAbs.div(DecimalMath.ONE);
 
         // calculate sqrt
-        uint256 squareRoot = DecimalMath.mulFloor(
-            DecimalMath.ONE.sub(k).mul(4),
-            DecimalMath.mulFloor(k, V0).mul(V0)
-        ); // 4(1-k)kQ0^2
+        uint256 squareRoot =
+            DecimalMath.mulFloor(
+                DecimalMath.ONE.sub(k).mul(4),
+                DecimalMath.mulFloor(k, V0).mul(V0)
+            ); // 4(1-k)kQ0^2
         squareRoot = bAbs.mul(bAbs).add(squareRoot).sqrt(); // sqrt(b*b+4(1-k)kQ0*Q0)
 
         // final res
@@ -186,6 +190,11 @@ library DODOMath {
             numerator = bAbs.add(squareRoot);
         }
 
-        return V1.sub(DecimalMath.divCeil(numerator, denominator));
+        uint256 V2 = DecimalMath.divCeil(numerator, denominator);
+        if (V2 > V1) {
+            return 0;
+        } else {
+            return V1 - V2;
+        }
     }
 }

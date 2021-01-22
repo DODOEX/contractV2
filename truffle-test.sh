@@ -31,6 +31,11 @@ then
 	truffle test ./test/V2Proxy/proxy.incentive.test.ts
 fi
 
+if [ "$1"x = "proxy-twap"x ]
+then
+	truffle test ./test/V2Proxy/proxy.twap.test.ts
+fi
+
 # if [ "$1"x = "route-incentive"x ]
 # then
 # 	truffle test ./test/Route/Incentive.test.ts

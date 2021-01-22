@@ -49,23 +49,6 @@ describe("DPP Trader", () => {
   });
 
   describe("trade", () => {
-    // it.only("basic check", async () => {
-    //   console.log(await ctx.DPP.methods.getVaultReserve().call())
-    //   console.log(await ctx.DPP.methods.getPMMState().call())
-    //   console.log(await ctx.DPP.methods.getMidPrice().call())
-    //   console.log(await ctx.DPP.methods.querySellQuote(ctx.Deployer, decimalStr("200")).call())
-    //   console.log(ctx.BASE.options.address)
-    //   console.log(await ctx.DPP.methods._BASE_TOKEN_().call())
-    //   console.log(ctx.QUOTE.options.address)
-    //   console.log(await ctx.DPP.methods._QUOTE_TOKEN_().call())
-    // })
-
-    // it.only("mannually buy", async () => {
-    //   await ctx.QUOTE.methods.transfer(ctx.DPP.options.address, decimalStr("100")).send(ctx.sendParam(lp))
-    //   console.log(await ctx.DPP.methods.getQuoteInput().call())
-    //   console.log(await ctx.DPP.methods.querySellQuote(lp, decimalStr("100")).call())
-    //   await ctx.DPP.methods.sellQuote(lp).send(ctx.sendParam(lp))
-    // })
 
     it("first buy and then sell", async () => {
       // buy at R=1
@@ -104,8 +87,14 @@ describe("DPP Trader", () => {
       assert.equal(balances.maintainerBase, "1952630183076783")
       assert.equal(balances.maintainerQuote, "103733013692081583")
 
+
       // sell at R>1 and R change state
       await ctx.transferBaseToDPP(trader, decimalStr("2"))
+
+      let resp = await ctx.DPP.methods.querySellBase(trader, decimalStr("2")).call();
+      let bs = await ctx.getBalances(trader);
+      let lpFeeRate = await ctx.DPP.methods._LP_FEE_RATE_().call();
+
       await logGas(ctx.DPP.methods.sellBase(trader), ctx.sendParam(trader), "sellBase - sell at R>1 and R change state")
       balances = await ctx.getBalances(trader)
 
@@ -175,7 +164,6 @@ describe("DPP Trader", () => {
       assert.equal(PMMStat.R, "1")
       assert.equal(PMMStat.Q0, "1000595024934809920179")
     });
-
 
     it("flash loan", async () => {
       // buy

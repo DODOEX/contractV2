@@ -22,6 +22,7 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
     
     uint256 internal constant _SETTLEMENT_EXPIRE_ = 86400 * 7;
     uint256 internal constant _SETTEL_FUND_ = 200 finney;
+    bool public _IS_OPEN_TWAP_ = false;
 
     // ============ Timeline ============
 
@@ -50,7 +51,7 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
 
     uint256 public _TOTAL_SHARES_;
     mapping(address => uint256) internal _SHARES_;
-    mapping(address => bool) internal _CLAIMED_;
+    mapping(address => bool) public _CLAIMED_;
 
     address public _POOL_FACTORY_;
     address public _POOL_;

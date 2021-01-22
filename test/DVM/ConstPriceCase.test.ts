@@ -63,7 +63,7 @@ describe("ConstPriceCase", () => {
       // trader balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(trader).call(),
-        decimalStr("11.998")
+        decimalStr("12")
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(trader).call(),
@@ -83,7 +83,7 @@ describe("ConstPriceCase", () => {
       // maintainer balances
       assert.equal(
         await ctx.BASE.methods.balanceOf(ctx.Maintainer).call(),
-        decimalStr("0.002")
+        decimalStr("0")
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
@@ -104,7 +104,7 @@ describe("ConstPriceCase", () => {
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(trader).call(),
-        decimalStr("1099.9")
+        decimalStr("1100")
       );
 
       // vault balances
@@ -124,7 +124,7 @@ describe("ConstPriceCase", () => {
       );
       assert.equal(
         await ctx.QUOTE.methods.balanceOf(ctx.Maintainer).call(),
-        decimalStr("0.1")
+        decimalStr("0")
       );
     });
   });

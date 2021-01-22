@@ -18,7 +18,8 @@ interface IDVMFactory {
         address quoteToken,
         uint256 lpFeeRate,
         uint256 i,
-        uint256 k
+        uint256 k,
+        bool isOpenTWAP
     ) external returns (address newVendingMachine);
 }
 
@@ -74,7 +75,8 @@ contract DVMFactory is InitializableOwnable {
         address quoteToken,
         uint256 lpFeeRate,
         uint256 i,
-        uint256 k
+        uint256 k,
+        bool isOpenTWAP
     ) external returns (address newVendingMachine) {
         newVendingMachine = ICloneFactory(_CLONE_FACTORY_).clone(_DVM_TEMPLATE_);
         {
@@ -85,12 +87,13 @@ contract DVMFactory is InitializableOwnable {
                 lpFeeRate,
                 _DEFAULT_MT_FEE_RATE_MODEL_,
                 i,
-                k
+                k,
+                isOpenTWAP
             );
         }
         _REGISTRY_[baseToken][quoteToken].push(newVendingMachine);
-        _USER_REGISTRY_[msg.sender].push(newVendingMachine);
-        emit NewDVM(baseToken, quoteToken, msg.sender, newVendingMachine);
+        _USER_REGISTRY_[tx.origin].push(newVendingMachine);
+        emit NewDVM(baseToken, quoteToken, tx.origin, newVendingMachine);
     }
 
     // ============ Admin Operation Functions ============
@@ -139,7 +142,7 @@ contract DVMFactory is InitializableOwnable {
 
     // ============ View Functions ============
 
-    function getVendingMachine(address baseToken, address quoteToken)
+    function getDODOPool(address baseToken, address quoteToken)
         external
         view
         returns (address[] memory machines)
@@ -147,7 +150,7 @@ contract DVMFactory is InitializableOwnable {
         return _REGISTRY_[baseToken][quoteToken];
     }
 
-    function getVendingMachineBidirection(address token0, address token1)
+    function getDODOPoolBidirection(address token0, address token1)
         external
         view
         returns (address[] memory baseToken0Machines, address[] memory baseToken1Machines)
@@ -155,7 +158,7 @@ contract DVMFactory is InitializableOwnable {
         return (_REGISTRY_[token0][token1], _REGISTRY_[token1][token0]);
     }
 
-    function getVendingMachineByUser(address user)
+    function getDODOPoolByUser(address user)
         external
         view
         returns (address[] memory machines)

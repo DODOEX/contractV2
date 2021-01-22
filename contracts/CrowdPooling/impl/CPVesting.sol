@@ -27,6 +27,12 @@ contract CPVesting is CPFunding {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
+    // ============ Events ============
+    
+    event Claim(address user, uint256 baseAmount, uint256 quoteAmount);
+    event ClaimLP(uint256 amount);
+
+
     // ================ Modifiers ================
 
     modifier afterSettlement() {
@@ -55,12 +61,15 @@ contract CPVesting is CPFunding {
 			IDODOCallee(to).CPClaimBidCall(msg.sender,baseAmount,quoteAmount,data);
 		}
 
+        emit Claim(msg.sender, baseAmount, quoteAmount);
     }
 
     // ============ Owner Functions ============
 
     function claimLPToken() external onlyOwner afterFreeze {
-        IERC20(_POOL_).safeTransfer(_OWNER_, getClaimableLPToken());
+        uint256 lpAmount = getClaimableLPToken();
+        IERC20(_POOL_).safeTransfer(_OWNER_, lpAmount);
+        emit ClaimLP(lpAmount);
     }
 
     function getClaimableLPToken() public view afterFreeze returns (uint256) {

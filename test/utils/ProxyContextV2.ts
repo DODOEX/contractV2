@@ -39,6 +39,7 @@ export class ProxyContext {
 
   //Functions
   DODOIncentive: Contract;
+  mtFeeRateModel: Contract;
 
   Deployer: string;
   Maintainer: string;
@@ -78,8 +79,8 @@ export class ProxyContext {
     var dppAdminTemplate = await contracts.newContract(contracts.DPP_ADMIN_NAME)
     var permissionManagerTemplate = await contracts.newContract(contracts.PERMISSION_MANAGER_NAME)
     var mtFeeRateModelTemplate = await contracts.newContract(contracts.FEE_RATE_MODEL_NAME)
-    // await mtFeeRateModelTemplate.methods.init(this.Deployer,decimalStr("0.01")).send(this.sendParam(this.Deployer));
-    await mtFeeRateModelTemplate.methods.init(this.Deployer,decimalStr("0")).send(this.sendParam(this.Deployer));
+    this.mtFeeRateModel = mtFeeRateModelTemplate;
+
 
     this.DVMFactory = await contracts.newContract(contracts.DVM_FACTORY_NAME,
       [
@@ -125,6 +126,7 @@ export class ProxyContext {
     this.DODOSellHelper = await contracts.newContract(
       contracts.DODO_SELL_HELPER
     );
+
 
     this.DODOProxyV2 = await contracts.newContract(contracts.DODO_PROXY_NAME,
       [
