@@ -1,25 +1,30 @@
-# DODOV2
+# DODO V2: Help 1 Trillion People Issue Token
 
-## DVM
+## Bug Bounty 💰
 
-DVM 是 DODO Vending Machine的缩写，”自动售货机“
+### Rewards
 
-这一模式下
+Severity of bugs will be assessed under the [CVSS Risk Rating](https://www.first.org/cvss/calculator/3.0) scale, as follows:
 
- 1. 参数i和k不变
- 2. 任何人都能充值
- 3. 第一次充值不需要按照比例，后续需要按照比例充值
+ - Critical (9.0-10.0): Up to $100,000
+ - High (7.0-8.9): Up to $10,000
+ - Medium (4.0-6.9): Up to $5,000
+ - Low (0.1-3.9): Up to $1,000
 
-## DPP
+In addition to assessing severity, rewards will be considered based on the impact of the discovered vulnerability as well as the level of difficulty in discovering such vulnerability.
 
-DPP 是 DODO Private Pool 的缩写，”私有池“
+### Disclosure
 
-这一模式下
+Any vulnerability or bug discovered must be reported only to the following email: contact@dodoex.io; must not be disclosed publicly; must not be disclosed to any other person, entity or email address prior to disclosure to the contact@dodoex.io email; and must not be disclosed in any way other than to the contact@dodoex.io email. In addition, disclosure to contact@dodoex.io must be made promptly following discovery of the vulnerability. Please include as much information about the vulnerability as possible, including:
 
- 1. 参数i和k可以任意改变
- 2. Target和reserve可以任意设置
- 3. 只有creator可以充提，且充提不受限制
+ - The conditions on which reproducing the bug is contingent.
+ - The steps needed to reproduce the bug or, preferably, a proof of concept.
+ - The potential implications of the vulnerability being abused.
+ 
+A detailed report of a vulnerability increases the likelihood of a reward and may increase the reward amount.
 
-## 文档
+Anyone who reports a unique, previously-unreported vulnerability that results in a change to the code or a configuration change and who keeps such vulnerability confidential until it has been resolved by our engineers will be recognized publicly for their contribution, if agreed.
 
-https://dodoex.github.io/docs/docs/coreConcept
+## Contact Us
+
+Send E-mail to contact@dodoex.io
