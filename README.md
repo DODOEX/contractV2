@@ -1,5 +1,9 @@
 # DODO V2: Help 1 Trillion People Issue Token
 
+## Audit Report
+
+[Audited by Peckshield](https://github.com/DODOEX/contractV2/blob/main/audit/PeckShield-Audit-DODOV2-v1.0.pdf)
+
 ## Bug Bounty 💰
 
 ### Rewards
