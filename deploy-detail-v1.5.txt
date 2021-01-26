@@ -100,3 +100,15 @@ Deploy time: 2021/1/20 上午10:58:55
 Deploy type: Proxy
 DODOV1Proxy03 Address:  0x9A9942458754bDf65dCbCd0B6B4B842a7D4031AB
 Set DODOProxy Owner tx:  0x2fd5f1abb016536e4557d609bdf52e2b790cbac85dead5097128e77b4357252d
+====================================================
+network type: bsclive
+Deploy time: 2021/1/26 下午5:28:55
+Deploy type: Proxy
+DODOV1Proxy04 Address:  0xbe9a66e49503e84ae59a4d0545365AABedf33b40
+Set DODOProxy Owner tx:  0xe5dd7a963446bb6a826c89a0c987baf0db463a649f3949fce6ef39b4d9649808
+====================================================
+network type: live
+Deploy time: 2021/1/26 下午5:41:41
+Deploy type: Proxy
+DODOV1Proxy04 Address:  0xa2CB66EBB947D217f61510882096F6e95c1DE97D
+Set DODOProxy Owner tx:  0xe49234c67bc710a7f4797aacbb2ef26fac458832f101e856d8113cc21721cd81

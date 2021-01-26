@@ -14,7 +14,6 @@ import {IDODOCallee} from "../../intf/IDODOCallee.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
-import {Ownable} from "../../lib/Ownable.sol";
 import {PMMPricing} from "../../lib/PMMPricing.sol";
 
 contract DPPVault is DPPStorage {

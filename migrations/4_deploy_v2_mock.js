@@ -64,10 +64,10 @@ module.exports = async (deployer, network, accounts) => {
     let MintableERC20TemplateAddress = "0xA45a64DAba80757432fA4d654Df12f65f020C13C";
     let ERC20FactoryAddress = "0xCb1A2f64EfB02803276BFB5a8D511C4D950282a0";
 
-    let DPPFactoryAddress = "0xaFC7F3Ef4f8609411653FbF1Dd6D583A8Ae1f0fA";
+    let DPPFactoryAddress = "0x6DAb26dFE83E484DCC5126F812E3e6AA8e7eEf4D";
     let DVMFactoryAddress = "0xE842d8c9A54B23C4D0cf208daCA3882c0c311353";
-    let DODOApproveAddress = "0x6FB6313cafaFe38acA19Be0B8151d6354F74A340";
-    let DODOProxyV2Address = "0xfDEDc04A641DE9CEeb4eD2F24d98faa22418Bd94";
+    let DODOApproveAddress = "0x8acF28D9d8124B20b645893b6102950B488dfd29";
+    let DODOProxyV2Address = "0x3457A15B9ab57FC754789EE83E4BD2BD8f4F50C8";
 
 
 
@@ -193,22 +193,22 @@ module.exports = async (deployer, network, accounts) => {
         // const quoteInAmount = web3.utils.toWei("0.5", 'ether');
         const deadline = Math.floor(new Date().getTime() / 1000 + 60 * 10);
         //DVM Pool
-        for (var i = 0; i < POOL_PARAM.length; i++) {
-            tx = await DODOProxyV2Instance.createDODOVendingMachine(
-                POOL_PARAM[i].baseAddr,
-                POOL_PARAM[i].quoteAddr,
-                baseInAmount,
-                0,
-                POOL_PARAM[i].lpFeeRate,
-                POOL_PARAM[i].i,
-                POOL_PARAM[i].k,
-                false,
-                deadline
-            );
-            var poolAddress = await DVMFactoryInstance._REGISTRY_(POOL_PARAM[i].baseAddr, POOL_PARAM[i].quoteAddr, 0);
-            logger.log("Create DVM: " + POOL_PARAM[i].baseAddr + "-" + POOL_PARAM[i].quoteAddr + " Pool:" + poolAddress + " Tx:", tx.tx);
-        }
-        //DVM Pool
+        // for (var i = 0; i < POOL_PARAM.length; i++) {
+        //     tx = await DODOProxyV2Instance.createDODOVendingMachine(
+        //         POOL_PARAM[i].baseAddr,
+        //         POOL_PARAM[i].quoteAddr,
+        //         baseInAmount,
+        //         0,
+        //         POOL_PARAM[i].lpFeeRate,
+        //         POOL_PARAM[i].i,
+        //         POOL_PARAM[i].k,
+        //         false,
+        //         deadline
+        //     );
+        //     var poolAddress = await DVMFactoryInstance._REGISTRY_(POOL_PARAM[i].baseAddr, POOL_PARAM[i].quoteAddr, 0);
+        //     logger.log("Create DVM: " + POOL_PARAM[i].baseAddr + "-" + POOL_PARAM[i].quoteAddr + " Pool:" + poolAddress + " Tx:", tx.tx);
+        // }
+        //DPP Pool
         for (var i = 0; i < POOL_PARAM.length; i++) {
             tx = await DODOProxyV2Instance.createDODOPrivatePool(
                 POOL_PARAM[i].baseAddr,

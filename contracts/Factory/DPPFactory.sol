@@ -26,7 +26,7 @@ contract DPPFactory is InitializableOwnable {
     address public immutable _CLONE_FACTORY_;
     address public immutable _DEFAULT_MAINTAINER_;
     address public immutable _DEFAULT_MT_FEE_RATE_MODEL_;
-    address public immutable _DODO_APPROVE_;
+    address public immutable _DODO_APPROVE_PROXY_;
     address public _DPP_TEMPLATE_;
     address public _DPP_ADMIN_TEMPLATE_;
 
@@ -55,14 +55,14 @@ contract DPPFactory is InitializableOwnable {
         address dppAdminTemplate,
         address defaultMaintainer,
         address defaultMtFeeRateModel,
-        address dodoApprove
+        address dodoApproveProxy
     ) public {
         _CLONE_FACTORY_ = cloneFactory;
         _DPP_TEMPLATE_ = dppTemplate;
         _DPP_ADMIN_TEMPLATE_ = dppAdminTemplate;
         _DEFAULT_MAINTAINER_ = defaultMaintainer;
         _DEFAULT_MT_FEE_RATE_MODEL_ = defaultMtFeeRateModel;
-        _DODO_APPROVE_ = dodoApprove;
+        _DODO_APPROVE_PROXY_ = dodoApproveProxy;
     }
 
     // ============ Functions ============
@@ -87,7 +87,7 @@ contract DPPFactory is InitializableOwnable {
                 creator,
                 _dppAddress,
                 creator,
-                _DODO_APPROVE_
+                _DODO_APPROVE_PROXY_
             );
             IDPP(_dppAddress).init(
                 adminModel,
@@ -111,10 +111,10 @@ contract DPPFactory is InitializableOwnable {
         address owner,
         address dpp,
         address operator,
-        address dodoApprove
+        address dodoApproveProxy
     ) internal returns (address adminModel) {
         adminModel = ICloneFactory(_CLONE_FACTORY_).clone(_DPP_ADMIN_TEMPLATE_);
-        IDPPAdmin(adminModel).init(owner, dpp, operator, dodoApprove);
+        IDPPAdmin(adminModel).init(owner, dpp, operator, dodoApproveProxy);
     }
 
     // ============ Admin Operation Functions ============
