@@ -5,15 +5,15 @@
 
 */
 pragma solidity 0.6.9;
+pragma experimental ABIEncoderV2;
 
 import {IERC20} from "../intf/IERC20.sol";
-import {Address} from "../lib/Address.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
 import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
-
+import {IDODOApproveProxy} from "../SmartRoute/DODOApproveProxy.sol";
 
 interface IGovernance {
     function governanceCall(address account, uint256 amount,bytes calldata data) external returns (bool);
@@ -25,7 +25,7 @@ interface IDODOLockedHelper {
 }
 
 
-contract vDODOToken is IERC20, InitializableOwnable ,ReentrancyGuard{
+contract vDODOToken is InitializableOwnable ,ReentrancyGuard{
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
@@ -46,21 +46,16 @@ contract vDODOToken is IERC20, InitializableOwnable ,ReentrancyGuard{
     bool cantransfer;
     uint256 public dodoPerBlock; 
 
-    uint256 constant public _MAG_SP_AMOUNT_ = 10;
-    //TODO： 可去掉
-    uint256 constant public _MAG_TOTALSP_AMOUNT_ = 110;
-    uint256 constant public _BASE_AMOUNT_ = 100;
+    uint256 constant public _MAG_SP_AMOUNT_ = 10; // 0.1
     
-    uint256 constant public _MIN_X_ = 1;
-    uint256 constant public _MIN_X_Y_ = 5;
-    uint256 constant public _MAX_X_ = 10;
-    uint256 constant public _MAX_X_Y_ = 15;
+    uint256 constant public _MIN_X_ = 10**18;
+    uint256 constant public _MAX_X_ = 10 * 10**18;
+    uint256 constant public _MIN_Y_ = 5 * 10**18;
+    uint256 constant public _MAX_Y_ = 15 * 10**18;
     
     uint256 public alpha = 100;
-    uint256 public totalOverDraft;
     uint256 public lastRewardBlock;
     uint256 public dodoFeeDestroyRatio;
-    mapping(address => mapping(address => uint256)) internal _ALLOWED_;
     mapping(address => bool) public operater;
     mapping(address => UserInfo) public userInfo;
    
@@ -68,14 +63,13 @@ contract vDODOToken is IERC20, InitializableOwnable ,ReentrancyGuard{
         address superior;
         uint256 vdodoAmount;
         uint256 overdraft; 
-        uint256 totalRedeem;
         bool    hasParticipateGov;              //是否正在参与治理，是的话就不可以提币
     }
 
     // ============ Events ============
     event ParticipatoryGov(address user, uint256 amount);
     event Deposit(address user,address superior, uint256 amount);
-    event Redeem(address user, uint256 amount);
+    event Withdraw(address user, uint256 amount);
     event SetCantransfer(bool allowed);
     event RemoveOperation(address operater);
     event AddOperation(address operater);
@@ -93,11 +87,6 @@ contract vDODOToken is IERC20, InitializableOwnable ,ReentrancyGuard{
         _;
     }
 
-    //TODO:是否可以不写？
-    receive() external payable {
-        revert();
-    }
-    
     constructor(
         address _dodoGov,
         address _dodoToken,
@@ -113,15 +102,15 @@ contract vDODOToken is IERC20, InitializableOwnable ,ReentrancyGuard{
         _DOOD_GOV_ = _dodoGov;
         _DODO_LOCKED_HELPER_ = _dodoLockedHelper;
         _DODO_TOKEN_ = _dodoToken;
+        lastRewardBlock = block.number;
     }
 
-    // ============ Ownable Functions ============
+    // ============ Ownable Functions ============`
 
     function setCantransfer(bool _allowed) public onlyOwner {
         cantransfer = _allowed;
         emit SetCantransfer(_allowed);
     }
-
 
     function addOperationAddress(address _operater) public onlyOwner {
         operater[_operater] = true;
@@ -134,7 +123,7 @@ contract vDODOToken is IERC20, InitializableOwnable ,ReentrancyGuard{
     }
 
     function changePerReward(uint256 _dodoPerBlock) public onlyOwner {
-        //TODO: update lastReward?
+        _updateAlpha();
         dodoPerBlock = _dodoPerBlock;
         emit ChangePerReward(dodoPerBlock);
     }
@@ -144,156 +133,125 @@ contract vDODOToken is IERC20, InitializableOwnable ,ReentrancyGuard{
         emit UpdateDodoFeeDestroyRatio(_dodoFeeDestroyRatio);
     }
     
-
     // ============ Functions ============
-
-    //TODO 投票与代理是否分开
     function participatoryGov(
         uint256 _amount,
         bytes calldata _data
     ) external preventReentrant {
-        UserInfo memory user = userInfo[msg.sender];
+        UserInfo storage user = userInfo[msg.sender];
         require(user.vdodoAmount > _amount, "vDODOToken: no enough vdodo");
         if (_data.length > 0)
             IGovernance(_DOOD_GOV_).governanceCall(msg.sender, _amount, _data);
 
-        uint256 userVdodoAmount = user.vdodoAmount.sub(_amount);
-        //TODO: 是否减掉总量
+        user.vdodoAmount = user.vdodoAmount.sub(_amount);
+        user.hasParticipateGov = true;
+        //TODO: 是否减掉总量?
         totalSupply = totalSupply.sub(_amount);
-        //TODO: 欠款为0？
-        _updateUserData(msg.sender,userVdodoAmount,0);
-        _changeUserParticipateState(msg.sender,true);
+
         emit ParticipatoryGov(msg.sender, _amount);
     }
 
 
-    //TODO  round up /down
-    function deposit(uint256 _amount,address _superiorAddress) public preventReentrant {
-        require(_amount > 0,"must deposit greater than 0");
-
-        IDODOApprove(_DODO_APPROVE_PROXY_).claimTokens(
-            fromToken,
+    function deposit(uint256 _dodoAmount,address _superiorAddress) public preventReentrant {
+        require(_dodoAmount > 0, "vDODOToken: must deposit greater than 0");
+        IDODOApproveProxy(_DODO_APPROVE_PROXY_).claimTokens(
+            _DODO_TOKEN_,
             msg.sender,
             address(this),
-            fromTokenAmount
+            _dodoAmount
         );
 
-
-        IERC20(_DODO_TOKEN_).transferFrom(msg.sender, address(this), _amount);
         _updateAlpha();
 
-        UserInfo memory user = userInfo[msg.sender];
-        // 自己的sp + x/alpha
-        uint256 newVdodoAmount = _amount.div(alpha);
-        uint256 fromVdodoAmount = user.vdodoAmount.add(newVdodoAmount);
-        _updateUserData(msg.sender,fromVdodoAmount,0);
+        UserInfo storage user = userInfo[msg.sender];
+        user.vdodoAmount = user.vdodoAmount.add(_dodoAmount.div(alpha));
+        
+        if(user.superior == address(0) && _superiorAddress != address(0) && _superiorAddress != msg.sender){
+            user.superior = _superiorAddress;
+        }
+        uint256 _dodoAmountDivAlpha = DecimalMath.divFloor(_dodoAmount, alpha);
+        
+        if(user.superior != address(0)){
+            UserInfo storage superiorUser = userInfo[user.superior];
+    
+            superiorUser.vdodoAmount = superiorUser.vdodoAmount.add(_dodoAmountDivAlpha.mul(_MAG_SP_AMOUNT_).div(100));
 
-        if(user.superior==address(0x0) && _superiorAddress != address(0x0)){
-            _updateSuperiorAddress(msg.sender,_superiorAddress);
+            superiorUser.overdraft = superiorUser.overdraft.add(_dodoAmount.mul(_MAG_SP_AMOUNT_).div(100));
+
+            totalSupply = totalSupply.add(_dodoAmountDivAlpha.mul(_MAG_SP_AMOUNT_ + 100).div(100));
+        }else {
+            totalSupply = totalSupply.add(_dodoAmountDivAlpha);
         }
 
-        UserInfo memory superiorUser = userInfo[user.superior];
-        // 上级sp +（ x/alpha）* 0.1 （round up）
-        uint256 superiorVdodoAmount = superiorUser.vdodoAmount.add(
-            _amount.div(alpha)
-            .mul(_MAG_SP_AMOUNT_).div(_BASE_AMOUNT_));
-
-        // 上级DODO欠款 + x*0.1 （round up）
-        uint256 overdraft = _amount.mul(_MAG_SP_AMOUNT_).div(_BASE_AMOUNT_);
-        uint256 superiorOverdraft = superiorUser.overdraft.add(overdraft);
-
-        _updateUserData(user.superior,superiorVdodoAmount,superiorOverdraft);
-
-        uint256 newtotalOverDraft = totalOverDraft.add(overdraft);
-        _updatetotalOverDraft(newtotalOverDraft);
-        // total sp + x/alpha*1.1
-        uint256 newtotalSupply = totalSupply.add(_amount.div(alpha).mul(_MAG_TOTALSP_AMOUNT_).div(_BASE_AMOUNT_));
-        _updatetotalSupply(newtotalSupply);
-        emit Deposit(msg.sender,_superiorAddress, _amount);
+        emit Deposit(msg.sender, _superiorAddress, _dodoAmount);
     }
     
-    //TODO  round up /down
-    function redeem(uint256 _amount) public preventReentrant{
-        UserInfo memory user = userInfo[msg.sender];
-        require(user.vdodoAmount>=_amount,"no enough vdodo token");
-        require(!user.hasParticipateGov,"hasParticipateGov");
+
+    function withdraw(uint256 _vDodoAmount) public preventReentrant {
+        UserInfo storage user = userInfo[msg.sender];
+        uint256 userAmount = user.vdodoAmount;
+        require(userAmount >= _vDodoAmount, "vDODOToken: no enough vdodo token");
+        require(!user.hasParticipateGov, "vDODOToken: hasParticipateGov");
+        
         _updateAlpha();
 
-        // 自己的sp - x
+        user.vdodoAmount = userAmount.sub(_vDodoAmount);
 
-        uint256 userVdodoAmount = user.vdodoAmount.sub(_amount);
-        _updateUserData(msg.sender,userVdodoAmount,0);
+        if(user.superior != address(0)) {
+            UserInfo storage superiorUser = userInfo[user.superior];
+            superiorUser.vdodoAmount = superiorUser.vdodoAmount.sub(_vDodoAmount.mul(_MAG_SP_AMOUNT_).div(100));
 
-        UserInfo memory superiorUser = userInfo[user.superior];
-        // 上级sp - （x)*0.1（round down）
-        uint256 superiorVdodoAmount = superiorUser.vdodoAmount.sub(
-            _amount.mul(_MAG_SP_AMOUNT_).div(_BASE_AMOUNT_));
+            uint256 _overdraft = _vDodoAmount.mul(alpha).mul(_MAG_SP_AMOUNT_).div(100);
+            superiorUser.overdraft = superiorUser.overdraft.sub(_overdraft);
 
-        // 上级DODO欠款 - x*alpha*0.1 （round down）
-        uint256 overdraft = _amount.mul(alpha).mul(_MAG_SP_AMOUNT_).div(_BASE_AMOUNT_);
-        uint256  superiorOverdraft= superiorUser.overdraft.sub(overdraft);
-        _updateUserData(user.superior,superiorVdodoAmount,superiorOverdraft);
+            totalSupply = totalSupply.sub(_vDodoAmount.mul(_MAG_SP_AMOUNT_ + 100).div(100));
+        } else {
+            totalSupply = totalSupply.sub(_vDodoAmount);
+        }
+        
+        uint256 feeRatio = _checkReward();
 
+        uint256 withdrawDodoAmount = alpha.mul(_vDodoAmount);
 
-        uint256 newtotalOverDraft = totalOverDraft.sub(overdraft);    
-        _updatetotalOverDraft(newtotalOverDraft);
+        uint256 withdrawFeeAmount = DecimalMath.mulCeil(withdrawDodoAmount,feeRatio).div(100);
+        uint256 dodoReceive = withdrawDodoAmount.sub(withdrawFeeAmount);
 
-        // total sp - （x+x*0.1）//TODO
-        uint256 newtotalSupply = totalSupply.sub(_amount.mul(_MAG_TOTALSP_AMOUNT_).div(_BASE_AMOUNT_));
-        _updatetotalSupply(newtotalSupply);
+        IERC20(_DODO_TOKEN_).transfer(msg.sender, dodoReceive);
 
-        lastRewardBlock = block.number;
-
-        uint256 feeRatio = checkReward();
-        // alpha* x * 80% transfer to user
-        uint256 dodoAmount = alpha.mul(_amount);
-
-        uint256 dodoFee = dodoAmount.mul(feeRatio).div(_BASE_AMOUNT_);
-        uint256 dodoReceive = dodoAmount.sub(dodoFee);
-
-        dodo.safeTransferFrom(address(this), msg.sender, dodoReceive);
-        uint256 newRedeem = user.totalRedeem.add(dodoReceive);
-        _updateUserRedeem(msg.sender,newRedeem);
-
-        // 3. 这部分税会继续拆成两部分，第一部分销毁，第二部分分给所有vDODO持有人
-        uint256 distributeAmount = dodoFee;
-        //是否需要销毁
-        if(dodoFeeDestroyRatio>0){
-            // uint256 dodoFee = dodoAmount.mul(feeRatio).div(_BASE_AMOUNT_);
-            uint256 destroyAmount = dodoFee.mul(dodoFeeDestroyRatio).div(_BASE_AMOUNT_);
-            transfer(address(0), destroyAmount);
-            distributeAmount = dodoFee.sub(destroyAmount);
+        if(dodoFeeDestroyRatio > 0){
+            uint256 destroyDodoAmount = DecimalMath.mulCeil(withdrawDodoAmount,dodoFeeDestroyRatio).div(100);
+            _transfer(address(this), address(0), destroyDodoAmount);
+            withdrawFeeAmount = withdrawFeeAmount.sub(destroyDodoAmount);
         }
 
-        //可以设置
-
-        // alpha = alpha*X + x * 20% /totalSp
-        uint256 feeAmount = _amount.mul(distributeAmount).div(_BASE_AMOUNT_);
-
-        alpha = alpha.mul(_amount).add(feeAmount.div(totalSupply));
-        emit Redeem(msg.sender, _amount);
+        alpha = alpha.add(withdrawFeeAmount.div(totalSupply));
+        emit Withdraw(msg.sender, _vDodoAmount);
     }
 
-    // balanceOf = sp-DODO欠款/alpha
-    function balanceOf(address _address) public view override returns (uint256 balance) {
+    // ============ Functions(ERC20) ============
+    function balanceOf(address _address) public view returns (uint256 balance) {
         UserInfo memory user = userInfo[_address];
         balance = user.vdodoAmount.sub(user.overdraft.div(alpha));
     }
 
-    function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
-        _transfer(msg.sender, recipient, amount);
+    function transfer(address to, uint256 amount) public returns (bool) {
+        _transfer(msg.sender, to, amount);
         return true;
     }
 
-    function approve(address spender, uint256 amount) public virtual override returns (bool) {
+    function approve(address spender, uint256 amount) public returns (bool) {
         _approve(msg.sender, spender, amount);
         return true;
     }
-    function transferFrom(address sender, address recipient, uint256 amount) public virtual override returns (bool) {
-        _transfer(sender, recipient, amount);
-        _approve(sender, msg.sender, _ALLOWED_[sender][msg.sender].sub(amount));
+
+    function transferFrom(address from, address to, uint256 amount) public returns (bool) {
+        require(amount <= _ALLOWED_[from][msg.sender], "ALLOWANCE_NOT_ENOUGH");
+        _transfer(from, to, amount);
+        _ALLOWED_[from][msg.sender] = _ALLOWED_[from][msg.sender].sub(amount);
+        emit Transfer(from, to, amount);
         return true;
     }
+
     function _approve(
         address owner,
         address spender,
@@ -303,113 +261,71 @@ contract vDODOToken is IERC20, InitializableOwnable ,ReentrancyGuard{
         emit Approval(owner, spender, amount);
     }
 
-    function allowance(address owner, address spender) public view override returns (uint256) {
+    function allowance(address owner, address spender) public view returns (uint256) {
         return _ALLOWED_[owner][spender];
     }
 
-    function _transfer(address from, address to, uint256 _amount) internal onlyOperater virtual {
+    function _transfer(address from, address to, uint256 _amount) internal onlyOperater {
         require(from != address(0), " transfer from the zero address");
         require(to != address(0), " transfer to the zero address");
-        // require(balanceOf(from)≥amount)
         require(balanceOf(from) >= _amount,"no enough to transfer");
-        UserInfo memory user = userInfo[from];
-        //  sp[from] -= amount
-        uint256 fromSpAmount = user.vdodoAmount.sub(_amount);
-        _updateUserData(from,fromSpAmount,0);
+        
+        UserInfo storage user = userInfo[from];
+        user.vdodoAmount= user.vdodoAmount.sub(_amount);
 
-        //  sp[上级[from]] -= amount*0.1 （round down)
-        UserInfo memory fromSuperior = userInfo[user.superior];
-        uint256 fromSuperiorSpAmount = fromSuperior.vdodoAmount.sub(_amount.mul(_MAG_SP_AMOUNT_).div(_BASE_AMOUNT_));
-        _updateUserData(user.superior,fromSuperiorSpAmount,0);
+        address fromSuperiorAddr = user.superior;
 
-        UserInfo memory toUser = userInfo[to];
-        // sp[to] += amount 
-        uint256 toSpAmount = toUser.vdodoAmount.add(_amount);
-        _updateUserData(to,toSpAmount,0);
+        if(fromSuperiorAddr != address(0)) {
+            UserInfo storage fromSuperior = userInfo[fromSuperiorAddr];
+            fromSuperior.vdodoAmount = fromSuperior.vdodoAmount.sub(_amount.mul(_MAG_SP_AMOUNT_).div(100));
+        }
 
-        // sp[上级[to]] += amount*0.1    
-        UserInfo memory toSuperior = userInfo[toUser.superior];
-        uint256 toSuperiorSpAmount =toSuperior.vdodoAmount.add(_amount.mul(_MAG_SP_AMOUNT_).div(_BASE_AMOUNT_)); 
-        _updateUserData(toUser.superior,toSuperiorSpAmount,0);
+        UserInfo storage toUser = userInfo[to];
+        toUser.vdodoAmount = toUser.vdodoAmount.add(_amount);
+
+        address toSuperiorAddr = toUser.superior;
+        if(toSuperiorAddr != address(0)) {
+            UserInfo storage toSuperior = userInfo[toSuperiorAddr];
+            toUser.vdodoAmount =toSuperior.vdodoAmount.add(_amount.mul(_MAG_SP_AMOUNT_).div(100)); 
+        } 
 
         emit Transfer(from, to, _amount);
     }
 
-    // 可提取DODO数额 = sp*alpha - DODO欠款
+    // ============ View Functions ============
     function canWithDraw(address _address) public view returns (uint256 withDrawAmount) {
         UserInfo memory user = userInfo[_address];
         withDrawAmount = user.vdodoAmount.mul(alpha).sub(user.overdraft);
     }
 
-    function checkUserInfo(address _userAddress) public view returns(address,uint256,uint256,uint256,bool) {
-        UserInfo memory user = userInfo[_userAddress];
-        return (user.superior, user.vdodoAmount, user.overdraft,user.totalRedeem,user.hasParticipateGov);
-
-    }
 
      // ============ internal  function ============
     function _updateAlpha() internal {
-        // accuDODO = dodoPerBlock*(block-lastRewardBlock)
         uint256 accuDODO = dodoPerBlock * (block.number.sub(lastRewardBlock));
         if(totalSupply > 0){
-            // alpha = alpha + accuDODO/totalSp （round down）
              alpha = alpha.add(accuDODO.div(totalSupply));
         }
+        lastRewardBlock = block.number;
     }
 
-
-
-    function _updateUserData(address _who,uint256 _vdodoAmount,uint256 _overdraft) internal {
-        UserInfo storage userWho = userInfo[_who];
-        if(_vdodoAmount>0){
-            userWho.vdodoAmount = _vdodoAmount;
-        }
-        if(_overdraft>0){
-            userWho.overdraft = _overdraft;
-        }
-    }
-    function _updateUserRedeem(address _who,uint256 _newRedeem) internal {
-        if(_newRedeem>0){
-            UserInfo storage userWho = userInfo[_who];
-            userWho.totalRedeem = _newRedeem;
-        }
-    }
-
-    function _updateSuperiorAddress(address _who,address _newAddres) internal {
-        UserInfo storage userWho = userInfo[_who];
-        userWho.superior = _newAddres;
-    }
-    function _changeUserParticipateState(address _who,bool _newState) internal {
-        UserInfo storage userWho = userInfo[_who];
-        userWho.hasParticipateGov = _newState;
-    }
-
-    function _updatetotalOverDraft(uint256 _overdraft) internal {
-        totalOverDraft = _overdraft;
-    }
-    
-    function _updatetotalSupply(uint256 _newVdodoAmount) internal {
-        totalSupply = _newVdodoAmount;
-    }
      // ============= Helper and calculation function ===============
-    function checkReward() internal  returns(uint256) {
+    function _checkReward() internal returns (uint256) {
         uint256 dodoTotalLockedAmout = IDODOLockedHelper(_DODO_LOCKED_HELPER_).getDodoLockedAmount();
         // (x - 1)^2 / 81 + (y - 15)^2 / 100 = 1 ==> y = sqrt(100* (x*x +2x ) / 81)) +15
         // y = 5 (x ≤ 1)
         // y = 15 (x ≥ 10)
-        uint256 x = dodoTotalLockedAmout.divCeil(totalSupply);
-        if(x<=_MIN_X_){
-            return _MIN_X_Y_;
-        }else if(x>=_MAX_X_){
-            return _MAX_X_Y_;
+        uint256 x = DecimalMath.divCeil(dodoTotalLockedAmout,totalSupply);
+        if( x <= _MIN_X_){
+            return _MIN_Y_;
+        }else if(x >= _MAX_X_){
+            return _MAX_Y_;
         }else{
-            uint256 rewardAmount = x.mul(x).add(x.mul(2)).mul(100).div(81).sqrt().add(15);
+            uint256 xSubOne = x.sub(10**18);
+            uint256 rewardAmount = uint256(81 * 10**18).sub(xSubOne.mul(xSubOne)).mul(100).div(81).sqrt().add(15);
             return rewardAmount;
         }
     }
 }
 
 
-//官方的收益会定期回购DODO Token并分红。因此要留一个donate接口，方便外部注入资金----> 为什么不可以使用 DODOToken.transfer?
-
-// TODO DecimalMath calculation 
+//TODO: donate function?
