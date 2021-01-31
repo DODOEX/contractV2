@@ -1,6 +1,14 @@
 # DODO V2: Help 1 Trillion People Issue Token
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+## Audit Report
+
+[Audited by Peckshield](https://github.com/DODOEX/contractV2/blob/main/audit/PeckShield-Audit-DODOV2-v1.0.pdf)
+
+>>>>>>> eb0b6ca13dc60f040673a1b62f1b5e6b84a3543e
 ## Bug Bounty 💰
 
 ### Rewards
@@ -29,6 +37,7 @@ Anyone who reports a unique, previously-unreported vulnerability that results in
 ## Contact Us
 
 Send E-mail to contact@dodoex.io
+<<<<<<< HEAD
 =======
 ## Audit Report
 
@@ -63,3 +72,6 @@ Anyone who reports a unique, previously-unreported vulnerability that results in
 
 Send E-mail to contact@dodoex.io
 >>>>>>> a525e0a839159ddb4d35f4a3ea398e9f74a0df6e
+=======
+
+>>>>>>> eb0b6ca13dc60f040673a1b62f1b5e6b84a3543e

@@ -28,6 +28,7 @@ export class ProxyContext {
   DPPFactory: Contract;
   CPFactory: Contract;
   DODOApprove: Contract;
+  DODOApproveProxy: Contract;
   DODOCalleeHelper: Contract;
   DODOSellHelper: Contract;
 
@@ -95,6 +96,11 @@ export class ProxyContext {
       contracts.SMART_APPROVE
     );
 
+    this.DODOApproveProxy = await contracts.newContract(
+      contracts.SMART_APPROVE_PROXY,
+      [this.DODOApprove.options.address]
+    )
+
     //DODO Incentive
     this.DODOIncentive = await contracts.newContract(
       contracts.DODO_INCENTIVE,
@@ -108,7 +114,7 @@ export class ProxyContext {
         dppAdminTemplate.options.address,
         this.Deployer,
         mtFeeRateModelTemplate.options.address,
-        this.DODOApprove.options.address
+        this.DODOApproveProxy.options.address
       ]
     )
 
@@ -134,7 +140,7 @@ export class ProxyContext {
         this.DPPFactory.options.address,
         this.CPFactory.options.address,
         this.WETH.options.address,
-        this.DODOApprove.options.address,
+        this.DODOApproveProxy.options.address,
         this.DODOSellHelper.options.address,
         "0x0000000000000000000000000000000000000000",
         this.DODOIncentive.options.address
@@ -142,9 +148,10 @@ export class ProxyContext {
     );
 
     await this.DODOProxyV2.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
-    await this.DODOApprove.methods.init(this.Deployer,this.DODOProxyV2.options.address).send(this.sendParam(this.Deployer));
+    await this.DODOApprove.methods.init(this.Deployer,this.DODOApproveProxy.options.address).send(this.sendParam(this.Deployer));
+    await this.DODOApproveProxy.methods.init(this.Deployer, [this.DODOProxyV2.options.address]).send(this.sendParam(this.Deployer));
+
     await this.DODOIncentive.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
-    
     await this.DODOIncentive.methods.changeDODOProxy(this.DODOProxyV2.options.address).send(this.sendParam(this.Deployer));
 
     this.DODOCalleeHelper = await contracts.newContract(

@@ -393,15 +393,6 @@ Deploy time: 2021/1/22 下午12:12:05
 Deploy type: V2 - Callee
 DODOCalleeHelperAddress:  0x8085e9a80edb737a08c158bd018683c7Ad3c082B
 ====================================================
-network type: bsclive
-Deploy time: 2021/1/22 下午1:51:45
-====================================================
-network type: bsclive
-Deploy time: 2021/1/22 下午1:54:22
-====================================================
-network type: bsclive
-Deploy time: 2021/1/22 下午1:57:54
-====================================================
 network type: kovan
 Deploy time: 2021/1/22 下午3:53:35
 Deploy type: V2
@@ -436,7 +427,7 @@ DefaultMtFeeRateAddress:  0x18DFdE99F578A0735410797e949E8D3e2AFCB9D2
 DefaultPermissionAddress:  0x729f7f44bf64Ce814716b6261e267DbE6cdf021c
 Init DefaultPermissionAddress Tx: 0x2fb909748e2afcc040becccae128256d264cd56f713329b49742255b9e478a2c
 DvmTemplateAddress:  0xC3BeD579CaB3EC29B22D9AB99F4E586af42496b9
-DppTemplateAddress:  0x550B2e7bD9605b8dcdd20d01bA73f1feB6ce289b
+DppTemplateAddress:  0x85351262f7474Ebe23FfAcD633cf20A491F1325D
 DppAdminTemplateAddress:  0x989DcAA95801C527C5B73AA65d3962dF9aCe1b0C
 CpTemplateAddress:  0x041ABa00c57Dd47abC37A2931dF569a2A2cc57Be
 DODOApprove Address:  0x72d220cE168C4f361dD4deE5D826a01AD8598f6C
@@ -462,7 +453,7 @@ DefaultMtFeeRateAddress:  0x5e84190a270333aCe5B9202a3F4ceBf11b81bB01
 DefaultPermissionAddress:  0x6B208E08dcF6BD51F50C5Da09d15B2D8E5C46Cf2
 Init DefaultPermissionAddress Tx: 0x235d8c2a5eea61edc73d4e7de1f13f7a4d0479935e4a72c7d400d1844a141071
 DvmTemplateAddress:  0x2BBD66fC4898242BDBD2583BBe1d76E8b8f71445
-DppTemplateAddress:  0x18DFdE99F578A0735410797e949E8D3e2AFCB9D2
+DppTemplateAddress:  0xB76de21f04F677f07D9881174a1D8E624276314C
 DppAdminTemplateAddress:  0x729f7f44bf64Ce814716b6261e267DbE6cdf021c
 CpTemplateAddress:  0x18b0bD918b55f995Fd404B872404378A62cb403b
 DODOApprove Address:  0xC3BeD579CaB3EC29B22D9AB99F4E586af42496b9
@@ -485,3 +476,69 @@ Deploy type: V2 - Adapter
 DODOV1Adapter Address:  0xb57Dd5c265dBb13CA014F2332069E90CD0e22e65
 DODOV2Adapter Address:  0xE55154D09265b18aC7CDAC6E646672A5460389a1
 UniAdapter Address:  0x043957f7554275b90c5178872faE851dcfC1089D
+====================================================
+network type: live
+Deploy time: 2021/1/24 下午5:23:15
+Deploy type: V2 - ERC20 Factory
+ERC20TemplateAddress:  0x85351262f7474Ebe23FfAcD633cf20A491F1325D
+MintableERC20TemplateAddress:  0x0596908263Ef2724fBfBcAfA1c983FCD7a629038
+ERC20FactoryAddress:  0x44D5dF24d5Ef52A791D6436Fa45A8D426f6de34e
+====================================================
+network type: live
+Deploy time: 2021/1/25 下午7:40:34
+Deploy type: V2 - Adapter
+DODOV1Adapter Address:  0x9B64c81ba54eA51e1f6B7fefb3cfF8AA6F1e2A09
+====================================================
+network type: bsclive
+Deploy time: 2021/1/25 下午7:51:54
+Deploy type: V2 - Adapter
+DODOV1Adapter Address:  0x0596908263Ef2724fBfBcAfA1c983FCD7a629038
+====================================================
+network type: kovan
+Deploy time: 2021/1/25 下午7:54:22
+Deploy type: V2 - Adapter
+DODOV1Adapter Address:  0xfbA45094b82AAdA3297712073Ee0920b4090cd7c
+====================================================
+network type: kovan
+Deploy time: 2021/1/26 上午11:02:21
+Deploy type: V2
+DppAdminTemplateAddress:  0x10AAaeE8B802FaEBEC5dE37dc581490d86Fb07A5
+DODOApprove Address:  0x8acF28D9d8124B20b645893b6102950B488dfd29
+DODOApproveProxy Address:  0x7Dac4ec78D4349FBD9E031a56E92B724B8AFA9B3
+DppFactoryAddress:  0x6DAb26dFE83E484DCC5126F812E3e6AA8e7eEf4D
+Init DppFactory Tx: 0x019975d4e881fc929ab8c7f4ecfcec4f54785df20f369848c34ad07462a3fe27
+DODOV2RouteHelper Address:  0xE2dbE9CF7bEb0484F464281D2DcbF6bF98D865Fd
+DODOV2Proxy02 Address:  0x3457A15B9ab57FC754789EE83E4BD2BD8f4F50C8
+Init DODOProxyV2 Tx: 0xd888ac726780d59c0902a3d2e0b1d057d740b6d0113a9b574b6e602aaae9c36c
+DODOApproveProxy Init tx:  0x269cca5af1c412592439ddce1ff4d4963c5f361251a0e24437f6478a05da9cd9
+DODOApprove Init tx:  0x8883928f79a11fdf1c96a07d2a6c3c8034e1bcf5cfea87342fb5084cc22eb406
+DODOIncentive ChangeProxy tx:  0x1b01057283954629021d23586ba04278c64ada46c899f62b1f53364546d0fa88
+DODOIncentive OpenSwitch tx:  0x336c69f91d6f0b547e432498d3848f8308fe3164925444aca98951876e68a89c
+====================================================
+network type: bsclive
+Deploy time: 2021/1/26 下午4:25:33
+Deploy type: V2
+DppAdminTemplateAddress:  0x44D5dF24d5Ef52A791D6436Fa45A8D426f6de34e
+DODOApproveProxy Address:  0xB76de21f04F677f07D9881174a1D8E624276314C
+DppFactoryAddress:  0x9B64c81ba54eA51e1f6B7fefb3cfF8AA6F1e2A09
+Init DppFactory Tx: 0xf2037cb6bbf6b6fccf524e21af55e76f54edf8ae08e5c99e9310afa9192d75e1
+DODOV2RouteHelper Address:  0x335aC99bb3E51BDbF22025f092Ebc1Cf2c5cC619
+DODOV2Proxy02 Address:  0x6B4Fa0bc61Eddc928e0Df9c7f01e407BfcD3e5EF
+Init DODOProxyV2 Tx: 0xb30622bdf50144d11d25b0c7c267270f6c6ef6a6eb89efee97f2d31f6e7986e6
+====================================================
+network type: live
+Deploy time: 2021/1/26 下午5:07:20
+Deploy type: V2
+DppAdminTemplateAddress:  0x5515363c0412AdD5c72d3E302fE1bD7dCBCF93Fe
+DODOApproveProxy Address:  0x335aC99bb3E51BDbF22025f092Ebc1Cf2c5cC619
+DppFactoryAddress:  0x6B4Fa0bc61Eddc928e0Df9c7f01e407BfcD3e5EF
+Init DppFactory Tx: 0x3f0ada4251c74ba5f793c1d653a9be7818674daac19291619ce7b5defd232240
+DODOV2RouteHelper Address:  0xbe9a66e49503e84ae59a4d0545365AABedf33b40
+DODOV2Proxy02 Address:  0xa356867fDCEa8e71AEaF87805808803806231FdC
+Init DODOProxyV2 Tx: 0xf8e511f50c2f27836ace72e65d8a10e6253f5d5094a9e1f2e5fa5181d3c05f08
+====================================================
+network type: bsclive
+Deploy time: 2021/1/26 下午5:29:51
+====================================================
+network type: live
+Deploy time: 2021/1/26 下午5:42:23

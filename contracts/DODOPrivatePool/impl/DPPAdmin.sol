@@ -9,7 +9,7 @@ pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
 import {IDPP} from "../intf/IDPP.sol";
-import {IDODOApprove} from "../../intf/IDODOApprove.sol";
+import {IDODOApproveProxy} from "../../SmartRoute/DODOApproveProxy.sol";
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 
 /**
@@ -21,7 +21,7 @@ import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 contract DPPAdmin is InitializableOwnable {
     address public _DPP_;
     address public _OPERATOR_;
-    address public _DODO_APPROVE_;
+    address public _DODO_APPROVE_PROXY_;
     uint256 public _FREEZE_TIMESTAMP_;
 
 
@@ -34,12 +34,12 @@ contract DPPAdmin is InitializableOwnable {
         address owner,
         address dpp,
         address operator,
-        address dodoApprove
+        address dodoApproveProxy
     ) external {
         initOwner(owner);
         _DPP_ = dpp;
         _OPERATOR_ = operator;
-        _DODO_APPROVE_ = dodoApprove;
+        _DODO_APPROVE_PROXY_ = dodoApproveProxy;
     }
 
     function sync() external notFreezed onlyOwner {
@@ -74,7 +74,7 @@ contract DPPAdmin is InitializableOwnable {
     ) external notFreezed returns (bool) {
         require(
             msg.sender == _OWNER_ ||
-                (msg.sender == IDODOApprove(_DODO_APPROVE_).getDODOProxy() &&
+                (IDODOApproveProxy(_DODO_APPROVE_PROXY_).isAllowedProxy(msg.sender) &&
                     operator == _OPERATOR_),
             "RESET FORBIDDEN！"
         );
