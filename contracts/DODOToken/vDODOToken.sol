@@ -179,23 +179,14 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
             _redeemFromSuperior(user, superiorRedeemVDODO);
         }
 
-        uint256 feeRatio =
-            IDODOCirculationHelper(_DODO_CIRCULATION_HELPER_).getVDODOWithdrawFeeRatio();
-        uint256 withdrawDodoAmount = DecimalMath.mulFloor(_vDodoAmount, alpha);
+        (uint256 dodoReceive, uint256 destroyDodoAmount, uint256 withdrawFeeDodoAmount) = getWithdrawAmount(_vDodoAmount);
+        
+        IERC20(_DODO_TOKEN_).transfer(msg.sender, dodoReceive);        
+        _transfer(address(this), address(0), destroyDodoAmount);
 
-        uint256 withdrawFeeAmount = DecimalMath.mulCeil(withdrawDodoAmount, feeRatio);
-        uint256 dodoReceive = withdrawDodoAmount.sub(withdrawFeeAmount);
+        tmpAlpha = tmpAlpha.add(DecimalMath.divFloor(withdrawFeeDodoAmount, totalSupply));
+        _updateAlpha(tmpAlpha);
 
-        IERC20(_DODO_TOKEN_).transfer(msg.sender, dodoReceive);
-
-        if (dodoFeeDestroyRatio > 0) {
-            uint256 destroyDodoAmount =
-                DecimalMath.mulCeil(withdrawDodoAmount, dodoFeeDestroyRatio);
-            _transfer(address(this), address(0), destroyDodoAmount);
-            withdrawFeeAmount = withdrawFeeAmount.sub(destroyDodoAmount);
-        }
-
-        alpha = alpha.add(DecimalMath.divFloor(withdrawFeeAmount, totalSupply));
         emit Withdraw(msg.sender, _vDodoAmount);
     }
 
@@ -315,7 +306,6 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
         address fromSuperiorAddr = fromUser.superior;
         if (fromSuperiorAddr != address(0)) {
             _redeemFromSuperior(fromUser, superiorRedeemVDODO);
-        }
 
         address toSuperiorAddr = toUser.superior;
         if (toSuperiorAddr != address(0)) {
@@ -323,6 +313,31 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
         }
 
         emit Transfer(from, to, _amount);
+
+    }
+
+    function getWithdrawAmount(uint256 vDodoAmount) public view returns(uint256 dodoReceive, uint256 destroyDodoAmount, uint256 withdrawFeeDodoAmount) {
+        
+        uint256 feeRatio =
+            IDODOCirculationHelper(_DODO_CIRCULATION_HELPER_).getVDODOWithdrawFeeRatio();
+
+        uint256 tmpAlpha = getAlpha();
+        uint256 withdrawDodoAmount = DecimalMath.mulFloor(_vDodoAmount, tmpAlpha);
+
+        withdrawFeeDodoAmount = DecimalMath.mulCeil(withdrawDodoAmount, feeRatio);
+        dodoReceive = withdrawDodoAmount.sub(withdrawFeeDodoAmount);
+    
+        if(dodoFeeDestroyRatio > 0){
+            destroyDodoAmount = DecimalMath.mulCeil(withdrawDodoAmount,dodoFeeDestroyRatio).div(100);
+            withdrawFeeDodoAmount = withdrawFeeDodoAmount.sub(destroyDodoAmount);
+        }else {
+            destroyDodoAmount = 0;
+     }
+
+     // ============ internal  function ============
+    function _updateAlpha(uint256 newAlpha) internal {
+        alpha = newAlpha;
+        lastRewardBlock = block.number;
     }
 
     function donate(uint256 amount) public {
