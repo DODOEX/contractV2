@@ -147,7 +147,7 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
         _mint(user, newVdodoAmount);
 
         uint256 superiorVDODO;
-        if (user.superior == address(0) && _superiorAddress != address(0)) {
+        if (user.superior == address(0) && _superiorAddress != address(0) && _superiorAddress != msg.sender ) {
             require(_superiorAddress != msg.sender, "COULD NOT SET SELF AS SUPERIOR");
             superiorVDODO = DecimalMath.divFloor(user.VDODOAmount, _SUPERIOR_RATIO_);
             user.superior = _superiorAddress;
