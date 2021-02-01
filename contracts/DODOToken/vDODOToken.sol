@@ -90,18 +90,19 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
     // ============ Constructor ============
 
     constructor(
-        address _dodoGov,
+        // address _dodoGov,
         address _dodoToken,
         address _dodoCirculationHelper,
         address _dodoApproveProxy,
         string memory _name,
         string memory _symbol
     ) public {
+        initOwner(msg.sender);
         name = _name;
         symbol = _symbol;
         decimals = 18;
         _DODO_APPROVE_PROXY_ = _dodoApproveProxy;
-        _DOOD_GOV_ = _dodoGov;
+        // _DOOD_GOV_ = _dodoGov;
         _DODO_CIRCULATION_HELPER_ = _dodoCirculationHelper;
         _DODO_TOKEN_ = _dodoToken;
         lastRewardBlock = block.number;
@@ -127,6 +128,9 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
 
     function updateDODOCirculationHelper(address _helper) public onlyOwner {
         _DODO_CIRCULATION_HELPER_ = _helper;
+    }
+     function updateGovernance(address _governance) public onlyOwner {
+        _DOOD_GOV_ = _governance;
     }
 
     // ============ Functions ============

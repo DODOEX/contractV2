@@ -40,6 +40,7 @@ contract DODOCirculationHelper is Ownable {
 
     function getCirculation() public view returns (uint256 circulation) {
         circulation = 10**9;
+        //TODO  circulation 需要乘以decimals吗?
         for (uint256 i = 0; i < _LOCKED_CONTRACT_ADDRESS_.length; i++) {
             circulation -= IERC20(_DODO_TOKEN_).balanceOf(_LOCKED_CONTRACT_ADDRESS_[i]);
         }
@@ -54,7 +55,7 @@ contract DODOCirculationHelper is Ownable {
         uint256 x =
             DecimalMath.divCeil(
                 dodoCirculationAmout,
-                IERC20(_DODO_TOKEN_).balanceOf(address(this))
+                IERC20(_DODO_TOKEN_).balanceOf(address(this))// TODO 这里应该是vdodo的值吧？
             );
 
         if (x <= 10**18) {
