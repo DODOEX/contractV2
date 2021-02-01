@@ -159,7 +159,9 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
             superiorVDODO = DecimalMath.mulFloor(newVdodoAmount, _SUPERIOR_RATIO_);
         }
 
-        _mintToSuperior(user, superiorVDODO);
+        if (user.superior != address(0)) {
+            _mintToSuperior(user, superiorVDODO);
+        }
         
         _updateAlpha(newAlpha);
 
@@ -209,7 +211,7 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
         balance = user.VDODOAmount.sub(DecimalMath.divFloor(user.credit, getLatestAlpha()));
     }
 
-    function availableBalanceOf(address account) public returns (uint256 balance) {
+    function availableBalanceOf(address account) public view returns (uint256 balance) {
         uint256 lockedBalance = IGovernance(_DOOD_GOV_).getLockedvDODO(account);
         balance = balanceOf(account).sub(lockedBalance);
     }

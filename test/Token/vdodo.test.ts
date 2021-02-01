@@ -26,6 +26,9 @@ async function init(ctx: VDODOContext): Promise<void> {
   await ctx.mintTestToken(account0, decimalStr("1000"));
   await ctx.mintTestToken(account1, decimalStr("1000"));
 
+  await ctx.approveProxy(account0);
+  await ctx.approveProxy(account1);
+  await ctx.approveProxy(account2);
 }
 
 describe("VDODO", () => {
@@ -48,7 +51,6 @@ describe("VDODO", () => {
   describe("vdodo", () => {
 
     it("vdodo init", async () => {
-
       assert.equal(
         await ctx.DODO.methods.balanceOf(account0).call(),
         decimalStr("1000")
@@ -69,7 +71,35 @@ describe("VDODO", () => {
         await ctx.VDODO.methods.totalSupply().call(),
         decimalStr("0")
       );
-      
+    });
+    it("vdodo first mint with no superior", async () => {
+
+      await ctx.VDODO.methods.mint(decimalStr("10"),"0x0000000000000000000000000000000000000000").send(ctx.sendParam(account0))
+      assert.equal(
+        await ctx.DODO.methods.balanceOf(account0).call(),
+        decimalStr("990")
+      );
+      assert.equal(
+        await await ctx.VDODO.methods.alpha().call(),
+        await ctx.alpha
+      );
+      assert.equal(
+        await ctx.DODO.methods.balanceOf(ctx.VDODO.options.address).call(),
+        decimalStr("10")
+      );
+      assert.equal(
+        await ctx.VDODO.methods.balanceOf(account0).call(),
+        decimalStr("0.1")
+      );
+
+      assert.equal(
+        await ctx.VDODO.methods.totalSupply().call(),
+        decimalStr("0.1")
+      );
+      assert.notEqual(
+        await ctx.VDODO.methods.lastRewardBlock().call(),
+        ctx.lastRewardBlock
+      );
     });
   })
 });

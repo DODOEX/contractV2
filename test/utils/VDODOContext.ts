@@ -47,6 +47,11 @@ export class VDODOContext {
     this.EVM = new EVM();
     this.Web3 = getDefaultWeb3();
 
+    const allAccounts = await this.Web3.eth.getAccounts();
+    this.Deployer = allAccounts[0];
+    this.Maintainer = allAccounts[1];
+    this.SpareAccounts = allAccounts.slice(2, 10);
+
     this.DODO = await contracts.newContract(
       contracts.MINTABLE_ERC20_CONTRACT_NAME,
       ["DODO Token", "DODO", 18]
@@ -67,9 +72,14 @@ export class VDODOContext {
       [this.DODOApprove.options.address]
     )
 
+  
+    this.Governance = await contracts.newContract(
+      contracts.DODO_GOVERNANCE
+    )
     this.VDODO = await contracts.newContract(
       contracts.VDODO_NAME,
       [
+        this.Governance.options.address,
         this.DODO.options.address,
         this.DODOCirculationHelper.options.address,
         this.DODOApproveProxy.options.address,
@@ -77,26 +87,31 @@ export class VDODOContext {
       ]
     )
 
-    this.Governance = await contracts.newContract(
-      contracts.DODO_GOVERNANCE,
-      [this.VDODO.options.address]
-    )
+    await this.Governance.methods.initOwner(
+      this.Deployer
+    ).send(this.sendParam(this.Deployer))
 
-    const allAccounts = await this.Web3.eth.getAccounts();
-    this.Deployer = allAccounts[0];
-    this.Maintainer = allAccounts[1];
-    this.SpareAccounts = allAccounts.slice(2, 10);
+    await this.Governance.methods.setVDODOAddress(
+      this.VDODO.options.address
+    ).send(this.sendParam(this.Deployer))
 
-    await this.VDODO.methods.updateGovernance(
-      this.Governance.options.address
+    await this.DODOApprove.methods.init(this.Deployer,this.DODOApproveProxy.options.address).send(this.sendParam(this.Deployer));
+    await this.DODOApproveProxy.methods.init(this.Deployer, [this.VDODO.options.address]).send(this.sendParam(this.Deployer));
+
+
+    
+
+    await this.VDODO.methods.initOwner(
+      this.Deployer
     ).send(this.sendParam(this.Deployer))
 
     this.alpha = await this.VDODO.methods.alpha().call();
     this.lastRewardBlock = await this.VDODO.methods.lastRewardBlock().call();
     
+    console.log(log.blueText("[Init VDODO context]"));
+    
     console.log("alpha = "+ this.alpha);
     console.log("lastRewardBlock = " + this.lastRewardBlock);
-    console.log(log.blueText("[Init VDODO context]"));
   }
 
   sendParam(sender, value = "0") {
@@ -110,6 +125,14 @@ export class VDODOContext {
 
   async mintTestToken(to: string, amount: string) {
     await this.DODO.methods.mint(to, amount).send(this.sendParam(this.Deployer));
+  }
+  async approveProxy(account: string) {
+    await this.DODO.methods
+      .approve(this.DODOApprove.options.address, MAX_UINT256)
+      .send(this.sendParam(account));
+    await this.VDODO.methods
+      .approve(this.DODOApprove.options.address, MAX_UINT256)
+      .send(this.sendParam(account));
   }
 }
 

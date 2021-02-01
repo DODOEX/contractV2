@@ -13,9 +13,11 @@ contract Governance is InitializableOwnable {
 
     // ============ Storage ============
 
-    address immutable _DODO_TOKEN_;
+    address _DODO_TOKEN_;
 
-    constructor(address dodoToken) public {
+    constructor() public {
+    }
+    function setVDODOAddress(address dodoToken) public onlyOwner{
         _DODO_TOKEN_ = dodoToken;
     }
     function getLockedvDODO(address account) external pure returns (uint256 lockedvDODO) {
