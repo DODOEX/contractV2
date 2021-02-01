@@ -97,7 +97,6 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
         string memory name,
         string memory symbol
     ) public {
-        initOwner(msg.sender);
         name = name;
         symbol = symbol;
         decimals = 18;
@@ -129,7 +128,8 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
     function updateDODOCirculationHelper(address helper) public onlyOwner {
         _DODO_CIRCULATION_HELPER_ = helper;
     }
-     function updateGovernance(address _governance) public onlyOwner {
+
+    function updateGovernance(address _governance) public onlyOwner {
         _DOOD_GOV_ = _governance;
     }
 
