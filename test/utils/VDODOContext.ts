@@ -109,9 +109,9 @@ export class VDODOContext {
     this.lastRewardBlock = await this.VDODO.methods.lastRewardBlock().call();
     
     console.log(log.blueText("[Init VDODO context]"));
-    
-    console.log("alpha = "+ this.alpha);
-    console.log("lastRewardBlock = " + this.lastRewardBlock);
+
+    console.log("init           alpha = " + this.alpha);
+    console.log("init lastRewardBlock = " + this.lastRewardBlock);
   }
 
   sendParam(sender, value = "0") {

@@ -72,34 +72,69 @@ describe("VDODO", () => {
         decimalStr("0")
       );
     });
-    it("vdodo first mint with no superior", async () => {
+    // it("vdodo first mint with no superior", async () => {
 
-      await ctx.VDODO.methods.mint(decimalStr("10"),"0x0000000000000000000000000000000000000000").send(ctx.sendParam(account0))
-      assert.equal(
-        await ctx.DODO.methods.balanceOf(account0).call(),
-        decimalStr("990")
-      );
-      assert.equal(
-        await await ctx.VDODO.methods.alpha().call(),
-        await ctx.alpha
-      );
-      assert.equal(
-        await ctx.DODO.methods.balanceOf(ctx.VDODO.options.address).call(),
-        decimalStr("10")
-      );
-      assert.equal(
-        await ctx.VDODO.methods.balanceOf(account0).call(),
-        decimalStr("0.1")
-      );
+    //   await ctx.VDODO.methods.mint(decimalStr("10"),"0x0000000000000000000000000000000000000000").send(ctx.sendParam(account0))
+    //   assert.equal(
+    //     await ctx.DODO.methods.balanceOf(account0).call(),
+    //     decimalStr("990")
+    //   );
+    //   assert.equal(
+    //     await await ctx.VDODO.methods.alpha().call(),
+    //     await ctx.alpha
+    //   );
+    //   assert.equal(
+    //     await ctx.DODO.methods.balanceOf(ctx.VDODO.options.address).call(),
+    //     decimalStr("10")
+    //   );
+    //   assert.equal(
+    //     await ctx.VDODO.methods.balanceOf(account0).call(),
+    //     decimalStr("0.1")
+    //   );
 
-      assert.equal(
-        await ctx.VDODO.methods.totalSupply().call(),
-        decimalStr("0.1")
-      );
-      assert.notEqual(
-        await ctx.VDODO.methods.lastRewardBlock().call(),
-        ctx.lastRewardBlock
-      );
-    });
+    //   assert.equal(
+    //     await ctx.VDODO.methods.totalSupply().call(),
+    //     decimalStr("0.1")
+    //   );
+    //   assert.notEqual(
+    //     await ctx.VDODO.methods.lastRewardBlock().call(),
+    //     ctx.lastRewardBlock
+    //   );
+    // });
+    // it("vdodo owner can transfer", async () => {
+
+    //   await ctx.VDODO.methods.mint(decimalStr("10"),"0x0000000000000000000000000000000000000000").send(ctx.sendParam(account0))
+    //   assert.equal(
+    //     await ctx.DODO.methods.balanceOf(account0).call(),
+    //     decimalStr("990")
+    //   );
+    //   assert.equal(
+    //     await ctx.DODO.methods.balanceOf(ctx.VDODO.options.address).call(),
+    //     decimalStr("10")
+    //   );
+    //   assert.equal(
+    //     await ctx.VDODO.methods.balanceOf(account0).call(),
+    //     decimalStr("0.1")
+    //   );
+    //   assert.equal(
+    //     await ctx.VDODO.methods.balanceOf(account1).call(),
+    //     decimalStr("0")
+    //   );
+
+
+    //   await truffleAssert.reverts(
+    //      ctx.VDODO.methods.transfer(account1,decimalStr("0.1")).send(ctx.sendParam(account0)),
+    //     "vDODOToken: not allowed transfer"
+    //   )
+    //   assert.equal(
+    //     await ctx.VDODO.methods.balanceOf(account0).call(),
+    //     decimalStr("0.1")
+    //   );
+    //   assert.equal(
+    //     await ctx.VDODO.methods.balanceOf(account1).call(),
+    //     decimalStr("0")
+    //   );
+
+    // });
   })
 });
