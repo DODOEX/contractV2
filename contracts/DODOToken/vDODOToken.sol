@@ -333,7 +333,7 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
         address from,
         address to,
         uint256 _amount
-    ) internal balanceEnough(msg.sender, _amount) {
+    ) internal balanceEnough(msg.sender, _amount) canTransfer {
         require(from != address(0), "transfer from the zero address");
         require(to != address(0), "transfer to the zero address");
 
