@@ -10,7 +10,7 @@ pragma experimental ABIEncoderV2;
 import {IERC20} from "../intf/IERC20.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
-import {Ownable} from "../lib/Ownable.sol";
+import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 
 interface IDODOCirculationHelper {
     // vDODO 锁仓不算流通
@@ -19,28 +19,29 @@ interface IDODOCirculationHelper {
     function getVDODOWithdrawFeeRatio() external returns (uint256);
 }
 
-contract DODOCirculationHelper is Ownable {
+contract DODOCirculationHelper is InitializableOwnable {
     using SafeMath for uint256;
 
     // ============ Storage ============
 
+    address immutable _VDODO_TOKEN_;
     address immutable _DODO_TOKEN_;
     address[] _LOCKED_CONTRACT_ADDRESS_;
 
     uint256 public _MIN_PENALTY_RATIO_ = 5 * 10**16; // 5%
     uint256 public _MAX_PENALTY_RATIO_ = 15 * 10**16; // 15%
 
-    constructor(address dodoToken) public {
+    constructor(address vDodoToken,address dodoToken) public {
+        _VDODO_TOKEN_ = vDodoToken;
         _DODO_TOKEN_ = dodoToken;
-    } // todo
+    }
 
     function addLockedContractAddress(address lockedContract) external onlyOwner {} // todo
 
     function removeLockedContractAddress(address lockedContract) external onlyOwner {} // todo
 
     function getCirculation() public view returns (uint256 circulation) {
-        circulation = 10**9;
-        //TODO  circulation 需要乘以decimals吗?
+        circulation = 10**10 * 10**18;
         for (uint256 i = 0; i < _LOCKED_CONTRACT_ADDRESS_.length; i++) {
             circulation -= IERC20(_DODO_TOKEN_).balanceOf(_LOCKED_CONTRACT_ADDRESS_[i]);
         }
@@ -55,7 +56,7 @@ contract DODOCirculationHelper is Ownable {
         uint256 x =
             DecimalMath.divCeil(
                 dodoCirculationAmout,
-                IERC20(_DODO_TOKEN_).balanceOf(address(this))// TODO 这里应该是vdodo的值吧？
+                IERC20(_VDODO_TOKEN_).totalSupply()
             );
 
         if (x <= 10**18) {

@@ -254,7 +254,7 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
     }
 
     function getLatestAlpha() public view returns(uint256) {
-        uint256 accuDODO = dodoPerBlock * (block.number.sub(lastRewardBlock));
+        uint256 accuDODO = dodoPerBlock * (block.number - lastRewardBlock);
         if (totalSupply > 0) {
             return uint256(alpha).add(DecimalMath.divFloor(accuDODO, totalSupply));
         } else {
@@ -299,8 +299,8 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
             user.superiorVDODO = uint128(uint256(user.superiorVDODO).add(vdodoAmount));
             UserInfo storage superiorUser = userInfo[user.superior];
             _mint(superiorUser, vdodoAmount);
-            uint256 dodoAmount = DecimalMath.mulFloor(vdodoAmount, alpha);
-            superiorUser.credit = superiorUser.credit.add(DecimalMath.mulFloor(dodoAmount, _SUPERIOR_RATIO_));
+            uint256 dodoAmount = DecimalMath.mulCeil(vdodoAmount, alpha);
+            superiorUser.credit = superiorUser.credit.add(dodoAmount);
         }
     }
 

@@ -36,8 +36,8 @@ export class VDODOContext {
   DODOCirculationHelper: Contract;
   Governance: Contract;
 
-  lastRewardBlock:number;
-  alpha:number;
+  lastRewardBlock: number;
+  alpha: number;
 
 
 
@@ -57,12 +57,6 @@ export class VDODOContext {
       ["DODO Token", "DODO", 18]
     );
 
-    this.DODOCirculationHelper = await contracts.newContract(
-      contracts.DODO_CULATION_HELPER,
-      [
-        this.DODO.options.address
-      ]
-    );
     this.DODOApprove = await contracts.newContract(
       contracts.SMART_APPROVE
     );
@@ -84,22 +78,29 @@ export class VDODOContext {
       [
         this.Governance.options.address,
         this.DODO.options.address,
-        this.DODOCirculationHelper.options.address,
+        "0x0000000000000000000000000000000000000000",
         this.DODOApproveProxy.options.address,
         "VDODO Token", "VDODO"
       ]
     )
 
-    
+    this.DODOCirculationHelper = await contracts.newContract(
+      contracts.DODO_CULATION_HELPER,
+      [
+        this.VDODO.options.address,
+        this.DODO.options.address
+      ]
+    );
+
     await this.Governance.methods.initOwner(
       this.Deployer
-      ).send(this.sendParam(this.Deployer))
-      
+    ).send(this.sendParam(this.Deployer))
+
     await this.Governance.methods.setVDODOAddress(
       this.VDODO.options.address
     ).send(this.sendParam(this.Deployer))
-    
-    await this.DODOApprove.methods.init(this.Deployer,this.DODOApproveProxy.options.address).send(this.sendParam(this.Deployer));
+
+    await this.DODOApprove.methods.init(this.Deployer, this.DODOApproveProxy.options.address).send(this.sendParam(this.Deployer));
     await this.DODOApproveProxy.methods.init(this.Deployer, [this.VDODO.options.address]).send(this.sendParam(this.Deployer));
 
 
@@ -108,11 +109,12 @@ export class VDODOContext {
     ).send(this.sendParam(this.Deployer))
 
     await this.VDODO.methods.changePerReward(decimalStr("1")).send(this.sendParam(this.Deployer));
+    await this.VDODO.methods.updateDODOCirculationHelper(this.DODOCirculationHelper.options.address).send(this.sendParam(this.Deployer));
     await this.mintTestToken(this.VDODO.options.address, decimalStr("100000"));
 
     this.alpha = await this.VDODO.methods.alpha().call();
     this.lastRewardBlock = await this.VDODO.methods.lastRewardBlock().call();
-        
+
     console.log(log.blueText("[Init VDODO context]"));
 
     console.log("init           alpha = " + this.alpha);
