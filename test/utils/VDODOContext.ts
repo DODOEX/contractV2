@@ -72,10 +72,13 @@ export class VDODOContext {
       [this.DODOApprove.options.address]
     )
 
-  
     this.Governance = await contracts.newContract(
-      contracts.DODO_GOVERNANCE
+      contracts.DODO_GOVERNANCE,
+      [
+        this.DODO.options.address
+      ]
     )
+
     this.VDODO = await contracts.newContract(
       contracts.VDODO_NAME,
       [
@@ -91,23 +94,20 @@ export class VDODOContext {
       this.Deployer
     ).send(this.sendParam(this.Deployer))
 
-    await this.Governance.methods.setVDODOAddress(
-      this.VDODO.options.address
-    ).send(this.sendParam(this.Deployer))
-
     await this.DODOApprove.methods.init(this.Deployer,this.DODOApproveProxy.options.address).send(this.sendParam(this.Deployer));
     await this.DODOApproveProxy.methods.init(this.Deployer, [this.VDODO.options.address]).send(this.sendParam(this.Deployer));
 
-
-    
 
     await this.VDODO.methods.initOwner(
       this.Deployer
     ).send(this.sendParam(this.Deployer))
 
+    await this.VDODO.methods.changePerReward(decimalStr("1")).send(this.sendParam(this.Deployer));
+    await this.mintTestToken(this.VDODO.options.address, decimalStr("100000"));
+
     this.alpha = await this.VDODO.methods.alpha().call();
     this.lastRewardBlock = await this.VDODO.methods.lastRewardBlock().call();
-    
+        
     console.log(log.blueText("[Init VDODO context]"));
 
     console.log("init           alpha = " + this.alpha);
@@ -126,11 +126,9 @@ export class VDODOContext {
   async mintTestToken(to: string, amount: string) {
     await this.DODO.methods.mint(to, amount).send(this.sendParam(this.Deployer));
   }
+
   async approveProxy(account: string) {
     await this.DODO.methods
-      .approve(this.DODOApprove.options.address, MAX_UINT256)
-      .send(this.sendParam(account));
-    await this.VDODO.methods
       .approve(this.DODOApprove.options.address, MAX_UINT256)
       .send(this.sendParam(account));
   }

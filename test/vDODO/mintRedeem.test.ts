@@ -12,24 +12,22 @@ import { logGas } from '../utils/Log';
 import { VDODOContext, getVDODOContext } from '../utils/VDODOContext';
 import { assert } from 'chai';
 import BigNumber from 'bignumber.js';
-const truffleAssert = require('truffle-assertions');
 
 let account0: string;
 let account1: string;
-let account2: string;
 
 async function init(ctx: VDODOContext): Promise<void> {
   account0 = ctx.SpareAccounts[0];
   account1 = ctx.SpareAccounts[1];
-  account2 = ctx.SpareAccounts[2];
 
   await ctx.mintTestToken(account0, decimalStr("1000"));
   await ctx.mintTestToken(account1, decimalStr("1000"));
 
   await ctx.approveProxy(account0);
   await ctx.approveProxy(account1);
-  await ctx.approveProxy(account2);
 }
+
+//TODO: 抽象出来mint func
 
 describe("VDODO", () => {
   let snapshotId: string;
@@ -72,6 +70,52 @@ describe("VDODO", () => {
         decimalStr("0")
       );
     });
+
+
+    it("vdodo-mint-first", async () => {
+      //第一次mint 后
+      //alpha lastRewardBlock 状态
+      //user superior info 状态
+      //vDODO 总量变化，以及vDODO合约dodo余额，user dodo余额
+
+    });
+
+    it("vdodo-mint-second", async () => {
+      //第二次mint 后（传入之前的superior地址）
+      //alpha lastRewardBlock 状态
+      //user superior info 状态
+      //vDODO 总量变化，以及vDODO合约dodo余额，user dodo余额
+    });
+
+
+    it("vdodo-mint-second-otherSuperior", async () => {
+      //第二次mint 后（传入非之前superior地址）
+      //alpha lastRewardBlock 状态
+      //user superior info 状态
+      //vDODO 总量变化，以及vDODO合约dodo余额，user dodo余额
+    });
+
+
+    it("redeem-amount-read", async () => {
+      //正确读取 withdrawAmount 字段
+    });
+
+    it("redeem-partial-haveMint", async () => {
+
+    });
+
+    it("redeem-partial-NotMint", async () => {
+      //多个下级引用
+    });
+
+    it("redeem-all-haveMint", async () => {
+
+    });
+
+    it("redeem-all-NoMint", async () => {
+      //多个下级引用
+    });
+
     // it("vdodo first mint with no superior", async () => {
 
     //   await ctx.VDODO.methods.mint(decimalStr("10"),"0x0000000000000000000000000000000000000000").send(ctx.sendParam(account0))
