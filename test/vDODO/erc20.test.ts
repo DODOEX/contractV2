@@ -64,5 +64,42 @@ describe("vDODO-erc20", () => {
         it("transfer - close", async () => {
             //预期revert
         });
+
+
+        // it("vdodo owner can transfer", async () => {
+
+        //   await ctx.VDODO.methods.mint(decimalStr("10"),"0x0000000000000000000000000000000000000000").send(ctx.sendParam(account0))
+        //   assert.equal(
+        //     await ctx.DODO.methods.balanceOf(account0).call(),
+        //     decimalStr("990")
+        //   );
+        //   assert.equal(
+        //     await ctx.DODO.methods.balanceOf(ctx.VDODO.options.address).call(),
+        //     decimalStr("10")
+        //   );
+        //   assert.equal(
+        //     await ctx.VDODO.methods.balanceOf(account0).call(),
+        //     decimalStr("0.1")
+        //   );
+        //   assert.equal(
+        //     await ctx.VDODO.methods.balanceOf(account1).call(),
+        //     decimalStr("0")
+        //   );
+
+
+        //   await truffleAssert.reverts(
+        //      ctx.VDODO.methods.transfer(account1,decimalStr("0.1")).send(ctx.sendParam(account0)),
+        //     "vDODOToken: not allowed transfer"
+        //   )
+        //   assert.equal(
+        //     await ctx.VDODO.methods.balanceOf(account0).call(),
+        //     decimalStr("0.1")
+        //   );
+        //   assert.equal(
+        //     await ctx.VDODO.methods.balanceOf(account1).call(),
+        //     decimalStr("0")
+        //   );
+
+        // });
     })
 });

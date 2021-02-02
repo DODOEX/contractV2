@@ -60,5 +60,9 @@ describe("vDODO-owner", () => {
 
             //改变后状态
         });
+
+        it("read-helper", async () => {
+            //不同amount对应的feeRatio （5 5-15 15）
+        });
     })
 });
