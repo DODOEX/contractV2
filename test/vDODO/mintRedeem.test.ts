@@ -5,8 +5,6 @@
 
 */
 
-// import * as assert from 'assert';
-
 import { decimalStr, MAX_UINT256 } from '../utils/Converter';
 import { logGas } from '../utils/Log';
 import { VDODOContext, getVDODOContext } from '../utils/VDODOContext';
@@ -53,6 +51,15 @@ describe("VDODO", () => {
       //alpha lastRewardBlock 状态
       //user superior info 状态
       //vDODO 总量变化，以及vDODO合约dodo余额，user dodo余额
+      var b_alpha = await ctx.VDODO.methods.getLatestAlpha().call();
+      var b_lastRewardBlock = await ctx.VDODO.methods.lastRewardBlock().call();
+      var b_dodo_contract = await ctx.DODO.methods.balanceOf(ctx.DODO.options.address).call();
+      var b_dodo_account = await ctx.DODO.methods.balanceOf(account0).call();
+
+      var userInfo = await ctx.VDODO.methods.userInfo(account0).call();
+
+      console.log("userInfo:", userInfo)
+
 
     });
 

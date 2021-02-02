@@ -36,6 +36,12 @@ then
 	truffle test ./test/V2Proxy/proxy.twap.test.ts
 fi
 
+if [ "$1"x = "vdodo-mintRedeem"x ]
+then
+	truffle test ./test/vDODO/mintRedeem.test.ts
+fi
+
+
 # if [ "$1"x = "route-incentive"x ]
 # then
 # 	truffle test ./test/Route/Incentive.test.ts
