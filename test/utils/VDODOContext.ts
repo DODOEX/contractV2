@@ -90,14 +90,15 @@ export class VDODOContext {
       ]
     )
 
+    
+    await this.Governance.methods.initOwner(
+      this.Deployer
+      ).send(this.sendParam(this.Deployer))
+      
     await this.Governance.methods.setVDODOAddress(
       this.VDODO.options.address
     ).send(this.sendParam(this.Deployer))
-
-    await this.Governance.methods.initOwner(
-      this.Deployer
-    ).send(this.sendParam(this.Deployer))
-
+    
     await this.DODOApprove.methods.init(this.Deployer,this.DODOApproveProxy.options.address).send(this.sendParam(this.Deployer));
     await this.DODOApproveProxy.methods.init(this.Deployer, [this.VDODO.options.address]).send(this.sendParam(this.Deployer));
 
