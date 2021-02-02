@@ -85,7 +85,7 @@ module.exports = async (deployer, network, accounts) => {
         DefaultPermissionAddress = "0xACc7E23368261e1E02103c4e5ae672E7D01f5797";
 
         DvmTemplateAddress = "0xA6384D1501842e9907D43148E2ca0d50E4ad56E2";
-        DppTemplateAddress = "0x044b48D64E77Ab8854C46c8456dC05C540c9dd53";
+        DppTemplateAddress = "";
         DppAdminTemplateAddress = "";
         CpTemplateAddress = "0x81c802080c3CE0dE98fcb625670A14Eb8440184a";
         //Factory
@@ -379,8 +379,8 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("DODOIncentive ChangeProxy tx: ", tx.tx);
 
             //3. Open trade incentive 
-            var tx = await DODOIncentiveInstance.changePerReward("10000000000000000000");
-            logger.log("DODOIncentive OpenSwitch tx: ", tx.tx);
+            // var tx = await DODOIncentiveInstance.changePerReward("10000000000000000000");
+            // logger.log("DODOIncentive OpenSwitch tx: ", tx.tx);
 
             //4. Transfer DODO to Trade Incentive
         }

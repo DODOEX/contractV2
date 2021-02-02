@@ -52,21 +52,21 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
     uint256 public dodoFeeBurnRation;
 
     // accounting
-    uint256 public alpha = 100 * 10**18; // 100
-    uint256 public lastRewardBlock;
+    uint128 public alpha = 100 * 10**18; // 100
+    uint128 public lastRewardBlock;
     mapping(address => UserInfo) public userInfo;
 
     struct UserInfo {
-        uint256 VDODOAmount;
-        uint256 credit;
+        uint128 VDODOAmount;
+        uint128 superiorVDODO;
         address superior;
-        uint256 superiorVDODO;
+        uint256 credit;
     }
 
     // ============ Events ============
 
-    event Deposit(address user, address superior, uint256 amount);
-    event Withdraw(address user, uint256 amount);
+    event MintVDODO(address user, address superior, uint256 amount);
+    event RedeemVDODO(address user, uint256 amount);
     event SetCantransfer(bool allowed);
 
     event ChangePerReward(uint256 dodoPerBlock);
@@ -94,17 +94,17 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
         address dodoToken,
         address dodoCirculationHelper,
         address dodoApproveProxy,
-        string memory name,
-        string memory symbol
+        string memory _name,
+        string memory _symbol
     ) public {
-        name = name;
-        symbol = symbol;
+        name = _name;
+        symbol = _symbol;
         decimals = 18;
         _DODO_APPROVE_PROXY_ = dodoApproveProxy;
         _DOOD_GOV_ = dodoGov;
         _DODO_CIRCULATION_HELPER_ = dodoCirculationHelper;
         _DODO_TOKEN_ = dodoToken;
-        lastRewardBlock = block.number;
+        lastRewardBlock = uint128(block.number);
     }
 
     // ============ Ownable Functions ============`
@@ -114,58 +114,54 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
         emit SetCantransfer(allowed);
     }
 
-    function changePerReward(uint256 dodoPerBlock) public onlyOwner {
-        _updateAlpha(getLatestAlpha());
-        dodoPerBlock = dodoPerBlock;
-        emit ChangePerReward(dodoPerBlock);
+    function changePerReward(uint256 _dodoPerBlock) public onlyOwner {
+        _updateAlpha();
+        dodoPerBlock = _dodoPerBlock;
+        emit ChangePerReward(_dodoPerBlock);
     }
 
-    function updatedodoFeeBurnRation(uint256 dodoFeeBurnRation) public onlyOwner {
-        dodoFeeBurnRation = dodoFeeBurnRation;
-        emit UpdatedodoFeeBurnRation(dodoFeeBurnRation);
+    function updatedodoFeeBurnRation(uint256 _dodoFeeBurnRation) public onlyOwner {
+        dodoFeeBurnRation = _dodoFeeBurnRation;
+        emit UpdatedodoFeeBurnRation(_dodoFeeBurnRation);
     }
 
     function updateDODOCirculationHelper(address helper) public onlyOwner {
         _DODO_CIRCULATION_HELPER_ = helper;
     }
 
-    function updateGovernance(address _governance) public onlyOwner {
-        _DOOD_GOV_ = _governance;
+    function updateGovernance(address governance) public onlyOwner {
+        _DOOD_GOV_ = governance;
     }
 
     // ============ Functions ============
 
     function mint(uint256 dodoAmount, address superiorAddress) public preventReentrant {
+        require(superiorAddress != address(0) && superiorAddress != msg.sender, "vDODOToken: Superior INVALID");
         require(dodoAmount > 0, "vDODOToken: must mint greater than 0");
+        
+        _updateAlpha();
+        
         IDODOApproveProxy(_DODO_APPROVE_PROXY_).claimTokens(
             _DODO_TOKEN_,
             msg.sender,
             address(this),
             dodoAmount
         );
-        uint256 newAlpha = getLatestAlpha();
 
-        uint256 newVdodoAmount = DecimalMath.divFloor(dodoAmount, newAlpha);
+        uint256 newVdodoAmount = DecimalMath.divFloor(dodoAmount, alpha);
 
         UserInfo storage user = userInfo[msg.sender];
         _mint(user, newVdodoAmount);
 
-        uint256 superiorVDODO;
-        if (user.superior == address(0) && superiorAddress != address(0)) {
-            require(superiorAddress != msg.sender, "COULD NOT SET SELF AS SUPERIOR");
-            superiorVDODO = DecimalMath.mulFloor(user.VDODOAmount, _SUPERIOR_RATIO_);
-            user.superior = superiorAddress;
-        } else if (user.superior != address(0)) {
-            superiorVDODO = DecimalMath.mulFloor(newVdodoAmount, _SUPERIOR_RATIO_);
-        }
-
-        if (user.superior != address(0)) {
-            _mintToSuperior(user, superiorVDODO);
-        }
+        uint256 increSuperiorVDODO = DecimalMath.mulFloor(newVdodoAmount, _SUPERIOR_RATIO_);
         
-        _updateAlpha(newAlpha);
+        if (user.superior == address(0)) {
+            user.superior = superiorAddress;
+        }
 
-        emit Deposit(msg.sender, superiorAddress, dodoAmount);
+        _mintToSuperior(user, increSuperiorVDODO);
+        
+        emit MintVDODO(msg.sender, superiorAddress, dodoAmount);
     }
 
     function redeem(uint256 vDodoAmount)
@@ -173,7 +169,7 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
         preventReentrant
         balanceEnough(msg.sender, vDodoAmount)
     {
-        uint256 newAlpha = getLatestAlpha();
+        _updateAlpha();
 
         UserInfo storage user = userInfo[msg.sender];
         _redeem(user, vDodoAmount);
@@ -185,14 +181,19 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
 
         (uint256 dodoReceive, uint256 burnDodoAmount, uint256 withdrawFeeDodoAmount) = getWithdrawAmount(vDodoAmount);
         
-        IERC20(_DODO_TOKEN_).transfer(msg.sender, dodoReceive);        
-        _transfer(address(this), address(0), burnDodoAmount);
+        IERC20(_DODO_TOKEN_).transfer(msg.sender, dodoReceive);
 
-        newAlpha = newAlpha.add(DecimalMath.divFloor(withdrawFeeDodoAmount, totalSupply));
-        _updateAlpha(newAlpha);
+        if(burnDodoAmount > 0){
+            _transfer(address(this), address(0), burnDodoAmount);
+        }        
 
-        emit Withdraw(msg.sender, vDodoAmount);
+        if(withdrawFeeDodoAmount > 0) {
+            alpha = uint128(uint256(alpha).add(DecimalMath.divFloor(withdrawFeeDodoAmount, totalSupply)));
+        }
+
+        emit RedeemVDODO(msg.sender, vDodoAmount);
     }
+
 
     function donate(uint256 dodoAmount) public {
         IDODOApproveProxy(_DODO_APPROVE_PROXY_).claimTokens(
@@ -201,14 +202,14 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
             address(this),
             dodoAmount
         );
-        alpha = alpha.add(DecimalMath.divFloor(dodoAmount, totalSupply));
+        alpha = uint128(uint256(alpha).add(DecimalMath.divFloor(dodoAmount, totalSupply)));
     }
 
     // ============ Functions(ERC20) ============
 
     function balanceOf(address account) public view returns (uint256 balance) {
         UserInfo memory user = userInfo[account];
-        balance = user.VDODOAmount.sub(DecimalMath.divFloor(user.credit, getLatestAlpha()));
+        balance = uint256(user.VDODOAmount).sub(DecimalMath.divFloor(user.credit, getLatestAlpha()));
     }
 
     function availableBalanceOf(address account) public view returns (uint256 balance) {
@@ -217,6 +218,7 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
     }
 
     function transfer(address to, uint256 amount) public returns (bool) {
+        _updateAlpha();
         _transfer(msg.sender, to, amount);
         return true;
     }
@@ -233,6 +235,7 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
         uint256 amount
     ) public returns (bool) {
         require(amount <= _ALLOWED_[from][msg.sender], "ALLOWANCE_NOT_ENOUGH");
+        _updateAlpha();
         _transfer(from, to, amount);
         _ALLOWED_[from][msg.sender] = _ALLOWED_[from][msg.sender].sub(amount);
         emit Transfer(from, to, amount);
@@ -247,13 +250,13 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
 
     function canWithdraw(address account) public view returns (uint256 dodoAmount) {
         UserInfo memory user = userInfo[account];
-        dodoAmount = DecimalMath.mulFloor(user.VDODOAmount,getLatestAlpha()).sub(user.credit);
+        dodoAmount = DecimalMath.mulFloor(uint256(user.VDODOAmount),getLatestAlpha()).sub(user.credit);
     }
 
     function getLatestAlpha() public view returns(uint256) {
         uint256 accuDODO = dodoPerBlock * (block.number.sub(lastRewardBlock));
         if (totalSupply > 0) {
-            return alpha.add(DecimalMath.divFloor(accuDODO, totalSupply));
+            return uint256(alpha).add(DecimalMath.divFloor(accuDODO, totalSupply));
         } else {
             return alpha;
         }
@@ -278,49 +281,48 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
 
     // ============ Internal Functions ============
 
-    function _updateAlpha(uint256 newAlpha) internal {
-        alpha = newAlpha;
-        lastRewardBlock = block.number;
+    function _updateAlpha() internal {
+        uint256 newAlpha = getLatestAlpha();
+        require(newAlpha <= uint128(-1), "OVERFLOW");
+        alpha = uint128(newAlpha);
+        lastRewardBlock = uint128(block.number);
     }
 
     function _mint(UserInfo storage to, uint256 vdodoAmount) internal {
-        to.VDODOAmount = to.VDODOAmount.add(vdodoAmount);
+        require(vdodoAmount <= uint128(-1), "OVERFLOW");
+        to.VDODOAmount = uint128(uint256(to.VDODOAmount).add(vdodoAmount));
         totalSupply = totalSupply.add(vdodoAmount);
     }
 
     function _mintToSuperior(UserInfo storage user, uint256 vdodoAmount) internal {
         if (vdodoAmount > 0) {
-            uint256 newAlpha = getLatestAlpha();
-
-            user.superiorVDODO = user.superiorVDODO.add(vdodoAmount);
+            user.superiorVDODO = uint128(uint256(user.superiorVDODO).add(vdodoAmount));
             UserInfo storage superiorUser = userInfo[user.superior];
             _mint(superiorUser, vdodoAmount);
-            uint256 dodoAmount = DecimalMath.mulFloor(vdodoAmount, newAlpha);
+            uint256 dodoAmount = DecimalMath.mulFloor(vdodoAmount, alpha);
             superiorUser.credit = superiorUser.credit.add(DecimalMath.mulFloor(dodoAmount, _SUPERIOR_RATIO_));
         }
     }
 
     function _redeem(UserInfo storage from, uint256 vdodoAmount) internal {
-        from.VDODOAmount = from.VDODOAmount.sub(vdodoAmount);
+        from.VDODOAmount = uint128(uint256(from.VDODOAmount).sub(vdodoAmount));
         totalSupply = totalSupply.sub(vdodoAmount);
     }
 
     function _redeemFromSuperior(UserInfo storage user, uint256 vdodoAmount) internal {
         if (vdodoAmount > 0) {
-            uint256 newAlpha = getLatestAlpha();
-
             vdodoAmount = user.superiorVDODO <= vdodoAmount ? user.superiorVDODO : vdodoAmount;
-            user.superiorVDODO = user.superiorVDODO.sub(vdodoAmount);
+            user.superiorVDODO = uint128(uint256(user.superiorVDODO).sub(vdodoAmount));
 
             UserInfo storage superiorUser = userInfo[user.superior];
-            uint256 creditVDODO = DecimalMath.divFloor(superiorUser.credit, newAlpha);
+            uint256 creditVDODO = DecimalMath.divFloor(superiorUser.credit, alpha);
 
             if (vdodoAmount >= creditVDODO) {
                 superiorUser.credit = 0;
                 _redeem(superiorUser, creditVDODO);
             } else {
                 superiorUser.credit = superiorUser.credit.sub(
-                    DecimalMath.mulFloor(vdodoAmount, newAlpha)
+                    DecimalMath.mulFloor(vdodoAmount, alpha)
                 );
                 _redeem(superiorUser, vdodoAmount);
             }
@@ -336,10 +338,10 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
         require(to != address(0), "transfer to the zero address");
 
         UserInfo storage fromUser = userInfo[from];
-        fromUser.VDODOAmount = fromUser.VDODOAmount.sub(_amount);
+        fromUser.VDODOAmount = uint128(uint256(fromUser.VDODOAmount).sub(_amount));
 
         UserInfo storage toUser = userInfo[to];
-        toUser.VDODOAmount = toUser.VDODOAmount.add(_amount);
+        toUser.VDODOAmount = uint128(uint256(toUser.VDODOAmount).add(_amount));
 
         uint256 superiorRedeemVDODO = DecimalMath.mulFloor(_amount, _SUPERIOR_RATIO_);
 

@@ -542,3 +542,17 @@ Deploy time: 2021/1/26 下午5:29:51
 ====================================================
 network type: live
 Deploy time: 2021/1/26 下午5:42:23
+====================================================
+network type: kovan
+Deploy time: 2021/2/1 下午11:09:38
+Deploy type: V2
+DODOApprove Address:  0x929ce7b28aA759a1C0E6e855ff2545f9e5ca846A
+DODOApproveProxy Address:  0x8a61c59e2DE32af51A252d754c7f852aA44191C8
+DODOV2Proxy02 Address:  0xf47BEA4D26026810787b56670502E058CEe5c386
+Init DODOProxyV2 Tx: 0x48c4de1d6008c96d82a92da63747385b218b56fe3451d4256b9b8429623d34f4
+DODOApproveProxy Init tx:  0xb12443d847d426fbeed3c0c3d0e796d52b214ebff65ca604a72dd7400b94e42c
+DODOApprove Init tx:  0x26d3f4be069eccf94b0b6d3ee1db07a534cadc98c4dd2b96fd5921d00f57403c
+DODOIncentive ChangeProxy tx:  0x9564307e19b26aed9980d9ac007dc88b789450893540426618de4f1039f5584f
+====================================================
+network type: kovan
+Deploy time: 2021/2/2 下午2:28:36
