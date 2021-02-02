@@ -90,6 +90,10 @@ export class VDODOContext {
       ]
     )
 
+    await this.Governance.methods.setVDODOAddress(
+      this.VDODO.options.address
+    ).send(this.sendParam(this.Deployer))
+
     await this.Governance.methods.initOwner(
       this.Deployer
     ).send(this.sendParam(this.Deployer))
