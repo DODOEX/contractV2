@@ -20,7 +20,7 @@ contract DODOMigrationBSC is Ownable {
     address immutable _BSC_DODO_TOKEN_ = 0xa6E37b1d3690C8E608Bb11AFE193fA7C88141643;
     mapping(address => uint256) internal balances;
 
-    bool public _IS_ETH_NETWORK_;
+    bool immutable _IS_ETH_NETWORK_;
 
     constructor(bool isETHNetwork) public {
         _IS_ETH_NETWORK_ = isETHNetwork;
