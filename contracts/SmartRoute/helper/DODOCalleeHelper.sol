@@ -76,7 +76,9 @@ contract DODOCalleeHelper is ReentrancyGuard {
                 to.transfer(amount);
             }
         } else {
-            SafeERC20.safeTransfer(IERC20(token), to, amount);
+            if (amount > 0) {
+                SafeERC20.safeTransfer(IERC20(token), to, amount);
+            }
         }
     }
 }
