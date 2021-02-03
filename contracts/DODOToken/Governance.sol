@@ -9,17 +9,18 @@ pragma experimental ABIEncoderV2;
 
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 
+//todo
 contract Governance is InitializableOwnable {
 
     // ============ Storage ============
 
-    address _DODO_TOKEN_;
+    address _VDODO_TOKEN_;
     
     function setVDODOAddress(address vodoToken) public onlyOwner{
-        _DODO_TOKEN_ = vodoToken;
+        _VDODO_TOKEN_ = vodoToken;
     }
     
     function getLockedvDODO(address account) external pure returns (uint256 lockedvDODO) {
-        lockedvDODO = 0;//DOTO,0 for test
+        lockedvDODO = 0;//todo for test
     }
 }

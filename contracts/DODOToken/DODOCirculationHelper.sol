@@ -13,7 +13,7 @@ import {DecimalMath} from "../lib/DecimalMath.sol";
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 
 interface IDODOCirculationHelper {
-    // vDODO 锁仓不算流通
+    // Locked vDOOD not counted in circulation
     function getCirculation() external returns (uint256);
 
     function getVDODOWithdrawFeeRatio() external returns (uint256);
@@ -49,10 +49,6 @@ contract DODOCirculationHelper is InitializableOwnable {
 
     function getVDODOWithdrawFeeRatio() external view returns (uint256 ratio) {
         uint256 dodoCirculationAmout = getCirculation();
-        // (x - 1)^2 / 81 + (y - 15)^2 / 100 = 1
-        // y = 5% (x ≤ 1)
-        // y = 15% (x ≥ 10)
-        // y = 15% - 10% * sqrt(1-[(x-1)/9]^2)
         uint256 x =
             DecimalMath.divCeil(
                 dodoCirculationAmout,
@@ -61,7 +57,14 @@ contract DODOCirculationHelper is InitializableOwnable {
         
         ratio = geRatioValue(x);
     }
+
     function geRatioValue(uint256 input) public view returns (uint256 ratio) {
+        
+        // (x - 1)^2 / 81 + (y - 15)^2 / 100 = 1
+        // y = 5% (x ≤ 1)
+        // y = 15% (x ≥ 10)
+        // y = 15% - 10% * sqrt(1-[(x-1)/9]^2)
+        
         if (input <= 10**18) {
             return _MIN_PENALTY_RATIO_;
         } else if (input >= 10**19) {
