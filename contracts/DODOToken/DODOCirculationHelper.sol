@@ -58,13 +58,16 @@ contract DODOCirculationHelper is InitializableOwnable {
                 dodoCirculationAmout,
                 IERC20(_VDODO_TOKEN_).totalSupply()
             );
-
-        if (x <= 10**18) {
+        
+        ratio = geRatioValue(x);
+    }
+    function geRatioValue(uint256 input) public view returns (uint256 ratio) {
+        if (input <= 10**18) {
             return _MIN_PENALTY_RATIO_;
-        } else if (x >= 10**19) {
+        } else if (input >= 10**19) {
             return _MAX_PENALTY_RATIO_;
         } else {
-            uint256 xTemp = x.sub(DecimalMath.ONE).div(9);
+            uint256 xTemp = input.sub(DecimalMath.ONE).div(9);
             uint256 premium = DecimalMath.ONE2.sub(xTemp.mul(xTemp)).sqrt();
             ratio =
                 _MAX_PENALTY_RATIO_ -
