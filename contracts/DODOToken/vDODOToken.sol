@@ -395,6 +395,7 @@ contract vDODOToken is InitializableOwnable {
         require(to != address(0), "transfer to the zero address");
         require(from != to, "transfer from same with to");
 
+
         uint256 stakingPower = DecimalMath.divFloor(vDODOAmount * _DODO_RATIO_, alpha);
 
         UserInfo storage fromUser = userInfo[from];
