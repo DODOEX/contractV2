@@ -45,7 +45,11 @@ module.exports = {
     MOCK_V2_POOL:     false,
     MOCK_V2_SWAP:     false,
     MANUAL_ADD_POOL:  false,
-    MOCK_TARGET_POOL: false
+    MOCK_TARGET_POOL: false,
+    BSCMigration:     false,
+    DODOBscToken:     false,
+    vDODOToken:       false,
+    CALLEE:           true,
   },
 
   networks: {

@@ -34,7 +34,7 @@ export class VDODOContext {
   DODOApproveProxy: Contract;
 
   DODOCirculationHelper: Contract;
-  Governance: Contract;
+  // Governance: Contract;
 
   lastRewardBlock: number;
   alpha: number;
@@ -66,21 +66,19 @@ export class VDODOContext {
       [this.DODOApprove.options.address]
     )
 
-    this.Governance = await contracts.newContract(
-      contracts.DODO_GOVERNANCE,
-      [
-        this.DODO.options.address
-      ]
-    )
+    // this.Governance = await contracts.newContract(
+    //   contracts.DODO_GOVERNANCE,
+    //   [
+    //     this.DODO.options.address
+    //   ]
+    // )
 
     this.VDODO = await contracts.newContract(
       contracts.VDODO_NAME,
       [
-        this.Governance.options.address,
-        this.DODO.options.address,
         "0x0000000000000000000000000000000000000000",
-        this.DODOApproveProxy.options.address,
-        "VDODO Token", "VDODO"
+        this.DODO.options.address,
+        this.DODOApproveProxy.options.address
       ]
     )
 
@@ -92,13 +90,13 @@ export class VDODOContext {
       ]
     );
 
-    await this.Governance.methods.initOwner(
-      this.Deployer
-    ).send(this.sendParam(this.Deployer))
+    // await this.Governance.methods.initOwner(
+    //   this.Deployer
+    // ).send(this.sendParam(this.Deployer))
 
-    await this.Governance.methods.setVDODOAddress(
-      this.VDODO.options.address
-    ).send(this.sendParam(this.Deployer))
+    // await this.Governance.methods.setVDODOAddress(
+    //   this.VDODO.options.address
+    // ).send(this.sendParam(this.Deployer))
 
     await this.DODOApprove.methods.init(this.Deployer, this.DODOApproveProxy.options.address).send(this.sendParam(this.Deployer));
     await this.DODOApproveProxy.methods.init(this.Deployer, [this.VDODO.options.address]).send(this.sendParam(this.Deployer));

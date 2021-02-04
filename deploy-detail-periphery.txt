@@ -1,0 +1,6 @@
+====================================================
+network type: bsclive
+Deploy time: 2021/2/4 下午4:56:38
+Deploy type: DODOBscToken
+DODOBscTokenAddress:  0x67ee3Cb086F8a16f34beE3ca72FAD36F7Db929e2
+Init DODOBscTokenAddress Tx: 0xf66264c2669f904527de63fab104250275247c014bfb6f42f57441997551cef6

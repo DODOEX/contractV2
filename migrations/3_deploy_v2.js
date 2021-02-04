@@ -164,6 +164,11 @@ module.exports = async (deployer, network, accounts) => {
     logger.log("network type: " + network);
     logger.log("Deploy time: " + new Date().toLocaleString());
 
+    if (deploySwitch.CALLEE) {
+        await deployer.deploy(DODOCalleeHelper, WETHAddress);
+        DODOCalleeHelperAddress = DODOCalleeHelper.address;
+        logger.log("DODOCalleeHelperAddress: ", DODOCalleeHelperAddress);
+    }
 
     if (deploySwitch.ADAPTER) {
         logger.log("Deploy type: V2 - Adapter");
@@ -232,6 +237,9 @@ module.exports = async (deployer, network, accounts) => {
             await deployer.deploy(FeeRateModelTemplate);
             DefaultMtFeeRateAddress = FeeRateModelTemplate.address;
             logger.log("DefaultMtFeeRateAddress: ", DefaultMtFeeRateAddress);
+            const defaultMtFeeRateInstance = await FeeRateModelTemplate.at(DefaultMtFeeRateAddress);
+            var tx = await defaultMtFeeRateInstance.initOwner(multiSigAddress);
+            logger.log("Init DefaultMtFeeRateAddress Tx:", tx.tx);
         }
 
         if (DefaultPermissionAddress == "") {

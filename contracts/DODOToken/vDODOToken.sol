@@ -30,9 +30,9 @@ contract vDODOToken is InitializableOwnable {
 
     // ============ Storage(ERC20) ============
 
-    string public name;
-    string public symbol;
-    uint8 public decimals;
+    string public name = "vDODO Token";
+    string public symbol = "vDODO";
+    uint8 public decimals = 18;
     uint256 public totalSupply;
     mapping(address => mapping(address => uint256)) internal _ALLOWED_;
 
@@ -91,18 +91,11 @@ contract vDODOToken is InitializableOwnable {
     constructor(
         address dodoGov,
         address dodoToken,
-        address dodoCirculationHelper,
-        address dodoApproveProxy,
-        string memory _name,
-        string memory _symbol
+        address dodoApproveProxy
     ) public {
-        name = _name;
-        symbol = _symbol;
-        decimals = 18;
-        _DODO_APPROVE_PROXY_ = dodoApproveProxy;
         _DOOD_GOV_ = dodoGov;
-        _DODO_CIRCULATION_HELPER_ = dodoCirculationHelper;
         _DODO_TOKEN_ = dodoToken;
+        _DODO_APPROVE_PROXY_ = dodoApproveProxy;
         lastRewardBlock = uint128(block.number);
     }
 
@@ -216,8 +209,12 @@ contract vDODOToken is InitializableOwnable {
     }
 
     function availableBalanceOf(address account) public view returns (uint256 balance) {
-        uint256 lockedBalance = IGovernance(_DOOD_GOV_).getLockedvDODO(account);
-        balance = balanceOf(account).sub(lockedBalance);
+        if(_DOOD_GOV_ == address(0)){
+            balance = balanceOf(account);
+        }else {
+            uint256 lockedBalance = IGovernance(_DOOD_GOV_).getLockedvDODO(account);
+            balance = balanceOf(account).sub(lockedBalance);
+        }
     }
 
     function transfer(address to, uint256 amount) public returns (bool) {

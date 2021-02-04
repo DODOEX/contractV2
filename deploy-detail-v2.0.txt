@@ -572,3 +572,11 @@ Init DODOProxyV2 Tx: 0xb41219ef20f0496c8c2088bf8d30a64dd3fa1ef5cdaeaa9161a6da523
 DODOApproveProxy Init tx:  0x38ced5f643938891ad553b40bafe55ffc6065a15e4bbc81f4cdfbe4f3a0b9494
 DODOApprove Init tx:  0x7eac3f1fa6dbe499351ea52066623980615bdc7901a84f2afa8fc67e34e4be59
 DODOIncentive ChangeProxy tx:  0x6d64bae7ee09f12db0bfc18823ac8e2ca1d682184c1ed3cc157f2b39641409e3
+====================================================
+network type: bsclive
+Deploy time: 2021/2/4 下午5:09:20
+DODOCalleeHelperAddress:  0xaaffAd1017D6a13E026A00121BF258C616B25f7C
+====================================================
+network type: kovan
+Deploy time: 2021/2/4 下午5:16:38
+DODOCalleeHelperAddress:  0x36ce1831941d35c3588759B2D084E240a094ad4A
