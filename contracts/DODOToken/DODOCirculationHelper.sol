@@ -12,12 +12,6 @@ import {SafeMath} from "../lib/SafeMath.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 
-interface IDODOCirculationHelper {
-    // Locked vDOOD not counted in circulation
-    function getCirculation() external returns (uint256);
-
-    function getVDODOWithdrawFeeRatio() external returns (uint256);
-}
 
 contract DODOCirculationHelper is InitializableOwnable {
     using SafeMath for uint256;

@@ -20,7 +20,7 @@ interface IGovernance {
 }
 
 interface IDODOCirculationHelper {
-    // vDODO 锁仓不算流通
+    // Locked vDOOD not counted in circulation
     function getCirculation() external view returns (uint256);
 
     function getVDODOWithdrawFeeRatio() external view returns (uint256);
