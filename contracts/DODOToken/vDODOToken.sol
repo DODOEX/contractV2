@@ -333,29 +333,20 @@ contract vDODOToken is InitializableOwnable {
     function _transfer(
         address from,
         address to,
-        uint256 _dodoAmount
-    ) internal balanceEnough(from, _dodoAmount) canTransfer {
+        uint256 vDODOAmount
+    ) internal canTransfer balanceEnough(from, vDODOAmount) {
         require(from != address(0), "transfer from the zero address");
         require(to != address(0), "transfer to the zero address");
-        
-        uint256 _amount = DecimalMath.divFloor(_dodoAmount,_DODO_RATIO_);
+        require(from != to, "transfer from same with to");
+
+        uint256 stakingPower = DecimalMath.divFloor(vDODOAmount * _DODO_RATIO_, alpha);
 
         UserInfo storage fromUser = userInfo[from];
-        fromUser.VDODOAmount = uint128(uint256(fromUser.VDODOAmount).sub(_amount));
-
         UserInfo storage toUser = userInfo[to];
-        toUser.VDODOAmount = uint128(uint256(toUser.VDODOAmount).add(_amount));
 
-        uint256 superiorRedeemVDODO = DecimalMath.mulFloor(_amount, _SUPERIOR_RATIO_);
+        _redeem(fromUser, stakingPower);
+        _mint(toUser, stakingPower);
 
-        if (fromUser.superior != address(0)) {
-            _redeemFromSuperior(fromUser, superiorRedeemVDODO);
-        }
-
-        if (toUser.superior != address(0)) {
-            _mintToSuperior(toUser, superiorRedeemVDODO);
-        }
-
-        emit Transfer(from, to, _dodoAmount);
+        emit Transfer(from, to, vDODOAmount);
     }
 }
