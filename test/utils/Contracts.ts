@@ -47,6 +47,9 @@ export const DODO_CALLEE_HELPER_NAME = "DODOCalleeHelper"
 export const CROWD_POOLING_NAME = "CP"
 export const CROWD_POOLING_FACTORY = "CrowdPoolingFactory"
 export const DODO_INCENTIVE = "DODOIncentive"
+export const VDODO_NAME = "vDODOToken"
+export const DODO_CULATION_HELPER = "DODOCirculationHelper"
+export const DODO_GOVERNANCE = "Governance"
 
 interface ContractJson {
   abi: any;

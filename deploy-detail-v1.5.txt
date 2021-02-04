@@ -112,3 +112,11 @@ Deploy time: 2021/1/26 下午5:41:41
 Deploy type: Proxy
 DODOV1Proxy04 Address:  0xa2CB66EBB947D217f61510882096F6e95c1DE97D
 Set DODOProxy Owner tx:  0xe49234c67bc710a7f4797aacbb2ef26fac458832f101e856d8113cc21721cd81
+====================================================
+network type: kovan
+Deploy time: 2021/2/1 下午11:07:47
+Deploy type: Proxy
+====================================================
+network type: kovan
+Deploy time: 2021/2/1 下午11:08:57
+Deploy type: Proxy

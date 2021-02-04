@@ -542,3 +542,33 @@ Deploy time: 2021/1/26 下午5:29:51
 ====================================================
 network type: live
 Deploy time: 2021/1/26 下午5:42:23
+====================================================
+network type: kovan
+Deploy time: 2021/2/1 下午11:09:38
+Deploy type: V2
+DODOApprove Address:  0x929ce7b28aA759a1C0E6e855ff2545f9e5ca846A
+DODOApproveProxy Address:  0x8a61c59e2DE32af51A252d754c7f852aA44191C8
+DODOV2Proxy02 Address:  0xf47BEA4D26026810787b56670502E058CEe5c386
+Init DODOProxyV2 Tx: 0x48c4de1d6008c96d82a92da63747385b218b56fe3451d4256b9b8429623d34f4
+DODOApproveProxy Init tx:  0xb12443d847d426fbeed3c0c3d0e796d52b214ebff65ca604a72dd7400b94e42c
+DODOApprove Init tx:  0x26d3f4be069eccf94b0b6d3ee1db07a534cadc98c4dd2b96fd5921d00f57403c
+DODOIncentive ChangeProxy tx:  0x9564307e19b26aed9980d9ac007dc88b789450893540426618de4f1039f5584f
+====================================================
+network type: kovan
+Deploy time: 2021/2/2 下午2:28:36
+====================================================
+network type: kovan
+Deploy time: 2021/2/2 下午2:38:26
+Deploy type: V2
+DppTemplateAddress:  0x6b9Db3908ddFD853AD2A42Ab75b5de3f22f137a5
+DppAdminTemplateAddress:  0x2d69731283ac620760309d8b561De11C6166a5F5
+DODOApprove Address:  0x7BD4dBc1F3cd0333E910aa9eeA14A2d96e3684C2
+DODOApproveProxy Address:  0x0cB68c60E4C2F023C4fdbC6Cbe283aAb34866e8a
+DppFactoryAddress:  0x80c03749C22Acbe5EaFEb1d550a32C707a67fc34
+Init DppFactory Tx: 0x643c1fdcefe736f782f0c1be2478ff09515030eb9e6c6030f0ec9513bd327bf7
+DODOV2RouteHelper Address:  0xD5171044E369Ef316125da5A0Af8E75ea6Cd3A90
+DODOV2Proxy02 Address:  0xFC6840905E7E550A209B3856f313C523D2f9a3e3
+Init DODOProxyV2 Tx: 0xb41219ef20f0496c8c2088bf8d30a64dd3fa1ef5cdaeaa9161a6da52349dd76d
+DODOApproveProxy Init tx:  0x38ced5f643938891ad553b40bafe55ffc6065a15e4bbc81f4cdfbe4f3a0b9494
+DODOApprove Init tx:  0x7eac3f1fa6dbe499351ea52066623980615bdc7901a84f2afa8fc67e34e4be59
+DODOIncentive ChangeProxy tx:  0x6d64bae7ee09f12db0bfc18823ac8e2ca1d682184c1ed3cc157f2b39641409e3
