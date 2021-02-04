@@ -339,6 +339,7 @@ contract vDODOToken is InitializableOwnable {
     ) internal balanceEnough(from, _amount) canTransfer {
         require(from != address(0), "transfer from the zero address");
         require(to != address(0), "transfer to the zero address");
+	require(from != to, "transfer from same with to");
 
         UserInfo storage fromUser = userInfo[from];
         fromUser.VDODOAmount = uint128(uint256(fromUser.VDODOAmount).sub(_amount));
