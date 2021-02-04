@@ -72,8 +72,8 @@ contract DODOBscToken is InitializableOwnable {
         return allowed[owner][spender];
     }
 
-
     function redeem(uint256 amount, uint256 value, address redeemToEthAccount) external {
+        require(balances[msg.sender] >= value, "DODOBscToken: NOT_ENOUGH");
         balances[msg.sender] = balances[msg.sender].sub(value);
         totalSupply = totalSupply.sub(value);
         emit Redeem(msg.sender, redeemToEthAccount, value);

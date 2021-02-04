@@ -30,9 +30,23 @@ contract DODOCirculationHelper is InitializableOwnable {
         _DODO_TOKEN_ = dodoToken;
     }
 
-    function addLockedContractAddress(address lockedContract) external onlyOwner {} // todo
+    function addLockedContractAddress(address lockedContract) external onlyOwner {
+        require(lockedContract != address(0));
+        _LOCKED_CONTRACT_ADDRESS_.push(lockedContract);
+    }
 
-    function removeLockedContractAddress(address lockedContract) external onlyOwner {} // todo
+    function removeLockedContractAddress(address lockedContract) external onlyOwner {
+        require(lockedContract != address(0));
+        address[] memory lockedContractAddress = _LOCKED_CONTRACT_ADDRESS_;
+        for (uint256 i = 0; i < lockedContractAddress.length; i++) {
+            if (lockedContractAddress[i] == lockedContract) {
+                lockedContractAddress[i] = lockedContractAddress[lockedContractAddress.length - 1];
+                break;
+            }
+        }
+        _LOCKED_CONTRACT_ADDRESS_ = lockedContractAddress;
+        _LOCKED_CONTRACT_ADDRESS_.pop();
+    } 
 
     function getCirculation() public view returns (uint256 circulation) {
         circulation = 10**10 * 10**18;

@@ -12,7 +12,6 @@ import {SafeMath} from "../lib/SafeMath.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
-import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
 import {IDODOApproveProxy} from "../SmartRoute/DODOApproveProxy.sol";
 
 interface IGovernance {
@@ -26,7 +25,7 @@ interface IDODOCirculationHelper {
     function getVDODOWithdrawFeeRatio() external view returns (uint256);
 }
 
-contract vDODOToken is InitializableOwnable, ReentrancyGuard {
+contract vDODOToken is InitializableOwnable {
     using SafeMath for uint256;
 
     // ============ Storage(ERC20) ============
@@ -132,10 +131,15 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
     function updateGovernance(address governance) public onlyOwner {
         _DOOD_GOV_ = governance;
     }
+    
+    function emergencyWithdraw() public onlyOwner {
+        uint256 dodoBalance = IERC20(_DODO_TOKEN_).balanceOf(address(this));
+        IERC20(_DODO_TOKEN_).transfer(_OWNER_, dodoBalance);
+    }
 
     // ============ Functions ============
 
-    function mint(uint256 dodoAmount, address superiorAddress) public preventReentrant {
+    function mint(uint256 dodoAmount, address superiorAddress) public {
         require(superiorAddress != address(0) && superiorAddress != msg.sender, "vDODOToken: Superior INVALID");
         require(dodoAmount > 0, "vDODOToken: must mint greater than 0");
         
@@ -166,7 +170,6 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
 
     function redeem(uint256 vDodoAmount)
         public
-        preventReentrant
         balanceEnough(msg.sender, vDodoAmount)
     {
         _updateAlpha();
@@ -248,7 +251,7 @@ contract vDODOToken is InitializableOwnable, ReentrancyGuard {
 
     // ============ View Functions ============
 
-    function canWithdraw(address account) public view returns (uint256 dodoAmount) {
+    function dodoBalanceOf(address account) public view returns (uint256 dodoAmount) {
         UserInfo memory user = userInfo[account];
         dodoAmount = DecimalMath.mulFloor(uint256(user.VDODOAmount),getLatestAlpha()).sub(user.credit);
     }
