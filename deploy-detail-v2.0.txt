@@ -580,3 +580,14 @@ DODOCalleeHelperAddress:  0xaaffAd1017D6a13E026A00121BF258C616B25f7C
 network type: kovan
 Deploy time: 2021/2/4 下午5:16:38
 DODOCalleeHelperAddress:  0x36ce1831941d35c3588759B2D084E240a094ad4A
+====================================================
+network type: kovan
+Deploy time: 2021/2/4 下午5:51:45
+Deploy type: V2
+DODOApprove Address:  0x9e159C2932ceFCD0FdC21458fBAd99a535BC1ccB
+DODOApproveProxy Address:  0x5ee5B85ddf0b842e0d65f0d295F6954eceFBEeD4
+DODOV2Proxy02 Address:  0x78A6b82ed33B73B8A5702a4Dcb16441bcd2ADA08
+Init DODOProxyV2 Tx: 0x42b4de22ef3a32db868174cc2f99bc3acdc17a77cafa9435e4be998e347cf492
+DODOApproveProxy Init tx:  0x34d085f14d73db5df4564d40c74151404ce66f7b14edb7308986bbfc05072f57
+DODOApprove Init tx:  0x51d7a94362e44515c6e67b9f9535889863977ea0a3a6f58cc2e8524bdf03f4c3
+DODOIncentive ChangeProxy tx:  0xb03cda4c06262131e28c36bed506be52d0621029e4a8dd57fa96d3aecdb81691

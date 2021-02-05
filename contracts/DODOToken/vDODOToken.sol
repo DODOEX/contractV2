@@ -40,6 +40,7 @@ contract vDODOToken is InitializableOwnable {
 
     address immutable _DODO_TOKEN_;
     address immutable _DODO_APPROVE_PROXY_;
+    address immutable _DODO_TEAM_;
     address public _DOOD_GOV_;
     address public _DODO_CIRCULATION_HELPER_;
 
@@ -91,12 +92,14 @@ contract vDODOToken is InitializableOwnable {
     constructor(
         address dodoGov,
         address dodoToken,
-        address dodoApproveProxy
+        address dodoApproveProxy,
+        address dodoTeam
     ) public {
         _DOOD_GOV_ = dodoGov;
         _DODO_TOKEN_ = dodoToken;
         _DODO_APPROVE_PROXY_ = dodoApproveProxy;
         lastRewardBlock = uint128(block.number);
+        _DODO_TEAM_ = dodoTeam;
     }
 
     // ============ Ownable Functions ============`
@@ -153,6 +156,7 @@ contract vDODOToken is InitializableOwnable {
         uint256 increSuperiorVDODO = DecimalMath.mulFloor(newVdodoAmount, _SUPERIOR_RATIO_);
         
         if (user.superior == address(0)) {
+            require(superiorAddress == _DODO_TEAM_ || userInfo[superiorAddress].superior != address(0), "vDODOToken: INVALID_SUPERIOR_ADDRESS");
             user.superior = superiorAddress;
         }
 

@@ -78,7 +78,8 @@ export class VDODOContext {
       [
         "0x0000000000000000000000000000000000000000",
         this.DODO.options.address,
-        this.DODOApproveProxy.options.address
+        this.DODOApproveProxy.options.address,
+        this.Deployer
       ]
     )
 

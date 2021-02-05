@@ -19,7 +19,7 @@ module.exports = async (deployer, network, accounts) => {
 
     if (network == "kovan") {
         DODOTokenAddress = "0xfF2985D13953Cb92ecc585aA2B6A4AF8cB46068f";
-        DODOApproveProxyAddress = "";
+        DODOApproveProxyAddress = "0x5ee5B85ddf0b842e0d65f0d295F6954eceFBEeD4";
         DODOCirculationHelperAddress = "";
         vDODOTokenAddress = "";
         GovernanceAddress = "0x0000000000000000000000000000000000000000";

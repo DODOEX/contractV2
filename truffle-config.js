@@ -49,7 +49,7 @@ module.exports = {
     BSCMigration:     false,
     DODOBscToken:     false,
     vDODOToken:       false,
-    CALLEE:           true,
+    CALLEE:           false,
   },
 
   networks: {
