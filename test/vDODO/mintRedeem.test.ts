@@ -10,6 +10,7 @@ import { logGas } from '../utils/Log';
 import { VDODOContext, getVDODOContext } from '../utils/VDODOContext';
 import { assert } from 'chai';
 
+let dodoTeam: string;
 let account0: string;
 let account1: string;
 let account2: string;
@@ -17,6 +18,7 @@ let account3: string;
 let account4: string;
 
 async function init(ctx: VDODOContext): Promise<void> {
+  dodoTeam = ctx.Deployer;
   account0 = ctx.SpareAccounts[0];
   account1 = ctx.SpareAccounts[1];
   account2 = ctx.SpareAccounts[2];
@@ -93,12 +95,12 @@ describe("VDODO", () => {
     it("vdodo-mint-first", async () => {
       await getGlobalState(ctx, "before");
       await getUserInfo(ctx, account0, "User before");
-      await getUserInfo(ctx, account1, "Superior before")
+      await getUserInfo(ctx, dodoTeam, "Superior before")
       await dodoBalance(ctx, account0, "before")
 
       await logGas(await ctx.VDODO.methods.mint(
         decimalStr("100"),
-        account1
+        dodoTeam
       ), ctx.sendParam(account0), "mint-fisrt");
 
       //增加两个区块
@@ -107,14 +109,14 @@ describe("VDODO", () => {
 
       let [alpha,] = await getGlobalState(ctx, "after");
       let userInfo = await getUserInfo(ctx, account0, "User after");
-      let superiorInfo = await getUserInfo(ctx, account1, "Superior after")
+      let superiorInfo = await getUserInfo(ctx, dodoTeam, "Superior after")
       let [, dodo_u] = await dodoBalance(ctx, account0, "after")
 
       assert.equal(alpha, "101818181818181818181");
       assert.equal(userInfo.VDODOAmount, "1000000000000000000");
       assert.equal(userInfo.superiorVDODO, "100000000000000000");
       assert.equal(userInfo.credit, "0");
-      assert.equal(userInfo.superior, account1);
+      assert.equal(userInfo.superior, dodoTeam);
 
       assert.equal(superiorInfo.VDODOAmount, "100000000000000000");
       assert.equal(superiorInfo.superiorVDODO, "0");
@@ -125,11 +127,49 @@ describe("VDODO", () => {
     });
 
     it("vdodo-mint-second", async () => {
-      await mint(ctx, account0, decimalStr("100"), account1)
+      await mint(ctx, account0, decimalStr("100"), dodoTeam)
 
       await getGlobalState(ctx, "before");
       await getUserInfo(ctx, account0, "User before");
-      await getUserInfo(ctx, account1, "Superior before")
+      await getUserInfo(ctx, dodoTeam, "Superior before")
+      await dodoBalance(ctx, account0, "before")
+
+      await logGas(await ctx.VDODO.methods.mint(
+        decimalStr("100"),
+        dodoTeam
+      ), ctx.sendParam(account0), "mint-second");
+
+      //增加一个区块
+      await ctx.mintTestToken(account0, decimalStr("0"));
+
+      let [alpha,] = await getGlobalState(ctx, "after");
+      let userInfo = await getUserInfo(ctx, account0, "User after");
+      let superiorInfo = await getUserInfo(ctx, dodoTeam, "Superior after")
+      let [, dodo_u] = await dodoBalance(ctx, account0, "after")
+
+      assert.equal(alpha, "101365693130399012751");
+      assert.equal(userInfo.VDODOAmount, "1990990990990990990");
+      assert.equal(userInfo.superiorVDODO, "199099099099099099");
+      assert.equal(userInfo.credit, "0");
+      assert.equal(userInfo.superior, dodoTeam);
+
+      assert.equal(superiorInfo.VDODOAmount, "199099099099099099");
+      assert.equal(superiorInfo.superiorVDODO, "0");
+      assert.equal(superiorInfo.credit, "19999999999999999990");
+      assert.equal(superiorInfo.superior, "0x0000000000000000000000000000000000000000");
+
+      assert.equal(dodo_u, "99800000000000000000000")
+
+    });
+
+
+    it("vdodo-mint-second-otherSuperior", async () => {
+      await mint(ctx, account0, decimalStr("100"), dodoTeam)
+      await mint(ctx, account1, decimalStr("100"), dodoTeam)
+
+      await getGlobalState(ctx, "before");
+      await getUserInfo(ctx, account0, "User before");
+      await getUserInfo(ctx, dodoTeam, "Superior before")
       await dodoBalance(ctx, account0, "before")
 
       await logGas(await ctx.VDODO.methods.mint(
@@ -142,69 +182,36 @@ describe("VDODO", () => {
 
       let [alpha,] = await getGlobalState(ctx, "after");
       let userInfo = await getUserInfo(ctx, account0, "User after");
-      let superiorInfo = await getUserInfo(ctx, account1, "Superior after")
+      let superiorInfo = await getUserInfo(ctx, dodoTeam, "Superior after")
       let [, dodo_u] = await dodoBalance(ctx, account0, "after")
 
-      assert.equal(alpha, "101365693130399012751");
-      assert.equal(userInfo.VDODOAmount, "1990990990990990990");
-      assert.equal(userInfo.superiorVDODO, "199099099099099099");
+      assert.equal(alpha, "101671011483201419416");
+      assert.equal(userInfo.VDODOAmount, "1986527067608148689");
+      assert.equal(userInfo.superiorVDODO, "198652706760814868");
       assert.equal(userInfo.credit, "0");
-      assert.equal(userInfo.superior, account1);
+      assert.equal(userInfo.superior, dodoTeam);
 
-      assert.equal(superiorInfo.VDODOAmount, "199099099099099099");
+      assert.equal(superiorInfo.VDODOAmount, "297751805859913967");
       assert.equal(superiorInfo.superiorVDODO, "0");
-      assert.equal(superiorInfo.credit, "19999999999999999990");
-      assert.equal(superiorInfo.superior, "0x0000000000000000000000000000000000000000");
+      assert.equal(superiorInfo.credit, "29999999999999999897");
+      assert.equal(superiorInfo.superior, "0x0000000000000000000000000000000000000000")
+
 
       assert.equal(dodo_u, "99800000000000000000000")
-    });
 
+      let otherInfo = await getUserInfo(ctx, account1, "Superior after")
 
-    it("vdodo-mint-second-otherSuperior", async () => {
-      await mint(ctx, account0, decimalStr("100"), account1)
-
-      await getGlobalState(ctx, "before");
-      await getUserInfo(ctx, account0, "User before");
-      await getUserInfo(ctx, account1, "Superior before")
-      await dodoBalance(ctx, account0, "before")
-
-      await logGas(await ctx.VDODO.methods.mint(
-        decimalStr("100"),
-        account2
-      ), ctx.sendParam(account0), "mint-second");
-
-      //增加一个区块
-      await ctx.mintTestToken(account0, decimalStr("0"));
-
-      let [alpha,] = await getGlobalState(ctx, "after");
-      let userInfo = await getUserInfo(ctx, account0, "User after");
-      let superiorInfo = await getUserInfo(ctx, account1, "Superior after")
-      let [, dodo_u] = await dodoBalance(ctx, account0, "after")
-
-      assert.equal(alpha, "101365693130399012751");
-      assert.equal(userInfo.VDODOAmount, "1990990990990990990");
-      assert.equal(userInfo.superiorVDODO, "199099099099099099");
-      assert.equal(userInfo.credit, "0");
-      assert.equal(userInfo.superior, account1);
-
-      assert.equal(superiorInfo.VDODOAmount, "199099099099099099");
-      assert.equal(superiorInfo.superiorVDODO, "0");
-      assert.equal(superiorInfo.credit, "19999999999999999990");
-      assert.equal(superiorInfo.superior, "0x0000000000000000000000000000000000000000");
-
-      let otherInfo = await getUserInfo(ctx, account2, "Superior after")
-
-      assert.equal(otherInfo.VDODOAmount, "0");
-      assert.equal(otherInfo.superiorVDODO, "0");
+      assert.equal(otherInfo.VDODOAmount, "990990990990990990");
+      assert.equal(otherInfo.superiorVDODO, "99099099099099099");
       assert.equal(otherInfo.credit, "0");
-      assert.equal(otherInfo.superior, "0x0000000000000000000000000000000000000000");
+      assert.equal(otherInfo.superior, dodoTeam)
 
       assert.equal(dodo_u, "99800000000000000000000")
     });
 
 
     it("redeem-amount-read", async () => {
-      await mint(ctx, account0, decimalStr("100"), account1)
+      await mint(ctx, account0, decimalStr("100"), dodoTeam)
 
       let [dodoReceive, burnDodoAmount, withdrawFeeDodoAmount] = await ctx.VDODO.methods.getWithdrawAmount(decimalStr("1")).call();
 
@@ -215,25 +222,25 @@ describe("VDODO", () => {
 
 
     it("redeem-partial-haveMint", async () => {
-      await mint(ctx, account0, decimalStr("10000"), account1)
+      await mint(ctx, account0, decimalStr("10000"), dodoTeam)
 
       await getGlobalState(ctx, "before");
       await getUserInfo(ctx, account0, "User before");
-      await getUserInfo(ctx, account1, "Superior before")
+      await getUserInfo(ctx, dodoTeam, "Superior before")
       await dodoBalance(ctx, account0, "before")
 
       await logGas(await ctx.VDODO.methods.redeem(decimalStr("10")), ctx.sendParam(account0), "redeem-partial-haveMint");
 
       let [alpha,] = await getGlobalState(ctx, "after");
       let userInfo = await getUserInfo(ctx, account0, "User after");
-      let superiorInfo = await getUserInfo(ctx, account1, "Superior after")
+      let superiorInfo = await getUserInfo(ctx, dodoTeam, "Superior after")
       let [, dodo_u] = await dodoBalance(ctx, account0, "after")
 
       assert.equal(alpha, "101524380165289256197");
       assert.equal(userInfo.VDODOAmount, "90000000000000000000");
       assert.equal(userInfo.superiorVDODO, "9000000000000000000");
       assert.equal(userInfo.credit, "0");
-      assert.equal(userInfo.superior, account1);
+      assert.equal(userInfo.superior, dodoTeam);
 
       assert.equal(superiorInfo.VDODOAmount, "9000000000000000000");
       assert.equal(superiorInfo.superiorVDODO, "0");
@@ -247,24 +254,24 @@ describe("VDODO", () => {
 
     it("redeem-partial-NotMint", async () => {
       //多个下级引用
-      await mint(ctx, account1, decimalStr("100"), account0)
-      await mint(ctx, account2, decimalStr("100"), account0)
-      await mint(ctx, account3, decimalStr("100"), account0)
-      await mint(ctx, account4, decimalStr("100"), account0)
+      await mint(ctx, account1, decimalStr("100"), dodoTeam)
+      await mint(ctx, account2, decimalStr("100"), dodoTeam)
+      await mint(ctx, account3, decimalStr("100"), dodoTeam)
+      await mint(ctx, account4, decimalStr("100"), dodoTeam)
 
       await getGlobalState(ctx, "before");
-      await getUserInfo(ctx, account0, "User before");
+      await getUserInfo(ctx, dodoTeam, "User before");
       await getUserInfo(ctx, account3, "One of referer before");
-      await dodoBalance(ctx, account0, "before")
+      await dodoBalance(ctx, dodoTeam, "before")
 
-      let account0VdodoAmount = await ctx.VDODO.methods.balanceOf(account0).call()
+      let dodoTeamVdodoAmount = await ctx.VDODO.methods.balanceOf(dodoTeam).call()
 
-      await logGas(await ctx.VDODO.methods.redeem((account0VdodoAmount - 3000) + ""), ctx.sendParam(account0), "redeem-partial-NotMint");
+      await logGas(await ctx.VDODO.methods.redeem((dodoTeamVdodoAmount - 3000) + ""), ctx.sendParam(dodoTeam), "redeem-partial-NotMint");
 
       let [alpha,] = await getGlobalState(ctx, "after");
-      let userInfo = await getUserInfo(ctx, account0, "User after");
+      let userInfo = await getUserInfo(ctx, dodoTeam, "User after");
       let superiorInfo = await getUserInfo(ctx, account3, "One of referer after")
-      let [, dodo_u] = await dodoBalance(ctx, account0, "after")
+      let [, dodo_u] = await dodoBalance(ctx, dodoTeam, "after")
 
       assert.equal(alpha, "101909933011338172201");
       assert.equal(userInfo.VDODOAmount, "393425809544634067");
@@ -275,20 +282,20 @@ describe("VDODO", () => {
       assert.equal(superiorInfo.VDODOAmount, "986527067608148689");
       assert.equal(superiorInfo.superiorVDODO, "98652706760814868");
       assert.equal(superiorInfo.credit, "0");
-      assert.equal(superiorInfo.superior, account0);
+      assert.equal(superiorInfo.superior, dodoTeam);
 
-      assert.equal(dodo_u, "100000232341473424735076")
+      assert.equal(dodo_u, "232341473424735076")
     });
 
 
     it("redeem-all-haveMint", async () => {
       //第一笔mint不动，防止totalSupply过小
-      await mint(ctx, account0, decimalStr("10000"), account1)
-      await mint(ctx, account1, decimalStr("100"), account2)
+      await mint(ctx, account0, decimalStr("10000"), dodoTeam)
+      await mint(ctx, account1, decimalStr("100"), dodoTeam)
 
       await getGlobalState(ctx, "before");
       await getUserInfo(ctx, account1, "User before");
-      await getUserInfo(ctx, account2, "Superior before")
+      await getUserInfo(ctx, dodoTeam, "Superior before")
       await dodoBalance(ctx, account1, "before")
 
       let account1VdodoAmount = await ctx.VDODO.methods.balanceOf(account1).call()
@@ -297,45 +304,45 @@ describe("VDODO", () => {
 
       let [alpha,] = await getGlobalState(ctx, "after");
       let userInfo = await getUserInfo(ctx, account1, "User after");
-      let superiorInfo = await getUserInfo(ctx, account2, "Superior after")
+      let superiorInfo = await getUserInfo(ctx, dodoTeam, "Superior after")
       let [, dodo_u] = await dodoBalance(ctx, account1, "after")
 
-      assert.equal(alpha, "100154592821433302856");
-      assert.equal(userInfo.VDODOAmount, "9999090991728024725");
+      assert.equal(alpha, "100154467726495446770");
+      assert.equal(userInfo.VDODOAmount, "0");
       assert.equal(userInfo.superiorVDODO, "0");
-      assert.equal(userInfo.credit, "1000000000000000000000");
-      assert.equal(userInfo.superior, account2);
+      assert.equal(userInfo.credit, "0");
+      assert.equal(userInfo.superior, dodoTeam);
 
-      assert.equal(superiorInfo.VDODOAmount, "8998462015594");
+      assert.equal(superiorInfo.VDODOAmount, "10000000000000000000");
       assert.equal(superiorInfo.superiorVDODO, "0");
-      assert.equal(superiorInfo.credit, "0");
+      assert.equal(superiorInfo.credit, "999999099990999910000");
       assert.equal(superiorInfo.superior, "0x0000000000000000000000000000000000000000");
 
-      assert.equal(dodo_u, "985084929758388492933")
+      assert.equal(dodo_u, "985007650076500764963")
 
     });
 
 
     it("redeem-all-NoMint", async () => {
       //多个下级引用
-      await mint(ctx, account1, decimalStr("100"), account0)
-      await mint(ctx, account2, decimalStr("100"), account0)
-      await mint(ctx, account3, decimalStr("100"), account0)
-      await mint(ctx, account4, decimalStr("100"), account0)
+      await mint(ctx, account1, decimalStr("100"), dodoTeam)
+      await mint(ctx, account2, decimalStr("100"), dodoTeam)
+      await mint(ctx, account3, decimalStr("100"), dodoTeam)
+      await mint(ctx, account4, decimalStr("100"), dodoTeam)
 
       await getGlobalState(ctx, "before");
-      await getUserInfo(ctx, account0, "User before");
+      await getUserInfo(ctx, dodoTeam, "User before");
       await getUserInfo(ctx, account3, "One of referer before");
-      await dodoBalance(ctx, account0, "before")
+      await dodoBalance(ctx, dodoTeam, "before")
 
-      let account0VdodoAmount = await ctx.VDODO.methods.balanceOf(account0).call()
+      let dodoTeamVdodoAmount = await ctx.VDODO.methods.balanceOf(dodoTeam).call()
 
-      await logGas(await ctx.VDODO.methods.redeem(account0VdodoAmount), ctx.sendParam(account0), "redeem-all-NotMint");
+      await logGas(await ctx.VDODO.methods.redeem(dodoTeamVdodoAmount), ctx.sendParam(dodoTeam), "redeem-all-NotMint");
 
       let [alpha,] = await getGlobalState(ctx, "after");
-      let userInfo = await getUserInfo(ctx, account0, "User after");
+      let userInfo = await getUserInfo(ctx, dodoTeam, "User after");
       let superiorInfo = await getUserInfo(ctx, account3, "One of referer after")
-      let [, dodo_u] = await dodoBalance(ctx, account0, "after")
+      let [, dodo_u] = await dodoBalance(ctx, dodoTeam, "after")
 
       assert.equal(alpha, "101909933011338182738");
       assert.equal(userInfo.VDODOAmount, "393425809544631067");
@@ -346,9 +353,9 @@ describe("VDODO", () => {
       assert.equal(superiorInfo.VDODOAmount, "986527067608148689");
       assert.equal(superiorInfo.superiorVDODO, "98652706760814868");
       assert.equal(superiorInfo.credit, "0");
-      assert.equal(superiorInfo.superior, account0);
+      assert.equal(superiorInfo.superior, dodoTeam);
 
-      assert.equal(dodo_u, "100000232341473424994923")
+      assert.equal(dodo_u, "232341473424994923")
     });
   })
 });
