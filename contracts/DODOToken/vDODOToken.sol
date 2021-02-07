@@ -57,6 +57,7 @@ contract vDODOToken is InitializableOwnable {
     uint32 public _LAST_REWARD_BLOCK_;
 
     uint256 public _TOTAL_BLOCK_REWARD_;
+
     uint256 public _TOTAL_STAKING_POWER_;
     mapping(address => UserInfo) public userInfo;
 
@@ -355,7 +356,6 @@ contract vDODOToken is InitializableOwnable {
 
         to.stakingPower = uint128(uint256(to.stakingPower).add(stakingPower));
         to.superiorSP = uint128(uint256(to.superiorSP).add(superiorIncreSP));
-
         superior.stakingPower = uint128(uint256(superior.stakingPower).add(superiorIncreSP));
         superior.credit = uint128(uint256(superior.credit).add(superiorIncreCredit));
 
@@ -394,7 +394,6 @@ contract vDODOToken is InitializableOwnable {
         require(from != address(0), "transfer from the zero address");
         require(to != address(0), "transfer to the zero address");
         require(from != to, "transfer from same with to");
-
 
         uint256 stakingPower = DecimalMath.divFloor(vDODOAmount * _DODO_RATIO_, alpha);
 
