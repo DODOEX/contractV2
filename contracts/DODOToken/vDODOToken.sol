@@ -221,12 +221,8 @@ contract vDODOToken is InitializableOwnable {
         vDODOSupply = IERC20(_DODO_TOKEN_).balanceOf(address(this)) / _DODO_RATIO_;
     }
 
-    function balanceOf(address account) public view returns (uint256 dodoAmount) {
-        UserInfo memory user = userInfo[account];
-        dodoAmount = DecimalMath
-            .mulFloor(uint256(user.stakingPower), getLatestAlpha())
-            .mul(_DODO_RATIO_)
-            .sub(user.credit);
+    function balanceOf(address account) public view returns (uint256 vDODOAmount) {
+        vDODOAmount = dodoBalanceOf(account) / _DODO_RATIO_;
     }
 
     function availableBalanceOf(address account) public view returns (uint256 balance) {
@@ -236,6 +232,13 @@ contract vDODOToken is InitializableOwnable {
             uint256 lockedBalance = IGovernance(_DOOD_GOV_).getLockedDODO(account);
             balance = balanceOf(account).sub(lockedBalance);
         }
+    }
+
+    function dodoBalanceOf(address account) public view returns (uint256 dodoAmount) {
+        UserInfo memory user = userInfo[account];
+        dodoAmount = DecimalMath.mulFloor(uint256(user.stakingPower), getLatestAlpha()).sub(
+            user.credit
+        );
     }
 
     function transfer(address to, uint256 vDODOAmount) public returns (bool) {
