@@ -12,7 +12,7 @@ import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 //todo
 contract Governance is InitializableOwnable {
 
-    function getLockedDODO(address account) external pure returns (uint256 lockedDODO) {
-        lockedDODO = 0;//todo for test
+    function getLockedvDODO(address account) external pure returns (uint256 lockedvDODO) {
+        lockedvDODO = 0;//todo for test
     }
 }

@@ -15,7 +15,7 @@ import {SafeERC20} from "../lib/SafeERC20.sol";
 import {IDODOApproveProxy} from "../SmartRoute/DODOApproveProxy.sol";
 
 interface IGovernance {
-    function getLockedDODO(address account) external view returns (uint256);
+    function getLockedvDODO(address account) external view returns (uint256);
 }
 
 interface IDODOCirculationHelper {
@@ -66,7 +66,7 @@ contract vDODOToken is InitializableOwnable {
 
     // ============ Events ============
 
-    event MintVDODO(address user, address superior, uint256 amount);
+    event MintVDODO(address user, address superior, uint256 mintDODO);
     event RedeemVDODO(address user, uint256 receiveDODO, uint256 burnDODO, uint256 feeDODO);
     event SetCantransfer(bool allowed);
 
@@ -268,7 +268,7 @@ contract vDODOToken is InitializableOwnable {
         if (_DOOD_GOV_ == address(0)) {
             balance = balanceOf(account);
         } else {
-            uint256 lockedBalance = IGovernance(_DOOD_GOV_).getLockedDODO(account);
+            uint256 lockedBalance = IGovernance(_DOOD_GOV_).getLockedvDODO(account);
             balance = balanceOf(account).sub(lockedBalance);
         }
     }
