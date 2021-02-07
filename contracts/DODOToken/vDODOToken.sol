@@ -190,7 +190,7 @@ contract vDODOToken is InitializableOwnable {
             getWithdrawResult(dodoAmount);
         IERC20(_DODO_TOKEN_).transfer(msg.sender, dodoReceive);
         if (burnDodoAmount > 0) {
-            _transfer(address(this), address(0), burnDodoAmount);
+            IERC20(_DODO_TOKEN_).transfer(address(0), burnDodoAmount);
         }
         if (withdrawFeeDodoAmount > 0) {
             alpha = uint128(
