@@ -299,6 +299,10 @@ contract vDODOToken is InitializableOwnable {
         withdrawFeeDodoAmount = withdrawFeeDodoAmount.sub(burnDodoAmount);
     }
 
+    function getDODOWithdrawFeeRatio() public view returns (uint256 feeRatio) {
+        feeRatio = IDODOCirculationHelper(_DODO_CIRCULATION_HELPER_).getDodoWithdrawFeeRatio();
+    }
+
     // ============ Internal Functions ============
 
     function _updateAlpha() internal {
