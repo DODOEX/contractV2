@@ -75,9 +75,9 @@ module.exports = async (deployer, network, accounts) => {
         DODOSellHelperAddress = "0xbdEae617F2616b45DCB69B287D52940a76035Fe3";
         WETHAddress = "0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b";
         chiAddress = "0x0000000000004946c0e9f43f4dee607b0ef1fa1c";
-        DODOCalleeHelperAddress = "0xf45e57FE0c0Bf759E34152179B2dA0a4e1a6BC9B";
+        DODOCalleeHelperAddress = "0x36ce1831941d35c3588759B2D084E240a094ad4A";
         DODOV1PmmHelperAddress = "0xC972069473a686b1c11Bd9347D719c87e6745d39";
-        DODORouteV2HelperAddress = "";
+        DODORouteV2HelperAddress = "0xD5171044E369Ef316125da5A0Af8E75ea6Cd3A90";
 
         //Template
         CloneFactoryAddress = "0xf7959fe661124C49F96CF30Da33729201aEE1b27";
@@ -85,16 +85,16 @@ module.exports = async (deployer, network, accounts) => {
         DefaultPermissionAddress = "0xACc7E23368261e1E02103c4e5ae672E7D01f5797";
 
         DvmTemplateAddress = "0xA6384D1501842e9907D43148E2ca0d50E4ad56E2";
-        DppTemplateAddress = "";
-        DppAdminTemplateAddress = "";
+        DppTemplateAddress = "0x6b9Db3908ddFD853AD2A42Ab75b5de3f22f137a5";
+        DppAdminTemplateAddress = "0x2d69731283ac620760309d8b561De11C6166a5F5";
         CpTemplateAddress = "0x81c802080c3CE0dE98fcb625670A14Eb8440184a";
         //Factory
         DvmFactoryAddress = "0xE842d8c9A54B23C4D0cf208daCA3882c0c311353";
-        DppFactoryAddress = "";
+        DppFactoryAddress = "0x80c03749C22Acbe5EaFEb1d550a32C707a67fc34";
         CpFactoryAddress = "0xD25e0A9A464f50191d9C879bE818FbA44680E980";
         //Approve
-        DODOApproveAddress = "";
-        DODOApproveProxyAddress = "";
+        DODOApproveAddress = "0x9e159C2932ceFCD0FdC21458fBAd99a535BC1ccB";
+        DODOApproveProxyAddress = "0x5ee5B85ddf0b842e0d65f0d295F6954eceFBEeD4";
         DODOIncentiveAddress = "0x1f69E3CEAbDc464Ab11bceB15726530CD8AC535E";
         DODOTokenAddress = "0xfF2985D13953Cb92ecc585aA2B6A4AF8cB46068f";
         //Account
@@ -164,6 +164,11 @@ module.exports = async (deployer, network, accounts) => {
     logger.log("network type: " + network);
     logger.log("Deploy time: " + new Date().toLocaleString());
 
+    if (deploySwitch.CALLEE) {
+        await deployer.deploy(DODOCalleeHelper, WETHAddress);
+        DODOCalleeHelperAddress = DODOCalleeHelper.address;
+        logger.log("DODOCalleeHelperAddress: ", DODOCalleeHelperAddress);
+    }
 
     if (deploySwitch.ADAPTER) {
         logger.log("Deploy type: V2 - Adapter");
@@ -232,6 +237,9 @@ module.exports = async (deployer, network, accounts) => {
             await deployer.deploy(FeeRateModelTemplate);
             DefaultMtFeeRateAddress = FeeRateModelTemplate.address;
             logger.log("DefaultMtFeeRateAddress: ", DefaultMtFeeRateAddress);
+            const defaultMtFeeRateInstance = await FeeRateModelTemplate.at(DefaultMtFeeRateAddress);
+            var tx = await defaultMtFeeRateInstance.initOwner(multiSigAddress);
+            logger.log("Init DefaultMtFeeRateAddress Tx:", tx.tx);
         }
 
         if (DefaultPermissionAddress == "") {

@@ -1,5 +1,5 @@
 #!/bin/bash
-truffle compile --all
+# truffle compile --all
 
 if [ "$1"x = "proxy-dpp"x ]
 then

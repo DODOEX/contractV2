@@ -1,0 +1,16 @@
+====================================================
+network type: bsclive
+Deploy time: 2021/2/4 下午4:56:38
+Deploy type: DODOBscToken
+DODOBscTokenAddress:  0x67ee3Cb086F8a16f34beE3ca72FAD36F7Db929e2
+Init DODOBscTokenAddress Tx: 0xf66264c2669f904527de63fab104250275247c014bfb6f42f57441997551cef6
+====================================================
+network type: kovan
+Deploy time: 2021/2/4 下午6:12:05
+Deploy type: vDODOToken
+vDODOTokenAddress:  0x2cF0B8F94361c52f23c1bBC0d2F213Ea5cD61397
+Init vDODOTokenAddress Tx: 0xed856ab816302df0575dc05910246d37ff4f239bf3c75f6969560df5d725fcf0
+DODOCirculationHelperAddress:  0x0bfb5Beb854e3104f47C1Cb057DEEB90CB7B9464
+Init DODOCirculationHelperAddress Tx: 0x8b2d1b9d3455db665f7ac06b465f1bfc2e0ccddb0aa5cd4bca72bc9c7b69b2d9
+vDODOToken changeReward tx:  0x8ed4b35edff17b8ef9480b9c40b7673cf7a50088afb9fb7c7fe50d439930c4cf
+vDODOToken setDODOCirculationHelper tx:  0x402a9d1abd299ac8df019cff5d6f79e49b82cae34b356a0f1e0afdb47d7bd811

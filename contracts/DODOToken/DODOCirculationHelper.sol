@@ -55,7 +55,7 @@ contract DODOCirculationHelper is InitializableOwnable {
         }
     }
 
-    function getVDODOWithdrawFeeRatio() external view returns (uint256 ratio) {
+    function getDodoWithdrawFeeRatio() external view returns (uint256 ratio) {
         uint256 dodoCirculationAmout = getCirculation();
         uint256 x =
             DecimalMath.divCeil(
