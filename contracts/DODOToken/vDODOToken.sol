@@ -134,7 +134,7 @@ contract vDODOToken is InitializableOwnable {
         IERC20(_DODO_TOKEN_).transfer(_OWNER_, dodoBalance);
     }
 
-    // ============ Functions ============
+    // ============ Mint & Redeem & Donate ============
 
     function mint(uint256 dodoAmount, address superiorAddress) public {
         require(
@@ -215,7 +215,7 @@ contract vDODOToken is InitializableOwnable {
         );
     }
 
-    // ============ Functions(ERC20) ============
+    // ============ ERC20 Functions ============
 
     function totalSupply() public view returns (uint256 vDODOSupply) {
         vDODOSupply = IERC20(_DODO_TOKEN_).balanceOf(address(this)) / _DODO_RATIO_;
@@ -223,22 +223,6 @@ contract vDODOToken is InitializableOwnable {
 
     function balanceOf(address account) public view returns (uint256 vDODOAmount) {
         vDODOAmount = dodoBalanceOf(account) / _DODO_RATIO_;
-    }
-
-    function availableBalanceOf(address account) public view returns (uint256 balance) {
-        if (_DOOD_GOV_ == address(0)) {
-            balance = balanceOf(account);
-        } else {
-            uint256 lockedBalance = IGovernance(_DOOD_GOV_).getLockedDODO(account);
-            balance = balanceOf(account).sub(lockedBalance);
-        }
-    }
-
-    function dodoBalanceOf(address account) public view returns (uint256 dodoAmount) {
-        UserInfo memory user = userInfo[account];
-        dodoAmount = DecimalMath.mulFloor(uint256(user.stakingPower), getLatestAlpha()).sub(
-            user.credit
-        );
     }
 
     function transfer(address to, uint256 vDODOAmount) public returns (bool) {
@@ -269,7 +253,7 @@ contract vDODOToken is InitializableOwnable {
         return _ALLOWED_[owner][spender];
     }
 
-    // ============ View Functions ============
+    // ============ Helper Functions ============
 
     function getLatestAlpha() public view returns (uint256) {
         uint256 accuDODO = _DODO_PER_BLOCK_ * (block.number - lastRewardBlock);
@@ -278,6 +262,22 @@ contract vDODOToken is InitializableOwnable {
         } else {
             return alpha;
         }
+    }
+
+    function availableBalanceOf(address account) public view returns (uint256 balance) {
+        if (_DOOD_GOV_ == address(0)) {
+            balance = balanceOf(account);
+        } else {
+            uint256 lockedBalance = IGovernance(_DOOD_GOV_).getLockedDODO(account);
+            balance = balanceOf(account).sub(lockedBalance);
+        }
+    }
+
+    function dodoBalanceOf(address account) public view returns (uint256 dodoAmount) {
+        UserInfo memory user = userInfo[account];
+        dodoAmount = DecimalMath.mulFloor(uint256(user.stakingPower), getLatestAlpha()).sub(
+            user.credit
+        );
     }
 
     function getWithdrawResult(uint256 dodoAmount)
@@ -301,6 +301,10 @@ contract vDODOToken is InitializableOwnable {
 
     function getDODOWithdrawFeeRatio() public view returns (uint256 feeRatio) {
         feeRatio = IDODOCirculationHelper(_DODO_CIRCULATION_HELPER_).getDodoWithdrawFeeRatio();
+    }
+
+    function getSuperior(address account) public view returns (address superior) {
+        return userInfo[account].superior;
     }
 
     // ============ Internal Functions ============
