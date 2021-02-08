@@ -134,8 +134,8 @@ module.exports = async (deployer, network, accounts) => {
         DODOSellHelperAddress = "0x0F859706AeE7FcF61D5A8939E8CB9dBB6c1EDA33";
         WETHAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
         chiAddress = "0x0000000000000000000000000000000000000000";
-        DODOCalleeHelperAddress = "0xDfaf9584F5d229A9DBE5978523317820A8897C5A";
-        DODORouteV2HelperAddress = "";
+        DODOCalleeHelperAddress = "0xaaffAd1017D6a13E026A00121BF258C616B25f7C";
+        DODORouteV2HelperAddress = "0x335aC99bb3E51BDbF22025f092Ebc1Cf2c5cC619";
         DODOV1PmmHelperAddress = "0x2BBD66fC4898242BDBD2583BBe1d76E8b8f71445";
         //Template
         CloneFactoryAddress = "0x03E2427859119E497EB856a166F616a2Ce5f8c88";
@@ -144,17 +144,17 @@ module.exports = async (deployer, network, accounts) => {
 
         DvmTemplateAddress = "0xC3BeD579CaB3EC29B22D9AB99F4E586af42496b9";
         DppTemplateAddress = "0x85351262f7474Ebe23FfAcD633cf20A491F1325D";
-        DppAdminTemplateAddress = "";
+        DppAdminTemplateAddress = "0x44D5dF24d5Ef52A791D6436Fa45A8D426f6de34e";
         CpTemplateAddress = "0x041ABa00c57Dd47abC37A2931dF569a2A2cc57Be";
         //Factory
         DvmFactoryAddress = "0xf50BDc9E90B7a1c138cb7935071b85c417C4cb8e";
-        DppFactoryAddress = "";
+        DppFactoryAddress = "0x9B64c81ba54eA51e1f6B7fefb3cfF8AA6F1e2A09";
         CpFactoryAddress = "0x9aE501385Bc7996A2A4a1FBb00c8d3820611BCB5";
         //Proxy
         DODOApproveAddress = "0xa128Ba44B2738A558A1fdC06d6303d52D3Cef8c1";
-        DODOApproveProxyAddress = "";
-        DODOIncentiveAddress = "0x80930Cb1849F7D42531506fF45E66724338A821b";
-        DODOTokenAddress = "0x497A44c951fCCF92ADfdeD0a5b0162256F147647";
+        DODOApproveProxyAddress = "0xB76de21f04F677f07D9881174a1D8E624276314C";
+        DODOIncentiveAddress = "";
+        DODOTokenAddress = "0x67ee3Cb086F8a16f34beE3ca72FAD36F7Db929e2";
         //Account
         multiSigAddress = "0x4073f2b9bB95774531b9e23d206a308c614A943a";
         defaultMaintainer = "0x4073f2b9bB95774531b9e23d206a308c614A943a";
