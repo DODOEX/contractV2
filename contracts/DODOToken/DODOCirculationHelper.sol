@@ -59,30 +59,25 @@ contract DODOCirculationHelper is InitializableOwnable {
         uint256 dodoCirculationAmout = getCirculation();
         uint256 x =
             DecimalMath.divCeil(
-                dodoCirculationAmout,
-                IERC20(_VDODO_TOKEN_).totalSupply()
+                IERC20(_VDODO_TOKEN_).totalSupply() * 100,
+                dodoCirculationAmout
             );
         
         ratio = geRatioValue(x);
     }
 
-    function geRatioValue(uint256 input) public view returns (uint256 ratio) {
+    function geRatioValue(uint256 input) public view returns (uint256) {
         
-        // (x - 1)^2 / 81 + (y - 15)^2 / 100 = 1
-        // y = 5% (x ≤ 1)
-        // y = 15% (x ≥ 10)
-        // y = 15% - 10% * sqrt(1-[(x-1)/9]^2)
+        // y = 15% (x < 0.1)
+        // y = 5% (x > 0.5)
+        // y = 0.175 - 0.25 * x
         
-        if (input <= 10**18) {
-            return _MIN_PENALTY_RATIO_;
-        } else if (input >= 10**19) {
+        if (input < 10**17) {
             return _MAX_PENALTY_RATIO_;
+        } else if (input > 5 * 10**17) {
+            return _MIN_PENALTY_RATIO_;
         } else {
-            uint256 xTemp = input.sub(DecimalMath.ONE).div(9);
-            uint256 premium = DecimalMath.ONE2.sub(xTemp.mul(xTemp)).sqrt();
-            ratio =
-                _MAX_PENALTY_RATIO_ -
-                DecimalMath.mulFloor(_MAX_PENALTY_RATIO_ - _MIN_PENALTY_RATIO_, premium);
+            return 175 * 10**15 - DecimalMath.mulFloor(input, 25 * 10**16);
         }
     }
 }

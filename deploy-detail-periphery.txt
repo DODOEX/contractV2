@@ -14,3 +14,19 @@ DODOCirculationHelperAddress:  0x0bfb5Beb854e3104f47C1Cb057DEEB90CB7B9464
 Init DODOCirculationHelperAddress Tx: 0x8b2d1b9d3455db665f7ac06b465f1bfc2e0ccddb0aa5cd4bca72bc9c7b69b2d9
 vDODOToken changeReward tx:  0x8ed4b35edff17b8ef9480b9c40b7673cf7a50088afb9fb7c7fe50d439930c4cf
 vDODOToken setDODOCirculationHelper tx:  0x402a9d1abd299ac8df019cff5d6f79e49b82cae34b356a0f1e0afdb47d7bd811
+====================================================
+network type: live
+Deploy time: 2021/2/8 下午3:06:45
+Deploy type: DODOMigrationBSC
+====================================================
+network type: live
+Deploy time: 2021/2/8 下午3:08:35
+Deploy type: DODOMigrationBSC
+DODOMigrationBSCAddress:  0xb159260989012fA98af560A3Fa6D9cd11a64cf6E
+Init DODOMigrationBSCAddress Tx: 0x5e825f52f1eae7f251acd5f36281dcbcd8a7520c3d271aad4907fbbf586da392
+====================================================
+network type: live
+Deploy time: 2021/2/8 下午3:27:50
+Deploy type: DODOMigrationBSC
+DODOMigrationBSCAddress:  0x958f79e2998DFe417208b9A07D799265B0298e58
+Init DODOMigrationBSCAddress Tx: 0x9b9ed65c536b5b53d83b811a754383d48cae00e4e5c80bee74f755c30a9c0748

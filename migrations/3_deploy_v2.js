@@ -77,26 +77,26 @@ module.exports = async (deployer, network, accounts) => {
         chiAddress = "0x0000000000004946c0e9f43f4dee607b0ef1fa1c";
         DODOCalleeHelperAddress = "0x36ce1831941d35c3588759B2D084E240a094ad4A";
         DODOV1PmmHelperAddress = "0xC972069473a686b1c11Bd9347D719c87e6745d39";
-        DODORouteV2HelperAddress = "0xD5171044E369Ef316125da5A0Af8E75ea6Cd3A90";
+        DODORouteV2HelperAddress = "0x4605149BB2Efab69D4fA37Bc9669f3b6f7bD3F92";
 
         //Template
         CloneFactoryAddress = "0xf7959fe661124C49F96CF30Da33729201aEE1b27";
-        DefaultMtFeeRateAddress = "0x2F7e3B1c22C1baE2224Cef9F8BFe6B13789Fd0F7";
-        DefaultPermissionAddress = "0xACc7E23368261e1E02103c4e5ae672E7D01f5797";
+        DefaultMtFeeRateAddress = "0x57e5b46e400c0C31cA174C8E199fB5fE650DB18a";
+        DefaultPermissionAddress = "0x82C87c5EB912762676E7a87Aad67D916317c7D0e";
 
-        DvmTemplateAddress = "0xA6384D1501842e9907D43148E2ca0d50E4ad56E2";
-        DppTemplateAddress = "0x6b9Db3908ddFD853AD2A42Ab75b5de3f22f137a5";
-        DppAdminTemplateAddress = "0x2d69731283ac620760309d8b561De11C6166a5F5";
-        CpTemplateAddress = "0x81c802080c3CE0dE98fcb625670A14Eb8440184a";
+        DvmTemplateAddress = "0x268EA583bc954678DeD93D4832F147604142aDaD";
+        DppTemplateAddress = "0xEAdc4943329Cb8139Ee3c8575f6a9B3659cd0591";
+        DppAdminTemplateAddress = "0xf63e41A459D9AEcaE4bAE1278ef0ae84F7F2DE56";
+        CpTemplateAddress = "0x973bEbaE41E79c2B4d9EaEE14c2aB85f43673dc3";
         //Factory
-        DvmFactoryAddress = "0xE842d8c9A54B23C4D0cf208daCA3882c0c311353";
-        DppFactoryAddress = "0x80c03749C22Acbe5EaFEb1d550a32C707a67fc34";
-        CpFactoryAddress = "0xD25e0A9A464f50191d9C879bE818FbA44680E980";
+        DvmFactoryAddress = "0x322F8014C125Da09314d3a68d4d9F427823F17FD";
+        DppFactoryAddress = "0x9fA487762d4329eBDD83a00a82C8a02719Fdf512";
+        CpFactoryAddress = "0x9e6E8985D52E91eDf1671f28Ca73bc4F3E219b72";
         //Approve
-        DODOApproveAddress = "0x9e159C2932ceFCD0FdC21458fBAd99a535BC1ccB";
-        DODOApproveProxyAddress = "0x5ee5B85ddf0b842e0d65f0d295F6954eceFBEeD4";
-        DODOIncentiveAddress = "0x1f69E3CEAbDc464Ab11bceB15726530CD8AC535E";
-        DODOTokenAddress = "0xfF2985D13953Cb92ecc585aA2B6A4AF8cB46068f";
+        DODOApproveAddress = "0x4A354b8d0DDb7083f066bDaC1f50d23DE221B01C";
+        DODOApproveProxyAddress = "0xe778affD2a337b57a9cDAF6f2ba0bebe3e16316E";
+        DODOIncentiveAddress = "0x5cFCc14f7C8be8B138D9fDF7438391b0BFe0589F";
+        DODOTokenAddress = "0x854b0f89BAa9101e49Bfb357A38071C9db5d0DFa";
         //Account
         multiSigAddress = accounts[0];
         defaultMaintainer = accounts[0];
