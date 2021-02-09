@@ -27,7 +27,7 @@ module.exports = async (deployer, network, accounts) => {
         multiSigAddress = accounts[0];
     } else if (network == "live") {
         DODOTokenAddress = "0x43dfc4159d86f3a37a5a4b3d4580b888ad7d4ddd";
-        DODOApproveProxyAddress = "	0x335aC99bb3E51BDbF22025f092Ebc1Cf2c5cC619";
+        DODOApproveProxyAddress = "0x335aC99bb3E51BDbF22025f092Ebc1Cf2c5cC619";
         DODOCirculationHelperAddress = "";
         vDODOTokenAddress = "";
         GovernanceAddress = "0x0000000000000000000000000000000000000000";

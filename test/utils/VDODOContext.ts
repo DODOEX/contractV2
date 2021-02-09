@@ -107,17 +107,19 @@ export class VDODOContext {
       this.Deployer
     ).send(this.sendParam(this.Deployer))
 
-    await this.VDODO.methods.changePerReward(decimalStr("1")).send(this.sendParam(this.Deployer));
+
     await this.VDODO.methods.updateDODOCirculationHelper(this.DODOCirculationHelper.options.address).send(this.sendParam(this.Deployer));
-    await this.mintTestToken(this.VDODO.options.address, decimalStr("100000"));
+    await this.mintTestToken(allAccounts[8], decimalStr("10000"));
+    await this.approveProxy(allAccounts[8]);
 
-    this.alpha = await this.VDODO.methods.alpha().call();
-    this.lastRewardBlock = await this.VDODO.methods.lastRewardBlock().call();
+    await this.VDODO.methods.preDepositedBlockReward(decimalStr("10000")).send(this.sendParam(allAccounts[8]));
 
+    var lastRewardBlock = await this.VDODO.methods._LAST_REWARD_BLOCK_().call();
+    var curBlock = await this.Web3.eth.getBlockNumber();
+    console.log("init-block:" + lastRewardBlock + " blockNumber:" + curBlock)
+
+    await this.VDODO.methods.changePerReward(decimalStr("1")).send(this.sendParam(this.Deployer));
     console.log(log.blueText("[Init VDODO context]"));
-
-    console.log("init           alpha = " + this.alpha);
-    console.log("init lastRewardBlock = " + this.lastRewardBlock);
   }
 
   sendParam(sender, value = "0") {

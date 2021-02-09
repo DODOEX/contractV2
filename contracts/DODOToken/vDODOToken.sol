@@ -37,9 +37,9 @@ contract vDODOToken is InitializableOwnable {
 
     // ============ Storage ============
 
-    address immutable _DODO_TOKEN_;
-    address immutable _DODO_APPROVE_PROXY_;
-    address immutable _DODO_TEAM_;
+    address public immutable _DODO_TOKEN_;
+    address public immutable _DODO_APPROVE_PROXY_;
+    address public immutable _DODO_TEAM_;
     address public _DOOD_GOV_;
     address public _DODO_CIRCULATION_HELPER_;
 
@@ -52,8 +52,11 @@ contract vDODOToken is InitializableOwnable {
     uint256 public _DODO_FEE_BURN_RATIO_;
 
     // accounting
-    uint128 public alpha = 10**18; // 1
-    uint128 public lastRewardBlock;
+    uint112 public alpha = 10**18; // 1
+    uint112 public _TOTAL_BLOCK_DISTRIBUTION_;
+    uint32 public _LAST_REWARD_BLOCK_;
+
+    uint256 public _TOTAL_BLOCK_REWARD_;
     uint256 public _TOTAL_STAKING_POWER_;
     mapping(address => UserInfo) public userInfo;
 
@@ -99,7 +102,6 @@ contract vDODOToken is InitializableOwnable {
         _DOOD_GOV_ = dodoGov;
         _DODO_TOKEN_ = dodoToken;
         _DODO_APPROVE_PROXY_ = dodoApproveProxy;
-        lastRewardBlock = uint128(block.number);
         _DODO_TEAM_ = dodoTeam;
     }
 
@@ -210,17 +212,30 @@ contract vDODOToken is InitializableOwnable {
             address(this),
             dodoAmount
         );
-        alpha = uint128(
+        alpha = uint112(
             uint256(alpha).add(DecimalMath.divFloor(dodoAmount, _TOTAL_STAKING_POWER_))
         );
+    }
+
+    function preDepositedBlockReward(uint256 dodoAmount) public {
+        IDODOApproveProxy(_DODO_APPROVE_PROXY_).claimTokens(
+            _DODO_TOKEN_,
+            msg.sender,
+            address(this),
+            dodoAmount
+        );
+        _TOTAL_BLOCK_REWARD_ = _TOTAL_BLOCK_REWARD_.add(dodoAmount);
     }
 
     // ============ ERC20 Functions ============
 
     function totalSupply() public view returns (uint256 vDODOSupply) {
-        vDODOSupply = IERC20(_DODO_TOKEN_).balanceOf(address(this)) / _DODO_RATIO_;
+        uint256 totalDODO = IERC20(_DODO_TOKEN_).balanceOf(address(this));
+        (,uint256 curDistribution) = getLatestAlpha();
+        uint256 actualDODO = totalDODO.sub(_TOTAL_BLOCK_REWARD_.sub(curDistribution.add(_TOTAL_BLOCK_DISTRIBUTION_)));
+        vDODOSupply = actualDODO / _DODO_RATIO_;
     }
-
+    
     function balanceOf(address account) public view returns (uint256 vDODOAmount) {
         vDODOAmount = dodoBalanceOf(account) / _DODO_RATIO_;
     }
@@ -231,7 +246,7 @@ contract vDODOToken is InitializableOwnable {
         return true;
     }
 
-    function approve(address spender, uint256 vDODOAmount) public returns (bool) {
+    function approve(address spender, uint256 vDODOAmount) canTransfer public returns (bool) {
         _ALLOWED_[msg.sender][spender] = vDODOAmount;
         emit Approval(msg.sender, spender, vDODOAmount);
         return true;
@@ -255,29 +270,33 @@ contract vDODOToken is InitializableOwnable {
 
     // ============ Helper Functions ============
 
-    function getLatestAlpha() public view returns (uint256) {
-        uint256 accuDODO = _DODO_PER_BLOCK_ * (block.number - lastRewardBlock);
+    function getLatestAlpha() public view returns (uint256 newAlpha, uint256 curDistribution) {
+        curDistribution = _DODO_PER_BLOCK_ * (block.number - _LAST_REWARD_BLOCK_);
         if (_TOTAL_STAKING_POWER_ > 0) {
-            return uint256(alpha).add(DecimalMath.divFloor(accuDODO, _TOTAL_STAKING_POWER_));
+            newAlpha = uint256(alpha).add(DecimalMath.divFloor(curDistribution, _TOTAL_STAKING_POWER_));
         } else {
-            return alpha;
+            newAlpha = alpha;
         }
     }
 
-    function availableBalanceOf(address account) public view returns (uint256 balance) {
+    function availableBalanceOf(address account) public view returns (uint256 vDODOAmount) {
         if (_DOOD_GOV_ == address(0)) {
-            balance = balanceOf(account);
+            vDODOAmount = balanceOf(account);
         } else {
-            uint256 lockedBalance = IGovernance(_DOOD_GOV_).getLockedvDODO(account);
-            balance = balanceOf(account).sub(lockedBalance);
+            uint256 lockedvDODOAmount = IGovernance(_DOOD_GOV_).getLockedvDODO(account);
+            vDODOAmount = balanceOf(account).sub(lockedvDODOAmount);
         }
     }
 
     function dodoBalanceOf(address account) public view returns (uint256 dodoAmount) {
         UserInfo memory user = userInfo[account];
-        dodoAmount = DecimalMath.mulFloor(uint256(user.stakingPower), getLatestAlpha()).sub(
-            user.credit
-        );
+        (uint256 newAlpha,) = getLatestAlpha();
+        uint256 nominalDodo =  DecimalMath.mulFloor(uint256(user.stakingPower), newAlpha);
+        if(nominalDodo > user.credit) {
+            dodoAmount = nominalDodo - user.credit;
+        }else {
+            dodoAmount = 0;
+        }
     }
 
     function getWithdrawResult(uint256 dodoAmount)
@@ -310,10 +329,12 @@ contract vDODOToken is InitializableOwnable {
     // ============ Internal Functions ============
 
     function _updateAlpha() internal {
-        uint256 newAlpha = getLatestAlpha();
-        require(newAlpha <= uint128(-1), "OVERFLOW");
-        alpha = uint128(newAlpha);
-        lastRewardBlock = uint128(block.number);
+        (uint256 newAlpha, uint256 curDistribution) = getLatestAlpha();
+        uint256 newTotalDistribution = curDistribution.add(_TOTAL_BLOCK_DISTRIBUTION_);
+        require(newAlpha <= uint112(-1) && newTotalDistribution <= uint112(-1), "OVERFLOW");
+        alpha = uint112(newAlpha);
+        _TOTAL_BLOCK_DISTRIBUTION_ = uint112(newTotalDistribution);
+        _LAST_REWARD_BLOCK_ = uint32(block.number);
     }
 
     function _mint(UserInfo storage to, uint256 stakingPower) internal {
