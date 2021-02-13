@@ -48,8 +48,9 @@ module.exports = {
     MOCK_TARGET_POOL: false,
     BSCMigration:     false,
     DODOBscToken:     false,
-    vDODOToken:       true,
+    vDODOToken:       false,
     CALLEE:           false,
+    DODORecharge:     true
   },
 
   networks: {

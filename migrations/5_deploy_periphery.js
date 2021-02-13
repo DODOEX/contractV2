@@ -4,6 +4,7 @@ const file = fs.createWriteStream("../deploy-detail-periphery.txt", { 'flags': '
 let logger = new console.Console(file, file);
 
 const DODOBscToken = artifacts.require("DODOBscToken");
+const DODORecharge = artifacts.require("DODORecharge");
 const DODOMigrationBSC = artifacts.require("DODOMigrationBSC");
 const vDODOToken = artifacts.require("vDODOToken");
 const DODOCirculationHelper = artifacts.require("DODOCirculationHelper");
@@ -36,8 +37,10 @@ module.exports = async (deployer, network, accounts) => {
         GovernanceAddress = "0x0000000000000000000000000000000000000000";
         //Account
         multiSigAddress = "0x95C4F5b83aA70810D4f142d58e5F7242Bd891CB0";
-        dodoTeam = "";
+        dodoTeam = "0x95C4F5b83aA70810D4f142d58e5F7242Bd891CB0";
     } else if (network == "bsclive") {
+        DODOTokenAddress = "0x67ee3Cb086F8a16f34beE3ca72FAD36F7Db929e2";
+        DODOApproveProxyAddress = "0xB76de21f04F677f07D9881174a1D8E624276314C";
         //Account
         multiSigAddress = "0x4073f2b9bB95774531b9e23d206a308c614A943a";
     } else return;
@@ -46,6 +49,15 @@ module.exports = async (deployer, network, accounts) => {
     logger.log("network type: " + network);
     logger.log("Deploy time: " + new Date().toLocaleString());
 
+    if (deploySwitch.DODORecharge) {
+        logger.log("Deploy type: DODORecharge");
+        await deployer.deploy(DODORecharge, DODOTokenAddress, DODOApproveProxyAddress);
+        DODORechargeAddress = DODORecharge.address;
+        logger.log("DODORechargeAddress: ", DODORechargeAddress);
+        const dodoRechargeInstance = await DODORecharge.at(DODORechargeAddress);
+        var tx = await dodoRechargeInstance.initOwner(multiSigAddress);
+        logger.log("Init DODORechargeAddress Tx:", tx.tx);
+    }
 
     if (deploySwitch.DODOBscToken && (network == "bsclive")) {
         logger.log("Deploy type: DODOBscToken");

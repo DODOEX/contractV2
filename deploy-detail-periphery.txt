@@ -67,3 +67,23 @@ DODOApproveProxy add tx:  0x0a9174ac009af95a3273ad3a3a961e997aef48d5c3d2537e0389
 vDODOToken first mint tx:  0x600c5714df725a86725b36a01c3bf5cfc60853f02b7f7214ca9d80c98eb9e72d
 vDODOToken injected dodo tx:  0xf2415de9bafeef0d80afe990b5e36a0ebcd339d6cd604d6388fd72e4f01e0de7
 vDODOToken changeReward tx:  0x80c01b5e630acdccc2a96f97d884e207488ee64a18cdfcb4566820473ffe3a1f
+====================================================
+network type: live
+Deploy time: 2021/2/13 下午9:54:02
+Deploy type: vDODOToken
+vDODOTokenAddress:  0xc4436fBAE6eBa5d95bf7d53Ae515F8A707Bd402A
+Init vDODOTokenAddress Tx: 0x89392c1bd215fff0d5da44e27c0d0d2099a97788a28d371fa55d19af74895d9a
+DODOCirculationHelperAddress:  0x53233ABD9108761258a4B6B7822abFD6716B129B
+Init DODOCirculationHelperAddress Tx: 0xc26313165161badec354d39c999a85223965df186246b8ea37182eae894e7442
+====================================================
+network type: bsclive
+Deploy time: 2021/2/13 下午10:20:21
+Deploy type: DODORecharge
+DODORechargeAddress:  0x61b21603A527b487C4a3A80a69224b87751D0F6a
+Init DODORechargeAddress Tx: 0x47bc2d2f46aac266ecf7c7743cc935fa06cf862e26463a9a8c1ebe91cee47611
+====================================================
+network type: bsclive
+Deploy time: 2021/2/13 下午10:24:52
+Deploy type: DODORecharge
+DODORechargeAddress:  0xF7c5311B618E6dFBBc34210c92D2C9675D7EdDCA
+Init DODORechargeAddress Tx: 0xc22cdde8436f28ae2343ebcd628091104545a60c6550a2cedf47344c5b337b09

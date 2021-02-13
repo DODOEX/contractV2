@@ -16,8 +16,8 @@ import {IDODOApproveProxy} from "../SmartRoute/DODOApproveProxy.sol";
 contract DODORecharge is InitializableOwnable {
     using SafeERC20 for IERC20;
 
-    address immutable _DODO_TOKEN_;
-    address immutable _DODO_APPROVE_PROXY_;
+    address public immutable _DODO_TOKEN_;
+    address public immutable _DODO_APPROVE_PROXY_;
 
     event DeductDODO(address user,uint256 _amount);
     

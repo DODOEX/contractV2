@@ -30,7 +30,7 @@ contract vDODOToken is InitializableOwnable {
 
     // ============ Storage(ERC20) ============
 
-    string public name = "vDODO Token";
+    string public name = "vDODO Membership Token";
     string public symbol = "vDODO";
     uint8 public decimals = 18;
     mapping(address => mapping(address => uint256)) internal _ALLOWED_;
