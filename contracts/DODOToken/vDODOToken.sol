@@ -71,8 +71,10 @@ contract vDODOToken is InitializableOwnable {
 
     event MintVDODO(address user, address superior, uint256 mintDODO);
     event RedeemVDODO(address user, uint256 receiveDODO, uint256 burnDODO, uint256 feeDODO);
+    event DonateDODO(address user, uint256 donateDODO);
     event SetCantransfer(bool allowed);
 
+    event PreDeposit(uint256 dodoAmount);
     event ChangePerReward(uint256 dodoPerBlock);
     event UpdateDODOFeeBurnRatio(uint256 dodoFeeBurnRatio);
 
@@ -217,6 +219,7 @@ contract vDODOToken is InitializableOwnable {
         alpha = uint112(
             uint256(alpha).add(DecimalMath.divFloor(dodoAmount, _TOTAL_STAKING_POWER_))
         );
+        emit DonateDODO(msg.sender, dodoAmount);
     }
 
     function preDepositedBlockReward(uint256 dodoAmount) public {
@@ -227,6 +230,7 @@ contract vDODOToken is InitializableOwnable {
             dodoAmount
         );
         _TOTAL_BLOCK_REWARD_ = _TOTAL_BLOCK_REWARD_.add(dodoAmount);
+        emit PreDeposit(dodoAmount);
     }
 
     // ============ ERC20 Functions ============
