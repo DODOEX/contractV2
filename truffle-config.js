@@ -42,11 +42,11 @@ module.exports = {
     DEPLOY_V2:        false,
     ADAPTER:          false,
     MOCK_TOKEN:       false,
-    MOCK_V2_POOL:     true,
+    MOCK_V2_POOL:     false,
     MOCK_V2_SWAP:     false,
     MANUAL_ADD_POOL:  false,
     MOCK_TARGET_POOL: false,
-    BSCMigration:     false,
+    BSCMigration:     true,
     DODOBscToken:     false,
     vDODOToken:       false,
     CALLEE:           false,
@@ -82,7 +82,7 @@ module.exports = {
         return new HDWalletProvider(privKey, "https://mainnet.infura.io/v3/" + infuraId);
       },
       gas: 6000000,
-      gasPrice: 100000000000,
+      gasPrice: 120000000000,
       network_id: 1,
       skipDryRun: true
     },

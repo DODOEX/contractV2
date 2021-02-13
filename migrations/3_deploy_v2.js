@@ -77,7 +77,7 @@ module.exports = async (deployer, network, accounts) => {
         chiAddress = "0x0000000000004946c0e9f43f4dee607b0ef1fa1c";
         DODOCalleeHelperAddress = "0x36ce1831941d35c3588759B2D084E240a094ad4A";
         DODOV1PmmHelperAddress = "0xC972069473a686b1c11Bd9347D719c87e6745d39";
-        DODORouteV2HelperAddress = "0x4605149BB2Efab69D4fA37Bc9669f3b6f7bD3F92";
+        DODORouteV2HelperAddress = "0xcB3b6cdBe2e57D3e37feba0C55584992Cc1B973F";
 
         //Template
         CloneFactoryAddress = "0xf7959fe661124C49F96CF30Da33729201aEE1b27";
@@ -90,11 +90,11 @@ module.exports = async (deployer, network, accounts) => {
         CpTemplateAddress = "0x973bEbaE41E79c2B4d9EaEE14c2aB85f43673dc3";
         //Factory
         DvmFactoryAddress = "0x322F8014C125Da09314d3a68d4d9F427823F17FD";
-        DppFactoryAddress = "0x9fA487762d4329eBDD83a00a82C8a02719Fdf512";
+        DppFactoryAddress = "0xC65F8087288aa0a118aa6F3228Ef9ecc8187F4b6";
         CpFactoryAddress = "0x9e6E8985D52E91eDf1671f28Ca73bc4F3E219b72";
         //Approve
-        DODOApproveAddress = "0x4A354b8d0DDb7083f066bDaC1f50d23DE221B01C";
-        DODOApproveProxyAddress = "0xe778affD2a337b57a9cDAF6f2ba0bebe3e16316E";
+        DODOApproveAddress = "0xa375b128e139ae54EF7F189BC8fEb4624f1c2Afa";
+        DODOApproveProxyAddress = "0xE2bf3e72E126f0AD4Aec07AdfA6cc345EEF43bDe";
         DODOIncentiveAddress = "0x5cFCc14f7C8be8B138D9fDF7438391b0BFe0589F";
         DODOTokenAddress = "0x854b0f89BAa9101e49Bfb357A38071C9db5d0DFa";
         //Account

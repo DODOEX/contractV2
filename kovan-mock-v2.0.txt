@@ -514,3 +514,15 @@ Mock POOL Tx: V2
 Approve:0xd7f02D1b4F9495B549787808503Ecfd231C3fbDA Tx: 0x29017dc8173e6e65768ef17baeffdb006e88d36088be0cc97a53c365ac929e60
 Create DPP: 0xd8C30a4E866B188F16aD266dC3333BD47F34ebaE-0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b Pool:0x210912095691C9b0e318c22e49d94170ACAaCd0a Tx: 0x5bf334d720433b4fbfb71a4f75f5755ccd39f0977e59b74e78df083b03d9d9f5
 Create DPP: 0xd7f02D1b4F9495B549787808503Ecfd231C3fbDA-0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b Pool:0x25F03Cc8d661D04513D17497dDE752BDF96A8459 Tx: 0xb15244e5e51f2e593adee05c337c00b265636869c59af6589ca49b82f56a86a7
+====================================================
+network type: kovan
+Deploy time: 2021/2/9 下午10:19:34
+====================================================
+network type: kovan
+Deploy time: 2021/2/9 下午10:43:19
+====================================================
+network type: kovan
+Deploy time: 2021/2/9 下午10:48:41
+====================================================
+network type: kovan
+Deploy time: 2021/2/9 下午10:51:19
