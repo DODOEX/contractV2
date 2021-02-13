@@ -640,3 +640,6 @@ Init DODOProxyV2 Tx: 0x72afdcd3795ee00b67b87c88af14227584b1ca7588dd10cdcda11c423
 DODOApproveProxy Init tx:  0x34e33c12750fff4abd34dd368157ad1b2101597f44a3f9783725d8a245860b73
 DODOApprove Init tx:  0x1f8ac1bbf54e3b42dc3657485fd837efba382a73342e2ced29b6e9fbdb4edeb4
 DODOIncentive ChangeProxy tx:  0xd0427f9a814efb822a36ebf17bbf637d066887adacf636c32455a165d30b768
+====================================================
+network type: kovan
+Deploy time: 2021/2/13 下午12:25:44

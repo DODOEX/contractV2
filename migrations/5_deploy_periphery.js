@@ -22,8 +22,8 @@ module.exports = async (deployer, network, accounts) => {
     if (network == "kovan") {
         DODOTokenAddress = "0x854b0f89BAa9101e49Bfb357A38071C9db5d0DFa";
         DODOApproveProxyAddress = "0xE2bf3e72E126f0AD4Aec07AdfA6cc345EEF43bDe";
-        DODOCirculationHelperAddress = "0xC4d70FdD0310BcAcA8a6eC85e66e95576CB096E4";
-        vDODOTokenAddress = "0x8e565B96C3B6BB36363183f5D43D667927164e91";
+        DODOCirculationHelperAddress = "";
+        vDODOTokenAddress = "";
         GovernanceAddress = "0x0000000000000000000000000000000000000000";
         //Account
         multiSigAddress = accounts[0];
@@ -97,8 +97,8 @@ module.exports = async (deployer, network, accounts) => {
         if(network == 'kovan') {
             const vDODOTokenInstance = await vDODOToken.at(vDODOTokenAddress);
             //updateDODOCirculationHelper
-            // var tx = await vDODOTokenInstance.updateDODOCirculationHelper(DODOCirculationHelperAddress);
-            // logger.log("vDODOToken setDODOCirculationHelper tx: ", tx.tx);
+            var tx = await vDODOTokenInstance.updateDODOCirculationHelper(DODOCirculationHelperAddress);
+            logger.log("vDODOToken setDODOCirculationHelper tx: ", tx.tx);
             
             //ApproveProxy add
             const DODOApproveProxyInstance = await DODOApproveProxy.at(DODOApproveProxyAddress);

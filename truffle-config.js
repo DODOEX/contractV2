@@ -46,9 +46,9 @@ module.exports = {
     MOCK_V2_SWAP:     false,
     MANUAL_ADD_POOL:  false,
     MOCK_TARGET_POOL: false,
-    BSCMigration:     true,
+    BSCMigration:     false,
     DODOBscToken:     false,
-    vDODOToken:       false,
+    vDODOToken:       true,
     CALLEE:           false,
   },
 

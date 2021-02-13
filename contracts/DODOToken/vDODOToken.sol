@@ -273,7 +273,11 @@ contract vDODOToken is InitializableOwnable {
     // ============ Helper Functions ============
 
     function getLatestAlpha() public view returns (uint256 newAlpha, uint256 curDistribution) {
-        curDistribution = _DODO_PER_BLOCK_ * (block.number - _LAST_REWARD_BLOCK_);
+        if (_LAST_REWARD_BLOCK_ == 0) {
+            curDistribution = 0;
+        } else {
+            curDistribution = _DODO_PER_BLOCK_ * (block.number - _LAST_REWARD_BLOCK_);
+        }
         if (_TOTAL_STAKING_POWER_ > 0) {
             newAlpha = uint256(alpha).add(DecimalMath.divFloor(curDistribution, _TOTAL_STAKING_POWER_));
         } else {

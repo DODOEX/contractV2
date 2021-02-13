@@ -53,3 +53,17 @@ network type: live
 Deploy time: 2021/2/9 下午11:22:45
 Deploy type: DODOMigrationBSC
 DODOMigrationBSCAddress:  0x02fCB21dc1cf221939C1d4277fB54016b5d32bC7
+====================================================
+network type: kovan
+Deploy time: 2021/2/13 下午12:25:51
+Deploy type: vDODOToken
+vDODOTokenAddress:  0x188A86C23c596C8b907b227C1DB34EfE769e5c0b
+Init vDODOTokenAddress Tx: 0x203c468d95005fe957e0ee22717b1a098a893be916dc18926de98f8d752832e3
+DODOCirculationHelperAddress:  0xbF5B98D74B249B86a2f1099D34CF568e2b5EB5b6
+Init DODOCirculationHelperAddress Tx: 0xfc46968cf93ff5324b70ca838e66ab5a4b95a2477a352f30e5e92f02d2cbce4a
+vDODOToken setDODOCirculationHelper tx:  0x47216bde498446ee2ed3e4e534c8814ad1e919e4c86f95d5ac619cbf1c1529aa
+DODOApproveProxy Unlock tx:  0xac285c252c052144c80722ca67b9e765280f2c45b8e4ff73282fabe26158aba6
+DODOApproveProxy add tx:  0x0a9174ac009af95a3273ad3a3a961e997aef48d5c3d2537e0389dd48619f1d06
+vDODOToken first mint tx:  0x600c5714df725a86725b36a01c3bf5cfc60853f02b7f7214ca9d80c98eb9e72d
+vDODOToken injected dodo tx:  0xf2415de9bafeef0d80afe990b5e36a0ebcd339d6cd604d6388fd72e4f01e0de7
+vDODOToken changeReward tx:  0x80c01b5e630acdccc2a96f97d884e207488ee64a18cdfcb4566820473ffe3a1f
