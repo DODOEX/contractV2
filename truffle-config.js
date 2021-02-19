@@ -50,7 +50,8 @@ module.exports = {
     DODOBscToken:     false,
     vDODOToken:       false,
     CALLEE:           false,
-    DODORecharge:     true
+    DODORecharge:     false,
+    MINE:             false
   },
 
   networks: {
@@ -83,7 +84,7 @@ module.exports = {
         return new HDWalletProvider(privKey, "https://mainnet.infura.io/v3/" + infuraId);
       },
       gas: 6000000,
-      gasPrice: 120000000000,
+      gasPrice: 115000000000,
       network_id: 1,
       skipDryRun: true
     },

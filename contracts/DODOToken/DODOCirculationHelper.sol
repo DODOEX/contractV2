@@ -49,7 +49,7 @@ contract DODOCirculationHelper is InitializableOwnable {
     } 
 
     function getCirculation() public view returns (uint256 circulation) {
-        circulation = 10**10 * 10**18;
+        circulation = 10**9 * 10**18;
         for (uint256 i = 0; i < _LOCKED_CONTRACT_ADDRESS_.length; i++) {
             circulation -= IERC20(_DODO_TOKEN_).balanceOf(_LOCKED_CONTRACT_ADDRESS_[i]);
         }

@@ -135,7 +135,7 @@ module.exports = async (deployer, network, accounts) => {
         WETHAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
         chiAddress = "0x0000000000000000000000000000000000000000";
         DODOCalleeHelperAddress = "0xaaffAd1017D6a13E026A00121BF258C616B25f7C";
-        DODORouteV2HelperAddress = "0x335aC99bb3E51BDbF22025f092Ebc1Cf2c5cC619";
+        DODORouteV2HelperAddress = "0x1dc8D1f1600B7C1D39e6b60FBC7b021Bc4F9C993";
         DODOV1PmmHelperAddress = "0x2BBD66fC4898242BDBD2583BBe1d76E8b8f71445";
         //Template
         CloneFactoryAddress = "0x03E2427859119E497EB856a166F616a2Ce5f8c88";
@@ -147,17 +147,17 @@ module.exports = async (deployer, network, accounts) => {
         DppAdminTemplateAddress = "0x44D5dF24d5Ef52A791D6436Fa45A8D426f6de34e";
         CpTemplateAddress = "0x041ABa00c57Dd47abC37A2931dF569a2A2cc57Be";
         //Factory
-        DvmFactoryAddress = "0xf50BDc9E90B7a1c138cb7935071b85c417C4cb8e";
-        DppFactoryAddress = "0x9B64c81ba54eA51e1f6B7fefb3cfF8AA6F1e2A09";
-        CpFactoryAddress = "0x9aE501385Bc7996A2A4a1FBb00c8d3820611BCB5";
+        DvmFactoryAddress = "0x790B4A80Fb1094589A3c0eFC8740aA9b0C1733fB";
+        DppFactoryAddress = "0xAfe0A75DFFb395eaaBd0a7E1BBbd0b11f8609eeF";
+        CpFactoryAddress = "0x778DF5B12170e8af8dF94356BfC864E57CE185DC";
         //Proxy
         DODOApproveAddress = "0xa128Ba44B2738A558A1fdC06d6303d52D3Cef8c1";
         DODOApproveProxyAddress = "0xB76de21f04F677f07D9881174a1D8E624276314C";
-        DODOIncentiveAddress = "";
+        DODOIncentiveAddress = "0x4EE6398898F7FC3e648b3f6bA458310ac29cD352";
         DODOTokenAddress = "0x67ee3Cb086F8a16f34beE3ca72FAD36F7Db929e2";
         //Account
-        multiSigAddress = "0x4073f2b9bB95774531b9e23d206a308c614A943a";
-        defaultMaintainer = "0x4073f2b9bB95774531b9e23d206a308c614A943a";
+        multiSigAddress = "0xcaa42F09AF66A8BAE3A7445a7f63DAD97c11638b";
+        defaultMaintainer = "0xcaa42F09AF66A8BAE3A7445a7f63DAD97c11638b";
     } else return;
 
     logger.log("====================================================");

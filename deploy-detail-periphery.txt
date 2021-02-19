@@ -87,3 +87,52 @@ Deploy time: 2021/2/13 下午10:24:52
 Deploy type: DODORecharge
 DODORechargeAddress:  0xF7c5311B618E6dFBBc34210c92D2C9675D7EdDCA
 Init DODORechargeAddress Tx: 0xc22cdde8436f28ae2343ebcd628091104545a60c6550a2cedf47344c5b337b09
+====================================================
+network type: kovan
+Deploy time: 2021/2/14 上午10:48:21
+Deploy type: vDODOToken
+vDODOTokenAddress:  0xf7119Bf8bE41Dd9080Bd0A9AB04788B5EcA140d5
+Init vDODOTokenAddress Tx: 0xc12344a7e49744698ae1be542583105e63330131f6392e53b0e9e183068bd573
+DODOCirculationHelperAddress:  0x41D3841c63C6D7d8Db2A06Dca895084DaB8F176a
+Init DODOCirculationHelperAddress Tx: 0x0e6e7126a1b28d11eb4a42e2786e7a8ce64b8fb47059766f592efb4fc4b13a5d
+vDODOToken setDODOCirculationHelper tx:  0x63149745bd5043ae8f6540bd7c99d870258f8640bb6237200bcbc767aaf1ae73
+DODOApproveProxy Unlock tx:  0x9131d3d3ad49a464b228ba617b2673fcad28d7f5598cd28de35e384d3ec226bc
+DODOApproveProxy add tx:  0xbfe3caf75502ac8d0ed7f02c42c14607734dd19bcc077b0859bcd26c56936b3e
+vDODOToken first mint tx:  0x4c9ad5eab14d664c1bb5c570856694c0d3612846debbd4731b5085232c3bf0de
+vDODOToken injected dodo tx:  0x39cea7a3064b40d19575d5f8908bdb99a360d6a7098b8e197d7226ee562d9b03
+vDODOToken changeReward tx:  0x6a0cb6f9cd115d9f14627ec8bbaad513e1ef03ca5dfc2bacf81ff9a87013490c
+====================================================
+network type: kovan
+Deploy time: 2021/2/15 下午4:54:48
+Deploy type: DODOMigrationBSC
+DODOMigrationBSCAddress:  0xA1191eED438A9C10D478698848E460F0c7528351
+Init DODOMigrationBSCAddress Tx: 0x7ddbbb24711e7577adf93982ad84d6b356ceee7bc53842991898226ee18021df
+DODOApproveProxy Unlock tx:  0x1a45a960f65acb7f63351e16a880ca0242e4d4994105755c74e6dd009e7c1740
+DODOApproveProxy add tx:  0x9315b57c5aca05b3e56fcb5a8b892c787639785fbb1b8e0a5892f063a41be740
+====================================================
+network type: kovan
+Deploy time: 2021/2/15 下午5:10:17
+Deploy type: vDODOToken
+DODOCirculationHelperAddress:  0x77e43757e0a43dAd8a909e1839930430e8B0Ffc9
+Init DODOCirculationHelperAddress Tx: 0xe78086b4c3bd34e44e9a6615d3c8af0db88ca77cc0533aac6022bc74c642664b
+vDODOToken setDODOCirculationHelper tx:  0xfe99a4ef2d15ab37645e7c50d62d36c4d17b20f955ba7aed007cae1a6ed9456a
+====================================================
+network type: live
+Deploy time: 2021/2/15 下午5:15:38
+Deploy type: vDODOToken
+DODOCirculationHelperAddress:  0x357c5E9cfA8B834EDcef7C7aAbD8F9Db09119d11
+Init DODOCirculationHelperAddress Tx: 0x011ff39955bbc878e0bb4c70fe349801fcd79de4fa8f8cb3b642a9db64c1f3bb
+====================================================
+network type: kovan
+Deploy time: 2021/2/16 下午10:23:21
+Deploy type: DODOMine
+DODOMineAddress:  0xc4023f2A71c03cc64d985691b019bEE68f48c108
+Add DODO Tx: 0x0cbcaff85dcd3ce32ebea5b596bbb1b74affa6112a845403cc0c73a808cf2ebd
+Set blockReward Tx: 0xd8d2bc6a4c0efb94294836b6ed35546d853ef1480c16b9ef1c18902d194cc679
+====================================================
+network type: bsclive
+Deploy time: 2021/2/19 下午12:38:10
+Deploy type: DODOMine
+DODOMineAddress:  0x01f9BfAC04E6184e90bD7eaFD51999CE430Cc750
+Add DODO Tx: 0x8d3491ce942c125d2c0541f5eb1d784e7ab6960a0218b9bd94dcbe23c7457f65
+Set blockReward Tx: 0x2ad01291228653755cd000acd27b5283e5cefe7f7741a4f5934474ab2b0e69db

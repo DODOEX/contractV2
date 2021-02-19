@@ -35,7 +35,7 @@ module.exports = async (deployer, network, accounts) => {
     DODOApproveProxyAddress = "0xB76de21f04F677f07D9881174a1D8E624276314C";
     chiAddress = "0x0000000000000000000000000000000000000000";
     DODOSwapCalcHelperAddress = "0xb0199C2c8ADF1E6c1e41De60A62E993406Cb8C02";
-    ownerAddress = "0x4073f2b9bB95774531b9e23d206a308c614A943a";
+    ownerAddress = "0xcaa42F09AF66A8BAE3A7445a7f63DAD97c11638b";
   } else return;
 
   if (deploySwitch.DEPLOY_V1) {

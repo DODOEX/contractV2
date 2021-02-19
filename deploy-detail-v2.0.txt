@@ -652,3 +652,28 @@ Deploy time: 2021/2/13 下午10:20:14
 ====================================================
 network type: bsclive
 Deploy time: 2021/2/13 下午10:24:45
+====================================================
+network type: kovan
+Deploy time: 2021/2/14 上午10:48:12
+====================================================
+network type: kovan
+Deploy time: 2021/2/15 下午4:54:39
+====================================================
+network type: kovan
+Deploy time: 2021/2/15 下午5:10:10
+====================================================
+network type: live
+Deploy time: 2021/2/15 下午5:15:29
+====================================================
+network type: bsclive
+Deploy time: 2021/2/16 下午4:51:26
+Deploy type: V2
+DvmFactoryAddress:  0x790B4A80Fb1094589A3c0eFC8740aA9b0C1733fB
+Init DvmFactory Tx: 0x9592fd57792036a06da1c028e2d42f267699eb2b9bd3ab652ee277b9b6de13c4
+DppFactoryAddress:  0xAfe0A75DFFb395eaaBd0a7E1BBbd0b11f8609eeF
+Init DppFactory Tx: 0x7eb6892dbdec51c098df7d327cdabc2d3b0aa3d2b10cd97bc89bad15c06a3e1a
+CpFactoryAddress:  0x778DF5B12170e8af8dF94356BfC864E57CE185DC
+Init CpFactory Tx: 0x2b5cb91e706a48090fe066582b41a6bb2e3d789423e6b61c6244e1fb67288f50
+DODOV2RouteHelper Address:  0x1dc8D1f1600B7C1D39e6b60FBC7b021Bc4F9C993
+DODOV2Proxy02 Address:  0x8F8Dd7DB1bDA5eD3da8C9daf3bfa471c12d58486
+Init DODOProxyV2 Tx: 0x1985f2e208d58ab2353eae96231ee3a11e1213a5e31f654274a40bbb2b4e9c8a
