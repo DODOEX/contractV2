@@ -49,7 +49,7 @@ module.exports = async (deployer, network, accounts) => {
     if (DODOApproveProxyAddress == "") {
       await deployer.deploy(DODOApproveProxy);
       DODOApproveProxyAddress = DODOApproveProxy.address;
-      logger.log("DODOApproveProxy Address: ", DODOApproveDODOApproveProxyAddressAddress);
+      logger.log("DODOApproveProxy Address: ", DODOApproveProxyAddress);
     }
     if (DODOSellHelperAddress == "") {
       await deployer.deploy(DODOSellHelper);
