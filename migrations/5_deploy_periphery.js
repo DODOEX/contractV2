@@ -10,6 +10,7 @@ const vDODOToken = artifacts.require("vDODOToken");
 const DODOCirculationHelper = artifacts.require("DODOCirculationHelper");
 const DODOApproveProxy = artifacts.require("DODOApproveProxy");
 const DODOMine = artifacts.require("DODOMine");
+const FeeRateImpl = artifacts.require("FeeRateImpl");
 
 module.exports = async (deployer, network, accounts) => {
 
@@ -50,7 +51,15 @@ module.exports = async (deployer, network, accounts) => {
     logger.log("network type: " + network);
     logger.log("Deploy time: " + new Date().toLocaleString());
 
-
+    if(deploySwitch.FEERATEIMPL) {
+        logger.log("Deploy type: FeeRateImpl");
+        await deployer.deploy(FeeRateImpl);
+        var FeeRateImplAddress = FeeRateImpl.address;
+        logger.log("FeeRateImplAddress: ", FeeRateImplAddress);
+        const feeRateImplInstance = await FeeRateImpl.at(FeeRateImplAddress);
+        var tx = await feeRateImplInstance.initOwner(multiSigAddress);
+        logger.log("Init feeRateImpl Tx:", tx.tx);
+    }
     
     if (deploySwitch.MINE) {
         logger.log("Deploy type: DODOMine");

@@ -51,7 +51,8 @@ module.exports = {
     vDODOToken:       false,
     CALLEE:           false,
     DODORecharge:     false,
-    MINE:             false
+    MINE:             false,
+    FEERATEIMPL:      false
   },
 
   networks: {
