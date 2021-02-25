@@ -158,6 +158,36 @@ module.exports = async (deployer, network, accounts) => {
         //Account
         multiSigAddress = "0xcaa42F09AF66A8BAE3A7445a7f63DAD97c11638b";
         defaultMaintainer = "0xcaa42F09AF66A8BAE3A7445a7f63DAD97c11638b";
+    } else if (network == 'heco') {
+        //Helper
+        DODOSellHelperAddress = "0xA0Bb1FbC23a547a8D448C7c8a2336F69A9dBa1AF";
+        WETHAddress = "0x5545153ccfca01fbd7dd11c0b23ba694d9509a6f";
+        chiAddress = "0x0000000000000000000000000000000000000000";
+        DODOCalleeHelperAddress = "0xbd5cc9cf41a7dedaa7dfa6da189d3a522fe262d1";
+        DODORouteV2HelperAddress = "";
+        DODOV1PmmHelperAddress = "0xFB973C79C665C0AC69E74C67be90D4C7A6f23c59";
+        //Template
+        CloneFactoryAddress = "0x5dCEAe50CF8C3B885430E0E79226C513Db0318f2";
+        DefaultMtFeeRateAddress = "0x07911226E710dd0b9B1c4a2Dd3c85DeFd821D492";
+        DefaultPermissionAddress = "0xC142FBA5948c372f49aDa159748EA224de6cC9AA";
+
+        DvmTemplateAddress = "0x13742E431830980c59Ca8d8eC4D001F64C0D0f09";
+        DppTemplateAddress = "";
+        DppAdminTemplateAddress = "0x3232fd648997F89E614A021fdAc756d61F9030A1";
+        CpTemplateAddress = "0x02869989ecc2D310C360861Ec2779f7027F65190";
+        //Factory
+        DvmFactoryAddress = "";
+        DppFactoryAddress = "";
+        CpFactoryAddress = "";
+        //Proxy
+        DODOApproveAddress = "";
+        DODOApproveProxyAddress = "";
+        DODOIncentiveAddress = "0x94290Bf438697Fa684d8CE0aC07c09f0e82D4f74";
+        DODOTokenAddress = "0x7d5DF05F987f9B9dD2a13deF1793f943Ad2A5e93";
+        //Account
+        // multiSigAddress = "0xD93c8D2429a6b0269527f148F3A0e5D187B0b1Ca";
+        multiSigAddress = accounts[0];
+        defaultMaintainer = accounts[0];
     } else return;
 
     logger.log("====================================================");

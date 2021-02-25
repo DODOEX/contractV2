@@ -58,18 +58,32 @@ const POOL_PARAM = [
 ];
 
 module.exports = async (deployer, network, accounts) => {
-    if (network != "kovan") return;
-    let CloneFactoryAddress = "0xf7959fe661124C49F96CF30Da33729201aEE1b27";
-    let ERC20TemplateAddress = "0x77d2e257241e6971688b08bdA9F658F065d7bb41";
-    let MintableERC20TemplateAddress = "0xA45a64DAba80757432fA4d654Df12f65f020C13C";
-    let ERC20FactoryAddress = "0xCb1A2f64EfB02803276BFB5a8D511C4D950282a0";
+    // if (network != "kovan") return;
+    let CloneFactoryAddress = "";
+    let ERC20TemplateAddress = "";
+    let MintableERC20TemplateAddress = "";
+    let ERC20FactoryAddress = "";
 
-    let DPPFactoryAddress = "0x9fA487762d4329eBDD83a00a82C8a02719Fdf512";
-    let DVMFactoryAddress = "0x322F8014C125Da09314d3a68d4d9F427823F17FD";
-    let DODOApproveAddress = "0x4A354b8d0DDb7083f066bDaC1f50d23DE221B01C";
-    let DODOProxyV2Address = "0x5b3faEAa344F8134a7E0A269a9dFb3C7898b090D";
+    let DPPFactoryAddress = "";
+    let DVMFactoryAddress = "";
+    let DODOApproveAddress = "";
+    let DODOProxyV2Address = "";
+    if (network == "kovan") {
+        CloneFactoryAddress = "0xf7959fe661124C49F96CF30Da33729201aEE1b27";
+        ERC20TemplateAddress = "0x77d2e257241e6971688b08bdA9F658F065d7bb41";
+        MintableERC20TemplateAddress = "0xA45a64DAba80757432fA4d654Df12f65f020C13C";
+        ERC20FactoryAddress = "0xCb1A2f64EfB02803276BFB5a8D511C4D950282a0";
 
-
+        DPPFactoryAddress = "0x9fA487762d4329eBDD83a00a82C8a02719Fdf512";
+        DVMFactoryAddress = "0x322F8014C125Da09314d3a68d4d9F427823F17FD";
+        DODOApproveAddress = "0x4A354b8d0DDb7083f066bDaC1f50d23DE221B01C";
+        DODOProxyV2Address = "0x5b3faEAa344F8134a7E0A269a9dFb3C7898b090D";
+    } else if (network == "heco") {
+        CloneFactoryAddress = "0x5dCEAe50CF8C3B885430E0E79226C513Db0318f2";
+        ERC20TemplateAddress = "";
+        MintableERC20TemplateAddress = "";
+        ERC20FactoryAddress = "";
+    }
 
     const provider = new Web3.providers.HttpProvider("https://kovan.infura.io/v3/22d4a3b2df0e47b78d458f43fe50a199");
 
@@ -262,7 +276,7 @@ module.exports = async (deployer, network, accounts) => {
         const ERC20FactoryInstance = await ERC20Factory.at(ERC20FactoryAddress);
 
         const totalSupply = web3.utils.toWei("0", 'ether');
-        for (let i = 0; i < 1; i++) {
+        for (let i = 0; i < 0; i++) {
             // var tx = await ERC20FactoryInstance.createStdERC20(totalSupply, 'DODO Bird', 'DODO', 18);
             var tx = await ERC20FactoryInstance.createMintableERC20(totalSupply, 'DODO Bird', 'DODO', 18);
             // var tx = await ERC20FactoryInstance.createStdERC20(totalSupply, 'USDT Token', 'USDT', 6);

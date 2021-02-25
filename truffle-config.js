@@ -41,7 +41,7 @@ module.exports = {
     DEPLOY_V1:        false,
     DEPLOY_V2:        false,
     ADAPTER:          false,
-    MOCK_TOKEN:       false,
+    MOCK_TOKEN:       true,
     MOCK_V2_POOL:     false,
     MOCK_V2_SWAP:     false,
     MANUAL_ADD_POOL:  false,
@@ -97,6 +97,13 @@ module.exports = {
       confirmations: 10,
       timeoutBlocks: 200,
       skipDryRun: true
+    },
+    heco: {
+      provider: function () {
+        return new HDWalletProvider(privKey, "https://http-mainnet.hecochain.com");
+      },
+      gasPrice: 1500000000,
+      network_id: 128
     },
     coverage: {
       host: "127.0.0.1",
