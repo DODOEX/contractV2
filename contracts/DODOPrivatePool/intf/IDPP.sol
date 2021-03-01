@@ -42,4 +42,19 @@ interface IDPP {
         uint256 minBaseReserve,
         uint256 minQuoteReserve
     ) external returns (bool);
+
+    //========== advanced ========
+    function tuneParameters(
+        uint256 newLpFeeRate,
+        uint256 newI,
+        uint256 newK,
+        uint256 minBaseReserve,
+        uint256 minQuoteReserve
+    ) external returns (bool);
+
+    function tunePrice(
+        uint256 newI,
+        uint256 minBaseReserve,
+        uint256 minQuoteReserve
+    ) external returns (bool);
 }

@@ -54,7 +54,7 @@ contract DPP is DPPTrader {
 
     // ============ Version Control ============
 
-    function version() external pure returns (string memory) {
+    function version() virtual external pure returns (string memory) {
         return "DPP 1.0.0";
     }
 }
