@@ -136,3 +136,45 @@ Deploy type: DODOMine
 DODOMineAddress:  0x01f9BfAC04E6184e90bD7eaFD51999CE430Cc750
 Add DODO Tx: 0x8d3491ce942c125d2c0541f5eb1d784e7ab6960a0218b9bd94dcbe23c7457f65
 Set blockReward Tx: 0x2ad01291228653755cd000acd27b5283e5cefe7f7741a4f5934474ab2b0e69db
+====================================================
+network type: bsclive
+Deploy time: 2021/3/1 下午9:36:19
+Deploy type: FeeRateImpl
+FeeRateImplAddress:  0x2b0d94Eb7A63B8a2909dE1CB3951ecF7Ae76D2fE
+Init feeRateImpl Tx: 0xa068d42bf27fceebee49b4e16209190c37f06b898caf5fe5fc89e791a432a285
+====================================================
+network type: live
+Deploy time: 2021/3/1 下午10:01:43
+Deploy type: FeeRateImpl
+FeeRateImplAddress:  0x4775b1858f1e417C9609D455C3Ad8751ec01daC4
+Init feeRateImpl Tx: 0x315beb6888ca62d957bd4f84bca3452ba19e55179e1e55b7d40a3f1a83b3a438
+====================================================
+network type: mbtestnet
+Deploy time: 2021/3/2 下午5:49:07
+Deploy type: FeeRateImpl
+FeeRateImplAddress:  0x1a3fa978909d86dF1244216b02733136b438D83E
+====================================================
+network type: mbtestnet
+Deploy time: 2021/3/2 下午9:34:32
+Deploy type: WETH9
+WETH9Address:  0x0e1630bd2bc047fF6338F78Dc45410e1c0Fc32a0
+====================================================
+network type: mbtestnet
+Deploy time: 2021/3/2 下午9:41:03
+Deploy type: DODOToken
+DODOTokenAddress:  0x1E7727eDad5a2ef47C5AB95a20FEd515735591B2
+====================================================
+network type: mbdev
+Deploy time: 2021/3/3 上午8:59:59
+Deploy type: DODOToken
+DODOTokenAddress:  0xC2Bf5F29a4384b1aB0C063e1c666f02121B6084a
+====================================================
+network type: mbdev
+Deploy time: 2021/3/3 下午11:02:11
+Deploy type: DODOToken
+DODOTokenAddress:  0x5c4242beB94dE30b922f57241f1D02f36e906915
+====================================================
+network type: mbdev
+Deploy time: 2021/3/3 下午11:03:01
+Deploy type: WETH9
+WETH9Address:  0x42e2EE7Ba8975c473157634Ac2AF4098190fc741

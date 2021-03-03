@@ -3,12 +3,13 @@ const Web3 = require('web3');
 const { deploySwitch } = require('../truffle-config.js')
 const file = fs.createWriteStream("../kovan-mock-v2.0.txt", { 'flags': 'a' });
 let logger = new console.Console(file, file);
+const { GetConfig } = require("../configAdapter.js")
 
 const CloneFactory = artifacts.require("CloneFactory");
 const ERC20Template = artifacts.require("InitializableERC20");
 const MintableERC20Template = artifacts.require("InitializableMintableERC20");
 const ERC20Factory = artifacts.require("ERC20Factory");
-const DODOProxyV2 = artifacts.require("DODOV2Proxy01");
+const DODOProxyV2 = artifacts.require("DODOV2Proxy02");
 const DVMFactory = artifacts.require("DVMFactory");
 const DPPFactory = artifacts.require("DPPFactory");
 
@@ -58,32 +59,18 @@ const POOL_PARAM = [
 ];
 
 module.exports = async (deployer, network, accounts) => {
-    // if (network != "kovan") return;
-    let CloneFactoryAddress = "";
-    let ERC20TemplateAddress = "";
-    let MintableERC20TemplateAddress = "";
-    let ERC20FactoryAddress = "";
+    if (network != "kovan") return;
+    let CONFIG = GetConfig(network, accounts)
+    let CloneFactoryAddress = CONFIG.CloneFactory;
+    let ERC20TemplateAddress = CONFIG.ERC20;
+    let MintableERC20TemplateAddress = CONFIG.MintableERC20;
+    let ERC20FactoryAddress = CONFIG.ERC20Factory;
 
-    let DPPFactoryAddress = "";
-    let DVMFactoryAddress = "";
-    let DODOApproveAddress = "";
-    let DODOProxyV2Address = "";
-    if (network == "kovan") {
-        CloneFactoryAddress = "0xf7959fe661124C49F96CF30Da33729201aEE1b27";
-        ERC20TemplateAddress = "0x77d2e257241e6971688b08bdA9F658F065d7bb41";
-        MintableERC20TemplateAddress = "0xA45a64DAba80757432fA4d654Df12f65f020C13C";
-        ERC20FactoryAddress = "0xCb1A2f64EfB02803276BFB5a8D511C4D950282a0";
+    let DPPFactoryAddress = CONFIG.DPPFactory;
+    let DVMFactoryAddress = CONFIG.DVMFactory;
+    let DODOApproveAddress = CONFIG.DODOApprove;
+    let DODOProxyV2Address = CONFIG.DODOV2Proxy;
 
-        DPPFactoryAddress = "0x9fA487762d4329eBDD83a00a82C8a02719Fdf512";
-        DVMFactoryAddress = "0x322F8014C125Da09314d3a68d4d9F427823F17FD";
-        DODOApproveAddress = "0x4A354b8d0DDb7083f066bDaC1f50d23DE221B01C";
-        DODOProxyV2Address = "0x5b3faEAa344F8134a7E0A269a9dFb3C7898b090D";
-    } else if (network == "heco") {
-        CloneFactoryAddress = "0x5dCEAe50CF8C3B885430E0E79226C513Db0318f2";
-        ERC20TemplateAddress = "";
-        MintableERC20TemplateAddress = "";
-        ERC20FactoryAddress = "";
-    }
 
     const provider = new Web3.providers.HttpProvider("https://kovan.infura.io/v3/22d4a3b2df0e47b78d458f43fe50a199");
 
@@ -93,74 +80,11 @@ module.exports = async (deployer, network, accounts) => {
 
     const web3 = new Web3(provider)
 
-    logger.log("====================================================");
-    logger.log("network type: " + network);
-    logger.log("Deploy time: " + new Date().toLocaleString());
-
-
-    if (deploySwitch.MOCK_TARGET_POOL) {
-        logger.log("Manual add target Pool: V2");
-        var tx;
-        const token0Addr = "0xCcf0733cA7B6299D59b1Bddf87f3a8AAaD87461F";
-        const quote0Addr = "0x43688f367eb83697c3ca5d03c5055b6bd6f6ac4b";
-        const token0 = await ERC20Template.at(token0Addr);
-        const quote0 = await ERC20Template.at(quote0Addr);
-
-        tx = await token0.approve(DODOApproveAddress, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-        logger.log("Approve:" + token0Addr + " Tx:", tx.tx);
-        tx = await quote0.approve(DODOApproveAddress, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-        logger.log("Approve:" + quote0Addr + " Tx:", tx.tx);
-        const DODOProxyV2Instance = await DODOProxyV2.at(DODOProxyV2Address);
-        const DPPFactoryInstance = await DPPFactory.at(DPPFactoryAddress);
-
-        const baseInAmount = web3.utils.toWei("0", 'ether');
-        const quoteInAmount = web3.utils.toWei("0", 'mwei');
-        const deadline = Math.floor(new Date().getTime() / 1000 + 60 * 10);
-        //DPP Pool
-        tx = await DODOProxyV2Instance.createDODOPrivatePool(
-            token0Addr,
-            quote0Addr,
-            baseInAmount,
-            quoteInAmount,
-            '0',
-            '1000000',
-            '1000000000000000000',
-            false,
-            deadline
-        );
-        var poolAddress = await DPPFactoryInstance._REGISTRY_(token0Addr, quote0Addr, 0);
-        logger.log("Create DPP: " + token0Addr + "-" + quote0Addr + " Pool:" + poolAddress + " Tx:", tx.tx);
-    }
-
-    if (deploySwitch.MANUAL_ADD_POOL) {
-        logger.log("Manual add Pool: V2");
-        const DPPFactoryInstance = await DPPFactory.at(DPPFactoryAddress);
-        var tx = await DPPFactoryInstance.addPoolByAdmin(
-            "0x7e83d9d94837ee82f0cc18a691da6f42f03f1d86",
-            "0x5eca15b12d959dfcf9c71c59f8b467eb8c6efd0b",
-            "0x69c8a7fc6e05d7aa36114b3e35f62deca8e11f6e",
-            "0x5e6e4B49bd79B76850650DB670Ca470ccC19d854"
-        );
-        logger.log("Manual add Pool Tx:" + tx.tx);
-    }
-
-    if (deploySwitch.MOCK_V2_SWAP) {
-        logger.log("Mock SWAP Tx: V2");
-        const DODOProxyV2Instance = await DODOProxyV2.at(DODOProxyV2Address);
-        var tx = await DODOProxyV2Instance.dodoSwapV2TokenToToken(
-            accounts[0],
-            "0x43688f367eb83697c3ca5d03c5055b6bd6f6ac4b",
-            "0xd8C30a4E866B188F16aD266dC3333BD47F34ebaE",
-            web3.utils.toWei("10", 'mwei'),
-            0,
-            ['0x1d4f55C99BEF84ED889699Be64A691c6651F847E'],
-            [1],
-            Math.floor(new Date().getTime() / 1000 + 60 * 10)
-        );
-        logger.log("Swap Tx:" + tx.tx);
-    }
 
     if (deploySwitch.MOCK_V2_POOL) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
         logger.log("Mock POOL Tx: V2");
         var tx;
         {//Approve when change DODOApprove Address
@@ -245,6 +169,9 @@ module.exports = async (deployer, network, accounts) => {
     }
 
     if (deploySwitch.MOCK_TOKEN) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
         logger.log("Mock TOKEN Tx: V2");
         if (CloneFactoryAddress == "") {
             await deployer.deploy(CloneFactory);
