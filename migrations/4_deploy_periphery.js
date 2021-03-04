@@ -11,6 +11,7 @@ const DODOMine = artifacts.require("DODOMine");
 const FeeRateImpl = artifacts.require("FeeRateImpl");
 const WETH9 = artifacts.require("WETH9");
 const DODOToken = artifacts.require("DODOToken");
+const UpCrowdPoolingFactory = artifacts.require("UpCrowdPoolingFactory");
 
 module.exports = async (deployer, network, accounts) => {
     let CONFIG = GetConfig(network, accounts)
@@ -24,8 +25,34 @@ module.exports = async (deployer, network, accounts) => {
     let vDODOTokenAddress = CONFIG.vDODOToken;
     let dodoTeam = CONFIG.dodoTeam;
 
-    let multiSigAddress = CONFIG.multiSigAddress;
+    let CloneFactoryAddress = CONFIG.CloneFactory;
+    let DefaultMtFeeRateAddress = CONFIG.FeeRateModel;
+    let DefaultPermissionAddress = CONFIG.PermissionManager;
+    let CpTemplateAddress = CONFIG.CP;
+    let DvmFactoryAddress = CONFIG.DVMFactory;
 
+    let multiSigAddress = CONFIG.multiSigAddress;
+    let defaultMaintainer = CONFIG.defaultMaintainer;
+
+    if (deploySwitch.UpCP) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
+        logger.log("Deploy type: UpCrowdPoolingFactory");
+        await deployer.deploy(
+            UpCrowdPoolingFactory,
+            CloneFactoryAddress,
+            CpTemplateAddress,
+            DvmFactoryAddress,
+            defaultMaintainer,
+            DefaultMtFeeRateAddress,
+            DefaultPermissionAddress
+        );
+        logger.log("UpCrowdPoolingFactory address: ", UpCrowdPoolingFactory.address);
+        const UpCpFactoryInstance = await UpCrowdPoolingFactory.at(UpCrowdPoolingFactory.address);
+        var tx = await UpCpFactoryInstance.initOwner(multiSigAddress);
+        logger.log("Init UpCpFactory Tx:", tx.tx);
+    }
 
     if (deploySwitch.FEERATEIMPL) {
         logger.log("====================================================");

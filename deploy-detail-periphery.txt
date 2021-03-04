@@ -178,3 +178,15 @@ network type: mbdev
 Deploy time: 2021/3/3 下午11:03:01
 Deploy type: WETH9
 WETH9Address:  0x42e2EE7Ba8975c473157634Ac2AF4098190fc741
+====================================================
+network type: bsclive
+Deploy time: 2021/3/4 下午2:17:56
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x69f52AC40185A2A005D49114F0B77b7bA856F0a0
+Init UpCpFactory Tx: 0x64d621c61b16c60523bc3b9afadd7dc50b78ecbf038f2a66ee28cf53729f330b
+====================================================
+network type: live
+Deploy time: 2021/3/4 下午3:10:50
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0xD734a08359296e44b87F4d404135cd0832A7a363
+Init UpCpFactory Tx: 0x58798e736d419ef9ce9753fc32a847d2a5a65957623a83e3d258ef2a1c9f8ca8
