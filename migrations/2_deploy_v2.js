@@ -97,7 +97,8 @@ module.exports = async (deployer, network, accounts) => {
         logger.log("network type: " + network);
         logger.log("Deploy time: " + new Date().toLocaleString());
         logger.log("Deploy type: V2");
-        
+        logger.log("multiSigAddress: ", multiSigAddress)
+
         if (DODOTokenAddress == "") return;
         //Helper
         if (DODOSellHelperAddress == "") {
@@ -282,7 +283,7 @@ module.exports = async (deployer, network, accounts) => {
         logger.log("Init DODOProxyV2 Tx:", tx.tx);
 
 
-        if (network == 'kovan') {
+        if (network == 'kovan' || network == 'mbtestnet') {
 
             const DODOApproveProxyInstance = await DODOApproveProxy.at(DODOApproveProxyAddress);
             var tx = await DODOApproveProxyInstance.init(multiSigAddress, [DODOProxyV2.address]);

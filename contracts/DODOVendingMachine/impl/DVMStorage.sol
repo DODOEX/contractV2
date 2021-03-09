@@ -21,6 +21,8 @@ contract DVMStorage is ReentrancyGuard {
 
     bool public _IS_OPEN_TWAP_ = false;
 
+    bool internal _DVM_INITIALIZED_;
+
     // ============ Core Address ============
 
     address public _MAINTAINER_;
