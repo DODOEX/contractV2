@@ -148,7 +148,7 @@ export class ProxyContext {
         this.DODO.options.address,
         Math.floor(new Date().getTime() / 1000),
         60 * 60 * 24 * 30,
-        300000000000000000
+        "300000000000000000"
       ]
     )
 

@@ -5,6 +5,8 @@ let logger = new console.Console(file, file);
 const { GetConfig } = require("../configAdapter.js")
 
 const DODORecharge = artifacts.require("DODORecharge");
+const DvmTemplate = artifacts.require("DVM");
+const CpTemplate = artifacts.require("CP");
 const vDODOToken = artifacts.require("vDODOToken");
 const DODOCirculationHelper = artifacts.require("DODOCirculationHelper");
 const DODOMine = artifacts.require("DODOMine");
@@ -30,6 +32,7 @@ module.exports = async (deployer, network, accounts) => {
     let DefaultPermissionAddress = CONFIG.PermissionManager;
     let CpTemplateAddress = CONFIG.CP;
     let DvmFactoryAddress = CONFIG.DVMFactory;
+    let DvmTemplateAddress = CONFIG.DVM;
 
     let multiSigAddress = CONFIG.multiSigAddress;
     let defaultMaintainer = CONFIG.defaultMaintainer;
@@ -52,6 +55,18 @@ module.exports = async (deployer, network, accounts) => {
         const UpCpFactoryInstance = await UpCrowdPoolingFactory.at(UpCrowdPoolingFactory.address);
         var tx = await UpCpFactoryInstance.initOwner(multiSigAddress);
         logger.log("Init UpCpFactory Tx:", tx.tx);
+    }
+
+    if(deploySwitch.DVM) {
+        await deployer.deploy(DvmTemplate);
+        DvmTemplateAddress = DvmTemplate.address;
+        logger.log("DvmTemplateAddress: ", DvmTemplateAddress);
+    }
+
+    if (deploySwitch.CP) {
+        await deployer.deploy(CpTemplate);
+        CpTemplateAddress = CpTemplate.address;
+        logger.log("CpTemplateAddress: ", CpTemplateAddress);
     }
 
     if (deploySwitch.FEERATEIMPL) {

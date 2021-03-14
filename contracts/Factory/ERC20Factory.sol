@@ -30,6 +30,10 @@ contract ERC20Factory {
 
     event NewERC20(address erc20, address creator, bool isMintable);
 
+    // ============ Registry ============
+    // creator -> token address list
+    mapping(address => address[]) public _USER_STD_REGISTRY_;
+
     // ============ Functions ============
 
     constructor(
@@ -50,6 +54,7 @@ contract ERC20Factory {
     ) external returns (address newERC20) {
         newERC20 = ICloneFactory(_CLONE_FACTORY_).clone(_ERC20_TEMPLATE_);
         InitializableERC20(newERC20).init(msg.sender, totalSupply, name, symbol, decimals);
+        _USER_STD_REGISTRY_[msg.sender].push(newERC20);
         emit NewERC20(newERC20, msg.sender, false);
     }
 
@@ -68,5 +73,14 @@ contract ERC20Factory {
             decimals
         );
         emit NewERC20(newMintableERC20, msg.sender, true);
+    }
+
+
+    function getTokenByUser(address user) 
+        external
+        view
+        returns (address[] memory tokens)
+    {
+        return _USER_STD_REGISTRY_[user];
     }
 }

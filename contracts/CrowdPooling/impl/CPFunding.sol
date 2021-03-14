@@ -101,7 +101,7 @@ contract CPFunding is CPStorage {
         _transferBaseOut(_POOL_, poolBase);
         _transferQuoteOut(_POOL_, poolQuote);
 
-        _TOTAL_LP_AMOUNT_ = IDVM(_POOL_).buyShares(address(this));
+        (_TOTAL_LP_AMOUNT_, ,) = IDVM(_POOL_).buyShares(address(this));
 
         msg.sender.transfer(_SETTEL_FUND_);
 

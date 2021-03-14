@@ -180,6 +180,7 @@ contract DVMVault is DVMStorage {
     }
 
     function _mint(address user, uint256 value) internal {
+        require(value > 0, "MINT_INVALID");
         _SHARES_[user] = _SHARES_[user].add(value);
         totalSupply = totalSupply.add(value);
         emit Mint(user, value);

@@ -32,6 +32,6 @@ interface IDVM {
 
     function sellQuote(address to) external returns (uint256);
 
-    function buyShares(address to) external returns (uint256);
+    function buyShares(address to) external returns (uint256,uint256,uint256);
 
 }

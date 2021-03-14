@@ -86,7 +86,7 @@ async function initIncentive(ctx: ProxyContext, delay: number): Promise<void> {
     await ctx.LockedVault02.methods.updateParams(
         Math.floor(new Date().getTime() / 1000 + delay),
         60 * 60 * 24 * 30,
-        300000000000000000
+        "300000000000000000"
     ).send(ctx.sendParam(ctx.Deployer));
 }
 

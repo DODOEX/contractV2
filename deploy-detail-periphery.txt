@@ -214,3 +214,11 @@ Deploy time: 2021/3/13 下午11:43:58
 Deploy type: UpCrowdPoolingFactory
 UpCrowdPoolingFactory address:  0x0c4b4F1D5F5c989457cdD6f5102308b33c922281
 Init UpCpFactory Tx: 0xd03546fa116a1eff47d729bc86e5b56143522fc846f0413f6b0b7dda1dd37a04
+====================================================
+network type: development
+Deploy time: 2021/3/14 下午12:01:16
+Deploy type: UpCrowdPoolingFactory
+DvmTemplateAddress:  0xe44F14BFDe673B7339734a28152cCd6b821753C9
+DvmTemplateAddress:  0x01FEEA29da5Ae41B0b5F6b10b93EE34752eF80d7
+CpTemplateAddress:  0x5D6e6A0BFB2176AFCc4FB809822D8e009216b245
+CpTemplateAddress:  0x327344B382EE1b44FB0a72945fCDCC7243200dD7
