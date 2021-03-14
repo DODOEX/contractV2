@@ -91,6 +91,6 @@ contract DVM is DVMTrader, DVMFunding {
     // ============ Version Control ============
     
     function version() external pure returns (string memory) {
-        return "DVM 1.0.0";
+        return "DVM 1.0.1";
     }
 }

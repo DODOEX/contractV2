@@ -39,7 +39,7 @@ module.exports = {
    */
   deploySwitch: {
     DEPLOY_V1:          false,
-    DEPLOY_V2:          true,
+    DEPLOY_V2:          false,
     ADAPTER:            false,
     MOCK_TOKEN:         false,
     MOCK_V2_POOL:       false,
@@ -49,7 +49,7 @@ module.exports = {
     FEERATEIMPL:        false,
     WETH:               false,
     DODO:               false,
-    UpCP:               false
+    UpCP:               true
   },
 
   networks: {
@@ -84,7 +84,7 @@ module.exports = {
         return new HDWalletProvider(privKey, "https://mainnet.infura.io/v3/" + infuraId);
       },
       gas: 6000000,
-      gasPrice: 90000000000,
+      gasPrice: 180000000000,
       network_id: 1,
       skipDryRun: true
     },

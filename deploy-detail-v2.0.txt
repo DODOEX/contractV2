@@ -565,3 +565,36 @@ Init CpFactory Tx: 0x93e987f7a665ff36e22275af6f399d5cbb88509107f7b223b8b7db353ba
 DODOV2RouteHelper Address:  0x8e66867Ff57250AF985Da3a81eE480fb6889EA9B
 DODOV2Proxy02 Address:  0x750C200d7c7C426da169742f705CA5268e1736b4
 Init DODOProxyV2 Tx: 0x47f86534b348ac846c8fe2014f7debe91a763ff708bb377774933985d5105a6c
+====================================================
+network type: bsclive
+Deploy time: 2021/3/11 下午10:25:45
+Deploy type: V2
+multiSigAddress:  0xcaa42F09AF66A8BAE3A7445a7f63DAD97c11638b
+DvmTemplateAddress:  0xC3BeD579CaB3EC29B22D9AB99F4E586af42496b9
+====================================================
+network type: bsclive
+Deploy time: 2021/3/11 下午10:28:36
+Deploy type: V2
+multiSigAddress:  0xcaa42F09AF66A8BAE3A7445a7f63DAD97c11638b
+DvmTemplateAddress:  0x02607600407329389C2912F46DD357d7fa33d901
+DvmFactoryAddress:  0xa1254eE5c6d6616904A82c55C6e134557096B6D4
+Init DvmFactory Tx: 0x2c4cf896c289a44977d8587f2608b8b46b2edd7cacd68c3dd22fcbf06d9864e5
+DODOV2RouteHelper Address:  0xd72b354BD39f8F11D0cA07bD5724896Bb1a42707
+DODOV2Proxy02 Address:  0x3a343F2e4e142412c5dD130359edb765a6054965
+Init DODOProxyV2 Tx: 0xa30500fe62320a53e7e5c73ab529f809302c01c0e42dc2f4050be1c948c7c81e
+====================================================
+network type: live
+Deploy time: 2021/3/12 上午8:38:27
+Deploy type: V2
+multiSigAddress:  0x95C4F5b83aA70810D4f142d58e5F7242Bd891CB0
+DvmTemplateAddress:  0x8a538751A501A9785F93727d4cB7b7827FAb1ad0
+DvmFactoryAddress:  0xc9eD9B18e447e600238fe50e944B9062B664DEa4
+Init DvmFactory Tx: 0x2e9b1a5f11bd9fa802a17404fd46b01b23741c8ebe61d27db1f567f30e83a742
+DODOV2RouteHelper Address:  0xeAB910bea37DD837dDCED91C8E99dBcC4DBcCc01
+====================================================
+network type: live
+Deploy time: 2021/3/12 上午9:42:10
+Deploy type: V2
+multiSigAddress:  0x95C4F5b83aA70810D4f142d58e5F7242Bd891CB0
+DODOV2Proxy02 Address:  0x1cf4Ae0Fae772B64d83D175d9E3eE06240f6Dc9a
+Init DODOProxyV2 Tx: 0x46f0fe1d79f83d0c7fb887c8e9c43fbf846b9096d39438c68ab48ecec33185f0

@@ -16,10 +16,6 @@ vDODOToken changeReward tx:  0x8ed4b35edff17b8ef9480b9c40b7673cf7a50088afb9fb7c7
 vDODOToken setDODOCirculationHelper tx:  0x402a9d1abd299ac8df019cff5d6f79e49b82cae34b356a0f1e0afdb47d7bd811
 ====================================================
 network type: live
-Deploy time: 2021/2/8 下午3:06:45
-Deploy type: DODOMigrationBSC
-====================================================
-network type: live
 Deploy time: 2021/2/8 下午3:08:35
 Deploy type: DODOMigrationBSC
 DODOMigrationBSCAddress:  0xb159260989012fA98af560A3Fa6D9cd11a64cf6E
@@ -190,3 +186,31 @@ Deploy time: 2021/3/4 下午3:10:50
 Deploy type: UpCrowdPoolingFactory
 UpCrowdPoolingFactory address:  0xD734a08359296e44b87F4d404135cd0832A7a363
 Init UpCpFactory Tx: 0x58798e736d419ef9ce9753fc32a847d2a5a65957623a83e3d258ef2a1c9f8ca8
+====================================================
+network type: kovan
+Deploy time: 2021/3/10 下午9:18:58
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x84F391bE6EE31bC32f0C956C7997E0a2eCF36c6d
+Init UpCpFactory Tx: 0xfab59285ac78ad435db86bf96e38f34a7757ab97151250863e6ea19c762483f3
+====================================================
+network type: kovan
+Deploy time: 2021/3/10 下午11:27:00
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0xe1C4300B47ccE8B162D8d036Db356c563a904757
+Init UpCpFactory Tx: 0x97ad372abbb2321e24e3e388585d47f0b1120980566abc3268c8305b04dc61f7====================================================
+network type: bsclive
+Deploy time: 2021/3/13 下午11:36:30
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x69f52AC40185A2A005D49114F0B77b7bA856F0a0
+====================================================
+network type: bsclive
+Deploy time: 2021/3/13 下午11:39:14
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0xeCEaDe494FD5F913Fd937C5CAc4577236395Dc32
+Init UpCpFactory Tx: 0x0f78a88904cc4bb32147014c85f4154be41959ed64f24eea75ac7c0d66277725
+====================================================
+network type: live
+Deploy time: 2021/3/13 下午11:43:58
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x0c4b4F1D5F5c989457cdD6f5102308b33c922281
+Init UpCpFactory Tx: 0xd03546fa116a1eff47d729bc86e5b56143522fc846f0413f6b0b7dda1dd37a04

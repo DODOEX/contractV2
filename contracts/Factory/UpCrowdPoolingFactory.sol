@@ -33,11 +33,9 @@ contract UpCrowdPoolingFactory is InitializableOwnable {
     address public _CP_TEMPLATE_;
 
     // ============ Settings =============
-
     uint256 public _FREEZE_DURATION_ =  30 days;
     uint256 public _CALM_DURATION_ = 0;
     uint256 public _VEST_DURATION_ = 0;
-    uint256 public _K_ = 0;
     uint256 public _CLIFF_RATE_ = 10**18;
 
 
@@ -56,11 +54,10 @@ contract UpCrowdPoolingFactory is InitializableOwnable {
         uint256[] memory timeLine,
         uint256[] memory valueList)
     {
-        require(timeLine[2] == _CALM_DURATION_, "CP_FACTORY : PHASE_CALM_DURATION_INVALID");
+        require(timeLine[2] <= _CALM_DURATION_, "CP_FACTORY : PHASE_CALM_DURATION_INVALID");
         require(timeLine[4] == _VEST_DURATION_, "CP_FACTORY : VEST_DURATION_INVALID");
-        require(valueList[1] == _K_, "CP_FACTORY : K_INVALID");
         require(valueList[3] == _CLIFF_RATE_, "CP_FACTORY : CLIFF_RATE_INVALID");
-        require(timeLine[3]>= _FREEZE_DURATION_, "CP_FACTORY : FREEZE_DURATION_INVALID");
+        require(timeLine[3] >= _FREEZE_DURATION_, "CP_FACTORY : FREEZE_DURATION_INVALID");
         _;
     }
 
@@ -172,11 +169,6 @@ contract UpCrowdPoolingFactory is InitializableOwnable {
 
     function setVestDuration(uint256 _newVestDuration) public onlyOwner {
         _VEST_DURATION_ = _newVestDuration;
-    }
-
-    function setK(uint256 _newK) public onlyOwner {
-        require(_newK <= 10**18, "CP_FACTORY : INVALID");
-        _K_ = _newK;
     }
 
     function setCliffRate(uint256 _newCliffRate) public onlyOwner {
