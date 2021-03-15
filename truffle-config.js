@@ -51,7 +51,8 @@ module.exports = {
     DODO:               false,
     UpCP:               false,
     DVM:                false,
-    CP:                 false
+    CP:                 false,
+    CPFactory:          false
   },
 
   networks: {
@@ -86,7 +87,7 @@ module.exports = {
         return new HDWalletProvider(privKey, "https://mainnet.infura.io/v3/" + infuraId);
       },
       gas: 6000000,
-      gasPrice: 130000000000,
+      gasPrice: 200000000000,
       network_id: 1,
       skipDryRun: true
     },

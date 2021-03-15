@@ -24,7 +24,6 @@ export class ProxyContext {
   EVM: EVM;
   Web3: Web3;
   DODOProxyV2: Contract;
-  DODOProxyV2Bsc: Contract;
   DVMFactory: Contract;
   DPPFactory: Contract;
   CPFactory: Contract;
@@ -41,8 +40,6 @@ export class ProxyContext {
 
   //Functions
   DODOIncentive: Contract;
-  DODOIncentiveBsc: Contract;
-  LockedVault02: Contract;
   mtFeeRateModel: Contract;
 
   Deployer: string;
@@ -110,12 +107,6 @@ export class ProxyContext {
       [this.DODO.options.address]
     )
 
-    //DODO Incentive (BSC)
-    this.DODOIncentiveBsc = await contracts.newContract(
-      contracts.DODO_INCENTIVE_BSC,
-      [this.DODO.options.address]
-    )
-
     this.DPPFactory = await contracts.newContract(contracts.DPP_FACTORY_NAME,
       [
         cloneFactory.options.address,
@@ -142,18 +133,6 @@ export class ProxyContext {
       contracts.DODO_SELL_HELPER
     );
 
-    //BSC 空投锁仓合约
-    this.LockedVault02 = await contracts.newContract(contracts.LOCKED_VAULT_02,
-      [
-        this.DODO.options.address,
-        Math.floor(new Date().getTime() / 1000),
-        60 * 60 * 24 * 30,
-        "300000000000000000"
-      ]
-    )
-
-    await this.LockedVault02.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
-
     //ETH proxy
     this.DODOProxyV2 = await contracts.newContract(contracts.DODO_PROXY_NAME,
       [
@@ -170,34 +149,13 @@ export class ProxyContext {
 
     await this.DODOProxyV2.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
 
-    //BSC proxy
-    this.DODOProxyV2Bsc = await contracts.newContract(contracts.DODO_PROXY_NAME_BSC,
-      [
-        this.DVMFactory.options.address,
-        this.DPPFactory.options.address,
-        this.CPFactory.options.address,
-        this.WETH.options.address,
-        this.DODOApproveProxy.options.address,
-        this.DODOSellHelper.options.address,
-        "0x0000000000000000000000000000000000000000",
-        this.DODOIncentiveBsc.options.address
-      ]
-    );
-
-    await this.DODOProxyV2Bsc.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
 
     await this.DODOApprove.methods.init(this.Deployer, this.DODOApproveProxy.options.address).send(this.sendParam(this.Deployer));
-    await this.DODOApproveProxy.methods.init(this.Deployer, [this.DODOProxyV2.options.address, this.DODOProxyV2Bsc.options.address]).send(this.sendParam(this.Deployer));
+    await this.DODOApproveProxy.methods.init(this.Deployer, [this.DODOProxyV2.options.address]).send(this.sendParam(this.Deployer));
 
     //DODOIncentive ETH
     await this.DODOIncentive.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
     await this.DODOIncentive.methods.changeDODOProxy(this.DODOProxyV2.options.address).send(this.sendParam(this.Deployer));
-
-    //DODOIncentive BSC
-    await this.DODOIncentiveBsc.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
-    await this.DODOIncentiveBsc.methods.setContract(this.DODOProxyV2Bsc.options.address, this.LockedVault02.options.address).send(this.sendParam(this.Deployer));
-    await this.DODOIncentiveBsc.methods.setStableList(this.USDC.options.address, true).send(this.sendParam(this.Deployer));
-    await this.DODOIncentiveBsc.methods.setTokenList(this.DODO.options.address, true).send(this.sendParam(this.Deployer));
 
     this.DODOCalleeHelper = await contracts.newContract(
       contracts.DODO_CALLEE_HELPER_NAME,

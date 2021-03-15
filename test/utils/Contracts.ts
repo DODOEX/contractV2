@@ -46,13 +46,10 @@ export const DODO_CALLEE_HELPER_NAME = "DODOCalleeHelper"
 export const CROWD_POOLING_NAME = "CP"
 export const CROWD_POOLING_FACTORY = "CrowdPoolingFactory"
 export const DODO_INCENTIVE = "DODOIncentive"
-export const DODO_INCENTIVE_BSC = "DODOIncentiveBsc"
 export const VDODO_NAME = "vDODOToken"
 export const DODO_CULATION_HELPER = "DODOCirculationHelper"
 export const DODO_GOVERNANCE = "Governance"
-export const LOCKED_VAULT_02 = "LockedTokenVault02"
 export const DODO_PROXY_NAME = "DODOV2Proxy02"
-export const DODO_PROXY_NAME_BSC = "DODOV2Proxy03Bsc"
 
 interface ContractJson {
   abi: any;

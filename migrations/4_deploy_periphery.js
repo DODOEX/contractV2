@@ -14,6 +14,7 @@ const FeeRateImpl = artifacts.require("FeeRateImpl");
 const WETH9 = artifacts.require("WETH9");
 const DODOToken = artifacts.require("DODOToken");
 const UpCrowdPoolingFactory = artifacts.require("UpCrowdPoolingFactory");
+const CpFactory = artifacts.require("CrowdPoolingFactory");
 
 module.exports = async (deployer, network, accounts) => {
     let CONFIG = GetConfig(network, accounts)
@@ -55,6 +56,26 @@ module.exports = async (deployer, network, accounts) => {
         const UpCpFactoryInstance = await UpCrowdPoolingFactory.at(UpCrowdPoolingFactory.address);
         var tx = await UpCpFactoryInstance.initOwner(multiSigAddress);
         logger.log("Init UpCpFactory Tx:", tx.tx);
+    }
+
+    if (deploySwitch.CPFactory) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
+        logger.log("Deploy type: CrowdPoolingFactory");
+        await deployer.deploy(
+            CpFactory,
+            CloneFactoryAddress,
+            CpTemplateAddress,
+            DvmFactoryAddress,
+            defaultMaintainer,
+            DefaultMtFeeRateAddress,
+            DefaultPermissionAddress
+        );
+        logger.log("CrowdPoolingFactory address: ", CpFactory.address);
+        const cpFactoryInstance = await CpFactory.at(CpFactory.address);
+        var tx = await cpFactoryInstance.initOwner(multiSigAddress);
+        logger.log("Init CpFactory Tx:", tx.tx);
     }
 
     if(deploySwitch.DVM) {

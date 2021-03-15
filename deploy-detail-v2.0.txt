@@ -598,3 +598,17 @@ Deploy type: V2
 multiSigAddress:  0x95C4F5b83aA70810D4f142d58e5F7242Bd891CB0
 DODOV2Proxy02 Address:  0x1cf4Ae0Fae772B64d83D175d9E3eE06240f6Dc9a
 Init DODOProxyV2 Tx: 0x46f0fe1d79f83d0c7fb887c8e9c43fbf846b9096d39438c68ab48ecec33185f0
+====================================================
+network type: bsclive
+Deploy time: 2021/3/14 下午9:34:00
+Deploy type: V2
+multiSigAddress:  0xcaa42F09AF66A8BAE3A7445a7f63DAD97c11638b
+DODOV2Proxy02 Address:  0x17eBC315760Bb47384224A5f3BF829222fbD3Aa7
+Init DODOProxyV2 Tx: 0x3c884309f190264d5e7f2d09d1cbb6084fce69da75edb808d21f8aa86aefda12
+====================================================
+network type: live
+Deploy time: 2021/3/15 下午2:59:09
+Deploy type: V2
+multiSigAddress:  0x95C4F5b83aA70810D4f142d58e5F7242Bd891CB0
+DODOV2Proxy02 Address:  0x9F8B87ee9D1b596e7479502de5B4f295E437C8d9
+Init DODOProxyV2 Tx: 0x4b6086c0b79edac7a55fedd00fd6104fae133569afa05484d0608d0b96844979

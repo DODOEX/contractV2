@@ -222,3 +222,57 @@ DvmTemplateAddress:  0xe44F14BFDe673B7339734a28152cCd6b821753C9
 DvmTemplateAddress:  0x01FEEA29da5Ae41B0b5F6b10b93EE34752eF80d7
 CpTemplateAddress:  0x5D6e6A0BFB2176AFCc4FB809822D8e009216b245
 CpTemplateAddress:  0x327344B382EE1b44FB0a72945fCDCC7243200dD7
+====================================================
+network type: live
+Deploy time: 2021/3/14 下午8:24:14
+Deploy type: CrowdPoolingFactory
+CrowdPoolingFactory address:  0x79887f65f83bdf15Bcc8736b5e5BcDB48fb8fE13
+Init CpFactory Tx: 0x3f501092f4b2319aee8ef98e7258113012766e0024d2352435ece2f3739525df
+====================================================
+network type: live
+Deploy time: 2021/3/14 下午8:28:48
+Deploy type: CrowdPoolingFactory
+CrowdPoolingFactory address:  0x95E887aDF9EAa22cC1c6E3Cb7f07adC95b4b25a8
+Init CpFactory Tx: 0xe49c57bdb78d18852e48fedb18a29bec86dd6fa4671c6f53b370f032d0f75389
+====================================================
+network type: bsclive
+Deploy time: 2021/3/14 下午8:36:12
+Deploy type: CrowdPoolingFactory
+CrowdPoolingFactory address:  0xd5a7E197bacE1F3B26E2760321d6ce06Ad07281a
+DvmTemplateAddress:  0x409E377A7AfFB1FD3369cfc24880aD58895D1dD9
+====================================================
+network type: bsclive
+Deploy time: 2021/3/15 下午6:47:55
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x4F57F6929E58AE564F6AB090fE0AEEcb39B0f270
+Init UpCpFactory Tx: 0x3626155c9eb35ca325ff7e013e6da73959b7cc266905af6bb9142b2e662bedd5
+====================================================
+network type: live
+Deploy time: 2021/3/15 下午6:55:06
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x0c4b4F1D5F5c989457cdD6f5102308b33c922281
+====================================================
+network type: live
+Deploy time: 2021/3/15 下午6:56:35
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x0c4b4F1D5F5c989457cdD6f5102308b33c922281
+====================================================
+network type: live
+Deploy time: 2021/3/15 下午6:57:39
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x78D338F9d54E9e41872E68cB1c01d9499d87eE52
+Init UpCpFactory Tx: 0xcd2e30bfd8fc76105dfb8e0a14df12d96a3a0e151d48cb95773d8f7fb69b4e57
+====================================================
+network type: bsclive
+Deploy time: 2021/3/15 下午7:04:59
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x3E64F18168651d140AaE57e0cF325874d066bA9E
+Init UpCpFactory Tx: 0x134491330aa75dd8c6131b5c173365dfd464885bdf14b3a09949258f8512419a
+DvmTemplateAddress:  0x7B1eD6Be684b9c691C6C4bd5ccd7bF3e0d4E06fC
+CpTemplateAddress:  0x6092eFEf82CaDcd07f3a545cBe6C83dae713aE0A
+====================================================
+network type: kovan
+Deploy time: 2021/3/15 下午8:00:28
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x25AE560522165eacCFbF2287493AF12B8ad718e7
+Init UpCpFactory Tx: 0x9692b9458c3f3f4c1682f58cc46c14c662e5b7b7f72c7b8afabc494d2eb75d16
