@@ -52,7 +52,8 @@ module.exports = {
     UpCP:               false,
     DVM:                false,
     CP:                 false,
-    CPFactory:          false
+    CPFactory:          false,
+    MultiCall:          true
   },
 
   networks: {
@@ -112,9 +113,9 @@ module.exports = {
     
     mbtestnet: {
       provider: () => {
-        return new HDWalletProvider(privKey, 'https://rpc.testnet.moonbeam.network');
+        return new HDWalletProvider(privKey, 'https://moonbeam-rpc.dodoex.io');
       },
-      network_id: 1287,
+      network_id: 1281,
     },
     
     mbdev: {

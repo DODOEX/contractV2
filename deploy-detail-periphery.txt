@@ -276,3 +276,19 @@ Deploy time: 2021/3/15 下午8:00:28
 Deploy type: UpCrowdPoolingFactory
 UpCrowdPoolingFactory address:  0x25AE560522165eacCFbF2287493AF12B8ad718e7
 Init UpCpFactory Tx: 0x9692b9458c3f3f4c1682f58cc46c14c662e5b7b7f72c7b8afabc494d2eb75d16
+====================================================
+network type: mbtestnet
+Deploy time: 2021/3/15 下午9:01:02
+Deploy type: DODOToken
+DODOTokenAddress:  0x5c4242beB94dE30b922f57241f1D02f36e906915
+====================================================
+network type: mbtestnet
+Deploy time: 2021/3/15 下午9:02:37
+Deploy type: DODOToken
+DODOTokenAddress:  0x42e2EE7Ba8975c473157634Ac2AF4098190fc741
+====================================================
+network type: mbtestnet
+Deploy time: 2021/3/15 下午9:02:47
+Deploy type: WETH9
+WETH9Address:  0xF8cef78E923919054037a1D03662bBD884fF4edf
+MultiCallAddress:  0xb61c30c1612504d334b39E5172D8215cb5Ad576C
