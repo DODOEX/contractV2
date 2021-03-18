@@ -25,13 +25,17 @@ contract FeeDistributor is InitializableOwnable {
     mapping(address => uint256) internal _BASE_DEBT_;
     mapping(address => uint256) internal _QUOTE_DEBT_;
 
-    function init() external {
+    function init(
+      address baseToken,
+      address quoteToken,
+      address stakeToken
+    ) external {
         _BASE_TOKEN_ = baseToken;
         _QUOTE_TOKEN_ = quoteToken;
         _STAKE_TOKEN_ = stakeToken;
         _BASE_REWARD_RATIO_ = DecimalMath.ONE;
         _QUOTE_REWARD_RATIO_ = DecimalMath.ONE;
-        _STAKE_VAULT_ = new DistributorStakeVault();
+        _STAKE_VAULT_ = new StakeVault();
     }
 
     function stake(address to) external {
@@ -54,7 +58,7 @@ contract FeeDistributor is InitializableOwnable {
       }
 
       _removeShares(amount, msg.sender);
-      DistributorStakeVault(_STAKE_VAULT_).transferOut(_STAKE_TOKEN_, amount, to);
+      StakeVault(_STAKE_VAULT_).transferOut(_STAKE_TOKEN_, amount, to);
     }
 
     function _claim(address sender, address to) internal {
@@ -91,7 +95,7 @@ contract FeeDistributor is InitializableOwnable {
 
 }
 
-contract DistributorStakeVault is Ownable {
+contract StakeVault is Ownable {
     function transferOut(
         address token,
         uint256 amount,
