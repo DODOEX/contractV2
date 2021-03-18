@@ -32,15 +32,17 @@ contract Fragment is InitializableMintableERC20 {
       address dvm, 
       address collateralVault, 
       uint256 supply, 
-      uint256 ownerRatio
+      uint256 ownerRatio,
+      uint256 buyoutTimestamp
     ) external {
         // init local variables
         initOwner(owner);
         _DVM_ = dvm;
         _COLLATERAL_VAULT_ = collateralVault;
         _QUOTE_ = IDVM(DVM)._QUOTE_TOKEN_();
+        _BUYOUT_TIMESTAMP_ = buyoutTimestamp;
 
-        // init FRAM meta data
+        // init FRAG meta data
         string memory suffix = "FRAG_";
         name = string(abi.encodePacked(suffix, IDVM(_DVM_).addressToShortString(_COLLATERAL_VAULT_));
         symbol = "FRAG";
@@ -58,6 +60,7 @@ contract Fragment is InitializableMintableERC20 {
     }
 
     function buyout() external {
+      require(!_IS_BUYOUT_, "ALREADY BUYOUT");
       _IS_BUYOUT_ = true;
       _BUYOUT_PRICE_ = IDVM(_DVM_).getMidPrice();
       uint256 requireQuote = DecimalMath.mulCeil(_BUYOUT_PRICE_, totalSupply);
@@ -80,11 +83,13 @@ contract Fragment is InitializableMintableERC20 {
 
     // buyout之后的恒定兑换
     function redeem(address to) external {
+      require(_IS_BUYOUT_, "NEED BUYOUT");
       IERC20(_QUOTE_).safeTransfer(DecimalMath.mulFloor(_BUYOUT_PRICE_, balances[address(this)]), to);
       _clearSelfBalance();
     }
 
-    function getBuyoutRequire() view return (uint256 requireQuote){
+    function getBuyoutRequirement() view return (uint256 requireQuote){
+      require(!_IS_BUYOUT_, "ALREADY BUYOUT");
       uint256 price = IDVM(_DVM_).getMidPrice();
       requireQuote = DecimalMath.mulCeil(price, totalSupply);
     }
