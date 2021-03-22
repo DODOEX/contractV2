@@ -655,3 +655,69 @@ Deploy type: V2 - Adapter
 DODOV1Adapter Address:  0x1a3fa978909d86dF1244216b02733136b438D83E
 DODOV2Adapter Address:  0x0e1630bd2bc047fF6338F78Dc45410e1c0Fc32a0
 UniAdapter Address:  0x1E7727eDad5a2ef47C5AB95a20FEd515735591B2
+====================================================
+network type: oktest
+Deploy time: 2021/3/18 下午5:51:41
+Deploy type: V2
+multiSigAddress:  undefined
+====================================================
+network type: oktest
+Deploy time: 2021/3/18 下午5:55:38
+Deploy type: V2
+multiSigAddress:  undefined
+====================================================
+network type: oktest
+Deploy time: 2021/3/18 下午6:29:10
+Deploy type: V2
+multiSigAddress:  0xaac153c1344cA14497A5dd22b1F70C28793625aa
+DODOSellHelper Address:  0x0F859706AeE7FcF61D5A8939E8CB9dBB6c1EDA33
+DODOCalleeHelperAddress:  0xe380Ad3181A69BF92133D2feb609867c4adC61eA
+====================================================
+network type: oktest
+Deploy time: 2021/3/18 下午6:32:58
+Deploy type: V2
+multiSigAddress:  0xaac153c1344cA14497A5dd22b1F70C28793625aa
+DODOV1RouterHelper Address:  0xED3Ac3335a24331F1704df8CB456C88dCA282782
+CloneFactoryAddress:  0xb0199C2c8ADF1E6c1e41De60A62E993406Cb8C02
+DefaultMtFeeRateAddress:  0x4073f2b9bB95774531b9e23d206a308c614A943a
+Init DefaultMtFeeRateAddress Tx: 0xee585bca5c418f8d901532b07946af27ce4fbba2efbfbeae134196ab4f830886
+DefaultPermissionAddress:  0x0cA2d4BC266B1ad7a0787409AD7a0331D78Eea90
+Init DefaultPermissionAddress Tx: 0x7d4bf524098795aaf9ea08b55854905e58b44501ef7b9a81759955778c437fd2
+DvmTemplateAddress:  0xbd826D0d98480F1D63Bc4125F1368889517559d0
+DppTemplateAddress:  0x890ED2A571486799F1b6413fbA4669106441f702
+DppAdminTemplateAddress:  0x00E7e2bE2e5EcD4343DeE10712Aa53e94c7B5958
+CpTemplateAddress:  0x93e0fd315d95F164147a6C427dA3D6173750C256
+ERC20TemplateAddress:  0x044B56B8CB54c358415Bf9507d56b1A09b5E4c29
+MintableERC20TemplateAddress:  0x527a5791761fCeBa189B5bEaE175E922D87c636e
+ERC20FactoryAddress:  0xc54c1D6Bf83c9d8ef260b93dEfc0eC00132Fa33B
+DODOApprove Address:  0x51cB75FEd3beb23Ae3Ed5FC74a761E3913ae47f9
+DODOApproveProxy Address:  0xf40be68442e8bcf900FED714246f99BE556345e7
+DODOIncentiveAddress:  0x3318FB94AF0c7B4A45001b5901d36BBA85afef2D
+DODOIncentive Init tx:  0xd611e33a9a5f7f20ee96ecf5c4dbef7b07b017727032707f0c46187ca6e7262c
+DvmFactoryAddress:  0x16810820A4ff4348Fc39C07bDf1641B724E7F5E7
+Init DvmFactory Tx: 0x30c2cca689561742fe5ef5ce47edf63c3854b83ce1b92e7c842be1871c94a3b2
+DppFactoryAddress:  0x4f678ECC9d5507eDf39E7656A714A9B51Bb6EA58
+Init DppFactory Tx: 0x4ff036040a161b764206e91fd1af16b10da9ef5dbfa9edaf550bf64966d024d3
+CpFactoryAddress:  0xf4D3ab686a1E133Ec0806644FE5d1FD94869F88F
+Init CpFactory Tx: 0xb300f6ae79927223daecaef686795d18443b1223fe290a76b3d008c80f4efd50
+DODOV2RouteHelper Address:  0x6A08844EdeB49A8578671F1452Fd7dbcc048424F
+DODOV2Proxy02 Address:  0x76532E95E26336c2096f969a6AF396f4796A0b67
+Init DODOProxyV2 Tx: 0xd93bc1ccb24267dce549964f3b70ed0eb9c16b2f35cc9e14d36515c0d0fa4239
+====================================================
+network type: oktest
+Deploy time: 2021/3/18 下午8:18:09
+Deploy type: V2
+multiSigAddress:  0xaac153c1344cA14497A5dd22b1F70C28793625aa
+CloneFactoryAddress:  0xae7153d043C55789F88032C168a0A74B18E73CEE
+DODOV2Proxy02 Address:  0xf83BeeA1025359C4d2cf554C330bF8Fd1a9eEbAb
+Init DODOProxyV2 Tx: 0x503e53d6663cf23f726af62da5a9f6b1e6e03d5ff8f46193d15885578915b313
+DODOApproveProxy Init tx:  0x6826b75559744a67e29c7688b55ecaf5cd2ce3bc6b697ff938a3af9da93a3c89
+DODOApprove Init tx:  0xaff1b167b4e23f76547a0de488ad06a734b9738bd963a3eba26572ca0fc0def2
+DODOIncentive ChangeProxy tx:  0xac36da3fb39009346e41db0ef0b165b1785ef479b6550200d5bf225a6033f7de
+====================================================
+network type: oktest
+Deploy time: 2021/3/18 下午8:21:27
+Deploy type: V2 - Adapter
+DODOV1Adapter Address:  0xa432E1ace51eB849d7a1664e5c60ce965B1fE6E4
+DODOV2Adapter Address:  0xC2aA2C0175e376E63cFb0bd1CAB1196DDc9a7076
+UniAdapter Address:  0x03E2427859119E497EB856a166F616a2Ce5f8c88

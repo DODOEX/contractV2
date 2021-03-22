@@ -292,3 +292,9 @@ Deploy time: 2021/3/15 下午9:02:47
 Deploy type: WETH9
 WETH9Address:  0xF8cef78E923919054037a1D03662bBD884fF4edf
 MultiCallAddress:  0xb61c30c1612504d334b39E5172D8215cb5Ad576C
+====================================================
+network type: oktest
+Deploy time: 2021/3/18 下午5:50:20
+Deploy type: DODOToken
+DODOTokenAddress:  0x19DA73be23Cea6bFA804Ec020041b8F3971BC522
+MultiCallAddress:  0x1Cc229Ac0ef9ba932e4dEbB898C77901C9AFB694
