@@ -38,7 +38,7 @@ contract Ownable {
         emit OwnershipTransferred(address(0), _OWNER_);
     }
 
-    function transferOwnership(address newOwner) external onlyOwner {
+    function transferOwnership(address newOwner) external virtual onlyOwner {
         emit OwnershipTransferPrepared(_OWNER_, newOwner);
         _NEW_OWNER_ = newOwner;
     }
