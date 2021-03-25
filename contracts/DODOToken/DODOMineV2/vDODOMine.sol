@@ -32,6 +32,7 @@ contract vDODOMine is BaseMine {
     event Deposit(address indexed user, uint256 amount);
     event Withdraw(address indexed user, uint256 amount);
 
+    // ============ Deposit && Withdraw && Exit ============
 
     function deposit(uint256 amount) public {
         require(amount > 0, "vDODOMineETH: CANNOT_DEPOSIT_ZERO");
@@ -56,4 +57,26 @@ contract vDODOMine is BaseMine {
         withdraw(balanceOf(msg.sender));
         getAllRewards();
     }
+
+    // ============ View  ============
+
+    function getLockedvDODO(address account) external view returns (uint256) {
+        return balanceOf(account);
+    }
+
+
+    // =============== Ownable  ================
+
+    function syncBalance(address[] calldata accountList, uint256[] calldata amountList) external onlyOwner {
+        require(accountList.length == amountList.length, "DODOMineV2: LENGTH_NOT_MATCH");
+        for (uint256 i = 0; i < accountList.length; ++i) {
+            uint256 curBalance = balanceOf(accountList[i]);
+            if(curBalance > amountList[i]) {
+                uint256 subAmount = curBalance.sub(amountList[i]);
+                _totalSupply = _totalSupply.sub(subAmount);
+                _balances[accountList[i]] = amountList[i];
+            }
+        }
+    }
+
 }

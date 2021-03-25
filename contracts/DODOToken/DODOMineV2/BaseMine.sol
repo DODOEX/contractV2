@@ -26,7 +26,6 @@ contract BaseMine is InitializableOwnable {
         uint256 startBlock;
         uint256 endBlock;
         address rewardVault;
-        address rewardDistributor;
 
         uint256 rewardPerBlock;
         uint256 accRewardPerShare;
@@ -46,22 +45,16 @@ contract BaseMine is InitializableOwnable {
     event Claim(uint256 indexed i, address indexed user, uint256 reward);
     event UpdateReward(uint256 indexed i, uint256 rewardPerBlock);
     event UpdateEndBlock(uint256 indexed i, uint256 endBlock);
-    event RewardDistributorChanged(uint256 indexed i, address rewardDistributor);
     event NewRewardToken(uint256 indexed i, address rewardToken);
     event RemoveRewardToken(address rewardToken);
 
     // ============ Modifier ==========
 
-    modifier onlyRewardDistributor(uint i) {
-        require(msg.sender == rewardTokenInfos[i].rewardDistributor, "DODOMineV2: ACCESS_RESTRICTED");
-        _;
-    }
-
     modifier updateReward(address user) {
         uint256 len = rewardTokenInfos.length;
         for (uint i = 0; i < len; i++) {
             RewardTokenInfo storage rt = rewardTokenInfos[i];
-            rt.accRewardPerShare = rewardPerLpToken(i);
+            rt.accRewardPerShare = rewardPerToken(i);
             rt.lastRewardBlock = lastBlockRewardApplicable(i);
             if (user != address(0)) {
                 rt.userRewards[user] = getPendingReward(i, user);
@@ -86,7 +79,7 @@ contract BaseMine is InitializableOwnable {
         }
     }
 
-    function rewardPerLpToken(uint i) public view returns (uint256) {
+    function rewardPerToken(uint i) public view returns (uint256) {
         RewardTokenInfo memory rt = rewardTokenInfos[i];
         if (totalSupply() == 0) {
             return rt.accRewardPerShare;
@@ -103,7 +96,7 @@ contract BaseMine is InitializableOwnable {
         RewardTokenInfo storage rt = rewardTokenInfos[i];
         return DecimalMath.mulFloor(
             balanceOf(user),
-            rewardPerLpToken(i).sub(rt.userRewardPerTokenPaid[user])
+            rewardPerToken(i).sub(rt.userRewardPerTokenPaid[user])
         ).add(rt.userRewards[user]);
     }
 
@@ -113,6 +106,11 @@ contract BaseMine is InitializableOwnable {
 
     function balanceOf(address user) public view returns (uint256) {
         return _balances[user];
+    }
+
+    function getRewardTokenByIdx(uint i) public view returns (address) {
+        RewardTokenInfo memory rt = rewardTokenInfos[i];
+        return rt.rewardToken;
     }
 
     // ============ Claim ============
@@ -136,17 +134,10 @@ contract BaseMine is InitializableOwnable {
 
     // =============== Ownable  ================
 
-    function setRewardDistribution(uint i, address rewardDistributor) external onlyOwner {
-        RewardTokenInfo storage rt = rewardTokenInfos[i];
-        rt.rewardDistributor = rewardDistributor;
-        emit RewardDistributorChanged(i, rewardDistributor);
-    }
-
-    function addRewardToken(address rewardToken, address rewardDistributor,uint256 startBlock, uint256 endBlock) external onlyOwner {
+    function addRewardToken(address rewardToken, uint256 startBlock, uint256 endBlock) external onlyOwner {
         require(rewardToken != address(0),"DODOMineV2: TOKEN_INVALID");
         require(startBlock > block.number, "DODOMineV2: START_BLOCK_INVALID");
         require(endBlock > startBlock ,"DODOMineV2: DURATION_INVALID");
-        require(rewardDistributor != address(0), "DODOMineV2: REWARD_DISTRIBUTOR_INVALID");
 
         uint256 len = rewardTokenInfos.length;
         for (uint i = 0; i < len; i++) {
@@ -157,11 +148,9 @@ contract BaseMine is InitializableOwnable {
         rt.rewardToken = rewardToken;
         rt.startBlock = startBlock;
         rt.endBlock = endBlock;
-        rt.rewardDistributor = rewardDistributor;
         rt.rewardVault = address(new RewardVault(rewardToken));
 
         emit NewRewardToken(len, rewardToken);
-        emit RewardDistributorChanged(len, rewardDistributor);
     }
 
     function removeRewardToken(address rewardToken) external onlyOwner {
@@ -176,40 +165,20 @@ contract BaseMine is InitializableOwnable {
         }
     }
 
-    function setEndBlock(uint i, uint256 newEndBlock) external onlyRewardDistributor(i) updateReward(address(0)) {
+    function setEndBlock(uint i, uint256 newEndBlock) external onlyOwner updateReward(address(0)) {
         require(block.number < newEndBlock, "DODOMineV2: END_BLOCK_INVALID");
         RewardTokenInfo storage rt = rewardTokenInfos[i];
         require(block.number > rt.startBlock, "DODOMineV2: NOT_START");
         require(block.number < rt.endBlock, "DODOMineV2: ALREADY_CLOSE");
-        
-        //TODO: gas ？需要额外维护 已分发reward变量，总reward 两个storage
-        // uint256 vaultBalance = IERC20(rt.rewardToken).balanceOf(rt.rewardVault);
-        // uint256 preReward = DecimalMath.mulFloor(newEndBlock.sub(block.number), rt.rewardPerBlock);
-        // require(preReward <= vaultBalance, "DODOMineV2: REWARD_NOT_ENOUGH");
-        
         rt.endBlock = newEndBlock;
         rt.lastRewardBlock = block.number;
-        
         emit UpdateEndBlock(i, newEndBlock);
     }
 
-    function setReward(uint i, uint256 newRewardPerBlock) external onlyRewardDistributor(i) updateReward(address(0)) {
+    function setReward(uint i, uint256 newRewardPerBlock) external onlyOwner updateReward(address(0)) {
         RewardTokenInfo storage rt = rewardTokenInfos[i];
         uint256 endBlock = rt.endBlock;
-
         require(block.number < endBlock, "DODOMineV2: ALREADY_FINISHED");
-
-        //TODO: 
-        // uint256 vaultBalance = IERC20(rt.rewardToken).balanceOf(rt.rewardVault);
-        // uint256 startBlock = rt.startBlock;
-        // uint256 preReward;
-        // if(startBlock > block.number) {
-        //     preReward = DecimalMath.mulFloor(endBlock.sub(startBlock), newRewardPerBlock);
-        // }else {
-        //     preReward = DecimalMath.mulFloor(endBlock.sub(block.number), newRewardPerBlock);
-        // }
-        // require(preReward <= vaultBalance, "DODOMineV2: REWARD_NOT_ENOUGH");
-        
         rt.rewardPerBlock = newRewardPerBlock;
         emit UpdateReward(i, newRewardPerBlock);
     }

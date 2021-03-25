@@ -10,22 +10,18 @@ pragma experimental ABIEncoderV2;
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
-import {IDODOApproveProxy} from "../../intf/IDODOApproveProxy.sol";
 import {BaseMine} from "./BaseMine.sol";
 
-
-contract LpMine is BaseMine {
+contract ERC20Mine is BaseMine {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
     // ============ Storage ============
     
-    address public immutable _LP_TOKEN_;
-    address public immutable _DODO_APPROVE_PROXY_;
+    address public immutable _TOKEN_;
 
-    constructor(address lpToken, address dodoApproveProxy) public {
-        _LP_TOKEN_ = lpToken;
-        _DODO_APPROVE_PROXY_ = dodoApproveProxy;
+    constructor(address token) public {
+        _TOKEN_ = token;
     }
 
     // ============ Event  ============
@@ -39,12 +35,7 @@ contract LpMine is BaseMine {
         require(amount > 0, "DODOMineV2: CANNOT_DEPOSIT_ZERO");
         _totalSupply = _totalSupply.add(amount);
         _balances[msg.sender] = _balances[msg.sender].add(amount);
-        IDODOApproveProxy(_DODO_APPROVE_PROXY_).claimTokens(
-            _LP_TOKEN_,
-            msg.sender,
-            address(this),
-            amount
-        );
+        IERC20(_TOKEN_).safeTransferFrom(msg.sender, address(this), amount);
         emit Deposit(msg.sender, amount);
     }
 
@@ -52,7 +43,7 @@ contract LpMine is BaseMine {
         require(amount > 0, "DODOMineV2: CANNOT_WITHDRAW_ZERO");
         _totalSupply = _totalSupply.sub(amount);
         _balances[msg.sender] = _balances[msg.sender].sub(amount);
-        IERC20(_LP_TOKEN_).safeTransfer(msg.sender, amount);
+        IERC20(_TOKEN_).safeTransfer(msg.sender, amount);
         emit Withdraw(msg.sender, amount);
     }
 
