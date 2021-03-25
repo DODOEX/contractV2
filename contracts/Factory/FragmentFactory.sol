@@ -12,6 +12,15 @@ import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 import {ICloneFactory} from "../lib/CloneFactory.sol";
 import {IDVM} from "../DODOVendingMachine/intf/IDVM.sol";
 
+// 这一部分最后写，先把前面的接口定下来
+// 业务流程（没有NFT的情况下）
+// 1. 上传媒体，创建NFTCollateralVault
+// 2. 把CollateralVault提供给FragmentFactory做碎片化
+// （已经有NFT的情况下）
+// 1. 将NFT打包成NFTCollateralVault
+// 2. 把CollateralVault提供给FragmentFactory做碎片化
+// 所以总体来说，factory只需要处理vault已经建立好之后的拼装工作即可
+
 interface IFragmentFactory {
     function createFragment() external returns (address newVendingMachine);
 }
