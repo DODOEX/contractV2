@@ -31,6 +31,13 @@ interface IDODOCallee {
         bytes calldata data
     ) external;
 
+    function DSPFlashLoanCall(
+        address sender,
+        uint256 baseAmount,
+        uint256 quoteAmount,
+        bytes calldata data
+    ) external;
+
     function CPCancelCall(
         address sender,
         uint256 amount,
