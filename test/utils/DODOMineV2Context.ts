@@ -26,6 +26,7 @@ export class DODOMineV2Context {
 
     //contract
     ERC20Mine: Contract;
+    VDODOMine: Contract;
 
     //account
     Deployer: string;
@@ -38,7 +39,7 @@ export class DODOMineV2Context {
     ERC20: Contract;
 
 
-    async init() {
+    async init(vdodo: string) {
         this.EVM = new EVM();
         this.Web3 = getDefaultWeb3();
 
@@ -62,6 +63,14 @@ export class DODOMineV2Context {
             ["REWARD_2 Token", "REWARD_2", 18]
         );
 
+        if (vdodo != null) {
+            this.VDODOMine = await contracts.newContract(
+                contracts.VDODO_MINE,
+                [vdodo]
+            );
+            await this.VDODOMine.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
+        }
+
         this.ERC20Mine = await contracts.newContract(
             contracts.ERC20_MINE,
             [this.ERC20.options.address]
@@ -69,7 +78,7 @@ export class DODOMineV2Context {
 
         await this.ERC20Mine.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
 
-        console.log(log.blueText("[Init ERC20Mine context]"));
+        console.log(log.blueText("[Init DODOMine context]"));
     }
 
     sendParam(sender, value = "0") {
@@ -85,6 +94,12 @@ export class DODOMineV2Context {
         await token.methods.mint(to, amount).send(this.sendParam(this.Deployer));
     }
 
+    async increBlock(num: number) {
+        for (let i = 0; i < num; i++) {
+            await this.mintTestToken(this.Deployer, this.ERC20, decimalStr("0"));
+        }
+    }
+
     async approveProxy(account: string, target: string, token: Contract) {
         await token.methods
             .approve(target, MAX_UINT256)
@@ -92,8 +107,8 @@ export class DODOMineV2Context {
     }
 }
 
-export async function getDODOMineContext(): Promise<DODOMineV2Context> {
+export async function getDODOMineContext(vdodo: string): Promise<DODOMineV2Context> {
     var context = new DODOMineV2Context();
-    await context.init();
+    await context.init(vdodo);
     return context;
 }

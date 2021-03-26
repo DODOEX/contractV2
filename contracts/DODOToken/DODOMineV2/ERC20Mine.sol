@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2020 DODO ZOO.
+    Copyright 2021 DODO ZOO.
     SPDX-License-Identifier: Apache-2.0
 
 */
@@ -31,7 +31,7 @@ contract ERC20Mine is BaseMine {
 
     // ============ Deposit && Withdraw && Exit ============
 
-    function deposit(uint256 amount) public {
+    function deposit(uint256 amount) external {
         require(amount > 0, "DODOMineV2: CANNOT_DEPOSIT_ZERO");
 
         _updateAllReward(msg.sender);
@@ -42,7 +42,7 @@ contract ERC20Mine is BaseMine {
         emit Deposit(msg.sender, amount);
     }
 
-    function withdraw(uint256 amount) public {
+    function withdraw(uint256 amount) external {
         require(amount > 0, "DODOMineV2: CANNOT_WITHDRAW_ZERO");
 
         _updateAllReward(msg.sender);

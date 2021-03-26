@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2020 DODO ZOO.
+    Copyright 2021 DODO ZOO.
     SPDX-License-Identifier: Apache-2.0
 
 */
@@ -45,24 +45,23 @@ contract BaseMine is InitializableOwnable {
     event NewRewardToken(uint256 indexed i, address rewardToken);
     event RemoveRewardToken(address rewardToken);
 
-    // ============ Modifier ==========
 
     // ============ View  ============
 
     function getPendingReward(address user, uint256 i) public view returns (uint256) {
-        RewardTokenInfo memory rt = rewardTokenInfos[i];
+        RewardTokenInfo storage rt = rewardTokenInfos[i];
         uint256 accRewardPerShare = rt.accRewardPerShare;
         if (rt.lastRewardBlock != block.number) {
-            accRewardPerShare = _getAccRewardPerShare(i)
+            accRewardPerShare = _getAccRewardPerShare(i);
         }
         return
             DecimalMath.mulFloor(
                 balanceOf(user), 
-                accRewardPerShare.sub(rt.userRewardPeSharenPaid[user])
+                accRewardPerShare.sub(rt.userRewardPerSharePaid[user])
             ).add(rt.userRewards[user]);
     }
 
-    function getPendingReward(address user, address rewardToken) public view returns (uint256) {
+    function getPendingRewardByToken(address user, address rewardToken) public view returns (uint256) {
         return getPendingReward(user, getIdByRewardToken(rewardToken));
     }
 
@@ -85,7 +84,7 @@ contract BaseMine is InitializableOwnable {
         for (uint256 i = 0; i < len; i++) {
             if (rewardToken == rewardTokenInfos[i].rewardToken) {
                 return i;
-            };
+            }
         }
         require(true, "DODOMineV2: TOKEN_NOT_FOUND");
     }
@@ -114,6 +113,7 @@ contract BaseMine is InitializableOwnable {
 
     function addRewardToken(
         address rewardToken,
+        uint256 rewardPerBlock,
         uint256 startBlock,
         uint256 endBlock
     ) external onlyOwner {
@@ -133,6 +133,7 @@ contract BaseMine is InitializableOwnable {
         rt.rewardToken = rewardToken;
         rt.startBlock = startBlock;
         rt.endBlock = endBlock;
+        rt.rewardPerBlock = rewardPerBlock;
         rt.rewardVault = address(new RewardVault(rewardToken));
 
         emit NewRewardToken(len, rewardToken);
@@ -202,7 +203,7 @@ contract BaseMine is InitializableOwnable {
         if (block.number < rt.startBlock || rt.lastRewardBlock > rt.endBlock) {
             return 0;
         }
-        uint256 start = rt.startBlock > block.number ? rt.startBlock : block.number;
+        uint256 start = rt.lastRewardBlock < rt.startBlock ? rt.startBlock : rt.lastRewardBlock;
         uint256 end = rt.endBlock < block.number ? rt.endBlock : block.number;
         return end.sub(start);
     }

@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2020 DODO ZOO.
+    Copyright 2021 DODO ZOO.
     SPDX-License-Identifier: Apache-2.0
 
 */
@@ -34,20 +34,22 @@ contract vDODOMine is BaseMine {
 
     // ============ Deposit && Withdraw && Exit ============
 
-    function deposit(uint256 amount) public {
+    function deposit(uint256 amount) external {
         require(amount > 0, "DODOMineV2: CANNOT_DEPOSIT_ZERO");
         require(
             amount <= IVDODOToken(_vDODO_TOKEN_).availableBalanceOf(msg.sender),
             "DODOMineV2: vDODO_NOT_ENOUGH"
         );
+        _updateAllReward(msg.sender);
         _totalSupply = _totalSupply.add(amount);
         _balances[msg.sender] = _balances[msg.sender].add(amount);
         emit Deposit(msg.sender, amount);
     }
 
-    function withdraw(uint256 amount) public {
+    function withdraw(uint256 amount) external {
         require(amount > 0, "DODOMineV2: CANNOT_WITHDRAW_ZERO");
         require(amount <= _balances[msg.sender], "DODOMineV2: WITHDRAW_BALANCE_NOT_ENOUGH");
+        _updateAllReward(msg.sender);
         _totalSupply = _totalSupply.sub(amount);
         _balances[msg.sender] = _balances[msg.sender].sub(amount);
         emit Withdraw(msg.sender, amount);
