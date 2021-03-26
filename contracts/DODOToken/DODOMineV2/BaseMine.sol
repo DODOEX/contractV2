@@ -62,6 +62,10 @@ contract BaseMine is InitializableOwnable {
             ).add(rt.userRewards[user]);
     }
 
+    function getPendingReward(address user, address rewardToken) public view returns (uint256) {
+        return getPendingReward(user, getIdByRewardToken(rewardToken));
+    }
+
     function totalSupply() public view returns (uint256) {
         return _totalSupply;
     }
