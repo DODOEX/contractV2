@@ -14,24 +14,21 @@ import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 import {IRewardVault, RewardVault} from "./RewardVault.sol";
 
-
 contract BaseMine is InitializableOwnable {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
     // ============ Storage ============
-    
+
     struct RewardTokenInfo {
         address rewardToken;
         uint256 startBlock;
         uint256 endBlock;
         address rewardVault;
-
         uint256 rewardPerBlock;
         uint256 accRewardPerShare;
         uint256 lastRewardBlock;
-
-        mapping(address => uint256) userRewardPerTokenPaid;
+        mapping(address => uint256) userRewardPerSharePaid;
         mapping(address => uint256) userRewards;
     }
 
@@ -50,54 +47,19 @@ contract BaseMine is InitializableOwnable {
 
     // ============ Modifier ==========
 
-    modifier updateReward(address user) {
-        uint256 len = rewardTokenInfos.length;
-        for (uint i = 0; i < len; i++) {
-            RewardTokenInfo storage rt = rewardTokenInfos[i];
-            rt.accRewardPerShare = rewardPerToken(i);
-            rt.lastRewardBlock = lastBlockRewardApplicable(i);
-            if (user != address(0)) {
-                rt.userRewards[user] = getPendingReward(i, user);
-                rt.userRewardPerTokenPaid[user] = rt.accRewardPerShare;
-            }
-        }
-        _;
-    }
-
     // ============ View  ============
 
-    function lastBlockRewardApplicable(uint i) public view returns (uint256) {
-        uint256 startBlock = rewardTokenInfos[i].startBlock;
-        uint256 endBlock = rewardTokenInfos[i].endBlock;
-        if(block.number < endBlock) {
-            if(block.number < startBlock) 
-                return startBlock;
-            else 
-                return block.number;
-        }else {
-            return endBlock;
-        }
-    }
-
-    function rewardPerToken(uint i) public view returns (uint256) {
+    function getPendingReward(address user, uint256 i) public view returns (uint256) {
         RewardTokenInfo memory rt = rewardTokenInfos[i];
-        if (totalSupply() == 0) {
-            return rt.accRewardPerShare;
+        uint256 accRewardPerShare = rt.accRewardPerShare;
+        if (rt.lastRewardBlock != block.number) {
+            accRewardPerShare = _getAccRewardPerShare(i)
         }
-        return rt.accRewardPerShare.add(
-            DecimalMath.divFloor(
-                lastBlockRewardApplicable(i).sub(rt.lastRewardBlock).mul(rt.rewardPerBlock), 
-                totalSupply()
-            )
-        );
-    }
-
-    function getPendingReward(uint i, address user) public view returns (uint256) {
-        RewardTokenInfo storage rt = rewardTokenInfos[i];
-        return DecimalMath.mulFloor(
-            balanceOf(user),
-            rewardPerToken(i).sub(rt.userRewardPerTokenPaid[user])
-        ).add(rt.userRewards[user]);
+        return
+            DecimalMath.mulFloor(
+                balanceOf(user), 
+                accRewardPerShare.sub(rt.userRewardPeSharenPaid[user])
+            ).add(rt.userRewards[user]);
     }
 
     function totalSupply() public view returns (uint256) {
@@ -108,14 +70,26 @@ contract BaseMine is InitializableOwnable {
         return _balances[user];
     }
 
-    function getRewardTokenByIdx(uint i) public view returns (address) {
+    function getRewardTokenById(uint256 i) public view returns (address) {
+        require(i<rewardTokenInfos.length, "DODOMineV2: REWARD_ID_FOUND");
         RewardTokenInfo memory rt = rewardTokenInfos[i];
         return rt.rewardToken;
     }
 
+    function getIdByRewardToken(address rewardToken) public view returns(uint256) {
+        uint256 len = rewardTokenInfos.length;
+        for (uint256 i = 0; i < len; i++) {
+            if (rewardToken == rewardTokenInfos[i].rewardToken) {
+                return i;
+            };
+        }
+        require(true, "DODOMineV2: TOKEN_NOT_FOUND");
+    }
+
     // ============ Claim ============
 
-    function getReward(uint i) public updateReward(msg.sender) {
+    function claimReward(uint256 i) public {
+        _updateReward(msg.sender, i);
         RewardTokenInfo storage rt = rewardTokenInfos[i];
         uint256 reward = rt.userRewards[msg.sender];
         if (reward > 0) {
@@ -125,23 +99,30 @@ contract BaseMine is InitializableOwnable {
         }
     }
 
-    function getAllRewards() public {
+    function claimAllRewards() public {
         uint256 len = rewardTokenInfos.length;
-        for (uint i = 0; i < len; i++) {
-            getReward(i);
+        for (uint256 i = 0; i < len; i++) {
+            claimReward(i);
         }
     }
 
     // =============== Ownable  ================
 
-    function addRewardToken(address rewardToken, uint256 startBlock, uint256 endBlock) external onlyOwner {
-        require(rewardToken != address(0),"DODOMineV2: TOKEN_INVALID");
+    function addRewardToken(
+        address rewardToken,
+        uint256 startBlock,
+        uint256 endBlock
+    ) external onlyOwner {
+        require(rewardToken != address(0), "DODOMineV2: TOKEN_INVALID");
         require(startBlock > block.number, "DODOMineV2: START_BLOCK_INVALID");
-        require(endBlock > startBlock ,"DODOMineV2: DURATION_INVALID");
+        require(endBlock > startBlock, "DODOMineV2: DURATION_INVALID");
 
         uint256 len = rewardTokenInfos.length;
-        for (uint i = 0; i < len; i++) {
-            require(rewardToken != rewardTokenInfos[i].rewardToken, "DODOMineV2: TOKEN_ALREADY_ADDED");
+        for (uint256 i = 0; i < len; i++) {
+            require(
+                rewardToken != rewardTokenInfos[i].rewardToken,
+                "DODOMineV2: TOKEN_ALREADY_ADDED"
+            );
         }
 
         RewardTokenInfo storage rt = rewardTokenInfos.push();
@@ -165,21 +146,72 @@ contract BaseMine is InitializableOwnable {
         }
     }
 
-    function setEndBlock(uint i, uint256 newEndBlock) external onlyOwner updateReward(address(0)) {
-        require(block.number < newEndBlock, "DODOMineV2: END_BLOCK_INVALID");
+    function setEndBlock(uint256 i, uint256 newEndBlock)
+        external
+        onlyOwner
+    {
+        _updateReward(address(0), i);
         RewardTokenInfo storage rt = rewardTokenInfos[i];
+
+        require(block.number < newEndBlock, "DODOMineV2: END_BLOCK_INVALID");
         require(block.number > rt.startBlock, "DODOMineV2: NOT_START");
         require(block.number < rt.endBlock, "DODOMineV2: ALREADY_CLOSE");
+
         rt.endBlock = newEndBlock;
-        rt.lastRewardBlock = block.number;
         emit UpdateEndBlock(i, newEndBlock);
     }
 
-    function setReward(uint i, uint256 newRewardPerBlock) external onlyOwner updateReward(address(0)) {
+    function setReward(uint256 i, uint256 newRewardPerBlock)
+        external
+        onlyOwner
+    {
+        _updateReward(address(0), i);
         RewardTokenInfo storage rt = rewardTokenInfos[i];
-        uint256 endBlock = rt.endBlock;
-        require(block.number < endBlock, "DODOMineV2: ALREADY_FINISHED");
         rt.rewardPerBlock = newRewardPerBlock;
         emit UpdateReward(i, newRewardPerBlock);
     }
+
+
+    // ============ Internal  ============
+
+    function _updateReward(address user, uint256 i) internal {
+        RewardTokenInfo storage rt = rewardTokenInfos[i];
+        if (rt.lastRewardBlock != block.number){
+            rt.accRewardPerShare = _getAccRewardPerShare(i);
+            rt.lastRewardBlock = block.number;
+        }
+        if (user != address(0)) {
+            rt.userRewards[user] = getPendingReward(user, i);
+            rt.userRewardPerSharePaid[user] = rt.accRewardPerShare;
+        }
+    }
+
+    function _updateAllReward(address user) internal {
+        uint256 len = rewardTokenInfos.length;
+        for (uint256 i = 0; i < len; i++) {
+            _updateReward(user, i);
+        }
+    }
+
+    function _getUnrewardBlockNum(uint256 i) internal view returns (uint256) {
+        RewardTokenInfo memory rt = rewardTokenInfos[i];
+        if (block.number < rt.startBlock || rt.lastRewardBlock > rt.endBlock) {
+            return 0;
+        }
+        uint256 start = rt.startBlock > block.number ? rt.startBlock : block.number;
+        uint256 end = rt.endBlock < block.number ? rt.endBlock : block.number;
+        return end.sub(start);
+    }
+
+    function _getAccRewardPerShare(uint256 i) internal view returns (uint256) {
+        RewardTokenInfo memory rt = rewardTokenInfos[i];
+        if (totalSupply() == 0) {
+            return rt.accRewardPerShare;
+        }
+        return
+            rt.accRewardPerShare.add(
+                DecimalMath.divFloor(_getUnrewardBlockNum(i).mul(rt.rewardPerBlock), totalSupply())
+            );
+    }
+
 }

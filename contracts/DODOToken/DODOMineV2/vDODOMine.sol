@@ -36,7 +36,10 @@ contract vDODOMine is BaseMine {
 
     function deposit(uint256 amount) public {
         require(amount > 0, "vDODOMineETH: CANNOT_DEPOSIT_ZERO");
-        require(IVDODOToken(_vDODO_TOKEN_).availableBalanceOf(msg.sender) >= amount, "vDODOMineETH: vDODO_NOT_ENOUGH");
+        require(
+            amount <= IVDODOToken(_vDODO_TOKEN_).availableBalanceOf(msg.sender),
+            "vDODOMineETH: vDODO_NOT_ENOUGH"
+        );
         _totalSupply = _totalSupply.add(amount);
         _balances[msg.sender] = _balances[msg.sender].add(amount);
         emit Deposit(msg.sender, amount);
@@ -44,18 +47,10 @@ contract vDODOMine is BaseMine {
 
     function withdraw(uint256 amount) public {
         require(amount > 0, "DODOMineV2: CANNOT_WITHDRAW_ZERO");
+        require(amount <= _balances[msg.sender], "DODOMineV2: WITHDRAW_BALANCE_NOT_ENOUGH");
         _totalSupply = _totalSupply.sub(amount);
         _balances[msg.sender] = _balances[msg.sender].sub(amount);
         emit Withdraw(msg.sender, amount);
-    }
-
-    function withdrawAll() external {
-        withdraw(balanceOf(msg.sender));
-    }
-
-    function exit() external {
-        withdraw(balanceOf(msg.sender));
-        getAllRewards();
     }
 
     // ============ View  ============
@@ -64,19 +59,18 @@ contract vDODOMine is BaseMine {
         return balanceOf(account);
     }
 
-
     // =============== Ownable  ================
 
-    function syncBalance(address[] calldata accountList, uint256[] calldata amountList) external onlyOwner {
-        require(accountList.length == amountList.length, "DODOMineV2: LENGTH_NOT_MATCH");
-        for (uint256 i = 0; i < accountList.length; ++i) {
-            uint256 curBalance = balanceOf(accountList[i]);
-            if(curBalance > amountList[i]) {
-                uint256 subAmount = curBalance.sub(amountList[i]);
-                _totalSupply = _totalSupply.sub(subAmount);
-                _balances[accountList[i]] = amountList[i];
+    function syncBalance(address[] calldata userList) external onlyOwner {
+        for (uint256 i = 0; i < userList.length; ++i) {
+            address user = userList[i];
+            uint256 curBalance = balanceOf(user);
+            uint256 vDODOBalance = IERC20(_vDODO_TOKEN_).balanceOf(user);
+            if (curBalance > vDODOBalance) {
+                _updateAllReward(user);
+                _totalSupply = _totalSupply.add(vDODOBalance).sub(curBalance);
+                _balances[user] = vDODOBalance;
             }
         }
     }
-
 }
