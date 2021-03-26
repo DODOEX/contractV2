@@ -50,6 +50,8 @@ export const VDODO_NAME = "vDODOToken"
 export const DODO_CULATION_HELPER = "DODOCirculationHelper"
 export const DODO_GOVERNANCE = "Governance"
 export const DODO_PROXY_NAME = "DODOV2Proxy02"
+export const ERC20_MINE = "ERC20Mine"
+export const VDODO_MINE = "vDODOMine"
 
 interface ContractJson {
   abi: any;

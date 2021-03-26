@@ -35,10 +35,10 @@ contract vDODOMine is BaseMine {
     // ============ Deposit && Withdraw && Exit ============
 
     function deposit(uint256 amount) public {
-        require(amount > 0, "vDODOMineETH: CANNOT_DEPOSIT_ZERO");
+        require(amount > 0, "DODOMineV2: CANNOT_DEPOSIT_ZERO");
         require(
             amount <= IVDODOToken(_vDODO_TOKEN_).availableBalanceOf(msg.sender),
-            "vDODOMineETH: vDODO_NOT_ENOUGH"
+            "DODOMineV2: vDODO_NOT_ENOUGH"
         );
         _totalSupply = _totalSupply.add(amount);
         _balances[msg.sender] = _balances[msg.sender].add(amount);

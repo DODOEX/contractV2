@@ -46,7 +46,10 @@ then
 	truffle test ./test/vDODO/mintRedeem.test.ts
 fi
 
-
+if [ "$1"x = "erc20-mine"x ]
+then
+	truffle test ./test/DODOMineV2/erc20Mine.test.ts
+fi
 # if [ "$1"x = "route-incentive"x ]
 # then
 # 	truffle test ./test/Route/Incentive.test.ts
