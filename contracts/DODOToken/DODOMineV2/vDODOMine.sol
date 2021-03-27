@@ -55,15 +55,7 @@ contract vDODOMine is BaseMine {
         emit Withdraw(msg.sender, amount);
     }
 
-    // ============ View  ============
-
-    function getLockedvDODO(address account) external view returns (uint256) {
-        return balanceOf(account);
-    }
-
-    // =============== Ownable  ================
-
-    function syncBalance(address[] calldata userList) external onlyOwner {
+    function syncBalance(address[] calldata userList) external {
         for (uint256 i = 0; i < userList.length; ++i) {
             address user = userList[i];
             uint256 curBalance = balanceOf(user);
@@ -74,5 +66,11 @@ contract vDODOMine is BaseMine {
                 _balances[user] = vDODOBalance;
             }
         }
+    }
+
+    // ============ View  ============
+
+    function getLockedvDODO(address account) external view returns (uint256) {
+        return balanceOf(account);
     }
 }
