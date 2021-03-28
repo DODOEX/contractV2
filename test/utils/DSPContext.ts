@@ -22,8 +22,8 @@ BigNumber.config({
 export interface DSPContextBalances {
     traderBase: string,
     traderQuote: string,
-    DPPBase: string,
-    DPPQuote: string,
+    DSPBase: string,
+    DSPQuote: string,
     maintainerBase: string,
     maintainerQuote: string
 }
@@ -71,7 +71,7 @@ export class DSPContext {
 
     constructor() { }
 
-    async init(config: DVMContextInitConfig) {
+    async init(config: DSPContextInitConfig) {
         this.EVM = new EVM();
         this.Web3 = getDefaultWeb3();
 
@@ -136,8 +136,8 @@ export class DSPContext {
         var balances: DSPContextBalances = {
             traderBase: await this.BASE.methods.balanceOf(trader).call(),
             traderQuote: await this.QUOTE.methods.balanceOf(trader).call(),
-            DPPBase: await this.BASE.methods.balanceOf(this.DSP.options.address).call(),
-            DPPQuote: await this.QUOTE.methods.balanceOf(this.DSP.options.address).call(),
+            DSPBase: await this.BASE.methods.balanceOf(this.DSP.options.address).call(),
+            DSPQuote: await this.QUOTE.methods.balanceOf(this.DSP.options.address).call(),
             maintainerBase: await this.BASE.methods.balanceOf(this.Maintainer).call(),
             maintainerQuote: await this.QUOTE.methods.balanceOf(this.Maintainer).call()
         };

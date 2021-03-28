@@ -53,38 +53,36 @@ describe("DSP Trader", () => {
             await logGas(ctx.DSP.methods.sellQuote(trader), ctx.sendParam(trader), "sellQuote - buy at R=1")
             var balances = await ctx.getBalances(trader)
 
-            console.log("Balance:", balances);
-            // assert.equal(balances.traderBase, "10986174542266106307")
-            // assert.equal(balances.traderQuote, decimalStr("900"))
-            // assert.equal(balances.DPPBase, "9012836315765723075")
-            // assert.equal(balances.DPPQuote, decimalStr("1100"))
-            // assert.equal(balances.maintainerBase, "989141968170618")
-            // assert.equal(balances.maintainerQuote, "0")
+            assert.equal(balances.traderBase, "1098914196817061816111")
+            assert.equal(balances.traderQuote, decimalStr("900"))
+            assert.equal(balances.DSPBase, "901085803182938183889")
+            assert.equal(balances.DSPQuote, decimalStr("1100"))
+            assert.equal(balances.maintainerBase, "0")
+            assert.equal(balances.maintainerQuote, "0")
 
             // buy at R>1
             await ctx.transferQuoteToDSP(trader, decimalStr("100"))
             await logGas(ctx.DSP.methods.sellQuote(trader), ctx.sendParam(trader), "sellQuote - buy at R>1")
             balances = await ctx.getBalances(trader)
-            console.log("Balance:", balances);
 
-            // assert.equal(balances.traderBase, "11946772292527553373")
-            // assert.equal(balances.traderQuote, decimalStr("800"))
-            // assert.equal(balances.DPPBase, "8051275077289369844")
-            // assert.equal(balances.DPPQuote, decimalStr("1200"))
-            // assert.equal(balances.maintainerBase, "1952630183076783")
-            // assert.equal(balances.maintainerQuote, "0")
+            assert.equal(balances.traderBase, "1195262145875634983260")
+            assert.equal(balances.traderQuote, decimalStr("800"))
+            assert.equal(balances.DSPBase, "804737854124365016740")
+            assert.equal(balances.DSPQuote, decimalStr("1200"))
+            assert.equal(balances.maintainerBase, "0")
+            assert.equal(balances.maintainerQuote, "0")
 
             // sell at R>1 and R not change state
             await ctx.transferBaseToDSP(trader, decimalStr("100"))
             await logGas(ctx.DSP.methods.sellBase(trader), ctx.sendParam(trader), "sellBase - sell at R>1 and R not change state")
             balances = await ctx.getBalances(trader)
-            console.log("Balance:", balances);
-            // assert.equal(balances.traderBase, "10946772292527553373")
-            // assert.equal(balances.traderQuote, "903421814651005338950")
-            // assert.equal(balances.DPPBase, "9051275077289369844")
-            // assert.equal(balances.DPPQuote, "1096474452335302579467")
-            // assert.equal(balances.maintainerBase, "1952630183076783")
-            // assert.equal(balances.maintainerQuote, "103733013692081583")
+
+            assert.equal(balances.traderBase, "1095262145875634983260")
+            assert.equal(balances.traderQuote, "903734814802481693100")
+            assert.equal(balances.DSPBase, "904737854124365016740")
+            assert.equal(balances.DSPQuote, "1096265185197518306900")
+            assert.equal(balances.maintainerBase, "0")
+            assert.equal(balances.maintainerQuote, "0")
 
 
             // sell at R>1 and R change state
@@ -92,19 +90,17 @@ describe("DSP Trader", () => {
 
             await logGas(ctx.DSP.methods.sellBase(trader), ctx.sendParam(trader), "sellBase - sell at R>1 and R change state")
             balances = await ctx.getBalances(trader)
-            console.log("Balance:", balances);
 
-            // assert.equal(balances.traderBase, "8946772292527553373")
-            // assert.equal(balances.traderQuote, "1102638273848343281094")
-            // assert.equal(balances.DPPBase, "11051275077289369844")
-            // assert.equal(balances.DPPQuote, "897058177231046545105")
-            // assert.equal(balances.maintainerBase, "1952630183076783")
-            // assert.equal(balances.maintainerQuote, "303548920610173801")
+            assert.equal(balances.traderBase, "895262145875634983260")
+            assert.equal(balances.traderQuote, "1103541932946094354686")
+            assert.equal(balances.DSPBase, "1104737854124365016740")
+            assert.equal(balances.DSPQuote, "896458067053905645314")
+            assert.equal(balances.maintainerBase, "0")
+            assert.equal(balances.maintainerQuote, "0")
 
             var PMMStat = await ctx.DSP.methods.getPMMState().call()
-            console.log("PMMStat:", PMMStat)
-            // assert.equal(PMMStat.R, "2")
-            // assert.equal(PMMStat.B0, "10005950249348099200")
+            assert.equal(PMMStat.R, "2")
+            assert.equal(PMMStat.B0, "999999999999999996713")
         });
 
         it("first sell and then buy", async () => {
@@ -112,90 +108,84 @@ describe("DSP Trader", () => {
             await ctx.transferBaseToDSP(trader, decimalStr("1"))
             await logGas(ctx.DSP.methods.sellBase(trader), ctx.sendParam(trader), "sellBase - sell at R=1")
             var balances = await ctx.getBalances(trader)
-            console.log("balances:",balances)
 
-            // assert.equal(balances.traderBase, decimalStr("9"))
-            // assert.equal(balances.traderQuote, "1098617454226610630663")
-            // assert.equal(balances.DPPBase, decimalStr("11"))
-            // assert.equal(balances.DPPQuote, "901283631576572307521")
-            // assert.equal(balances.maintainerBase, "0")
-            // assert.equal(balances.maintainerQuote, "98914196817061816")
+            assert.equal(balances.traderBase, decimalStr("999"))
+            assert.equal(balances.traderQuote, "1000999899919944970392")
+            assert.equal(balances.DSPBase, decimalStr("1001"))
+            assert.equal(balances.DSPQuote, "999000100080055029608")
+            assert.equal(balances.maintainerBase, "0")
+            assert.equal(balances.maintainerQuote, "0")
 
             // buy at R>1
             await ctx.transferBaseToDSP(trader, decimalStr("1"))
             await logGas(ctx.DSP.methods.sellBase(trader), ctx.sendParam(trader), "sellBase - buy at R>1")
             balances = await ctx.getBalances(trader)
-            console.log("balances:", balances)
 
-            // assert.equal(balances.traderBase, decimalStr("8"))
-            // assert.equal(balances.traderQuote, "1194677229252755337109")
-            // assert.equal(balances.DPPBase, decimalStr("12"))
-            // assert.equal(balances.DPPQuote, "805127507728936984519")
-            // assert.equal(balances.maintainerBase, "0")
-            // assert.equal(balances.maintainerQuote, "195263018307678372")
+            assert.equal(balances.traderBase, decimalStr("998"))
+            assert.equal(balances.traderQuote, "1001999599359119051790")
+            assert.equal(balances.DSPBase, decimalStr("1002"))
+            assert.equal(balances.DSPQuote, "998000400640880948210")
+            assert.equal(balances.maintainerBase, "0")
+            assert.equal(balances.maintainerQuote, "0")
 
             // sell at R>1 and R not change state
             await ctx.transferQuoteToDSP(trader, decimalStr("1"))
             await logGas(ctx.DSP.methods.sellQuote(trader), ctx.sendParam(trader), "sell at R>1 and R not change state")
             balances = await ctx.getBalances(trader)
-            console.log("balances:", balances)
 
-            // assert.equal(balances.traderBase, "9034218146510053391")
-            // assert.equal(balances.traderQuote, "1094677229252755337109")
-            // assert.equal(balances.DPPBase, "10964744523353025794")
-            // assert.equal(balances.DPPQuote, "905127507728936984519")
-            // assert.equal(balances.maintainerBase, "1037330136920815")
-            // assert.equal(balances.maintainerQuote, "195263018307678372")
+            assert.equal(balances.traderBase, "999000300621013276966")
+            assert.equal(balances.traderQuote, "1000999599359119051790")
+            assert.equal(balances.DSPBase, "1000999699378986723034")
+            assert.equal(balances.DSPQuote, "999000400640880948210")
+            assert.equal(balances.maintainerBase, "0")
+            assert.equal(balances.maintainerQuote, "0")
 
             // sell at R>1 and R change state
             await ctx.transferQuoteToDSP(trader, decimalStr("2"))
             await logGas(ctx.DSP.methods.sellQuote(trader), ctx.sendParam(trader), "sell at R>1 and R change state")
             balances = await ctx.getBalances(trader)
-            console.log("balances:", balances)
 
-            // assert.equal(balances.traderBase, "11026382738483432812")
-            // assert.equal(balances.traderQuote, "894677229252755337109")
-            // assert.equal(balances.DPPBase, "8970581772310465451")
-            // assert.equal(balances.DPPQuote, "1105127507728936984519")
-            // assert.equal(balances.maintainerBase, "3035489206101737")
-            // assert.equal(balances.maintainerQuote, "195263018307678372")
+            assert.equal(balances.traderBase, "1001000300480585414741")
+            assert.equal(balances.traderQuote, "998999599359119051790")
+            assert.equal(balances.DSPBase, "998999699519414585259")
+            assert.equal(balances.DSPQuote, "1001000400640880948210")
+            assert.equal(balances.maintainerBase, "0")
+            assert.equal(balances.maintainerQuote, "0")
 
             var PMMStat = await ctx.DSP.methods.getPMMState().call()
-            console.log("PMMStat:", PMMStat)
-
-            // assert.equal(PMMStat.R, "1")
-            // assert.equal(PMMStat.Q0, "1000595024934809920179")
+            assert.equal(PMMStat.R, "1")
+            assert.equal(PMMStat.Q0, "999999999999999995766")
         });
 
         it("flash loan", async () => {
             // buy
-            await ctx.transferQuoteToDSP(trader, decimalStr("200"))
+            await ctx.transferQuoteToDSP(trader, decimalStr("100"))
 
             // buy failed
-            await truffleAssert.reverts(ctx.DSP.methods.flashLoan("1946763594380080790", "0", trader, "0x").send(ctx.sendParam(trader)), "FLASH_LOAN_FAILED")
+            await truffleAssert.reverts(ctx.DSP.methods.flashLoan("901085803182938100000", decimalStr("101"), trader, "0x").send(ctx.sendParam(trader)), "FLASH_LOAN_FAILED")
 
             // buy succeed
-            await ctx.DSP.methods.flashLoan("1946763594380080789", "0", trader, "0x").send(ctx.sendParam(trader))
+            await ctx.DSP.methods.flashLoan("98914196817061816111", "0", trader, "0x").send(ctx.sendParam(trader))
 
             // trader balances
             assert.equal(
                 await ctx.BASE.methods.balanceOf(trader).call(),
-                "11946763594380080789"
+                "1098914196817061816111"
             );
 
             // sell
             await ctx.transferBaseToDSP(trader, decimalStr("1"))
 
             // sell failed
-            await truffleAssert.reverts(ctx.DSP.methods.flashLoan("0", "103421810640399874606", trader, "0x").send(ctx.sendParam(trader)), "FLASH_LOAN_FAILED")
+            await truffleAssert.reverts(ctx.DSP.methods.flashLoan(decimalStr("2"), "1", trader, "0x").send(ctx.sendParam(trader)), "FLASH_LOAN_FAILED")
 
             // sell succeed
-            await ctx.DSP.methods.flashLoan("0", "103421810640399874605", trader, "0x").send(ctx.sendParam(trader))
+            await ctx.DSP.methods.flashLoan("0", "999899919944970392", trader, "0x").send(ctx.sendParam(trader))
 
             // trader balances
             assert.equal(
                 await ctx.QUOTE.methods.balanceOf(trader).call(),
-                "903421810640399874605"
+                "900999899919944970392"
             );
         })
     });
