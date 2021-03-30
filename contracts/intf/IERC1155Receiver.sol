@@ -1,9 +1,9 @@
 // This is a file copied from https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC1155/IERC1155Receiver.sol
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.6.0 <0.8.0;
+pragma solidity 0.6.9;
 
-import "./ERC165.sol";
+import "./IERC165.sol";
 
 /**
  * _Available since v3.1._

@@ -68,30 +68,30 @@ contract FragmentFactory is InitializableOwnable {
         uint256 ownerRatio,
         uint256 buyoutTimestamp
     ) external returns (address newFragment) {
-        newFragment = ICloneFactory(_CLONE_FACTORY_).clone(_FRAGMENT_TEMPLATE_);
-        newVendingMachine = ICloneFactory(_CLONE_FACTORY_).clone(_DVM_TEMPLATE_);
-        newFeeDistributor = ICloneFactory(_CLONE_FACTORY_).clone(_FEE_DISTRIBUTOR_TEMPLATE_);
+        // newFragment = ICloneFactory(_CLONE_FACTORY_).clone(_FRAGMENT_TEMPLATE_);
+        // newVendingMachine = ICloneFactory(_CLONE_FACTORY_).clone(_DVM_TEMPLATE_);
+        // newFeeDistributor = ICloneFactory(_CLONE_FACTORY_).clone(_FEE_DISTRIBUTOR_TEMPLATE_);
 
-        {
-            IFeeDistributor(newFeeDistributor).init(newFragment, quoteToken, newFragment);
-        }
+        // {
+        //     IFeeDistributor(newFeeDistributor).init(newFragment, quoteToken, newFragment);
+        // }
 
-        {
-            IDVM(newVendingMachine).init(
-                newFeeDistributor,
-                newFragment,
-                quoteToken,
-                0,
-                mtFeeRateModel,
-                i,
-                k,
-                false
-            );
-            IFeeRateRegistry(mtFeeRateModel).set(newVendingMachine, mtFeeRate)
-        }
+        // {
+        //     IDVM(newVendingMachine).init(
+        //         newFeeDistributor,
+        //         newFragment,
+        //         quoteToken,
+        //         0,
+        //         mtFeeRateModel,
+        //         i,
+        //         k,
+        //         false
+        //     );
+        //     IFeeRateRegistry(mtFeeRateModel).set(newVendingMachine, mtFeeRate);
+        // }
 
-        {
-            IFragment(newFragment).init(owner, newVendingMachine, vault, totalSupply, ownerRatio, buyoutTimestamp);
-        }
+        // {
+        //     IFragment(newFragment).init(owner, newVendingMachine, vault, totalSupply, ownerRatio, buyoutTimestamp);
+        // }
     }
 }
