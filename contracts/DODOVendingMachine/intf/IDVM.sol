@@ -34,4 +34,17 @@ interface IDVM {
 
     function buyShares(address to) external returns (uint256,uint256,uint256);
 
+    function addressToShortString(address _addr) external pure returns (string memory);
+
+    function getMidPrice() external view returns (uint256 midPrice);
+
+    function sellShares(
+        uint256 shareAmount,
+        address to,
+        uint256 baseMinAmount,
+        uint256 quoteMinAmount,
+        bytes calldata data,
+        uint256 deadline
+    ) external  returns (uint256 baseAmount, uint256 quoteAmount);
+
 }
