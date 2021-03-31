@@ -31,6 +31,7 @@ contract vDODOMine is BaseMine {
 
     event Deposit(address indexed user, uint256 amount);
     event Withdraw(address indexed user, uint256 amount);
+    event SyncBalance();
 
     // ============ Deposit && Withdraw && Exit ============
 
@@ -66,6 +67,7 @@ contract vDODOMine is BaseMine {
                 _balances[user] = vDODOBalance;
             }
         }
+        emit SyncBalance();
     }
 
     // ============ View  ============
