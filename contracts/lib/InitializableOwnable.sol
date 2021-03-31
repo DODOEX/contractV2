@@ -44,7 +44,7 @@ contract InitializableOwnable {
         _OWNER_ = newOwner;
     }
 
-    function transferOwnership(address newOwner) public virtual onlyOwner {
+    function transferOwnership(address newOwner) public onlyOwner {
         emit OwnershipTransferPrepared(_OWNER_, newOwner);
         _NEW_OWNER_ = newOwner;
     }
