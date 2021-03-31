@@ -61,7 +61,7 @@ contract BaseMine is InitializableOwnable {
             ).add(rt.userRewards[user]);
     }
 
-    function getPendingRewardByToken(address user, address rewardToken) public view returns (uint256) {
+    function getPendingRewardByToken(address user, address rewardToken) external view returns (uint256) {
         return getPendingReward(user, getIdByRewardToken(rewardToken));
     }
 
@@ -73,8 +73,8 @@ contract BaseMine is InitializableOwnable {
         return _balances[user];
     }
 
-    function getRewardTokenById(uint256 i) public view returns (address) {
-        require(i<rewardTokenInfos.length, "DODOMineV2: REWARD_ID_FOUND");
+    function getRewardTokenById(uint256 i) external view returns (address) {
+        require(i<rewardTokenInfos.length, "DODOMineV2: REWARD_ID_NOT_FOUND");
         RewardTokenInfo memory rt = rewardTokenInfos[i];
         return rt.rewardToken;
     }
@@ -86,7 +86,7 @@ contract BaseMine is InitializableOwnable {
                 return i;
             }
         }
-        require(true, "DODOMineV2: TOKEN_NOT_FOUND");
+        require(false, "DODOMineV2: TOKEN_NOT_FOUND");
     }
 
     // ============ Claim ============
@@ -102,7 +102,7 @@ contract BaseMine is InitializableOwnable {
         }
     }
 
-    function claimAllRewards() public {
+    function claimAllRewards() external {
         uint256 len = rewardTokenInfos.length;
         for (uint256 i = 0; i < len; i++) {
             claimReward(i);
@@ -143,7 +143,9 @@ contract BaseMine is InitializableOwnable {
         uint256 len = rewardTokenInfos.length;
         for (uint256 i = 0; i < len; i++) {
             if (rewardToken == rewardTokenInfos[i].rewardToken) {
-                rewardTokenInfos[i] = rewardTokenInfos[len - 1];
+                if(i != len - 1) {
+                    rewardTokenInfos[i] = rewardTokenInfos[len - 1];
+                }
                 rewardTokenInfos.pop();
                 emit RemoveRewardToken(rewardToken);
                 break;
