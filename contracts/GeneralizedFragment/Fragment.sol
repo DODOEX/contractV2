@@ -10,23 +10,25 @@ pragma solidity 0.6.9;
 import {SafeMath} from "../lib/SafeMath.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
-import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 import {IDVM} from "../DODOVendingMachine/intf/IDVM.sol";
-import {ICloneFactory} from "../lib/CloneFactory.sol";
 import {IERC20} from "../intf/IERC20.sol";
 import {InitializableMintableERC20} from "../external/ERC20/InitializableMintableERC20.sol";
 
+
+//TODO?：why mintable
 contract Fragment is InitializableMintableERC20 {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    uint256 _BUYOUT_TIMESTAMP_;
+    // ============ Storage ============
+    
+    bool public _IS_BUYOUT_;
+    uint256 public _BUYOUT_TIMESTAMP_;
+    uint256 public _BUYOUT_PRICE_;
 
-    address _COLLATERAL_VAULT_;
-    address _QUOTE_;
-    address _DVM_;
-    bool _IS_BUYOUT_;
-    uint256 _BUYOUT_PRICE_;
+    address public _COLLATERAL_VAULT_;
+    address public _QUOTE_;
+    address public _DVM_;
 
     function init(
       address owner, 
@@ -52,15 +54,15 @@ contract Fragment is InitializableMintableERC20 {
         // init FRAG distribution
         totalSupply = supply;
         balances[owner] = DecimalMath.mulFloor(supply, ownerRatio);
-        balances[dvm] = supply.sub( balances[owner]);
+        balances[dvm] = supply.sub(balances[owner]);
         emit Transfer(address(0), owner, balances[owner]);
         emit Transfer(address(0), dvm, balances[dvm]);
 
         // init DVM liquidity
-        //TODO?: transfer FRAG to DVM
         IDVM(_DVM_).buyShares(address(this));
     }
 
+    //需要先转入QUOTE
     function buyout() external {
       require(!_IS_BUYOUT_, "ALREADY BUYOUT");
       _IS_BUYOUT_ = true;
@@ -83,10 +85,10 @@ contract Fragment is InitializableMintableERC20 {
       IERC20(_QUOTE_).safeTransfer(_OWNER_, ownerQuote);
     }
 
-    // buyout之后的恒定兑换
+    // buyout之后的恒定兑换，需要先转入FRAG
     function redeem(address to) external {
       require(_IS_BUYOUT_, "NEED BUYOUT");
-      //TODO? amount
+
       IERC20(_QUOTE_).safeTransfer(to, DecimalMath.mulFloor(_BUYOUT_PRICE_, balances[address(this)]));
       _clearSelfBalance();
     }

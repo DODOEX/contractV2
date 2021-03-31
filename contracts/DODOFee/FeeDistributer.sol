@@ -18,6 +18,8 @@ contract FeeDistributor is InitializableOwnable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
+    // ============ Storage ============
+
     address public _BASE_TOKEN_;
     address public _QUOTE_TOKEN_;
     uint256 public _BASE_RESERVE_;
@@ -32,6 +34,7 @@ contract FeeDistributor is InitializableOwnable {
     mapping(address => uint256) internal _QUOTE_DEBT_;
     mapping(address => uint256) internal _SHARES_;
 
+
     function init(
       address baseToken,
       address quoteToken,
@@ -45,6 +48,7 @@ contract FeeDistributor is InitializableOwnable {
         _STAKE_VAULT_ = address(new StakeVault());
     }
 
+    //TODO: 用户的手续费base or quote 直接转到该合约中，stakeVault保存的是？
     function stake(address to) external {
       _accuReward();
       uint256 stakeVault = IERC20(_STAKE_TOKEN_).balanceOf(_STAKE_VAULT_);
