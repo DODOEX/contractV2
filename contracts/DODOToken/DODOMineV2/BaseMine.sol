@@ -49,6 +49,7 @@ contract BaseMine is InitializableOwnable {
     // ============ View  ============
 
     function getPendingReward(address user, uint256 i) public view returns (uint256) {
+        require(i<rewardTokenInfos.length, "DODOMineV2: REWARD_ID_NOT_FOUND");
         RewardTokenInfo storage rt = rewardTokenInfos[i];
         uint256 accRewardPerShare = rt.accRewardPerShare;
         if (rt.lastRewardBlock != block.number) {
@@ -92,6 +93,7 @@ contract BaseMine is InitializableOwnable {
     // ============ Claim ============
 
     function claimReward(uint256 i) public {
+        require(i<rewardTokenInfos.length, "DODOMineV2: REWARD_ID_NOT_FOUND");
         _updateReward(msg.sender, i);
         RewardTokenInfo storage rt = rewardTokenInfos[i];
         uint256 reward = rt.userRewards[msg.sender];
