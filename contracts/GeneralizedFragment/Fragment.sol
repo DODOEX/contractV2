@@ -12,63 +12,77 @@ import {SafeERC20} from "../lib/SafeERC20.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
 import {IDVM} from "../DODOVendingMachine/intf/IDVM.sol";
 import {IERC20} from "../intf/IERC20.sol";
-import {InitializableMintableERC20} from "../external/ERC20/InitializableMintableERC20.sol";
+import {InitializableERC20} from "../external/ERC20/InitializableERC20.sol";
+
+interface ICollateralVault {
+  function directTransferOwnership(address newOwner) external;
+}
 
 
-//TODO?：why mintable
-contract Fragment is InitializableMintableERC20 {
+contract Fragment is InitializableERC20 {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
     // ============ Storage ============
     
     bool public _IS_BUYOUT_;
+    bool public _IS_OPEN_BUYOUT_;
     uint256 public _BUYOUT_TIMESTAMP_;
     uint256 public _BUYOUT_PRICE_;
 
     address public _COLLATERAL_VAULT_;
+    address public _VAULT_PRE_OWNER_;
     address public _QUOTE_;
     address public _DVM_;
 
+    bool internal _FRAG_INITIALIZED_;
+
     function init(
-      address owner, 
       address dvm, 
-      address collateralVault, 
-      uint256 supply, 
+      address vaultPreOwner,
+      address collateralVault,
+      uint256 totalSupply, 
       uint256 ownerRatio,
-      uint256 buyoutTimestamp
+      uint256 buyoutTimestamp,
+      bool isOpenBuyout
     ) external {
+        require(!_FRAG_INITIALIZED_, "DODOFragment: ALREADY_INITIALIZED");
+        _FRAG_INITIALIZED_ = true;
+
         // init local variables
-        initOwner(owner);
         _DVM_ = dvm;
-        _COLLATERAL_VAULT_ = collateralVault;
         _QUOTE_ = IDVM(_DVM_)._QUOTE_TOKEN_();
+        _VAULT_PRE_OWNER_ = vaultPreOwner;
+        _COLLATERAL_VAULT_ = collateralVault;
         _BUYOUT_TIMESTAMP_ = buyoutTimestamp;
+        _IS_OPEN_BUYOUT_ = isOpenBuyout;
 
         // init FRAG meta data
-        string memory suffix = "FRAG_";
-        name = string(abi.encodePacked(suffix, IDVM(_DVM_).addressToShortString(_COLLATERAL_VAULT_)));
+        string memory prefix = "FRAG_";
+        name = string(abi.encodePacked(prefix, IDVM(_DVM_).addressToShortString(_COLLATERAL_VAULT_)));
         symbol = "FRAG";
         decimals = 18;
+        super.init(address(this), totalSupply, name, symbol, decimals);
 
         // init FRAG distribution
-        totalSupply = supply;
-        balances[owner] = DecimalMath.mulFloor(supply, ownerRatio);
-        balances[dvm] = supply.sub(balances[owner]);
-        emit Transfer(address(0), owner, balances[owner]);
-        emit Transfer(address(0), dvm, balances[dvm]);
+        uint256 vaultPreOwnerBalance = DecimalMath.mulFloor(totalSupply, ownerRatio);
+        transfer(_VAULT_PRE_OWNER_,vaultPreOwnerBalance);
+        transfer(_DVM_,totalSupply.sub(vaultPreOwnerBalance));
 
         // init DVM liquidity
         IDVM(_DVM_).buyShares(address(this));
     }
 
-    //需要先转入QUOTE
-    function buyout() external {
-      require(!_IS_BUYOUT_, "ALREADY BUYOUT");
+
+    function buyout(address newVaultOwner) external {
+      require(_IS_OPEN_BUYOUT_, "DODOFragment: NOT_SUPPORT_BUYOUT");
+      require(block.timestamp > _BUYOUT_TIMESTAMP_, "DODOFragment: BUYOUT_NOT_START");
+      require(!_IS_BUYOUT_, "DODOFragment: ALREADY_BUYOUT");
       _IS_BUYOUT_ = true;
+      
       _BUYOUT_PRICE_ = IDVM(_DVM_).getMidPrice();
       uint256 requireQuote = DecimalMath.mulCeil(_BUYOUT_PRICE_, totalSupply);
-      require(IERC20(_QUOTE_).balanceOf(address(this))>=requireQuote, "QUOTE NOT ENOUGH");
+      require(IERC20(_QUOTE_).balanceOf(address(this)) >= requireQuote, "DODOFragment: QUOTE_NOT_ENOUGH");
 
       IDVM(_DVM_).sellShares(
         IERC20(_DVM_).balanceOf(address(this)),
@@ -77,30 +91,38 @@ contract Fragment is InitializableMintableERC20 {
         0,
         "",
         uint256(-1)
-      );
+      );  
 
-      uint256 ownerQuote = DecimalMath.mulFloor(_BUYOUT_PRICE_, balances[address(this)]);
-      _clearSelfBalance();
+      uint256 preOwnerQuote = DecimalMath.mulFloor(_BUYOUT_PRICE_, balances[_VAULT_PRE_OWNER_]);
+      IERC20(_QUOTE_).safeTransfer(_VAULT_PRE_OWNER_, preOwnerQuote);
+      _clearBalance(_VAULT_PRE_OWNER_);
 
-      IERC20(_QUOTE_).safeTransfer(_OWNER_, ownerQuote);
+      uint256 newOwnerQuote = DecimalMath.mulFloor(_BUYOUT_PRICE_, balances[newVaultOwner]);
+      IERC20(_QUOTE_).safeTransfer(newVaultOwner, newOwnerQuote);
+      _clearBalance(newVaultOwner);
+
+      ICollateralVault(_COLLATERAL_VAULT_).directTransferOwnership(newVaultOwner);
     }
 
-    // buyout之后的恒定兑换，需要先转入FRAG
-    function redeem(address to) external {
-      require(_IS_BUYOUT_, "NEED BUYOUT");
 
-      IERC20(_QUOTE_).safeTransfer(to, DecimalMath.mulFloor(_BUYOUT_PRICE_, balances[address(this)]));
-      _clearSelfBalance();
+    function redeem(address to) external {
+      require(_IS_BUYOUT_, "DODOFragment: NEED_BUYOUT");
+
+      IERC20(_QUOTE_).safeTransfer(to, DecimalMath.mulFloor(_BUYOUT_PRICE_, balances[to]));
+      _clearBalance(to);
     }
 
     function getBuyoutRequirement() external view returns (uint256 requireQuote){
+      require(_IS_OPEN_BUYOUT_, "NOT SUPPORT BUYOUT");
       require(!_IS_BUYOUT_, "ALREADY BUYOUT");
       uint256 price = IDVM(_DVM_).getMidPrice();
       requireQuote = DecimalMath.mulCeil(price, totalSupply);
     }
 
-    function _clearSelfBalance() internal {
-      emit Transfer(address(this), address(0), balances[address(this)]);
-      balances[address(this)] = 0;
+    function _clearBalance(address account) internal {
+      uint256 clearBalance = balances[account];
+      balances[account] = 0;
+      balances[address(0)] = clearBalance;
+      emit Transfer(account, address(0), clearBalance);
     }
 }
