@@ -11,10 +11,9 @@ import {SafeMath} from "../lib/SafeMath.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
 import {IERC20} from "../intf/IERC20.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
-import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 import {Ownable} from "../lib/Ownable.sol";
 
-contract FeeDistributor is InitializableOwnable {
+contract FeeDistributor {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
@@ -24,46 +23,55 @@ contract FeeDistributor is InitializableOwnable {
     address public _QUOTE_TOKEN_;
     uint256 public _BASE_RESERVE_;
     uint256 public _QUOTE_RESERVE_;
-    uint256 public _BASE_REWARD_RATIO_;
-    uint256 public _QUOTE_REWARD_RATIO_;
 
     address public _STAKE_VAULT_;
     address public _STAKE_TOKEN_;
     uint256 public _STAKE_RESERVE_;
-    mapping(address => uint256) internal _BASE_DEBT_;
-    mapping(address => uint256) internal _QUOTE_DEBT_;
-    mapping(address => uint256) internal _SHARES_;
 
+    uint256 public _BASE_REWARD_RATIO_;
+    mapping(address => uint256) internal _USER_BASE_REWARDS_;
+    mapping(address => uint256) internal _USER_BASE_PER_SHARE_;
+    
+    uint256 public _QUOTE_REWARD_RATIO_;
+    mapping(address => uint256) internal _USER_QUOTE_REWARDS_;
+    mapping(address => uint256) internal _USER_QUOTE_PER_SHARE_;
+
+    mapping(address => uint256) internal _SHARES_;
+    
+    bool internal _FEE_INITIALIZED_;
 
     function init(
       address baseToken,
       address quoteToken,
       address stakeToken
     ) external {
+        require(!_FEE_INITIALIZED_, "ALREADY_INITIALIZED");
+        _FEE_INITIALIZED_ = true;
+        
         _BASE_TOKEN_ = baseToken;
         _QUOTE_TOKEN_ = quoteToken;
         _STAKE_TOKEN_ = stakeToken;
-        _BASE_REWARD_RATIO_ = DecimalMath.ONE;
-        _QUOTE_REWARD_RATIO_ = DecimalMath.ONE;
         _STAKE_VAULT_ = address(new StakeVault());
     }
 
-    //TODO: 用户的手续费base or quote 直接转到该合约中，stakeVault保存的是？
     function stake(address to) external {
-      _accuReward();
+      _updateGlobalState();
+      _updateUserReward(to);
       uint256 stakeVault = IERC20(_STAKE_TOKEN_).balanceOf(_STAKE_VAULT_);
       uint256 stakeInput = stakeVault.sub(_STAKE_RESERVE_);
       _addShares(stakeInput, to);
     }
 
     function claim(address to) external {
-      _accuReward();
+      _updateGlobalState();
+      _updateUserReward(msg.sender);
       _claim(msg.sender, to);
     }
 
     function unstake(uint256 amount, address to, bool withClaim) external {
       require(_SHARES_[msg.sender]>=amount, "STAKE BALANCE ONT ENOUGH");
-      _accuReward();
+      _updateGlobalState();
+      _updateUserReward(msg.sender);
 
       if (withClaim) {
         _claim(msg.sender, to);
@@ -73,30 +81,18 @@ contract FeeDistributor is InitializableOwnable {
       StakeVault(_STAKE_VAULT_).transferOut(_STAKE_TOKEN_, amount, to);
     }
 
+    // ============ Internal  ============
+
     function _claim(address sender, address to) internal {
-      uint256 allBase = DecimalMath.mulFloor(_SHARES_[sender], _BASE_REWARD_RATIO_);
-      uint256 allQuote = DecimalMath.mulFloor(_SHARES_[sender], _QUOTE_REWARD_RATIO_);
-      IERC20(_BASE_TOKEN_).safeTransfer(to, allBase.sub(_BASE_DEBT_[sender]));
-      IERC20(_QUOTE_TOKEN_).safeTransfer(to, allQuote.sub(_QUOTE_DEBT_[sender]));
-      _BASE_DEBT_[sender] = allBase;
-      _QUOTE_DEBT_[sender] = allQuote;
+      uint256 allBase = _USER_BASE_REWARDS_[sender];
+      uint256 allQuote = _USER_QUOTE_REWARDS_[sender];
+      IERC20(_BASE_TOKEN_).safeTransfer(to, allBase);
+      IERC20(_QUOTE_TOKEN_).safeTransfer(to, allQuote);
+      _USER_BASE_REWARDS_[sender] = 0;
+      _USER_BASE_REWARDS_[sender] = 0;
     }
 
-    function _addShares(uint256 amount, address to) internal {
-      _SHARES_[to] = _SHARES_[to].add(amount);
-      _BASE_DEBT_[to] = _BASE_DEBT_[to].add(DecimalMath.mulCeil(amount, _BASE_REWARD_RATIO_));
-      _QUOTE_DEBT_[to] = _QUOTE_DEBT_[to].add(DecimalMath.mulCeil(amount, _QUOTE_REWARD_RATIO_));
-      _STAKE_RESERVE_ = IERC20(_STAKE_TOKEN_).balanceOf(_STAKE_VAULT_);
-    }
-
-    function _removeShares(uint256 amount, address from) internal {
-      _SHARES_[from] = _SHARES_[from].sub(amount);
-      _BASE_DEBT_[from] = _BASE_DEBT_[from].sub(DecimalMath.mulFloor(amount, _BASE_REWARD_RATIO_));
-      _QUOTE_DEBT_[from] = _QUOTE_DEBT_[from].sub(DecimalMath.mulFloor(amount, _QUOTE_REWARD_RATIO_));
-      _STAKE_RESERVE_ = IERC20(_STAKE_TOKEN_).balanceOf(_STAKE_VAULT_);
-    }
-
-    function _accuReward() internal {
+    function _updateGlobalState() internal {
       uint256 baseInput = IERC20(_BASE_TOKEN_).balanceOf(address(this)).sub(_BASE_RESERVE_);
       uint256 quoteInput = IERC20(_QUOTE_TOKEN_).balanceOf(address(this)).sub(_QUOTE_RESERVE_);
       _BASE_REWARD_RATIO_ = _BASE_REWARD_RATIO_.add(DecimalMath.divFloor(baseInput, _STAKE_RESERVE_));
@@ -105,6 +101,31 @@ contract FeeDistributor is InitializableOwnable {
       _QUOTE_RESERVE_ = _QUOTE_RESERVE_.add(quoteInput);
     }
 
+    function _updateUserReward(address user) internal {
+        _USER_BASE_REWARDS_[user] = DecimalMath.mulFloor(
+          _SHARES_[user], 
+          _BASE_REWARD_RATIO_.sub(_USER_BASE_PER_SHARE_[user])
+        ).add(_USER_BASE_REWARDS_[user]);
+
+        _USER_BASE_PER_SHARE_[user] = _BASE_REWARD_RATIO_;
+
+        _USER_QUOTE_REWARDS_[user] = DecimalMath.mulFloor(
+          _SHARES_[user], 
+          _QUOTE_REWARD_RATIO_.sub(_USER_QUOTE_PER_SHARE_[user])
+        ).add(_USER_QUOTE_REWARDS_[user]);
+
+        _USER_QUOTE_PER_SHARE_[user] = _QUOTE_REWARD_RATIO_;
+    }
+
+    function _addShares(uint256 amount, address to) internal {
+      _SHARES_[to] = _SHARES_[to].add(amount);
+      _STAKE_RESERVE_ = IERC20(_STAKE_TOKEN_).balanceOf(_STAKE_VAULT_);
+    }
+
+    function _removeShares(uint256 amount, address from) internal {
+      _SHARES_[from] = _SHARES_[from].sub(amount);
+      _STAKE_RESERVE_ = IERC20(_STAKE_TOKEN_).balanceOf(_STAKE_VAULT_);
+    }
 }
 
 contract StakeVault is Ownable {
