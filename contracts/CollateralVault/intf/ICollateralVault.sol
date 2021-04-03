@@ -6,10 +6,12 @@
 */
 
 pragma solidity 0.6.9;
-pragma experimental ABIEncoderV2;
+
 
 interface ICollateralVault {
     function _OWNER_() external returns (address);
 
-    function transferOwner(address to) external;
+    function init(address owner, string memory name) external;
+
+    function directTransferOwnership(address newOwner) external;
 }

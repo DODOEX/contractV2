@@ -7,17 +7,14 @@
 
 pragma solidity 0.6.9;
 
-import {SafeMath} from "../lib/SafeMath.sol";
-import {SafeERC20} from "../lib/SafeERC20.sol";
-import {DecimalMath} from "../lib/DecimalMath.sol";
-import {IDVM} from "../DODOVendingMachine/intf/IDVM.sol";
-import {IERC20} from "../intf/IERC20.sol";
-import {InitializableERC20} from "../external/ERC20/InitializableERC20.sol";
-
-interface ICollateralVault {
-  function directTransferOwnership(address newOwner) external;
-}
-
+import {SafeMath} from "../../lib/SafeMath.sol";
+import {SafeERC20} from "../../lib/SafeERC20.sol";
+import {DecimalMath} from "../../lib/DecimalMath.sol";
+import {IDVM} from "../../DODOVendingMachine/intf/IDVM.sol";
+import {IDODOCallee} from "../../intf/IDODOCallee.sol";
+import {IERC20} from "../../intf/IERC20.sol";
+import {InitializableERC20} from "../../external/ERC20/InitializableERC20.sol";
+import {ICollateralVault} from "../../CollateralVault/intf/ICollateralVault.sol";
 
 contract Fragment is InitializableERC20 {
     using SafeMath for uint256;
@@ -105,11 +102,20 @@ contract Fragment is InitializableERC20 {
     }
 
 
-    function redeem(address to) external {
+    function redeem(address to, bytes calldata data) external {
       require(_IS_BUYOUT_, "DODOFragment: NEED_BUYOUT");
 
-      IERC20(_QUOTE_).safeTransfer(to, DecimalMath.mulFloor(_BUYOUT_PRICE_, balances[to]));
-      _clearBalance(to);
+      uint256 quoteAmount = DecimalMath.mulFloor(_BUYOUT_PRICE_, balances[msg.sender]);
+      IERC20(_QUOTE_).safeTransfer(to, quoteAmount);
+      _clearBalance(msg.sender);
+
+      if (data.length > 0) {
+        IDODOCallee(to).NFTRedeemCall(
+          msg.sender,
+          quoteAmount,
+          data
+        );
+      }
     }
 
     function getBuyoutRequirement() external view returns (uint256 requireQuote){

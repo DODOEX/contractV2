@@ -27,7 +27,11 @@ contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Re
     }
     NftInfo[] public nftInfos;
 
-    constructor (string memory _name) public {
+    function init(
+        address owner,
+        string memory _name
+    ) external {
+        initOwner(owner);
         name = _name;
     }
 
