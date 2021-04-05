@@ -45,7 +45,7 @@ contract ERC721Facotry {
         string memory baseUrl
     ) external returns (address newERC721) {
         newERC721 = ICloneFactory(_CLONE_FACTORY_).clone(_ERC721_TEMPLATE_);
-        InitializableERC721(newERC721).init(msg.sender, name, symbol, baseUrl);
+        InitializableERC721(newERC721).init(name, symbol, baseUrl);
         _USER_REGISTRY_[msg.sender].push(newERC721);
         emit NewERC721(newERC721, msg.sender);
     }
