@@ -19,6 +19,7 @@
  */
 
 var HDWalletProvider = require("truffle-hdwallet-provider");
+var wrapProvider = require('arb-ethers-web3-bridge').wrapProvider;
 var privKey = process.env.privKey;
 var infuraId = process.env.infuraId;
 //
@@ -126,6 +127,17 @@ module.exports = {
       confirmations: 10,
       timeoutBlocks: 200,
       skipDryRun: true
+    },
+    
+    arbtest: {
+      provider: function () {
+        return wrapProvider(
+          new HDWalletProvider(privKey, "https://kovan4.arbitrum.io/rpc")
+        )
+      },
+      network_id: '212984383488152',
+      gas: 1000000000,
+      gasPrice: 0,
     },
 
     coverage: {

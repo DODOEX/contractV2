@@ -721,3 +721,164 @@ Deploy type: V2 - Adapter
 DODOV1Adapter Address:  0xa432E1ace51eB849d7a1664e5c60ce965B1fE6E4
 DODOV2Adapter Address:  0xC2aA2C0175e376E63cFb0bd1CAB1196DDc9a7076
 UniAdapter Address:  0x03E2427859119E497EB856a166F616a2Ce5f8c88
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午9:27:07
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+DODOSellHelper Address:  0x313fcb27BD83607C33998AA60E409C79Fb2251fd
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午9:31:06
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午9:32:35
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+DODOCalleeHelperAddress:  0x1ddD02f6d31C1eF04cFA0a1AA811406B5B2884E7
+DODOV1RouterHelper Address:  0xD56281EF996B6B29874C77D2e1464216E8043127
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午9:35:57
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+CloneFactoryAddress:  0x61b21603A527b487C4a3A80a69224b87751D0F6a
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午9:38:16
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午9:40:06
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+DefaultMtFeeRateAddress:  0x4EfF1D851366b8cc51d553a87e2d12dA8Da46F2a
+Init DefaultMtFeeRateAddress Tx: 0xfc59c5af3257e02c44eaca448a7813d6b835b6f7304fb546c81fc149ff4aca11
+DefaultPermissionAddress:  0x97f0153E7F5749640aDF3Ff9CFC518b79D6Fe53b
+Init DefaultPermissionAddress Tx: 0x16e408cf7ba3e109e91a0ca0c5c0c7aab45b049ec69269f8c7d7f6b5dac070ce
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午9:43:59
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午9:46:07
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+DvmTemplateAddress:  0x1565666CD77bB6DDE193e1D37Ad7b07900e6f4c0
+DppTemplateAddress:  0x1dc8D1f1600B7C1D39e6b60FBC7b021Bc4F9C993
+DppAdminTemplateAddress:  0x8F8Dd7DB1bDA5eD3da8C9daf3bfa471c12d58486
+CpTemplateAddress:  0x70eFB31271C0796833f80dA4E6538d05B2AFA72C
+ERC20TemplateAddress:  0x77106d0f8c5B8ADF95a7feaae5bea130b1D2D748
+MintableERC20TemplateAddress:  0xa952f8716a753D9e094c4041FEBd163e38B21eDB
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午9:54:11
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+ERC20FactoryAddress:  0x01f9BfAC04E6184e90bD7eaFD51999CE430Cc750
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午9:56:58
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午10:00:34
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午10:06:16
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午10:18:56
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午10:28:04
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+DODOApprove Address:  0x1c31c6d0032768463EaBABe1A47D04c6470d31fE
+DODOApproveProxy Address:  0x8Fc0d51915D631Ff6B8b70dEEAE789cE5c792a62
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午10:31:30
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+DODOIncentiveAddress:  0x3a60A76aCAe8feeC74D6B5b665d4DBaab2abC406
+DODOIncentive Init tx:  0x7dcd6d1f14c50c2d8ca9369dfb86d933a6277cc9123631247b1483cf00cad753
+DvmFactoryAddress:  0xCFea63e3DE31De53D68780Dd65675F169439e470
+Init DvmFactory Tx: 0xab3f6be8d20d1b730c37e61caed2b5bf361289f9b1d01750a495fe3ebee6b3f4
+DppFactoryAddress:  0xb7865a5ceE051d35B09A48b624D7057d3362655a
+Init DppFactory Tx: 0x20f0f23cccdf641653eeed070f1c4aa7ece73f4a219f460f6036ad341a2f11c0
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午10:39:00
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午10:40:12
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午10:42:05
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+CpFactoryAddress:  0xCDFD45f965De9932367833Ca7187e4c9C43A2380
+Init CpFactory Tx: 0xcbeb5fc276756004ca7565f13946ea67eede733b10c515395eaa84308c87ee0d
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午10:45:20
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午10:49:05
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午10:54:47
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午10:56:39
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+DODOV2RouteHelper Address:  0x69f52AC40185A2A005D49114F0B77b7bA856F0a0
+DODOV2Proxy02 Address:  0x3bde3f150EAED3A506740EEfcbBB1BB4393600a9
+Init DODOProxyV2 Tx: 0x93ce40a126c12335ba505dd186fce1aca1cc0e57b728db1326e6ac36a789c0f1
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午11:01:11
+Deploy type: V2 - Adapter
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午11:02:53
+Deploy type: V2 - Adapter
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午11:04:56
+Deploy type: V2 - Adapter
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午11:06:23
+Deploy type: V2 - Adapter
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午11:08:19
+Deploy type: V2 - Adapter
+DODOV1Adapter Address:  0x3a343F2e4e142412c5dD130359edb765a6054965
+DODOV2Adapter Address:  0x2cD18557E14aF72DAA8090BcAA95b231ffC9ea26
+UniAdapter Address:  0xeCEaDe494FD5F913Fd937C5CAc4577236395Dc32

@@ -298,3 +298,17 @@ Deploy time: 2021/3/18 下午5:50:20
 Deploy type: DODOToken
 DODOTokenAddress:  0x19DA73be23Cea6bFA804Ec020041b8F3971BC522
 MultiCallAddress:  0x1Cc229Ac0ef9ba932e4dEbB898C77901C9AFB694
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午9:16:44
+Deploy type: WETH9
+WETH9Address:  0x1e0D4043C0CD3ed15F3c2AfE60B0F213c9b5E30d
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午9:22:11
+Deploy type: DODOToken
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午9:24:48
+Deploy type: DODOToken
+DODOTokenAddress:  0x67ee3Cb086F8a16f34beE3ca72FAD36F7Db929e2

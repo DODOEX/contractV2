@@ -28,6 +28,7 @@
     "@types/es6-promisify": "^6.0.0",
     "@types/ethereumjs-abi": "^0.6.3",
     "@types/mocha": "^7.0.2",
+    "arb-ethers-web3-bridge": "^0.7.3",
     "assert": "^2.0.0",
     "axios": "^0.20.0",
     "babel-cli": "^6.26.0",
