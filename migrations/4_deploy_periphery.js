@@ -37,6 +37,7 @@ module.exports = async (deployer, network, accounts) => {
     let WETHAddress = CONFIG.WETH;
     let DODOTokenAddress = CONFIG.DODO;
     let DODOApproveProxyAddress = CONFIG.DODOApproveProxy;
+    let WETH = CONFIG.WETH;
 
     let DspTemplateAddress = CONFIG.DSP;
     let DspFactoryAddress = CONFIG.DSPFactory;
@@ -56,6 +57,7 @@ module.exports = async (deployer, network, accounts) => {
     let DefaultPermissionAddress = CONFIG.PermissionManager;
     let CpTemplateAddress = CONFIG.CP;
     let DvmTemplateAddress = CONFIG.DVM;
+    let UpCpFactoryAddress = CONFIG.UpCpFactory;
 
     let multiSigAddress = CONFIG.multiSigAddress;
     let defaultMaintainer = CONFIG.defaultMaintainer;
