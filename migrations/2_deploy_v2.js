@@ -296,9 +296,9 @@ module.exports = async (deployer, network, accounts) => {
 
 
             //2. ChangeDODO Incentive proxy
-            const DODOIncentiveInstance = await DODOIncentive.at(DODOIncentiveAddress);
-            var tx = await DODOIncentiveInstance.changeDODOProxy(DODOProxyV2.address);
-            logger.log("DODOIncentive ChangeProxy tx: ", tx.tx);
+            // const DODOIncentiveInstance = await DODOIncentive.at(DODOIncentiveAddress);
+            // var tx = await DODOIncentiveInstance.changeDODOProxy(DODOProxyV2.address);
+            // logger.log("DODOIncentive ChangeProxy tx: ", tx.tx);
 
             //3. Open trade incentive 
             // var tx = await DODOIncentiveInstance.changePerReward("10000000000000000000");

@@ -312,3 +312,9 @@ network type: arbtest
 Deploy time: 2021/4/5 下午9:24:48
 Deploy type: DODOToken
 DODOTokenAddress:  0x67ee3Cb086F8a16f34beE3ca72FAD36F7Db929e2
+====================================================
+network type: heco
+Deploy time: 2021/4/6 下午9:02:51
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0xF7c3467786efAA9BD4022941ecd5a00C61b17FA9
+Init UpCpFactory Tx: 0x27d493acbed5e6425c86a48fe8ebfd65a49b884570e44cb87a6164c902aa52c9
