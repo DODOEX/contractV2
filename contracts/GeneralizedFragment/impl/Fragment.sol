@@ -34,6 +34,15 @@ contract Fragment is InitializableERC20 {
 
     bool internal _FRAG_INITIALIZED_;
 
+    // ============ Event ============
+    event RemoveNftToken(address nftContract, uint256 tokenId, uint256 amount);
+    event AddNftToken(address nftContract, uint256 tokenId, uint256 amount);
+    event InitInfo(address vault, string name, string baseURI);
+    event CreateFragment();
+    event Buyout(address newOwner);
+    event Redeem(address sender, uint256 baseAmount, uint256 quoteAmount);
+
+
     function init(
       address dvm, 
       address vaultPreOwner,
@@ -99,13 +108,16 @@ contract Fragment is InitializableERC20 {
       _clearBalance(newVaultOwner);
 
       ICollateralVault(_COLLATERAL_VAULT_).directTransferOwnership(newVaultOwner);
+
+      emit Buyout(newVaultOwner);
     }
 
 
     function redeem(address to, bytes calldata data) external {
       require(_IS_BUYOUT_, "DODOFragment: NEED_BUYOUT");
 
-      uint256 quoteAmount = DecimalMath.mulFloor(_BUYOUT_PRICE_, balances[msg.sender]);
+      uint256 baseAmount = balances[msg.sender];
+      uint256 quoteAmount = DecimalMath.mulFloor(_BUYOUT_PRICE_, baseAmount);
       IERC20(_QUOTE_).safeTransfer(to, quoteAmount);
       _clearBalance(msg.sender);
 
@@ -116,6 +128,8 @@ contract Fragment is InitializableERC20 {
           data
         );
       }
+
+      emit Redeem(msg.sender, baseAmount, quoteAmount);
     }
 
     function getBuyoutRequirement() external view returns (uint256 requireQuote){

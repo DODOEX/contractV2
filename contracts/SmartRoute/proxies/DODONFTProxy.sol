@@ -50,7 +50,7 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
     event ChangeVaultTemplate(address newVaultTemplate);
     event ChangeFragTemplate(address newFragTemplate);
     event ChangeFeeTemplate(address newFeeTemplate);
-    event CreateNFTCollateralVault(address creator, address vault);
+    event CreateNFTCollateralVault(address creator, address vault, string name, string baseURI);
     event CreateFragment(address vault, address fragment, address dvm, address feeDistributor);
     event Buyout(address from, address fragment, uint256 amount);
     event Stake(address from, address feeDistributor, uint256 amount);
@@ -80,10 +80,10 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
         _NFT_REGISTY_ = nftRegistry;
     }
 
-    function createNFTCollateralVault(string memory name) external returns (address newVault) {
+    function createNFTCollateralVault(string memory name, string memory baseURI) external returns (address newVault) {
         newVault = ICloneFactory(_CLONE_FACTORY_).clone(_VAULT_TEMPLATE_);
-        ICollateralVault(newVault).init(msg.sender, name);
-        emit CreateNFTCollateralVault(msg.sender, newVault);
+        ICollateralVault(newVault).init(msg.sender, name, baseURI);
+        emit CreateNFTCollateralVault(msg.sender, newVault, name, baseURI);
     }
 
     function createFragment(

@@ -20,6 +20,8 @@ contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Re
 
     // ============ Storage ============
     string public name;
+    string public baseURI;
+
     struct NftInfo {
         uint256 tokenId; 
         uint256 amount;
@@ -29,15 +31,18 @@ contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Re
 
     function init(
         address owner,
-        string memory _name
+        string memory _name,
+        string memory _baseURI
     ) external {
         initOwner(owner);
         name = _name;
+        baseURI = _baseURI;
     }
 
     // ============ Event ============
     event RemoveNftToken(address nftContract, uint256 tokenId, uint256 amount);
     event AddNftToken(address nftContract, uint256 tokenId, uint256 amount);
+    event CreateFragment();
 
 
     // ============ Ownable ============
@@ -49,9 +54,10 @@ contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Re
     function createFragment(address nftProxy, bytes calldata data) external onlyOwner {
         require(nftProxy != address(0), "DODONftVault: PROXY_INVALID");
         _OWNER_ = nftProxy;
-        emit OwnershipTransferred(_OWNER_, nftProxy);
         (bool success, ) = nftProxy.call(data);
         require(success, "DODONftVault: TRANSFER_OWNER_FAILED");
+        emit OwnershipTransferred(_OWNER_, nftProxy);
+        emit CreateFragment();
     }
 
     function withdrawERC721(address nftContract, uint256 tokenId) external onlyOwner {

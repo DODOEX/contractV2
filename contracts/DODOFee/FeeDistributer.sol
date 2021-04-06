@@ -40,6 +40,11 @@ contract FeeDistributor {
     
     bool internal _FEE_INITIALIZED_;
 
+    // ============ Event ============
+    event Stake(address sender, uint256 amount);
+    event UnStake(address sender, uint256 amount);
+    event Claim(address sender, uint256 baseAmount, uint256 quoteAmount);
+
     function init(
       address baseToken,
       address quoteToken,
@@ -60,6 +65,7 @@ contract FeeDistributor {
       uint256 stakeVault = IERC20(_STAKE_TOKEN_).balanceOf(_STAKE_VAULT_);
       uint256 stakeInput = stakeVault.sub(_STAKE_RESERVE_);
       _addShares(stakeInput, to);
+      emit Stake(to, stakeInput);
     }
 
     function claim(address to) external {
@@ -79,6 +85,7 @@ contract FeeDistributor {
 
       _removeShares(amount, msg.sender);
       StakeVault(_STAKE_VAULT_).transferOut(_STAKE_TOKEN_, amount, to);
+      emit UnStake(msg.sender, amount);
     }
 
     // ============ Internal  ============
@@ -90,6 +97,7 @@ contract FeeDistributor {
       IERC20(_QUOTE_TOKEN_).safeTransfer(to, allQuote);
       _USER_BASE_REWARDS_[sender] = 0;
       _USER_BASE_REWARDS_[sender] = 0;
+      emit Claim(sender, allBase, allQuote);
     }
 
     function _updateGlobalState() internal {
