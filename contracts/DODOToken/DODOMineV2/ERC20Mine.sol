@@ -35,11 +35,15 @@ contract ERC20Mine is BaseMine {
         require(amount > 0, "DODOMineV2: CANNOT_DEPOSIT_ZERO");
 
         _updateAllReward(msg.sender);
-        _totalSupply = _totalSupply.add(amount);
-        _balances[msg.sender] = _balances[msg.sender].add(amount);
-        IERC20(_TOKEN_).safeTransferFrom(msg.sender, address(this), amount);
 
-        emit Deposit(msg.sender, amount);
+        uint256 erc20OriginBalance = IERC20(_TOKEN_).balanceOf(address(this));
+        IERC20(_TOKEN_).safeTransferFrom(msg.sender, address(this), amount);
+        uint256 actualStakeAmount = IERC20(_TOKEN_).balanceOf(address(this)).sub(erc20OriginBalance);
+        
+        _totalSupply = _totalSupply.add(actualStakeAmount);
+        _balances[msg.sender] = _balances[msg.sender].add(actualStakeAmount);
+
+        emit Deposit(msg.sender, actualStakeAmount);
     }
 
     function withdraw(uint256 amount) external {
