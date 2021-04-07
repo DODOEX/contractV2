@@ -60,7 +60,7 @@ contract DODOUpCpProxy is ReentrancyGuard {
         
         newUpCrowdPooling = IDODOV2(_UPCP_FACTORY_).createCrowdPooling();
 
-        IERC20(_baseToken).safeTransferFrom(msg.sender, newUpCrowdPooling, baseInAmount);
+        IERC20(_baseToken).transferFrom(msg.sender, newUpCrowdPooling, baseInAmount);
 
         newUpCrowdPooling.transfer(msg.value);
 

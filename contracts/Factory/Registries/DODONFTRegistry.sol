@@ -14,6 +14,7 @@ interface IDODONFTRegistry {
     function addRegistry(
         address vault,
         address fragment, 
+        address quoteToken,
         address feeDistributor,
         address dvm
     ) external;
@@ -38,6 +39,9 @@ contract DODONFTRegistry is InitializableOwnable {
     // Vault -> Frag
     mapping(address => address) public _VAULT_FRAG_REGISTRY_;
 
+    // base -> quote -> DVM address list
+    mapping(address => mapping(address => address[])) public _REGISTRY_;
+
     // ============ Events ============
 
     event NewRegistry(
@@ -55,6 +59,7 @@ contract DODONFTRegistry is InitializableOwnable {
     function addRegistry(
         address vault,
         address fragment, 
+        address quoteToken,
         address feeDistributor,
         address dvm
     ) external {
@@ -62,6 +67,7 @@ contract DODONFTRegistry is InitializableOwnable {
         _FRAG_FEE_REGISTRY_[fragment] = feeDistributor;
         _DVM_FEE_REGISTRY_[dvm] = feeDistributor;
         _VAULT_FRAG_REGISTRY_[vault] = fragment;
+        _REGISTRY_[fragment][quoteToken].push(dvm);
         emit NewRegistry(vault, fragment, feeDistributor, dvm);
     }
 
@@ -82,5 +88,21 @@ contract DODONFTRegistry is InitializableOwnable {
 
     function removeWhiteList (address contractAddr) public onlyOwner {
         isAdminListed[contractAddr] = false;
+    }
+
+    function getDODOPool(address baseToken, address quoteToken)
+        external
+        view
+        returns (address[] memory pools)
+    {
+        return _REGISTRY_[baseToken][quoteToken];
+    }
+
+    function getDODOPoolBidirection(address token0, address token1)
+        external
+        view
+        returns (address[] memory baseToken0Pool, address[] memory baseToken1Pool)
+    {
+        return (_REGISTRY_[token0][token1], _REGISTRY_[token1][token0]);
     }
 }

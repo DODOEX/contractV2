@@ -58,5 +58,19 @@ module.exports = {
         //Account
         multiSigAddress: "",
         defaultMaintainer: "",
+
+
+        //================== NFT ====================
+        ConstFeeRateModel: "0xBDAcEcF886a4F0C509260d9678D5673C3E8fa4b7",
+        FeeDistributor: "0x989F9eFaA19c6A06945Db4439b9a7935dD573A66",
+        Fragment: "0x36ed21f19B0cf0c1E571A8C3A6953a5778E48B5a",
+        NFTCollateralVault: "0x78B7AFf2E5fA95B1E7E16679645FB65a850ed6AB",
+
+        InitializableERC721: "0xBF243C5626A0766031d57269c01F6eFd57B603fc",
+        InitializableERC1155: "0x33221F3aFC8b5F7eEB1bf6e836ECB0bA6a78759b",
+        NFTTokenFactory: "0x57d7A27e9E7206F28fe98D0A0228a03afF5b6e77",
+
+        DODONFTRegistry: "0xF405372b7808363DCfbb5Eb81204889B7a69Aa3e",
+        DODONFTProxy: "0x41Eb1FFC3d6474Ee4f4Aaf335a09cD411ADDDf1f",
     }
 }

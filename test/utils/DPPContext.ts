@@ -75,7 +75,7 @@ export class DPPContext {
     this.Web3 = getDefaultWeb3();
 
     this.DPP = await contracts.newContract(contracts.DPP_NAME);
-    var lpFeeRateModel = await contracts.newContract(contracts.CONST_FEE_RATE_MODEL_NAME);
+    // var lpFeeRateModel = await contracts.newContract(contracts.CONST_FEE_RATE_MODEL_NAME);
     var mtFeeRateModel = await contracts.newContract(contracts.CONST_FEE_RATE_MODEL_NAME);
     var permissionManager = await contracts.newContract(contracts.PERMISSION_MANAGER_NAME);
     var gasPriceSource = await contracts.newContract(contracts.EXTERNAL_VALUE_NAME);
@@ -96,7 +96,7 @@ export class DPPContext {
     this.SpareAccounts = allAccounts.slice(2, 10);
 
     await gasPriceSource.methods.init(this.Deployer, MAX_UINT256).send(this.sendParam(this.Deployer));
-    await lpFeeRateModel.methods.init(this.DPP.options.address, config.lpFeeRate).send(this.sendParam(this.Deployer));
+    // await lpFeeRateModel.methods.init(this.DPP.options.address, config.lpFeeRate).send(this.sendParam(this.Deployer));
     await mtFeeRateModel.methods.init(this.DPP.options.address, config.mtFeeRate).send(this.sendParam(this.Deployer));
 
     await kSource.methods.init(this.DPP.options.address, config.k).send(this.sendParam(this.Deployer));

@@ -13,7 +13,8 @@ import {IERC20} from "../../intf/IERC20.sol";
 import {IWETH} from "../../intf/IWETH.sol";
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 import {ICollateralVault} from "../../CollateralVault/intf/ICollateralVault.sol";
-import {IDODOV2} from "../intf/IDODOV2.sol";
+import {IDVM} from "../../DODOVendingMachine/intf/IDVM.sol";
+import {IConstFeeRateModel} from "../../lib/ConstFeeRateModel.sol";
 import {IFragment} from "../../GeneralizedFragment/intf/IFragment.sol";
 import {IFeeDistributor} from "../../intf/IFeeDistributor.sol";
 import {IDODONFTRegistry} from "../../Factory/Registries/DODONFTRegistry.sol";
@@ -41,15 +42,20 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
     address public immutable _CLONE_FACTORY_;
     address public immutable _DVM_FACTORY_;
     address public immutable _NFT_REGISTY_;
+    address public immutable _DEFAULT_MAINTAINER_;
 
     address public _VAULT_TEMPLATE_;
     address public _FRAG_TEMPLATE_;
     address public _FEE_TEMPLATE_;
+    address public _DVM_TEMPLATE_;
+    address public _MTFEE_TEMPLATE_;
 
     // ============ Events ============
     event ChangeVaultTemplate(address newVaultTemplate);
     event ChangeFragTemplate(address newFragTemplate);
     event ChangeFeeTemplate(address newFeeTemplate);
+    event ChangeMtFeeTemplate(address newMtFeeTemplate);
+    event ChangeDvmTemplate(address newDvmTemplate);
     event CreateNFTCollateralVault(address creator, address vault, string name, string baseURI);
     event CreateFragment(address vault, address fragment, address dvm, address feeDistributor);
     event Buyout(address from, address fragment, uint256 amount);
@@ -65,18 +71,24 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
         address payable weth,
         address dodoApproveProxy,
         address dvmFactory,
+        address defaultMaintainer,
         address vaultTemplate,
         address fragTemplate,
         address feeTemplate,
+        address dvmTemplate,
+        address mtFeeTemplate,
         address nftRegistry
     ) public {
         _CLONE_FACTORY_ = cloneFactory;
         _WETH_ = weth;
         _DODO_APPROVE_PROXY_ = dodoApproveProxy;
         _DVM_FACTORY_ = dvmFactory;
+        _DEFAULT_MAINTAINER_ = defaultMaintainer;
         _VAULT_TEMPLATE_ = vaultTemplate;
         _FRAG_TEMPLATE_ = fragTemplate;
         _FEE_TEMPLATE_ = feeTemplate;
+        _DVM_TEMPLATE_ = dvmTemplate;
+        _MTFEE_TEMPLATE_ = mtFeeTemplate;
         _NFT_REGISTY_ = nftRegistry;
     }
 
@@ -88,44 +100,14 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
 
     function createFragment(
         address quoteToken,
-        address collateralVault,
         address vaultPreOwner,
         address stakeToken,
-        uint256[] calldata dvmParams, //0 - lpFeeRate, 1 - I, 2 - K
+        uint256[] calldata dvmParams, //0 - lpFeeRate, 1 - mtFeeRate 2 - I, 3 - K
         uint256[] calldata fragParams, //0 - totalSupply, 1 - ownerRatio, 2 - buyoutTimestamp
-        bool isOpenBuyout
+        bool isOpenTwap 
     ) external returns (address newFragment, address newDvm, address newFeeDistributor) {
-        require(msg.sender == collateralVault, "NEED_BE_CALLED_BY_VAULT");
-
         newFragment = ICloneFactory(_CLONE_FACTORY_).clone(_FRAG_TEMPLATE_);
         address _quoteToken = quoteToken == _ETH_ADDRESS_ ? _WETH_ : quoteToken;
-        
-        {
-        uint256[] memory  _dvmParams = dvmParams;
-        uint256[] memory  _fragParams = fragParams;
-        
-        newDvm = IDODOV2(_DVM_FACTORY_).createDODOVendingMachine(
-            newFragment,
-            _quoteToken,
-            _dvmParams[0],
-            _dvmParams[1],
-            _dvmParams[2],
-            false
-        );
-
-        IFragment(newFragment).init(
-            newDvm, 
-            vaultPreOwner, 
-            msg.sender, 
-            _fragParams[0], 
-            _fragParams[1], 
-            _fragParams[2], 
-            isOpenBuyout
-        );
-        }
-
-        ICollateralVault(msg.sender).directTransferOwnership(newFragment);
-        
         
         if(stakeToken == address(0)) {
             newFeeDistributor = address(0);
@@ -134,7 +116,34 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
             IFeeDistributor(newFeeDistributor).init(newFragment, _quoteToken, stakeToken);
         }
 
-        IDODONFTRegistry(_NFT_REGISTY_).addRegistry(msg.sender, newFragment, newFeeDistributor, newDvm);
+        {
+        uint256[] memory  _dvmParams = dvmParams;
+        uint256[] memory  _fragParams = fragParams;
+        
+        newDvm = ICloneFactory(_CLONE_FACTORY_).clone(_DVM_TEMPLATE_);
+        IDVM(newDvm).init(
+            newFeeDistributor == address(0) ? _DEFAULT_MAINTAINER_ : newFeeDistributor,
+            newFragment,
+            _quoteToken,
+            _dvmParams[0],
+            _createConstantMtFeeRateModel(_dvmParams[1]),
+            _dvmParams[2],
+            _dvmParams[3],
+            isOpenTwap
+        );
+        IFragment(newFragment).init(
+            newDvm, 
+            vaultPreOwner, 
+            msg.sender, 
+            _fragParams[0], 
+            _fragParams[1], 
+            _fragParams[2]
+        );
+        }
+
+        ICollateralVault(msg.sender).directTransferOwnership(newFragment);
+        
+        IDODONFTRegistry(_NFT_REGISTY_).addRegistry(msg.sender, newFragment, _quoteToken, newFeeDistributor, newDvm);
 
         emit CreateFragment(msg.sender, newFragment, newDvm, newFeeDistributor);
     }
@@ -173,6 +182,23 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
     function updateFeeTemplate(address newFeeTemplate) external onlyOwner {
         _FEE_TEMPLATE_ = newFeeTemplate;
         emit ChangeFeeTemplate(newFeeTemplate);
+    }
+
+    function updateMtFeeTemplate(address newMtFeeTemplate) external onlyOwner {
+        _MTFEE_TEMPLATE_ = newMtFeeTemplate;
+        emit ChangeMtFeeTemplate(newMtFeeTemplate);
+    }
+
+    function updateDvmTemplate(address newDvmTemplate) external onlyOwner {
+        _DVM_TEMPLATE_ = newDvmTemplate;
+        emit ChangeDvmTemplate(newDvmTemplate);
+    }
+
+    //============= Internal ================
+
+    function _createConstantMtFeeRateModel(uint256 mtFee) internal returns (address mtFeeModel) {
+        mtFeeModel = ICloneFactory(_CLONE_FACTORY_).clone(_MTFEE_TEMPLATE_);
+        IConstFeeRateModel(mtFeeModel).init(mtFee);
     }
 
 

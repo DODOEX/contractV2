@@ -6,31 +6,21 @@
 */
 
 pragma solidity 0.6.9;
-pragma experimental ABIEncoderV2;
-
-import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 
 interface IConstFeeRateModel {
-    function init(address owner, uint256 feeRate) external;
+    function init(uint256 feeRate) external;
 
-    function setFeeRate(uint256 newFeeRate) external;
-
-    function getFeeRate(address trader) external view returns (uint256);
+    function getFeeRate(address) external view returns (uint256);
 }
 
-contract ConstFeeRateModel is InitializableOwnable {
+contract ConstFeeRateModel {
     uint256 public _FEE_RATE_;
 
-    function init(address owner, uint256 feeRate) external {
-        initOwner(owner);
+    function init(uint256 feeRate) external {
         _FEE_RATE_ = feeRate;
     }
 
-    function setFeeRate(uint256 newFeeRate) external onlyOwner {
-        _FEE_RATE_ = newFeeRate;
-    }
-
-    function getFeeRate(address trader) external view returns (uint256) {
+    function getFeeRate(address) external view returns (uint256) {
         return _FEE_RATE_;
     }
 }
