@@ -49,8 +49,7 @@ contract Fragment is InitializableERC20 {
       address collateralVault,
       uint256 totalSupply, 
       uint256 ownerRatio,
-      uint256 buyoutTimestamp,
-      bool isOpenBuyout
+      uint256 buyoutTimestamp
     ) external {
         require(!_FRAG_INITIALIZED_, "DODOFragment: ALREADY_INITIALIZED");
         _FRAG_INITIALIZED_ = true;
@@ -61,7 +60,6 @@ contract Fragment is InitializableERC20 {
         _VAULT_PRE_OWNER_ = vaultPreOwner;
         _COLLATERAL_VAULT_ = collateralVault;
         _BUYOUT_TIMESTAMP_ = buyoutTimestamp;
-        _IS_OPEN_BUYOUT_ = isOpenBuyout;
 
         // init FRAG meta data
         string memory prefix = "FRAG_";
@@ -81,7 +79,7 @@ contract Fragment is InitializableERC20 {
 
 
     function buyout(address newVaultOwner) external {
-      require(_IS_OPEN_BUYOUT_, "DODOFragment: NOT_SUPPORT_BUYOUT");
+      require(_BUYOUT_TIMESTAMP_ == 0, "DODOFragment: NOT_SUPPORT_BUYOUT");
       require(block.timestamp > _BUYOUT_TIMESTAMP_, "DODOFragment: BUYOUT_NOT_START");
       require(!_IS_BUYOUT_, "DODOFragment: ALREADY_BUYOUT");
       _IS_BUYOUT_ = true;
@@ -133,7 +131,7 @@ contract Fragment is InitializableERC20 {
     }
 
     function getBuyoutRequirement() external view returns (uint256 requireQuote){
-      require(_IS_OPEN_BUYOUT_, "NOT SUPPORT BUYOUT");
+      require(_BUYOUT_TIMESTAMP_ == 0, "NOT SUPPORT BUYOUT");
       require(!_IS_BUYOUT_, "ALREADY BUYOUT");
       uint256 price = IDVM(_DVM_).getMidPrice();
       requireQuote = DecimalMath.mulCeil(price, totalSupply);

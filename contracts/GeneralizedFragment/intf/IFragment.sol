@@ -16,8 +16,7 @@ interface IFragment {
       address collateralVault,
       uint256 totalSupply, 
       uint256 ownerRatio,
-      uint256 buyoutTimestamp,
-      bool isOpenBuyout
+      uint256 buyoutTimestamp
     ) external;
 
     function buyout(address newVaultOwner) external;
