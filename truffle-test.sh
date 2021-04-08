@@ -56,6 +56,12 @@ then
 	truffle test ./test/DODOMineV2/vDODOMine.test.ts
 fi
 
+if [ "$1"x = "nft"x ]
+then
+	truffle test ./test/DODONFT/nftMainFlow.test.ts
+fi
+
+
 # if [ "$1"x = "route-incentive"x ]
 # then
 # 	truffle test ./test/Route/Incentive.test.ts
