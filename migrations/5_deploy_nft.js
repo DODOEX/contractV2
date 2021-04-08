@@ -23,10 +23,9 @@ module.exports = async (deployer, network, accounts) => {
     let WETHAddress = CONFIG.WETH;
     let DVMTemplateAddress = CONFIG.DVM;
     let CloneFactoryAddress = CONFIG.CloneFactory;
-    let DvmFactoryAddress = CONFIG.DVMFactory;
     let DODOApproveProxyAddress = CONFIG.DODOApproveProxy;
 
-    if (DvmFactoryAddress == "" || DODOApproveProxyAddress == "" || CloneFactoryAddress == "") return;
+    if (DODOApproveProxyAddress == "" || CloneFactoryAddress == "") return;
 
     let ConstFeeRateModelAddress = CONFIG.ConstFeeRateModel;
     let FeeDistributorAddress = CONFIG.FeeDistributor;
@@ -119,7 +118,6 @@ module.exports = async (deployer, network, accounts) => {
                 CloneFactoryAddress,
                 WETHAddress,
                 DODOApproveProxyAddress,
-                DvmFactoryAddress,
                 defaultMaintainer,
                 NFTCollateralVaultAddress,
                 FragmentAddress,

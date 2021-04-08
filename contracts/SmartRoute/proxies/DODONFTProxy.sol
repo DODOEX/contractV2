@@ -40,7 +40,6 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
     address public immutable _WETH_;
     address public immutable _DODO_APPROVE_PROXY_;
     address public immutable _CLONE_FACTORY_;
-    address public immutable _DVM_FACTORY_;
     address public immutable _NFT_REGISTY_;
     address public immutable _DEFAULT_MAINTAINER_;
 
@@ -70,7 +69,6 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
         address cloneFactory,
         address payable weth,
         address dodoApproveProxy,
-        address dvmFactory,
         address defaultMaintainer,
         address vaultTemplate,
         address fragTemplate,
@@ -82,7 +80,6 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
         _CLONE_FACTORY_ = cloneFactory;
         _WETH_ = weth;
         _DODO_APPROVE_PROXY_ = dodoApproveProxy;
-        _DVM_FACTORY_ = dvmFactory;
         _DEFAULT_MAINTAINER_ = defaultMaintainer;
         _VAULT_TEMPLATE_ = vaultTemplate;
         _FRAG_TEMPLATE_ = fragTemplate;

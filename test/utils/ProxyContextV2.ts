@@ -162,7 +162,7 @@ export class ProxyContext {
       [this.WETH.options.address]
     )
 
-    console.log(log.blueText("[Init DVM context]"));
+    console.log(log.blueText("[Init ProxyV2 context]"));
   }
 
   sendParam(sender, value = "0") {
