@@ -24,13 +24,13 @@ contract InitializableERC1155 is IERC165, IERC1155, IERC1155MetadataURI {
 
     string private _uri;
 
-
     function init(
+        address creator,
         uint256 amount,
         string memory baseUrI
     ) public {
         _setURI(baseUrI);
-        _mint(msg.sender, 0, amount ,"");
+        _mint(creator, 0, amount ,"");
     }
 
     function supportsInterface(bytes4 interfaceId) public view override returns (bool) {

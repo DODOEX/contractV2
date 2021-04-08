@@ -49,7 +49,7 @@ contract NFTTokenFactory {
         string memory baseUrl
     ) external returns (address newERC721) {
         newERC721 = ICloneFactory(_CLONE_FACTORY_).clone(_ERC721_TEMPLATE_);
-        InitializableERC721(newERC721).init("DODONFT", "DODONFT", baseUrl);
+        InitializableERC721(newERC721).init(msg.sender, "DODONFT", "DODONFT", baseUrl);
         _USER_ERC721_REGISTRY_[msg.sender].push(newERC721);
         emit NewERC721(newERC721, msg.sender);
     }
@@ -59,7 +59,7 @@ contract NFTTokenFactory {
         string memory baseUrl
     ) external returns (address newERC1155) {
         newERC1155 = ICloneFactory(_CLONE_FACTORY_).clone(_ERC1155_TEMPLATE_);
-        InitializableERC1155(newERC1155).init(amount, baseUrl);
+        InitializableERC1155(newERC1155).init(msg.sender, amount, baseUrl);
         _USER_ERC1155_REGISTRY_[msg.sender].push(newERC1155);
         emit NewERC1155(newERC1155, msg.sender);
     }

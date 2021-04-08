@@ -43,6 +43,7 @@ contract InitializableERC721 is IERC165, IERC721, IERC721Metadata {
 
 
     function init(
+        address creator,
         string memory name,
         string memory symbol,
         string memory baseUrI
@@ -50,7 +51,7 @@ contract InitializableERC721 is IERC165, IERC721, IERC721Metadata {
         _name = name;
         _symbol = symbol;
         _baseURI = baseUrI;
-        _safeMint(msg.sender, 0);
+        _mint(creator, 0);
     }
 
 
