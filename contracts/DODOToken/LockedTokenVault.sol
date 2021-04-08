@@ -113,6 +113,7 @@ contract LockedTokenVault is Ownable {
     // ============ For Holder ============
 
     function transferLockedToken(address to) external {
+        require(to != msg.sender, "INVALID_TO_ADDRESS");
         originBalances[to] = originBalances[to].add(originBalances[msg.sender]);
         claimedBalances[to] = claimedBalances[to].add(claimedBalances[msg.sender]);
 
