@@ -94,7 +94,8 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
         ICollateralVault(newVault).init(msg.sender, name, baseURI);
         emit CreateNFTCollateralVault(msg.sender, newVault, name, baseURI);
     }
-
+    
+    //Stake 碎片
     function createFragment(
         address quoteToken,
         address vaultPreOwner,

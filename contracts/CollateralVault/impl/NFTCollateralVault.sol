@@ -13,9 +13,10 @@ import {IERC721} from "../../intf/IERC721.sol";
 import {IERC721Receiver} from "../../intf/IERC721Receiver.sol";
 import {IERC1155} from "../../intf/IERC1155.sol";
 import {IERC1155Receiver} from "../../intf/IERC1155Receiver.sol";
+import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 
 
-contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Receiver {
+contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Receiver,ReentrancyGuard {
     using SafeMath for uint256;
 
     // ============ Storage ============
@@ -51,11 +52,11 @@ contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Re
         emit OwnershipTransferred(_OWNER_, newOwner);
     }
 
-    function createFragment(address nftProxy, bytes calldata data) external onlyOwner {
+    function createFragment(address nftProxy, bytes calldata data) external preventReentrant onlyOwner {
         require(nftProxy != address(0), "DODONftVault: PROXY_INVALID");
         _OWNER_ = nftProxy;
-        (bool success, ) = nftProxy.call(data);
-        require(success, "DODONftVault: TRANSFER_OWNER_FAILED");
+        nftProxy.call(data);
+        // require(success, "DODONftVault: TRANSFER_OWNER_FAILED");
         emit OwnershipTransferred(_OWNER_, nftProxy);
         emit CreateFragment();
     }
