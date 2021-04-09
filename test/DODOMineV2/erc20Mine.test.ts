@@ -299,37 +299,37 @@ describe("erc20Mine", () => {
             assert.equal(rewardBalance, "40000000000000000000");
         })
 
-        it("setReward - after", async () => {
-            var curBlock = await ctx.Web3.eth.getBlockNumber();
-            await addRewardToken(ctx, ctx.REWARD_1, curBlock + 2, curBlock + 10, decimalStr("10"));
+        // it("setReward - after", async () => {
+        //     var curBlock = await ctx.Web3.eth.getBlockNumber();
+        //     await addRewardToken(ctx, ctx.REWARD_1, curBlock + 2, curBlock + 10, decimalStr("10"));
 
-            //增加区块
-            await ctx.increBlock(3);
+        //     //增加区块
+        //     await ctx.increBlock(3);
 
-            await logGas(await ctx.ERC20Mine.methods.deposit(
-                decimalStr("10")
-            ), ctx.sendParam(account0), "deposit");
-            await logGas(await ctx.ERC20Mine.methods.deposit(
-                decimalStr("10")
-            ), ctx.sendParam(account1), "deposit");
+        //     await logGas(await ctx.ERC20Mine.methods.deposit(
+        //         decimalStr("10")
+        //     ), ctx.sendParam(account0), "deposit");
+        //     await logGas(await ctx.ERC20Mine.methods.deposit(
+        //         decimalStr("10")
+        //     ), ctx.sendParam(account1), "deposit");
 
-            //增加区块
-            await ctx.increBlock(3);
+        //     //增加区块
+        //     await ctx.increBlock(3);
 
-            let [, pendingReward] = await getRewardInfo(ctx, 0, account0, "UserRewardInfo - After");
-            assert.equal(pendingReward, "25000000000000000000");
+        //     let [, pendingReward] = await getRewardInfo(ctx, 0, account0, "UserRewardInfo - After");
+        //     assert.equal(pendingReward, "25000000000000000000");
 
-            await ctx.ERC20Mine.methods.setReward(0, decimalStr("5")).send(ctx.sendParam(projector));
+        //     await ctx.ERC20Mine.methods.setReward(0, decimalStr("5")).send(ctx.sendParam(projector));
 
-            //增加区块
-            await ctx.increBlock(3);
+        //     //增加区块
+        //     await ctx.increBlock(3);
 
-            [, pendingReward] = await getRewardInfo(ctx, 0, account0, "UserRewardInfo - After");
-            await logGas(await ctx.ERC20Mine.methods.claimReward(0), ctx.sendParam(account0), "claimReward - 0");
+        //     [, pendingReward] = await getRewardInfo(ctx, 0, account0, "UserRewardInfo - After");
+        //     await logGas(await ctx.ERC20Mine.methods.claimReward(0), ctx.sendParam(account0), "claimReward - 0");
 
-            let rewardBalance = await ctx.REWARD_1.methods.balanceOf(account0).call();
-            assert.equal(rewardBalance, "25000000000000000000");
-        })
+        //     let rewardBalance = await ctx.REWARD_1.methods.balanceOf(account0).call();
+        //     assert.equal(rewardBalance, "25000000000000000000");
+        // })
 
         it("setEndBlock", async () => {
             var curBlock = await ctx.Web3.eth.getBlockNumber();

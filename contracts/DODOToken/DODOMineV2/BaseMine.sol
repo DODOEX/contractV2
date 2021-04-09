@@ -44,7 +44,7 @@ contract BaseMine is InitializableOwnable {
     event UpdateEndBlock(uint256 indexed i, uint256 endBlock);
     event NewRewardToken(uint256 indexed i, address rewardToken);
     event RemoveRewardToken(address rewardToken);
-
+    event WithdrawLeftOver(address owner, uint256 i);
 
     // ============ View  ============
 
@@ -176,8 +176,20 @@ contract BaseMine is InitializableOwnable {
     {
         _updateReward(address(0), i);
         RewardTokenInfo storage rt = rewardTokenInfos[i];
+        
+        require(block.number < rt.endBlock, "DODOMineV2: ALREADY_CLOSE");
+
         rt.rewardPerBlock = newRewardPerBlock;
         emit UpdateReward(i, newRewardPerBlock);
+    }
+
+    function withdrawLeftOver(uint256 i) external onlyOwner {
+        RewardTokenInfo storage rt = rewardTokenInfos[i];
+        require(block.number > rt.endBlock, "DODOMineV2: MINING_NOT_FINISHED");
+
+        IRewardVault(rt.rewardVault).withdrawLeftOver(msg.sender);
+
+        emit WithdrawLeftOver(msg.sender, i);
     }
 
 

@@ -14,6 +14,7 @@ import {IERC20} from "../../intf/IERC20.sol";
 
 interface IRewardVault {
     function reward(address to, uint256 amount) external;
+    function withdrawLeftOver(address to) external; 
 }
 
 contract RewardVault is Ownable {
@@ -27,5 +28,10 @@ contract RewardVault is Ownable {
 
     function reward(address to, uint256 amount) external onlyOwner {
         IERC20(rewardToken).safeTransfer(to, amount);
+    }
+
+    function withdrawLeftOver(address to) external onlyOwner {
+        uint256 leftover = IERC20(rewardToken).balanceOf(address(this));
+        IERC20(rewardToken).safeTransfer(to, leftover);
     }
 }
