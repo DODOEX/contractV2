@@ -1,9 +1,13 @@
+/*
+
+    Copyright 2020 DODO ZOO.
+    SPDX-License-Identifier: Apache-2.0
+
+*/
+
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {IDODOV2Proxy01} from "../intf/IDODOV2Proxy01.sol";
-import {IDODOV2} from "../intf/IDODOV2.sol";
-import {IDODOV1} from "../intf/IDODOV1.sol";
 import {IDODOApproveProxy} from "../DODOApproveProxy.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {IWETH} from "../../intf/IWETH.sol";
@@ -59,40 +63,40 @@ contract DODORouteProxy {
     }
 
     function dodoMutliSwap(
-        address _fromToken,
-        address _toToken,
-        uint256 _fromTokenAmount,
+        uint256 fromTokenAmount,
         uint256 minReturnAmount,
         uint256[] memory totalWeight,
+        uint256[] memory splitNumber,
         address[] memory midToken,
-        uint256[] calldata splitNumber,
-        bytes[] calldata sequence,
         address[] memory assetFrom,
+        bytes[] memory sequence,
         uint256 deadLine
     ) external payable judgeExpired(deadLine) returns (uint256 returnAmount) {
-        require(midToken[0] == _fromToken && midToken[midToken.length - 1] == _toToken, 'RABMixSwap: INVALID_PATH');
-        require(assetFrom.length == splitNumber.length+1, 'RABMixSwap: PAIR_ASSETTO_NOT_MATCH');        
-        require(minReturnAmount > 0, "RABMixSwap: RETURN_AMOUNT_ZERO");
+        require(assetFrom.length == splitNumber.length + 1, 'DODORouteProxy: PAIR_ASSETTO_NOT_MATCH');        
+        require(minReturnAmount > 0, "DODORouteProxy: RETURN_AMOUNT_ZERO");
+        
+        uint256 _fromTokenAmount = fromTokenAmount;
+        address fromToken = midToken[0];
+        address toToken = midToken[midToken.length - 1];
 
-        uint256 toTokenOriginBalance = IERC20(_toToken).universalBalanceOf(msg.sender);
-        _deposit(msg.sender, assetFrom[0], _fromToken, _fromTokenAmount, _fromToken == _ETH_ADDRESS_);
-        _RABHelper(totalWeight, midToken, splitNumber, sequence, assetFrom);
+        uint256 toTokenOriginBalance = IERC20(toToken).universalBalanceOf(msg.sender);
+        _deposit(msg.sender, assetFrom[0], fromToken, _fromTokenAmount, fromToken == _ETH_ADDRESS_);
+
+        _multiSwap(totalWeight, midToken, splitNumber, sequence, assetFrom);
     
-
-        if(_toToken == _ETH_ADDRESS_) {
+        if(toToken == _ETH_ADDRESS_) {
             returnAmount = IWETH(_WETH_).balanceOf(address(this));
             IWETH(_WETH_).withdraw(returnAmount);
             msg.sender.transfer(returnAmount);
         }else {
-            returnAmount = IERC20(_toToken).tokenBalanceOf(msg.sender).sub(toTokenOriginBalance);
+            returnAmount = IERC20(toToken).tokenBalanceOf(msg.sender).sub(toTokenOriginBalance);
         }
 
-        require(returnAmount >= minReturnAmount, "RABMixSwap: Return amount is not enough");
+        require(returnAmount >= minReturnAmount, "DODORouteProxy: Return amount is not enough");
     
-
         emit OrderHistory(
-            _fromToken,
-            _toToken,
+            fromToken,
+            toToken,
             msg.sender,
             _fromTokenAmount,
             returnAmount
@@ -102,10 +106,10 @@ contract DODORouteProxy {
     
     //====================== internal =======================
 
-    function _RABHelper(
+    function _multiSwap(
         uint256[] memory totalWeight,
         address[] memory midToken,
-        uint256[] memory splitNumberHelp,
+        uint256[] memory splitNumber,
         bytes[] memory swapSequence,
         address[] memory assetFrom
     ) internal { 
@@ -120,12 +124,7 @@ contract DODORouteProxy {
                 uint256 weight = (0xffff & mixPara) >> 9;
                 uint256 poolEdition = (0xff & mixPara);
 
-                //uint256 poolWeight = swapSequence[j][i].weight;
-                //address pool = swapSequence[j][i].pool;
-
-                //require(poolWeight < curTotalWeight, 'RABMixSwap: INVALID_SUBWEIGHT');
-
-                if(assetFrom[j] == address(this)) {
+                if(assetFrom[i] == address(this)) {
                     uint256 curAmount = curTotalAmount.div(curTotalWeight).mul(weight);
             
                     if(poolEdition == 1) {  
@@ -144,17 +143,7 @@ contract DODORouteProxy {
                 }
             }
         }
-
     }
-
-    /*
-    function _decodeSwap(bytes calldata originData) internal returns (address _pool, address _adapter, uint256 _direction, uint256 _weight) {
-        for(uint256 i = 0; i < originData.length; ++i) {
-            bytes memory tmpData = originData[i];
-            (address _pool, address _adapter, uint256 _direction, uint256 _weight) = abi.decode(tmpData, (address, address, uint256, uint256));
-        }   
-    }
-    */
 
     function _deposit(
         address from,
@@ -170,24 +159,6 @@ contract DODORouteProxy {
             }
         } else {
             IDODOApproveProxy(_DODO_APPROVE_PROXY_).claimTokens(token, from, to, amount);
-        }
-    }
-
-    function _withdraw(
-        address payable to,
-        address token,
-        uint256 amount,
-        bool isETH
-    ) internal {
-        if (isETH) {
-            if (amount > 0) {
-                IWETH(_WETH_).withdraw(amount);
-                to.transfer(amount);
-            }
-        } else {
-            if (amount > 0) {
-                SafeERC20.safeTransfer(IERC20(token), to, amount);
-            }
         }
     }
 }
