@@ -85,8 +85,43 @@ describe("DODONFT", () => {
             assert(nftInfo.tokenId, '0')
         });
 
-        it("createFragment", async () => {
-            
+        it.only("createFragment", async () => {
+            var erc721Address = await createERC721(ctx);
+            var vaultAddress = await createNFTVault(ctx);
+            var nftVaultInstance = contracts.getContractWithAddress(contracts.NFT_VAULT, vaultAddress);
+            var erc721Instance = contracts.getContractWithAddress(contracts.ERC721, erc721Address);
+            await erc721Instance.methods.safeTransferFrom(author, vaultAddress, 0).send(ctx.sendParam(author));
+
+            var quoteToken = ctx.USDT.options.address;
+            var vaultPreOwner = author;
+            var stakeToken = "0x0000000000000000000000000000000000000000";
+            var dvmParams = [
+                "0",
+                "10000000000000000",
+                "1000000",
+                "1000000000000000000"
+            ];
+            var fragParams = [
+                "100000000000000000000000000",
+                "200000000000000000",
+                "1617976800"
+            ]
+            var isOpenTwap = false
+            var callData = ctx.NFTProxy.methods.createFragment(
+                quoteToken,
+                vaultPreOwner,
+                stakeToken,
+                dvmParams,
+                fragParams,
+                isOpenTwap
+            ).encodeABI();
+            console.log("data:",callData);
+
+            await logGas(await nftVaultInstance.methods.createFragment(
+                ctx.NFTProxy.options.address,
+                callData
+            ), ctx.sendParam(author), "createFragment");
+
         });
 
         it("stakeToFeeDistributor", async () => {

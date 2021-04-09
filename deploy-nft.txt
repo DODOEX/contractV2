@@ -26,3 +26,35 @@ Deploy type: NFT
 multiSigAddress:  0x7e83d9d94837eE82F0cc18a691da6f42F03F1d86
 DODOApproveProxy unlockAddProxy tx:  0xfda8786e258102a264db7642e6dcdd86780f30747eb3fc8f9bea2db7dfa8aefa
 DODOApproveProxy addDODOProxy tx:  0x899bfa16da6c91141e120bb00687c614fbbe8181bdbcb027315fcc0c9a9a76c5
+====================================================
+network type: kovan
+Deploy time: 2021/4/9 上午9:59:52
+Deploy type: NFT
+multiSigAddress:  0x7e83d9d94837eE82F0cc18a691da6f42F03F1d86
+====================================================
+network type: kovan
+Deploy time: 2021/4/9 上午10:06:22
+Deploy type: NFT
+multiSigAddress:  0x7e83d9d94837eE82F0cc18a691da6f42F03F1d86
+ERC721Address:  0x7563414479593394460d1bbaFE2Fc3E29D804007
+ERC1155Address:  0xb971B0df71fB1778351F25a0e3bfe0C3eF06E1d1
+NFTTokenFactoryAddress:  0x38c109aF4f3454172BA4eecf5676aA213b589e75
+DODONFTRouteHelperAddress:  0xAE683548702be6d651e179e5F9313272bb18596A
+DODOApproveProxy unlockAddProxy tx:  0xd95d184faf652a03e2e7261d352fbf6586d9720d687da356f71a601423f58442
+DODOApproveProxy addDODOProxy tx:  0x379ae35106f43b77488adce056f37903f035c1a372a1b6ec64adbe9eaeef8b2d
+====================================================
+network type: kovan
+Deploy time: 2021/4/9 下午2:35:06
+Deploy type: NFT
+multiSigAddress:  0x7e83d9d94837eE82F0cc18a691da6f42F03F1d86
+NFTTokenFactoryAddress:  0x0Fb11568CE1Ca7ED643C7ccb249331e19F3742b0
+====================================================
+network type: kovan
+Deploy time: 2021/4/9 下午2:37:51
+Deploy type: NFT
+multiSigAddress:  0x7e83d9d94837eE82F0cc18a691da6f42F03F1d86
+NFTCollateralVaultAddress:  0x5a317a617FBF89d55bBfe40A76E526FCD74E4545
+DODONFTProxyAddress:  0x41c5eDe987bd61c75925Ab2657256D75270a55D4
+Init DODONFTProxyAddress Tx: 0x8193cc72ebbc27e024d44f25cad6bb74def48130339f4ab589989dbb6a157ad6
+DODOApproveProxy unlockAddProxy tx:  0xef8154df211142848d99cbd5c80410ca32fa4503b9715642aa463c0d77aecdc8
+DODOApproveProxy addDODOProxy tx:  0x01ec3075e3bc5a27f2cd8eeb0a8d86b2aad7f80981fd48fc6fcb3bc527ebcb61

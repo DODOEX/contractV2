@@ -11,6 +11,7 @@ const Fragment = artifacts.require("Fragment");
 const FeeDistributor = artifacts.require("FeeDistributor");
 const DODONFTRegistry = artifacts.require("DODONFTRegistry");
 const DODONFTProxy = artifacts.require("DODONFTProxy");
+const DODONFTRouteHelper = artifacts.require("DODONFTRouteHelper");
 
 const InitializableERC721 = artifacts.require("InitializableERC721");
 const InitializableERC1155 = artifacts.require("InitializableERC1155");
@@ -31,6 +32,7 @@ module.exports = async (deployer, network, accounts) => {
     let FeeDistributorAddress = CONFIG.FeeDistributor;
     let FragmentAddress = CONFIG.Fragment;
     let NFTCollateralVaultAddress = CONFIG.NFTCollateralVault;
+    let DODONFTRouteHelperAddress = CONFIG.DODONFTRouteHelper;
 
     let DODONFTRegistryAddress = CONFIG.DODONFTRegistry;
     let DODONFTProxyAddress = CONFIG.DODONFTProxy;
@@ -81,13 +83,31 @@ module.exports = async (deployer, network, accounts) => {
             const DODONFTRegistrynstance = await DODONFTRegistry.at(DODONFTRegistryAddress);
             var tx = await DODONFTRegistrynstance.initOwner(multiSigAddress);
             logger.log("Init DODONFTRegistryAddress Tx:", tx.tx);
+
+            await deployer.deploy(
+                DODONFTRouteHelper,
+                DODONFTRegistryAddress
+            );
+            DODONFTRouteHelperAddress = DODONFTRouteHelper.address;
+            logger.log("DODONFTRouteHelperAddress: ", DODONFTRouteHelperAddress);
+        }
+
+
+        //DODONFTRouteHelper
+        if (DODONFTRouteHelperAddress == "") {
+            await deployer.deploy(
+                DODONFTRouteHelper,
+                DODONFTRegistryAddress
+            );
+            DODONFTRouteHelperAddress = DODONFTRouteHelper.address;
+            logger.log("DODONFTRouteHelperAddress: ", DODONFTRouteHelperAddress);
         }
 
         //Vault
         if (NFTCollateralVaultAddress == "") {
             await deployer.deploy(NFTCollateralVault);
-            NFTTokenFactoryAddress = NFTCollateralVault.address;
-            logger.log("NFTTokenFactoryAddress: ", NFTTokenFactoryAddress);
+            NFTCollateralVaultAddress = NFTCollateralVault.address;
+            logger.log("NFTCollateralVaultAddress: ", NFTCollateralVaultAddress);
         }
 
         //Frag

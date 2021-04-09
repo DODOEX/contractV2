@@ -64,13 +64,14 @@ module.exports = {
         ConstFeeRateModel: "0xBDAcEcF886a4F0C509260d9678D5673C3E8fa4b7",
         FeeDistributor: "0x989F9eFaA19c6A06945Db4439b9a7935dD573A66",
         Fragment: "0x36ed21f19B0cf0c1E571A8C3A6953a5778E48B5a",
-        NFTCollateralVault: "0x78B7AFf2E5fA95B1E7E16679645FB65a850ed6AB",
+        NFTCollateralVault: "0x5a317a617FBF89d55bBfe40A76E526FCD74E4545",
+        DODONFTRouteHelper: "0xAE683548702be6d651e179e5F9313272bb18596A",
 
-        InitializableERC721: "",
-        InitializableERC1155: "",
-        NFTTokenFactory: "",
+        InitializableERC721: "0x7563414479593394460d1bbaFE2Fc3E29D804007",
+        InitializableERC1155: "0xb971B0df71fB1778351F25a0e3bfe0C3eF06E1d1",
+        NFTTokenFactory: "0x38c109aF4f3454172BA4eecf5676aA213b589e75",
 
         DODONFTRegistry: "0xF405372b7808363DCfbb5Eb81204889B7a69Aa3e",
-        DODONFTProxy: "0x41Eb1FFC3d6474Ee4f4Aaf335a09cD411ADDDf1f",
+        DODONFTProxy: "0x41c5eDe987bd61c75925Ab2657256D75270a55D4",
     }
 }
