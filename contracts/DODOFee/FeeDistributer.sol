@@ -136,6 +136,7 @@ contract FeeDistributor {
     }
 }
 
+
 contract StakeVault is Ownable {
     using SafeERC20 for IERC20;
     
@@ -144,6 +145,8 @@ contract StakeVault is Ownable {
         uint256 amount,
         address to
     ) external onlyOwner {
-        IERC20(token).safeTransfer(to, amount);
+        if (amount > 0) {
+            IERC20(token).safeTransfer(to, amount);
+        }
     }
 }

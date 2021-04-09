@@ -92,9 +92,12 @@ describe("DODONFT", () => {
             var erc721Instance = contracts.getContractWithAddress(contracts.ERC721, erc721Address);
             await erc721Instance.methods.safeTransferFrom(author, vaultAddress, 0).send(ctx.sendParam(author));
 
-            var quoteToken = ctx.USDT.options.address;
-            var vaultPreOwner = author;
-            var stakeToken = "0x0000000000000000000000000000000000000000";
+            var quoteToken = "0x156595bAF85D5C29E91d959889B022d952190A64";
+            var vaultPreOwner = "0xaac153c1344cA14497A5dd22b1F70C28793625aa";
+            var stakeToken = "0x854b0f89BAa9101e49Bfb357A38071C9db5d0DFa";
+            // var quoteToken = ctx.USDT.options.address;
+            // var vaultPreOwner = author;
+            // var stakeToken = "0x0000000000000000000000000000000000000000";
             var dvmParams = [
                 "0",
                 "10000000000000000",
@@ -117,10 +120,12 @@ describe("DODONFT", () => {
             ).encodeABI();
             console.log("data:",callData);
 
-            await logGas(await nftVaultInstance.methods.createFragment(
-                ctx.NFTProxy.options.address,
-                callData
-            ), ctx.sendParam(author), "createFragment");
+            // var tx = await logGas(await nftVaultInstance.methods.createFragment(
+            //     ctx.NFTProxy.options.address,
+            //     callData
+            // ), ctx.sendParam(author), "createFragment");
+
+            // console.log("tx:",tx);
 
         });
 

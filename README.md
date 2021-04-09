@@ -8,6 +8,8 @@
 
 - contracts/external/ERC1155/
 
+- contracts/external/ERC20/InitializableERC20.sol
+
 - contracts/Factory/Registries/
 
 - contracts/Factory/NFTTokenFactory.sol

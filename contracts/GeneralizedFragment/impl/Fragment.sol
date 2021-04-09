@@ -70,8 +70,8 @@ contract Fragment is InitializableERC20 {
 
         // init FRAG distribution
         uint256 vaultPreOwnerBalance = DecimalMath.mulFloor(totalSupply, ownerRatio);
-        transfer(_VAULT_PRE_OWNER_,vaultPreOwnerBalance);
-        transfer(_DVM_,totalSupply.sub(vaultPreOwnerBalance));
+        _transfer(address(this), _VAULT_PRE_OWNER_, vaultPreOwnerBalance);
+        _transfer(address(this), _DVM_, totalSupply.sub(vaultPreOwnerBalance));
 
         // init DVM liquidity
         IDVM(_DVM_).buyShares(address(this));

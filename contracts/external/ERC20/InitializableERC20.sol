@@ -43,12 +43,7 @@ contract InitializableERC20 {
     }
 
     function transfer(address to, uint256 amount) public returns (bool) {
-        require(to != address(0), "TO_ADDRESS_IS_EMPTY");
-        require(amount <= balances[msg.sender], "BALANCE_NOT_ENOUGH");
-
-        balances[msg.sender] = balances[msg.sender].sub(amount);
-        balances[to] = balances[to].add(amount);
-        emit Transfer(msg.sender, to, amount);
+        _transfer(msg.sender, to, amount);
         return true;
     }
 
@@ -81,4 +76,16 @@ contract InitializableERC20 {
     function allowance(address owner, address spender) public view returns (uint256) {
         return allowed[owner][spender];
     }
+
+    function _transfer(address sender, address recipient, uint256 amount) internal {
+        require(sender != address(0), "FROM_ADDRESS_IS_EMPTY");
+        require(recipient != address(0), "TO_ADDRESS_IS_EMPTY");
+        require(amount <= balances[sender], "BALANCE_NOT_ENOUGH");
+
+        balances[sender] = balances[sender].sub(amount);
+        balances[recipient] = balances[recipient].add(amount);
+
+        emit Transfer(sender, recipient, amount);
+    }
+
 }
