@@ -183,11 +183,11 @@ contract BaseMine is InitializableOwnable {
         emit UpdateReward(i, newRewardPerBlock);
     }
 
-    function withdrawLeftOver(uint256 i) external onlyOwner {
+    function withdrawLeftOver(uint256 i, uint256 amount) external onlyOwner {
         RewardTokenInfo storage rt = rewardTokenInfos[i];
         require(block.number > rt.endBlock, "DODOMineV2: MINING_NOT_FINISHED");
 
-        IRewardVault(rt.rewardVault).withdrawLeftOver(msg.sender);
+        IRewardVault(rt.rewardVault).withdrawLeftOver(msg.sender,amount);
 
         emit WithdrawLeftOver(msg.sender, i);
     }
