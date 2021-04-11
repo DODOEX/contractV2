@@ -95,11 +95,10 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
         emit CreateNFTCollateralVault(msg.sender, newVault, name, baseURI);
     }
     
-    //Stake 碎片
     function createFragment(
         address quoteToken,
         address vaultPreOwner,
-        address stakeToken,
+        address stakeToken, //address(0) using frag token
         uint256[] calldata dvmParams, //0 - lpFeeRate, 1 - mtFeeRate 2 - I, 3 - K
         uint256[] calldata fragParams, //0 - totalSupply, 1 - ownerRatio, 2 - buyoutTimestamp
         bool isOpenTwap 
@@ -108,11 +107,11 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
         address _quoteToken = quoteToken == _ETH_ADDRESS_ ? _WETH_ : quoteToken;
         
         if(stakeToken == address(0)) {
-            newFeeDistributor = address(0);
-        } else {
-            newFeeDistributor = ICloneFactory(_CLONE_FACTORY_).clone(_FEE_TEMPLATE_);
-            IFeeDistributor(newFeeDistributor).init(newFragment, _quoteToken, stakeToken);
-        }
+            stakeToken = newFragment;
+        } 
+
+        newFeeDistributor = ICloneFactory(_CLONE_FACTORY_).clone(_FEE_TEMPLATE_);
+        IFeeDistributor(newFeeDistributor).init(newFragment, _quoteToken, stakeToken);
 
         {
         uint256[] memory  _dvmParams = dvmParams;
@@ -161,7 +160,9 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
         uint256 stakeAmount,
         uint8 flag // 0 - ERC20, 1 - ETH
     ) external payable preventReentrant {
-        _deposit(msg.sender, feeDistributor, IFeeDistributor(feeDistributor)._STAKE_TOKEN_(), stakeAmount, flag == 1);
+        address stakeVault = IFeeDistributor(feeDistributor)._STAKE_VAULT_();
+        require(stakeVault != address(0), "DODONFTProxy:STAKE_VAULT_EMPTY");
+        _deposit(msg.sender, stakeVault, IFeeDistributor(feeDistributor)._STAKE_TOKEN_(), stakeAmount, flag == 1);
         IFeeDistributor(feeDistributor).stake(msg.sender);
         emit Stake(msg.sender, feeDistributor, stakeAmount);
     }
