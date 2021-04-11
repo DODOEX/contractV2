@@ -18,4 +18,6 @@ interface IFeeDistributor {
 
     function _STAKE_TOKEN_() external view returns(address);
 
+    function _STAKE_VAULT_() external view returns(address);
+
 }

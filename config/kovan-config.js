@@ -62,7 +62,7 @@ module.exports = {
 
         //================== NFT ====================
         ConstFeeRateModel: "0xBDAcEcF886a4F0C509260d9678D5673C3E8fa4b7",
-        FeeDistributor: "0x1eD92Fe9c3AE1cC427004eC27AAd96df4928B3ec",
+        FeeDistributor: "",
         Fragment: "0x64193839f8b6e85A257411a945085783cbA9976B",
         NFTCollateralVault: "0xFDf7604649dfBb733e784afAEdC19892706cc683",
         DODONFTRouteHelper: "0xAE683548702be6d651e179e5F9313272bb18596A",
@@ -72,6 +72,6 @@ module.exports = {
         NFTTokenFactory: "0x38c109aF4f3454172BA4eecf5676aA213b589e75",
 
         DODONFTRegistry: "0xF405372b7808363DCfbb5Eb81204889B7a69Aa3e",
-        DODONFTProxy: "0x622332C5e5B3E8B67Aee300184Ce024E428A89f8",
+        DODONFTProxy: "",
     }
 }
