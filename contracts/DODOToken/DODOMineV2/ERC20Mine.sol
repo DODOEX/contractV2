@@ -18,9 +18,10 @@ contract ERC20Mine is BaseMine {
 
     // ============ Storage ============
 
-    address public immutable _TOKEN_;
+    address public _TOKEN_;
 
-    constructor(address token) public {
+    function init(address owner, address token) external {
+        super.initOwner(owner);
         _TOKEN_ = token;
     }
 

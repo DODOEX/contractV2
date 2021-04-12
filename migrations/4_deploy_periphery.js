@@ -52,20 +52,18 @@ module.exports = async (deployer, network, accounts) => {
         var erc20TokenAddress = "0xd8C30a4E866B188F16aD266dC3333BD47F34ebaE";
         var owner = multiSigAddress;
 
-        await deployer.deploy(
-            ERC20Mine,
-            erc20TokenAddress
-        );
+        await deployer.deploy(ERC20Mine);
+
         logger.log("erc20Mine address: ", ERC20Mine.address);
         const erc20MineInstance = await ERC20Mine.at(ERC20Mine.address);
-        var tx = await erc20MineInstance.initOwner(owner);
+        var tx = await erc20MineInstance.init(owner, erc20TokenAddress);
         logger.log("Init ERC20Mine Tx:", tx.tx);
 
         //add Token
         var reward0Token = "0xd7f02d1b4f9495b549787808503ecfd231c3fbda"
         var reward1Token = "0xfe1133ea03d701c5006b7f065bbf987955e7a67c"
         var rewardPerBlock = "100000000000000000" //0.1
-        var startBlock = 24229900
+        var startBlock = 24231000
         var endBlock = 24270000
         tx = await erc20MineInstance.addRewardToken(
             reward0Token,
@@ -82,8 +80,10 @@ module.exports = async (deployer, network, accounts) => {
             endBlock
         );
         logger.log("Add rewardToken1 Tx:", tx.tx);
-
-        //transfer Token to vault
+        
+        //init
+        //addToken
+        //TransferToken
     }
 
     if(deploySwitch.LockedVault) {

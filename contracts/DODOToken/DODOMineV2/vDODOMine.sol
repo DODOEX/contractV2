@@ -21,9 +21,10 @@ contract vDODOMine is BaseMine {
     using SafeMath for uint256;
 
     // ============ Storage ============
-    address public immutable _vDODO_TOKEN_;
+    address public _vDODO_TOKEN_;
 
-    constructor(address vDODOToken) public {
+    function init(address owner, address vDODOToken) external {
+        super.initOwner(owner);
         _vDODO_TOKEN_ = vDODOToken;
     }
 

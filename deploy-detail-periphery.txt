@@ -335,3 +335,21 @@ erc20Mine address:  0x888B9d4C25664F8B1BF744e8F4397d1429314155
 Init ERC20Mine Tx: 0x993b5ccbc038eaeb58db7891f74eb53e4b47fada5051b179fbbf68351295d4d7
 Add rewardToken0 Tx: 0x78add1f55782e99e84bd0390049750c03b470bca1d4fbf0cd8b145c3945d43e8
 Add rewardToken1 Tx: 0x52edb6a993999817fe26acbd92c267b63ac36c94989f4f2676ba81b9c452dcce
+====================================================
+network type: kovan
+Deploy time: 2021/4/12 下午8:12:13
+Deploy type: ERC20Mine
+erc20Mine address:  0x3b5a083dB74A639CdB7940298783ec975cDdfe76
+Init ERC20Mine Tx: 0x318ecc12d9452f1b7e518cbce2eaf9d03e9f6b76d58863de3e5b6bcd88b4d90e
+====================================================
+network type: kovan
+Deploy time: 2021/4/12 下午8:15:52
+Deploy type: ERC20Mine
+erc20Mine address:  0x5cba33Ecd715c780922210758813Ad599E98bDB8
+Init ERC20Mine Tx: 0xf73f5b7a8694fcac91b9f72ac8b604389db792072fc4f4ef33c4bbea7c2ff510
+Add rewardToken0 Tx: 0xcee550cfc5fc52f9b0224247927ee63a4e9bf83ac0332c3b5c4979d2bb2d3088
+Add rewardToken1 Tx: 0xe5127653d59ba4530be0e2d873adc80191005ee1b131db45deb06d141975a4af
+====================================================
+network type: kovan
+Deploy time: 2021/4/12 下午8:32:13
+Deploy type: ERC20Mine
