@@ -120,3 +120,14 @@ Init DODONFTProxyAddress Tx: 0xdd8137f026d229e5d0ab796677627479896a38b065f6eb03f
 DODOApproveProxy unlockAddProxy tx:  0x68dcc65b77711dd5445d6bb0cf6710d45eb0fe17fa2bd9b9b240d8163dc8ea34
 DODOApproveProxy addDODOProxy tx:  0x4e5a77d040cdec2e62534fd16150e0c6a3375dbf3122c1a95d04625fdf4e9b89
 Add AdminList on DODONFTRegistry Tx: 0x7d84c1128c6f6779307df1d4c7e12f10353b78d1f520aecb5cafcb0218c57c58
+====================================================
+network type: kovan
+Deploy time: 2021/4/12 下午7:33:43
+Deploy type: NFT
+multiSigAddress:  0x7e83d9d94837eE82F0cc18a691da6f42F03F1d86
+FeeDistributorAddress:  0xdE39C2901e72A883f7446951fB533219F3622b87
+DODONFTProxyAddress:  0x0727dEd495E35f4bA4F5D64794145152301Db23f
+Init DODONFTProxyAddress Tx: 0x1ea94a3bedab5e35fec95071738066762a63253a68bc535ac4293bc8055fcd8d
+DODOApproveProxy unlockAddProxy tx:  0xb8472dd2df9baeeff89d982299cbfc2d90e18c20baff97577fba959541f2514f
+DODOApproveProxy addDODOProxy tx:  0x8aa82620b6735ddfad0d55d3e9a752c3056e7d83664077e0240c0215a2e0017d
+Add AdminList on DODONFTRegistry Tx: 0x20f41302401122d950049e66458f307257743c0d395e06af607215b0f2532643

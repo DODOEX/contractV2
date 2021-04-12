@@ -59,7 +59,8 @@ module.exports = {
     LockedVault:    false,
     MULTIHOP:       false,
     CpProxy:        false,
-    ERC20V2Factory: false
+    ERC20V2Factory: false,
+    DEPLOY_NFT:     false
   },
 
   networks: {
