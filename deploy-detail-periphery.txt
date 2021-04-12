@@ -319,3 +319,19 @@ Deploy time: 2021/4/6 下午9:02:51
 Deploy type: UpCrowdPoolingFactory
 UpCrowdPoolingFactory address:  0xF7c3467786efAA9BD4022941ecd5a00C61b17FA9
 Init UpCpFactory Tx: 0x27d493acbed5e6425c86a48fe8ebfd65a49b884570e44cb87a6164c902aa52c9
+====================================================
+network type: kovan
+Deploy time: 2021/4/12 下午5:24:15
+Deploy type: ERC20Mine
+====================================================
+network type: kovan
+Deploy time: 2021/4/12 下午5:32:39
+Deploy type: ERC20Mine
+====================================================
+network type: kovan
+Deploy time: 2021/4/12 下午5:34:36
+Deploy type: ERC20Mine
+erc20Mine address:  0x888B9d4C25664F8B1BF744e8F4397d1429314155
+Init ERC20Mine Tx: 0x993b5ccbc038eaeb58db7891f74eb53e4b47fada5051b179fbbf68351295d4d7
+Add rewardToken0 Tx: 0x78add1f55782e99e84bd0390049750c03b470bca1d4fbf0cd8b145c3945d43e8
+Add rewardToken1 Tx: 0x52edb6a993999817fe26acbd92c267b63ac36c94989f4f2676ba81b9c452dcce
