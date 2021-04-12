@@ -38,6 +38,8 @@ export const EXTERNAL_VALUE_NAME = "ExternalValue"
 export const FEE_RATE_MODEL_NAME = "FeeRateModel"
 export const DPP_NAME = "DPP"
 export const DPP_FACTORY_NAME = "DPPFactory"
+export const DSP_NAME = "DSP"
+export const DSP_FACTORY_NAME = "DSPFactory"
 export const SMART_APPROVE = "DODOApprove"
 export const SMART_APPROVE_PROXY = "DODOApproveProxy"
 export const DODO_SELL_HELPER = "DODOSellHelper"
@@ -50,6 +52,8 @@ export const VDODO_NAME = "vDODOToken"
 export const DODO_CULATION_HELPER = "DODOCirculationHelper"
 export const DODO_GOVERNANCE = "Governance"
 export const DODO_PROXY_NAME = "DODOV2Proxy02"
+export const ERC20_MINE = "ERC20Mine"
+export const VDODO_MINE = "vDODOMine"
 
 interface ContractJson {
   abi: any;

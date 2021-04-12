@@ -197,7 +197,8 @@ network type: kovan
 Deploy time: 2021/3/10 下午11:27:00
 Deploy type: UpCrowdPoolingFactory
 UpCrowdPoolingFactory address:  0xe1C4300B47ccE8B162D8d036Db356c563a904757
-Init UpCpFactory Tx: 0x97ad372abbb2321e24e3e388585d47f0b1120980566abc3268c8305b04dc61f7====================================================
+Init UpCpFactory Tx: 0x97ad372abbb2321e24e3e388585d47f0b1120980566abc3268c8305b04dc61f7
+====================================================
 network type: bsclive
 Deploy time: 2021/3/13 下午11:36:30
 Deploy type: UpCrowdPoolingFactory

@@ -25,7 +25,7 @@ contract LockedTokenVault is Ownable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    address _TOKEN_;
+    address public immutable _TOKEN_;
 
     mapping(address => uint256) internal originBalances;
     mapping(address => uint256) internal claimedBalances;

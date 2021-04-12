@@ -16,6 +16,7 @@ const DODOToken = artifacts.require("DODOToken");
 const UpCrowdPoolingFactory = artifacts.require("UpCrowdPoolingFactory");
 const CpFactory = artifacts.require("CrowdPoolingFactory");
 const MultiCall = artifacts.require("Multicall");
+const LockedTokenVault = artifacts.require("LockedTokenVault");
 
 module.exports = async (deployer, network, accounts) => {
     let CONFIG = GetConfig(network, accounts)
@@ -39,6 +40,22 @@ module.exports = async (deployer, network, accounts) => {
     let multiSigAddress = CONFIG.multiSigAddress;
     let defaultMaintainer = CONFIG.defaultMaintainer;
 
+    if(deploySwitch.LockedVault) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
+        logger.log("Deploy type: LockedVault");
+        await deployer.deploy(
+            LockedTokenVault,
+            "0xd8C30a4E866B188F16aD266dC3333BD47F34ebaE",
+            1616468400,
+            2592000,
+            "100000000000000000"
+        );
+        logger.log("LockedVault address: ", LockedTokenVault.address);
+        //TODO: approve && deposit
+    }
+    
     if (deploySwitch.UpCP) {
         logger.log("====================================================");
         logger.log("network type: " + network);
