@@ -6,7 +6,6 @@
 */
 
 pragma solidity 0.6.9;
-pragma experimental ABIEncoderV2;
 
 interface IDODOApprove {
     function claimTokens(address token,address who,address dest,uint256 amount) external;

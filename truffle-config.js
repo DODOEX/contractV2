@@ -58,7 +58,8 @@ module.exports = {
     DSP:            false,
     LockedVault:    false,
     MULTIHOP:       false,
-    CpProxy:        false
+    CpProxy:        false,
+    DEPLOY_NFT:     false
   },
 
   networks: {
