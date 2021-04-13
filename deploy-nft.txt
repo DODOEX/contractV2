@@ -132,82 +132,11 @@ DODOApproveProxy unlockAddProxy tx:  0xb8472dd2df9baeeff89d982299cbfc2d90e18c20b
 DODOApproveProxy addDODOProxy tx:  0x8aa82620b6735ddfad0d55d3e9a752c3056e7d83664077e0240c0215a2e0017d
 Add AdminList on DODONFTRegistry Tx: 0x20f41302401122d950049e66458f307257743c0d395e06af607215b0f2532643
 ====================================================
-network type: development
-Deploy time: 2021/4/12 下午9:22:30
+network type: kovan
+Deploy time: 2021/4/13 下午3:42:04
 Deploy type: NFT
-multiSigAddress:  undefined
-====================================================
-network type: development
-Deploy time: 2021/4/13 下午1:11:34
-Deploy type: NFT
-multiSigAddress:  undefined
-====================================================
-network type: development
-Deploy time: 2021/4/13 下午1:14:33
-Deploy type: NFT
-multiSigAddress:  undefined
-====================================================
-network type: development
-Deploy time: 2021/4/13 下午1:16:02
-Deploy type: NFT
-multiSigAddress:  undefined
-====================================================
-network type: development
-Deploy time: 2021/4/13 下午1:23:01
-Deploy type: NFT
-multiSigAddress:  undefined
-====================================================
-network type: development
-Deploy time: 2021/4/13 下午1:25:16
-Deploy type: NFT
-multiSigAddress:  undefined
-====================================================
-network type: development
-Deploy time: 2021/4/13 下午1:26:59
-Deploy type: NFT
-multiSigAddress:  undefined
-====================================================
-network type: development
-Deploy time: 2021/4/13 下午1:51:35
-Deploy type: NFT
-multiSigAddress:  undefined
-====================================================
-network type: development
-Deploy time: 2021/4/13 下午1:53:57
-Deploy type: NFT
-multiSigAddress:  undefined
-====================================================
-network type: development
-Deploy time: 2021/4/13 下午2:35:23
-Deploy type: NFT
-multiSigAddress:  undefined
-====================================================
-network type: development
-Deploy time: 2021/4/13 下午2:42:02
-Deploy type: NFT
-multiSigAddress:  undefined
-====================================================
-network type: development
-Deploy time: 2021/4/13 下午2:43:47
-Deploy type: NFT
-multiSigAddress:  undefined
-====================================================
-network type: development
-Deploy time: 2021/4/13 下午2:50:26
-Deploy type: NFT
-multiSigAddress:  undefined
-====================================================
-network type: development
-Deploy time: 2021/4/13 下午2:53:12
-Deploy type: NFT
-multiSigAddress:  undefined
-====================================================
-network type: development
-Deploy time: 2021/4/13 下午2:56:12
-Deploy type: NFT
-multiSigAddress:  undefined
-====================================================
-network type: development
-Deploy time: 2021/4/13 下午3:11:16
-Deploy type: NFT
-multiSigAddress:  undefined
+multiSigAddress:  0x7e83d9d94837eE82F0cc18a691da6f42F03F1d86
+FragmentAddress:  0x40F3bBe2f8C5F2E5f4adFf7d51f652F2B9F77315
+DODOApproveProxy unlockAddProxy tx:  0x78c7557de3325d8471bce3715070509a57b9db94e035178b8c65261393f463e1
+DODOApproveProxy addDODOProxy tx:  0x81723112e50c67f5bb6291bcbf52c8ea8f98c881185bcbf23a763aff29602ee9
+Add AdminList on DODONFTRegistry Tx: 0x72c664e55a09c59fbd46bd754482b4e56dd04560071e262253b7f7929a76ccb1
