@@ -131,3 +131,8 @@ Init DODONFTProxyAddress Tx: 0x1ea94a3bedab5e35fec95071738066762a63253a68bc535ac
 DODOApproveProxy unlockAddProxy tx:  0xb8472dd2df9baeeff89d982299cbfc2d90e18c20baff97577fba959541f2514f
 DODOApproveProxy addDODOProxy tx:  0x8aa82620b6735ddfad0d55d3e9a752c3056e7d83664077e0240c0215a2e0017d
 Add AdminList on DODONFTRegistry Tx: 0x20f41302401122d950049e66458f307257743c0d395e06af607215b0f2532643
+====================================================
+network type: development
+Deploy time: 2021/4/12 下午9:22:30
+Deploy type: NFT
+multiSigAddress:  undefined

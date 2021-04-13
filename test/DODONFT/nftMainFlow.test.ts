@@ -138,11 +138,11 @@ describe("DODONFT", () => {
             var erc721Instance = contracts.getContractWithAddress(contracts.ERC721, erc721Address);
             await erc721Instance.methods.safeTransferFrom(author, vaultAddress, 0).send(ctx.sendParam(author));
 
-            // var quoteToken = "0x156595bAF85D5C29E91d959889B022d952190A64";
-            // var vaultPreOwner = "0xaac153c1344cA14497A5dd22b1F70C28793625aa";
+            var quoteToken = "0x156595bAF85D5C29E91d959889B022d952190A64";
+            var vaultPreOwner = "0x7e83d9d94837eE82F0cc18a691da6f42F03F1d86";
             // var stakeToken = "0x854b0f89BAa9101e49Bfb357A38071C9db5d0DFa";
-            var quoteToken = ctx.USDT.options.address;
-            var vaultPreOwner = author;
+            // var quoteToken = ctx.USDT.options.address;
+            // var vaultPreOwner = author;
             var stakeToken = "0x0000000000000000000000000000000000000000";
 
             var dvmParams = [
@@ -168,18 +168,18 @@ describe("DODONFT", () => {
             ).encodeABI();
             console.log("data:", callData);
 
-            await logGas(await nftVaultInstance.methods.createFragment(
-                ctx.NFTProxy.options.address,
-                callData
-            ), ctx.sendParam(author), "createFragment");
+            // await logGas(await nftVaultInstance.methods.createFragment(
+            //     ctx.NFTProxy.options.address,
+            //     callData
+            // ), ctx.sendParam(author), "createFragment");
 
-            let [fragAddress, , dvmAddress] = await ctx.getRegistry(ctx, vaultAddress);
+            // let [fragAddress, , dvmAddress] = await ctx.getRegistry(ctx, vaultAddress);
 
-            var dvmInstance = contracts.getContractWithAddress(contracts.DVM_NAME, dvmAddress);
-            var midPrice = await dvmInstance.methods.getMidPrice().call();
-            assert(midPrice, mweiStr("1"));
-            let newVaultOwner = await nftVaultInstance.methods._OWNER_().call();
-            assert(fragAddress, newVaultOwner);
+            // var dvmInstance = contracts.getContractWithAddress(contracts.DVM_NAME, dvmAddress);
+            // var midPrice = await dvmInstance.methods.getMidPrice().call();
+            // assert(midPrice, mweiStr("1"));
+            // let newVaultOwner = await nftVaultInstance.methods._OWNER_().call();
+            // assert(fragAddress, newVaultOwner);
         });
 
         it.only("stakeToFeeDistributor", async () => {

@@ -10,9 +10,10 @@ import {SafeERC20} from "../lib/SafeERC20.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {IRandomGenerator} from "../lib/RandomGenerator.sol";
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
+import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
 import {ERC1155} from "../external/ERC1155/ERC1155.sol";
 
-contract DODOMysteryBox is ERC1155, InitializableOwnable {
+contract DODOMysteryBox is ERC1155, InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
@@ -27,13 +28,15 @@ contract DODOMysteryBox is ERC1155, InitializableOwnable {
     uint256[][] public _PRIZE_SET_; // Interval index => tokenIds
     mapping(uint256 => bool) _TOKEN_ID_FLAG_;
 
-    uint256 constant totalInterval = 1000;
-
     // ============ Event =============
     event ChangeRandomGenerator(address randomGenerator);
     event ChangeTicketUnit(uint256 newTicketUnit);
     event RetriveTicket(address to, uint256 amount);
     event BurnTicket(uint256 amount);
+    event RedeemPrize(address to, uint256 ticketInput, uint256 ticketNum);
+    event SetProbInterval();
+    event SetPrizeSet();
+    event SetPrizeSetByIndex(uint256 index);
 
     function init(
         address owner,
@@ -44,8 +47,10 @@ contract DODOMysteryBox is ERC1155, InitializableOwnable {
         uint256[] memory probIntervals,
         uint256[][] memory prizeSet
     ) public {
-        require(probIntervals.length == prizeSet.length, "DODOMysteryBox:PARAM_NOT_MATCH");
-
+        require(
+            probIntervals.length == prizeSet.length && probIntervals.length > 0,
+            "DODOMysteryBox: PARAM_NOT_INVALID"
+        );
         initOwner(owner);
         _setURI(baseUri);
 
@@ -57,7 +62,7 @@ contract DODOMysteryBox is ERC1155, InitializableOwnable {
         _setPrizeSet(prizeSet);
     }
 
-    function redeemPrize(address to) external {
+    function redeemPrize(address to) preventReentrant external {
         uint256 ticketBalance = IERC20(_TICKET_).balanceOf(address(this));
         uint256 ticketInput = ticketBalance.sub(_TICKET_RESERVE_);
         uint256 ticketNum = ticketInput.div(_TICKET_UNIT_);
@@ -65,13 +70,28 @@ contract DODOMysteryBox is ERC1155, InitializableOwnable {
         for (uint256 i = 0; i < ticketNum; i++) {
             _redeemSinglePrize(to);
         }
-        _TICKET_RESERVE_ = _TICKET_RESERVE_.add(ticketBalance);
+        _TICKET_RESERVE_ = _TICKET_RESERVE_.add(ticketInput);
+        emit RedeemPrize(to, ticketInput, ticketNum);
+    }
+
+    // =============== View ================
+    function getRarityByTokenId(uint256 tokenId) external view returns (uint256) {
+        require(_TOKEN_ID_FLAG_[tokenId], "DODOMysteryBox: TOKEN_ID_NOT_FOUND");
+        for (uint256 i = 0; i < _PRIZE_SET_.length; i++) {
+            uint256[] memory curPrizes = _PRIZE_SET_[i];
+            for (uint256 j = 0; j < curPrizes.length; j++) {
+                if(tokenId == curPrizes[j]) {
+                    return i;
+                }
+            }
+        }
     }
 
     // ============ Internal  ============
 
     function _redeemSinglePrize(address to) internal {
-        uint256 random = IRandomGenerator(_RANDOM_GENERATOR_).random() % totalInterval;
+        uint256 range = _PROB_INTERVAL_[_PROB_INTERVAL_.length - 1];
+        uint256 random = IRandomGenerator(_RANDOM_GENERATOR_).random(gasleft()) % range;
         uint256 i;
         for (i = 0; i < _PROB_INTERVAL_.length; i++) {
             if (random <= _PROB_INTERVAL_[i]) {
@@ -84,33 +104,57 @@ contract DODOMysteryBox is ERC1155, InitializableOwnable {
     }
 
     function _setProbInterval(uint256[] memory probIntervals) internal {
-        uint256 sum;
-        for (uint256 i = 0; i < probIntervals.length; i++) {
-            require(probIntervals[i] > 0, "DODOMysteryBox: INTERVAL_INVALID");
-            sum += probIntervals[i];
-            _PROB_INTERVAL_.push(probIntervals[i]);
+        for (uint256 i = 1; i < probIntervals.length; i++) {
+            require(probIntervals[i] > probIntervals[i - 1], "DODOMysteryBox: INTERVAL_INVALID");
         }
-        require(sum == totalInterval, "DODOMysteryBox: TOTAL_INTERVAL_INVALID");
+        _PROB_INTERVAL_ = probIntervals;
+        emit SetProbInterval();
     }
 
     function _setPrizeSet(uint256[][] memory prizeSet) internal {
         for (uint256 i = 0; i < prizeSet.length; i++) {
             uint256[] memory curPrizes = prizeSet[i];
             require(curPrizes.length > 0, "DODOMysteryBox: PRIZES_INVALID");
-            _PRIZE_SET_.push();
             for (uint256 j = 0; j < curPrizes.length; j++) {
                 uint256 curTokenId = prizeSet[i][j];
-                if(_TOKEN_ID_FLAG_[curTokenId]){
+                if (_TOKEN_ID_FLAG_[curTokenId]) {
                     require(false, "DODOMysteryBox: TOKEN_ID_INVALID");
-                }else {
-                    _PRIZE_SET_[i].push(curTokenId);
+                } else {
                     _TOKEN_ID_FLAG_[curTokenId] = true;
                 }
             }
         }
+        _PRIZE_SET_ = prizeSet;
+        emit SetPrizeSet();
     }
 
     // ================= Owner ===================
+
+    function setProbInterval(uint256[] memory probIntervals) external onlyOwner {
+        require(probIntervals.length > 0, "DODOMysteryBox: PARAM_NOT_INVALID");
+        _setProbInterval(probIntervals);
+    }
+
+    function setPrzieSet(uint256[][] memory prizeSet) external onlyOwner {
+        require(prizeSet.length == _PROB_INTERVAL_.length, "DODOMysteryBox: PARAM_NOT_INVALID");
+        _setPrizeSet(prizeSet);
+    }
+
+    function setPrizeSetByIndex(uint256 index, uint256[] memory prizes) external onlyOwner {
+        require(
+            prizes.length > 0 && index < _PRIZE_SET_.length,
+            "DODOMysteryBox: PARAM_NOT_INVALID"
+        );
+        for (uint256 i = 0; i < prizes.length; i++) {
+            if (_TOKEN_ID_FLAG_[prizes[i]]) {
+                require(false, "DODOMysteryBox: TOKEN_ID_INVALID");
+            } else {
+                _TOKEN_ID_FLAG_[prizes[i]] = true;
+            }
+        }
+        _PRIZE_SET_[index] = prizes;
+        emit SetPrizeSetByIndex(index);
+    }
 
     function updateRandomGenerator(address newRandomGenerator) external onlyOwner {
         require(newRandomGenerator != address(0));
