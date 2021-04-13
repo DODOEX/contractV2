@@ -90,6 +90,10 @@ contract BaseMine is InitializableOwnable {
         require(false, "DODOMineV2: TOKEN_NOT_FOUND");
     }
 
+    function getRewardNum() external view returns(uint256) {
+        return rewardTokenInfos.length;
+    }
+
     // ============ Claim ============
 
     function claimReward(uint256 i) public {
@@ -159,6 +163,7 @@ contract BaseMine is InitializableOwnable {
         external
         onlyOwner
     {
+        require(i < rewardTokenInfos.length, "DODOMineV2: REWARD_ID_NOT_FOUND");
         _updateReward(address(0), i);
         RewardTokenInfo storage rt = rewardTokenInfos[i];
 
@@ -174,6 +179,7 @@ contract BaseMine is InitializableOwnable {
         external
         onlyOwner
     {
+        require(i < rewardTokenInfos.length, "DODOMineV2: REWARD_ID_NOT_FOUND");
         _updateReward(address(0), i);
         RewardTokenInfo storage rt = rewardTokenInfos[i];
         
@@ -184,6 +190,8 @@ contract BaseMine is InitializableOwnable {
     }
 
     function withdrawLeftOver(uint256 i, uint256 amount) external onlyOwner {
+        require(i < rewardTokenInfos.length, "DODOMineV2: REWARD_ID_NOT_FOUND");
+        
         RewardTokenInfo storage rt = rewardTokenInfos[i];
         require(block.number > rt.endBlock, "DODOMineV2: MINING_NOT_FINISHED");
 
