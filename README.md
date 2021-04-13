@@ -21,3 +21,5 @@
 - contracts/external/ERC1155/
 
 - contracts/lib/RandomGenerator.sol
+
+- contracts/SmartRoute/proxies/DODOMysteryBoxProxy.sol
