@@ -9,21 +9,26 @@ import { logGas } from '../utils/Log';
 import { NFTContext, getDODONftContext } from '../utils/NFTContext';
 import { assert } from 'chai';
 import * as contracts from '../utils/Contracts';
+const truffleAssert = require('truffle-assertions');
 
 let author: string;
 let user1: string;
 let user2: string;
+let buyer: string;
 
 async function init(ctx: NFTContext): Promise<void> {
     author = ctx.SpareAccounts[1];
     user1 = ctx.SpareAccounts[2];
     user2 = ctx.SpareAccounts[3];
+    buyer = ctx.SpareAccounts[4];
 
     await ctx.mintTestToken(user1, ctx.USDT, mweiStr("10000"));
     await ctx.mintTestToken(user2, ctx.USDT, mweiStr("10000"));
+    await ctx.mintTestToken(buyer, ctx.USDT, mweiStr("1000000000"));
 
     await ctx.approveProxy(ctx.USDT, user1);
     await ctx.approveProxy(ctx.USDT, user2);
+    await ctx.approveProxy(ctx.USDT, buyer);
 }
 
 async function getFeeGlobalState(ctx: NFTContext, feeAddress: string, baseToken, quoteToken, stakeToken) {
@@ -86,6 +91,13 @@ async function mockTrade(ctx: NFTContext, dvmAddress: string, dvmInstance, fragI
 
     await ctx.transferBaseToDVM(fragInstance, dvmAddress, user2, decimalStr("20"));
     await dvmInstance.methods.sellBase(user2).send(ctx.sendParam(user2));
+}
+
+async function getUserBalance(user: string, baseToken, quoteToken, logInfo: string) {
+    var baseBalance = await baseToken.methods.balanceOf(user).call();
+    var quoteBalance = await quoteToken.methods.balanceOf(user).call();
+    console.log(logInfo + " baseBalance:" + fromWei(baseBalance, 'ether') + " quoteBalance:" + fromWei(quoteBalance, 'mwei'));
+    return [baseBalance, quoteBalance];
 }
 
 
@@ -182,7 +194,7 @@ describe("DODONFT", () => {
             // assert(fragAddress, newVaultOwner);
         });
 
-        it.only("stakeToFeeDistributor", async () => {
+        it("stakeToFeeDistributor", async () => {
             let [vaultAddress, fragAddress, feeAddress, dvmAddress] = await ctx.createFragment(ctx, author, null, null, null);
 
             var nftFeeInstance = contracts.getContractWithAddress(contracts.NFT_FEE, feeAddress);
@@ -240,10 +252,10 @@ describe("DODONFT", () => {
             assert(user1Obj['userQuoteRewards'], "0");
             assert(globalObj['quoteBalance'], mweiStr("0.5"));
             assert(user1BaseBalanceEnd - user1BaseBalanceStart, "333332400002269700");
-            
+
             //unstake
             var user2BaseBalanceStart = await fragInstance.methods.balanceOf(user2).call()
-            await logGas(await nftFeeInstance.methods.unstake(decimalStr("30"),user2, true), ctx.sendParam(user2), "unstake");
+            await logGas(await nftFeeInstance.methods.unstake(decimalStr("30"), user2, true), ctx.sendParam(user2), "unstake");
             var user2BaseBalanceEnd = await fragInstance.methods.balanceOf(user2).call()
             user2Obj = await getFeeUserState(ctx, feeAddress, user2);
             await getFeeGlobalState(ctx, feeAddress, fragInstance, ctx.USDT, fragInstance);
@@ -254,16 +266,81 @@ describe("DODONFT", () => {
             assert(user2BaseBalanceEnd - user2BaseBalanceStart, "30666664800004540000");
         });
 
-        it("buyout", async () => {
-            
+        it("buyout and redeem", async () => {
+            var fragParams = [
+                decimalStr("10000"), //totalSupply
+                decimalStr("0.2"), //ownerRatio
+                Math.floor(new Date().getTime() / 1000) //buyoutTimeStamp
+            ]
+            let [vaultAddress, fragAddress, feeAddress, dvmAddress] = await ctx.createFragment(ctx, author, null, fragParams, null);
+            var dvmInstance = contracts.getContractWithAddress(contracts.DVM_NAME, dvmAddress);
+            var fragInstance = contracts.getContractWithAddress(contracts.NFT_FRAG, fragAddress);
+            var vaultInstance = contracts.getContractWithAddress(contracts.NFT_VAULT, vaultAddress);
+
+            await mockTrade(ctx, dvmAddress, dvmInstance, fragInstance);
+
+            await getUserBalance(author, fragInstance, ctx.USDT, "Author Before");
+            await getUserBalance(buyer, fragInstance, ctx.USDT, "Buyer Before");
+            await getUserBalance(dvmAddress, fragInstance, ctx.USDT, "DVM Before");
+            await getUserBalance(fragAddress, fragInstance, ctx.USDT, "FRAG Before");
+
+            var requireQuote = await fragInstance.methods.getBuyoutRequirement().call();
+            await logGas(await ctx.NFTProxy.methods.buyout(fragAddress, requireQuote, 0), ctx.sendParam(buyer), "buyout");
+
+            let [authorFrag, authorQuote] = await getUserBalance(author, fragInstance, ctx.USDT, "Author After");
+            await getUserBalance(buyer, fragInstance, ctx.USDT, "Buyer After");
+            await getUserBalance(dvmAddress, fragInstance, ctx.USDT, "DVM After");
+            await getUserBalance(fragAddress, fragInstance, ctx.USDT, "FRAG After");
+            assert(authorQuote, "2034932000");
+            assert(authorFrag, "0");
+
+            var vaultNewOwner = await vaultInstance.methods._OWNER_().call();
+            assert(vaultNewOwner, buyer);
+
+            await getUserBalance(user1, fragInstance, ctx.USDT, "User1 Redeem Before");
+            await getUserBalance(user2, fragInstance, ctx.USDT, "User2 Redeem Before");
+
+            await logGas(await fragInstance.methods.redeem(user1, "0x"), ctx.sendParam(user1), "redeem");
+            await logGas(await fragInstance.methods.redeem(user2, "0x"), ctx.sendParam(user2), "redeem");
+
+            let [user1Frag, user1Quote] = await getUserBalance(user1, fragInstance, ctx.USDT, "User1 Redeem After");
+            await getUserBalance(user2, fragInstance, ctx.USDT, "User2 Redeem After");
+            await getUserBalance(fragAddress, fragInstance, ctx.USDT, "FRAG Redeem After");
+            assert(user1Quote, "99998580370")
+            assert(user1Frag, "0")
         });
 
-        it("redeem", async () => {
+        it.only("withdrawNFTFromVault", async () => {
+            var erc721Address = await ctx.createERC721(ctx, author);
+            var erc1155Address = await ctx.createERC1155(ctx, author,100);
+            var vaultAddress = await ctx.createNFTVault(ctx, author);
+            var nftVaultInstance = contracts.getContractWithAddress(contracts.NFT_VAULT, vaultAddress);
+            var erc721Instance = contracts.getContractWithAddress(contracts.ERC721, erc721Address);
+            var erc1155Instance = contracts.getContractWithAddress(contracts.ERC1155, erc1155Address);
+            await erc721Instance.methods.safeTransferFrom(author, vaultAddress, 0).send(ctx.sendParam(author));
+            await erc1155Instance.methods.safeTransferFrom(author, vaultAddress, 0, 100, "0x").send(ctx.sendParam(author));
+            var nftIndex = await nftVaultInstance.methods.getIdByTokenIdAndAddr(erc721Address, 0).call();
+            var nftInfo = await nftVaultInstance.methods.getNftInfoById(nftIndex).call();
+            assert(nftInfo.amount, '1')
+            assert(nftInfo.tokenId, '0')
 
-        });
+            nftIndex = await nftVaultInstance.methods.getIdByTokenIdAndAddr(erc1155Address, 0).call();
+            nftInfo = await nftVaultInstance.methods.getNftInfoById(nftIndex).call();
+            assert(nftInfo.amount, '100')
+            assert(nftInfo.tokenId, '0')
 
-        it("withdrawNFTFromVault", async () => {
+            await logGas(await nftVaultInstance.methods.withdrawERC721(erc721Address,0), ctx.sendParam(author), "withdrawERC721");
+            await logGas(await nftVaultInstance.methods.withdrawERC1155(erc1155Address,[0], 50), ctx.sendParam(author), "withdrawERC1155");
 
+            await truffleAssert.reverts(
+                await nftVaultInstance.methods.getIdByTokenIdAndAddr(erc721Address, 0).call(),
+                "TOKEN_ID_NOT_FOUND"
+            )
+
+            nftIndex = await nftVaultInstance.methods.getIdByTokenIdAndAddr(erc1155Address, 0).call();
+            nftInfo = await nftVaultInstance.methods.getNftInfoById(nftIndex).call();
+            assert(nftInfo.amount, '50')
+            assert(nftInfo.tokenId, '0')
         });
     });
 });

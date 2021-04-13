@@ -174,6 +174,14 @@ export class NFTContext {
         return tx.events['NewERC721']['returnValues']['erc721'];
     }
 
+    async createERC1155(ctx: NFTContext, author: string, amount) {
+        var tx = await ctx.NFTTokenFacotry.methods.createERC1155(
+            amount,
+            "https://app.dodoex.io"
+        ).send(ctx.sendParam(author));
+        return tx.events['NewERC1155']['returnValues']['erc1155'];
+    }
+
     async createFragment(ctx: NFTContext, author: string, dvmParams, fragParams, addrs) {
         var erc721Address = await this.createERC721(ctx, author);
         var vaultAddress = await this.createNFTVault(ctx, author);
