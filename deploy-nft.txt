@@ -136,3 +136,78 @@ network type: development
 Deploy time: 2021/4/12 下午9:22:30
 Deploy type: NFT
 multiSigAddress:  undefined
+====================================================
+network type: development
+Deploy time: 2021/4/13 下午1:11:34
+Deploy type: NFT
+multiSigAddress:  undefined
+====================================================
+network type: development
+Deploy time: 2021/4/13 下午1:14:33
+Deploy type: NFT
+multiSigAddress:  undefined
+====================================================
+network type: development
+Deploy time: 2021/4/13 下午1:16:02
+Deploy type: NFT
+multiSigAddress:  undefined
+====================================================
+network type: development
+Deploy time: 2021/4/13 下午1:23:01
+Deploy type: NFT
+multiSigAddress:  undefined
+====================================================
+network type: development
+Deploy time: 2021/4/13 下午1:25:16
+Deploy type: NFT
+multiSigAddress:  undefined
+====================================================
+network type: development
+Deploy time: 2021/4/13 下午1:26:59
+Deploy type: NFT
+multiSigAddress:  undefined
+====================================================
+network type: development
+Deploy time: 2021/4/13 下午1:51:35
+Deploy type: NFT
+multiSigAddress:  undefined
+====================================================
+network type: development
+Deploy time: 2021/4/13 下午1:53:57
+Deploy type: NFT
+multiSigAddress:  undefined
+====================================================
+network type: development
+Deploy time: 2021/4/13 下午2:35:23
+Deploy type: NFT
+multiSigAddress:  undefined
+====================================================
+network type: development
+Deploy time: 2021/4/13 下午2:42:02
+Deploy type: NFT
+multiSigAddress:  undefined
+====================================================
+network type: development
+Deploy time: 2021/4/13 下午2:43:47
+Deploy type: NFT
+multiSigAddress:  undefined
+====================================================
+network type: development
+Deploy time: 2021/4/13 下午2:50:26
+Deploy type: NFT
+multiSigAddress:  undefined
+====================================================
+network type: development
+Deploy time: 2021/4/13 下午2:53:12
+Deploy type: NFT
+multiSigAddress:  undefined
+====================================================
+network type: development
+Deploy time: 2021/4/13 下午2:56:12
+Deploy type: NFT
+multiSigAddress:  undefined
+====================================================
+network type: development
+Deploy time: 2021/4/13 下午3:11:16
+Deploy type: NFT
+multiSigAddress:  undefined
