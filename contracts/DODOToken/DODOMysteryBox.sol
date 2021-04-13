@@ -10,10 +10,9 @@ import {SafeERC20} from "../lib/SafeERC20.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {IRandomGenerator} from "../lib/RandomGenerator.sol";
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
-import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
 import {ERC1155} from "../external/ERC1155/ERC1155.sol";
 
-contract DODOMysteryBox is ERC1155, InitializableOwnable, ReentrancyGuard {
+contract DODOMysteryBox is ERC1155, InitializableOwnable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
@@ -24,6 +23,7 @@ contract DODOMysteryBox is ERC1155, InitializableOwnable, ReentrancyGuard {
     uint256 public _TICKET_UNIT_; // ticket consumed in a single lottery
 
     address public _RANDOM_GENERATOR_;
+    address public _DODO_MYSTERY_BOX_PROXY_;
     uint256[] public _PROB_INTERVAL_; // index => Interval probability
     uint256[][] public _PRIZE_SET_; // Interval index => tokenIds
     mapping(uint256 => bool) _TOKEN_ID_FLAG_;
@@ -31,6 +31,7 @@ contract DODOMysteryBox is ERC1155, InitializableOwnable, ReentrancyGuard {
     // ============ Event =============
     event ChangeRandomGenerator(address randomGenerator);
     event ChangeTicketUnit(uint256 newTicketUnit);
+    event ChangeMysteryBoxProxy(address mysteryBoxProxy);
     event RetriveTicket(address to, uint256 amount);
     event BurnTicket(uint256 amount);
     event RedeemPrize(address to, uint256 ticketInput, uint256 ticketNum);
@@ -42,6 +43,7 @@ contract DODOMysteryBox is ERC1155, InitializableOwnable, ReentrancyGuard {
         address owner,
         string memory baseUri,
         address randomGenerator,
+        address dodoMysteryBoxProxy,
         address ticket,
         uint256 ticketUnit,
         uint256[] memory probIntervals,
@@ -55,6 +57,7 @@ contract DODOMysteryBox is ERC1155, InitializableOwnable, ReentrancyGuard {
         _setURI(baseUri);
 
         _RANDOM_GENERATOR_ = randomGenerator;
+        _DODO_MYSTERY_BOX_PROXY_ = dodoMysteryBoxProxy;
         _TICKET_ = ticket;
         _TICKET_UNIT_ = ticketUnit;
 
@@ -62,7 +65,8 @@ contract DODOMysteryBox is ERC1155, InitializableOwnable, ReentrancyGuard {
         _setPrizeSet(prizeSet);
     }
 
-    function redeemPrize(address to) preventReentrant external {
+    function redeemPrize(address to) external {
+        require(msg.sender == _DODO_MYSTERY_BOX_PROXY_, "DODOMysteryBox: ACCESS_DENIED");
         uint256 ticketBalance = IERC20(_TICKET_).balanceOf(address(this));
         uint256 ticketInput = ticketBalance.sub(_TICKET_RESERVE_);
         uint256 ticketNum = ticketInput.div(_TICKET_UNIT_);
@@ -160,6 +164,12 @@ contract DODOMysteryBox is ERC1155, InitializableOwnable, ReentrancyGuard {
         require(newRandomGenerator != address(0));
         _RANDOM_GENERATOR_ = newRandomGenerator;
         emit ChangeRandomGenerator(newRandomGenerator);
+    }
+
+    function updateMysteryBoxProxy(address newMysteryBoxProxy) external onlyOwner {
+        require(newMysteryBoxProxy != address(0));
+        _DODO_MYSTERY_BOX_PROXY_ = newMysteryBoxProxy;
+        emit ChangeMysteryBoxProxy(newMysteryBoxProxy);
     }
 
     function updateTicketUnit(uint256 newTicketUnit) external onlyOwner {

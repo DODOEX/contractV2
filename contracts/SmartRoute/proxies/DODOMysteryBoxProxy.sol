@@ -13,6 +13,7 @@ import {IWETH} from "../../intf/IWETH.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
+import {Address} from "../../lib/Address.sol";
 
 interface IDODOMysteryBox {
     function _TICKET_() external view returns (address);
@@ -27,6 +28,7 @@ interface IDODOMysteryBox {
  */
 contract DODOMysteryBoxProxy is ReentrancyGuard {
     using SafeMath for uint256;
+    using Address for address;
 
     // ============ Storage ============
 
@@ -54,6 +56,8 @@ contract DODOMysteryBoxProxy is ReentrancyGuard {
         uint256 ticketAmount,
         uint8 flag // 0 - ERC20, 1 - quoteInETH
     ) external payable preventReentrant {
+        address caller = msg.sender;
+        require(!caller.isContract(), "DODOMysteryBoxProxy: ONLY_ALLOW_EOA");
         _deposit(msg.sender, dodoMysteryBox, IDODOMysteryBox(dodoMysteryBox)._TICKET_(), ticketAmount, flag == 1);
         IDODOMysteryBox(dodoMysteryBox).redeemPrize(msg.sender);
         emit RedeemPrize(msg.sender, dodoMysteryBox, ticketAmount);
