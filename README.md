@@ -6,6 +6,8 @@
 
 - contracts/external/ERC721/
 
+- contracts/external/ERC1155/
+
 - contracts/external/ERC20/InitializableERC20.sol
 
 - contracts/Factory/Registries/
@@ -16,10 +18,8 @@
 
 - contracts/SmartRoute/proxies/DODONFTProxy.sol
 
-- contracts/DODOToken/DODOMysteryBox.sol
+### DODO MysteryBox
 
-- contracts/external/ERC1155/
+- contracts/DODOMysteryBox/MysteryBox1.sol
 
 - contracts/lib/RandomGenerator.sol
-
-- contracts/SmartRoute/proxies/DODOMysteryBoxProxy.sol
