@@ -14,11 +14,11 @@ contract InitializableERC721 is ERC721 {
         address creator,
         string memory name,
         string memory symbol,
-        string memory baseUrI
+        string memory baseUri
     ) public {
         _name = name;
         _symbol = symbol;
-        _baseURI = baseUrI;
+        _baseUri = baseUri;
         _mint(creator, 0);
     }
 }
