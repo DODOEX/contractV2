@@ -4,6 +4,7 @@
 pragma solidity 0.6.9;
 
 import {IERC1155} from "../../intf/IERC1155.sol";
+import {IERC165} from "../../intf/IERC165.sol";
 import {IERC1155Receiver} from "../../intf/IERC1155Receiver.sol";
 import {IERC1155MetadataURI} from "../../intf/IERC1155MetadataURI.sol";
 import {ERC165} from "../utils/ERC165.sol";
@@ -30,13 +31,6 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
 
     // Used as the URI for all token types by relying on ID substitution, e.g. https://token-cdn-domain/{id}.json
     string private _uri;
-
-    /**
-     * @dev See {_setURI}.
-     */
-    constructor (string memory uri_) {
-        _setURI(uri_);
-    }
 
     /**
      * @dev See {IERC165-supportsInterface}.
@@ -399,4 +393,3 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
         return array;
     }
 }
-

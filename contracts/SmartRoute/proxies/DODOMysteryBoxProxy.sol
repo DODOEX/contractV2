@@ -13,7 +13,7 @@ import {IWETH} from "../../intf/IWETH.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
-import {Address} from "../../lib/Address.sol";
+import {Address} from "../../external/utils/Address.sol";
 
 interface IDODOMysteryBox {
     function _TICKET_() external view returns (address);
