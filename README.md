@@ -4,8 +4,6 @@
 
 - contracts/DODOFee/FeeDistributer.sol
 
-- contracts/external/ERC721/
-
 - contracts/external/ERC1155/
 
 - contracts/external/ERC20/InitializableERC20.sol
@@ -20,6 +18,8 @@
 
 ### DODO MysteryBox
 
-- contracts/DODOMysteryBox/MysteryBox1.sol
+- contracts/DODOMysteryBox/MysteryBoxV1.sol
 
 - contracts/lib/RandomGenerator.sol
+
+- contracts/external/ERC721/

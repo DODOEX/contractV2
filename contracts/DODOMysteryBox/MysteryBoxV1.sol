@@ -11,9 +11,9 @@ import {SafeMath} from "../lib/SafeMath.sol";
 import {IRandomGenerator} from "../lib/RandomGenerator.sol";
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 import {Address} from "../external/utils/Address.sol";
-import {ERC721} from "../external/ERC721/ERC721.sol";
+import {ERC721URIStorage} from "../external/ERC721/ERC721URIStorage.sol";
 
-contract MysteryBox1 is ERC721, InitializableOwnable {
+contract MysteryBoxV1 is ERC721URIStorage, InitializableOwnable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
     using Address for address;
@@ -28,6 +28,8 @@ contract MysteryBox1 is ERC721, InitializableOwnable {
     uint256 public _TICKET_UNIT_ = 1; // ticket consumed in a single lottery
 
     uint256[] public _TOKEN_IDS_;
+    uint256 public _ID_POINT_; 
+
     address public _RANDOM_GENERATOR_;
 
     bool public _REDEEM_ALLOWED_ = true;
@@ -51,13 +53,13 @@ contract MysteryBox1 is ERC721, InitializableOwnable {
     function init(
         string memory name,
         string memory symbol,
-        string memory baseUrI,
+        string memory baseUri,
         address owner,
         address randomGenerator
     ) public {
         _name = name;
         _symbol = symbol;
-        _baseURI = baseUrI;
+        _baseUri = baseUri;
 
         initOwner(owner);
         _RANDOM_GENERATOR_ = randomGenerator;
@@ -78,14 +80,16 @@ contract MysteryBox1 is ERC721, InitializableOwnable {
         emit BuyTicket(msg.sender, buyAmount - leftOver, tickets);
     }
 
-    function redeemPrize() external {
+
+    function redeemPrize(uint256 ticketNum) external {
         require(_REDEEM_ALLOWED_, "REDEEM_CLOSED");
         require(!address(msg.sender).isContract(), "ONLY_ALLOW_EOA");
-        uint256 ticketNum = _USER_TICKETS_[msg.sender];
-        require(ticketNum >= 1, "TICKET_NOT_ENOUGH");
+        require(ticketNum >= 1 && ticketNum <= _USER_TICKETS_[msg.sender], "TICKET_NUM_INVALID");
         for (uint256 i = 0; i < ticketNum; i++) {
             _redeemSinglePrize(msg.sender);
         }
+        _USER_TICKETS_[msg.sender] = _USER_TICKETS_[msg.sender].sub(ticketNum);
+        _TOTAL_TICKETS_ = _TOTAL_TICKETS_.sub(ticketNum);
     }
 
     // =============== Internal  ================
@@ -139,11 +143,13 @@ contract MysteryBox1 is ERC721, InitializableOwnable {
         emit Withdraw(msg.sender, amount);
     }
 
-    function batchMint(uint256[] calldata tokenIds) external onlyOwner {
-        for(uint256 i = 0; i<tokenIds.length; i++) {
-            _mint(address(this), tokenIds[i]);
-            _TOKEN_IDS_.push(tokenIds[i]);
+    function batchMint(string[] calldata urls) external onlyOwner {
+        for(uint256 i = 0; i < urls.length; i++) {
+            _mint(address(this), _ID_POINT_);
+            _TOKEN_IDS_.push(_ID_POINT_);
+            _setTokenURI(_ID_POINT_, urls[i]);
+            _ID_POINT_++;
         }
-        emit BatchMint(tokenIds.length);
+        emit BatchMint(urls.length);
     }
 }
