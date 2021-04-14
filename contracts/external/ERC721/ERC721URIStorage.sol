@@ -3,12 +3,12 @@
 
 pragma solidity 0.6.9;
 
-import "./ERC721.sol";
+import "./ERC721Enumerable.sol";
 
 /**
  * @dev ERC721 token with storage based token URI management.
  */
-abstract contract ERC721URIStorage is ERC721 {
+abstract contract ERC721URIStorage is ERC721Enumerable {
     using Strings for uint256;
 
     // Optional mapping for token URIs
