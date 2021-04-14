@@ -21,73 +21,99 @@ contract MysteryBox1 is ERC721, InitializableOwnable {
     // ============ Storage ============
 
     mapping(address => uint256) _USER_TICKETS_;
-
     uint256 public _TOTAL_TICKETS_;
+    
     uint256 public _CUR_SELLING_TICKETS_;
     uint256 public _CUR_PRCIE_;
     uint256 public _TICKET_UNIT_ = 1; // ticket consumed in a single lottery
 
-    
-    mapping(uint256 => bool) _TOKEN_ID_FLAG_;
-
+    uint256[] public _TOKEN_IDS_;
     address public _RANDOM_GENERATOR_;
 
-    uint256 constant _TOTAL_NFTs_ = 3000;
+    bool public _REDEEM_ALLOWED_ = true;
+
 
     // ============ Event =============
     event ChangeRandomGenerator(address randomGenerator);
     event ChangeTicketUnit(uint256 newTicketUnit);
     event ChangeSellingInfo(uint256 curSellingTickets, uint256 curPrice);
     event Withdraw(address account, uint256 amount);
+    event BatchMint(uint256 mintAmount);
+    event BuyTicket(address account, uint256 value, uint256 tickets);
+    event RedeemPrize(address account, uint256 tokenId);
+    event DisableRedeem();
+    event EnableRedeem();
 
     fallback() external payable {}
 
     receive() external payable {}
 
     function init(
+        string memory name,
+        string memory symbol,
+        string memory baseUrI,
         address owner,
-        string memory baseUri,
         address randomGenerator
     ) public {
+        _name = name;
+        _symbol = symbol;
+        _baseURI = baseUrI;
+
         initOwner(owner);
-        _setURI(baseUri);
         _RANDOM_GENERATOR_ = randomGenerator;
     }
 
     function buyTicket() payable external {
-        require(msg.value >= _CUR_PRCIE_, "BNB_NOT_ENOUGH");
+        uint256 buyAmount = msg.value;
+        require(buyAmount >= _CUR_PRCIE_, "BNB_NOT_ENOUGH");
+        uint256 tickets = buyAmount.div(_CUR_PRCIE_);
+        require(tickets <= _CUR_SELLING_TICKETS_, "TICKETS_NOT_ENOUGH");
+        _USER_TICKETS_[msg.sender] = _USER_TICKETS_[msg.sender].add(tickets);
+        _TOTAL_TICKETS_ = _TOTAL_TICKETS_.add(tickets);
+        _CUR_SELLING_TICKETS_ = _CUR_SELLING_TICKETS_.sub(tickets);
 
+        uint256 leftOver = msg.value - tickets.mul(_CUR_PRCIE_);
+        if(leftOver > 0) 
+            msg.sender.transfer(leftOver);
+        emit BuyTicket(msg.sender, buyAmount - leftOver, tickets);
     }
 
-    function redeemPrize(address to) external {
-
-        // uint256 ticketNum = ticketInput.div(_TICKET_UNIT_);
-        // require(ticketNum >= 1, "DODOMysteryBox: TICKET_NOT_ENOUGH");
-        // for (uint256 i = 0; i < ticketNum; i++) {
-        //     _redeemSinglePrize(to);
-        // }
-        // emit RedeemPrize(to, ticketInput, ticketNum);
+    function redeemPrize() external {
+        require(_REDEEM_ALLOWED_, "REDEEM_CLOSED");
+        require(!address(msg.sender).isContract(), "ONLY_ALLOW_EOA");
+        uint256 ticketNum = _USER_TICKETS_[msg.sender];
+        require(ticketNum >= 1, "TICKET_NOT_ENOUGH");
+        for (uint256 i = 0; i < ticketNum; i++) {
+            _redeemSinglePrize(msg.sender);
+        }
     }
-
-    // =============== View ================
 
     // =============== Internal  ================
 
     function _redeemSinglePrize(address to) internal {
-        // uint256 range = _PROB_INTERVAL_[_PROB_INTERVAL_.length - 1];
-        // uint256 random = IRandomGenerator(_RANDOM_GENERATOR_).random(gasleft()) % range;
-        // uint256 i;
-        // for (i = 0; i < _PROB_INTERVAL_.length; i++) {
-        //     if (random <= _PROB_INTERVAL_[i]) {
-        //         break;
-        //     }
-        // }
-        // require(_PRIZE_SET_[i].length > 0, "EMPTY_PRIZE_SET");
-        // uint256 prize = _PRIZE_SET_[i][random % _PRIZE_SET_[i].length];
-        // _mint(to, prize, 1, "");
+        uint256 range = _TOKEN_IDS_.length;
+        uint256 random = IRandomGenerator(_RANDOM_GENERATOR_).random(gasleft()) % range;
+        uint256 prizeId = _TOKEN_IDS_[random];
+
+        if(random != range - 1) {
+            _TOKEN_IDS_[random] = _TOKEN_IDS_[range - 1];
+        }
+        _TOKEN_IDS_.pop();
+        safeTransferFrom(address(this), to, prizeId, "");
+        emit RedeemPrize(to, prizeId);
     }
 
     // ================= Owner ===================
+
+    function disableRedeemPrize() external onlyOwner {
+        _REDEEM_ALLOWED_ = false;
+        emit DisableRedeem();
+    }
+
+    function enableRedeemPrize() external onlyOwner {
+        _REDEEM_ALLOWED_ = true;
+        emit EnableRedeem();
+    }
 
     function updateRandomGenerator(address newRandomGenerator) external onlyOwner {
         require(newRandomGenerator != address(0));
@@ -111,5 +137,13 @@ contract MysteryBox1 is ERC721, InitializableOwnable {
         uint256 amount = address(this).balance;
         msg.sender.transfer(amount);
         emit Withdraw(msg.sender, amount);
+    }
+
+    function batchMint(uint256[] calldata tokenIds) external onlyOwner {
+        for(uint256 i = 0; i<tokenIds.length; i++) {
+            _mint(address(this), tokenIds[i]);
+            _TOKEN_IDS_.push(tokenIds[i]);
+        }
+        emit BatchMint(tokenIds.length);
     }
 }
