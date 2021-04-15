@@ -64,6 +64,9 @@ export const NFT_TOKEN_FACTORY = "NFTTokenFactory"
 export const NFT_REGISTER = "DODONFTRegistry"
 export const NFT_PROXY = "DODONFTProxy"
 
+export const RANDOM_GENERATOR = "RandomGenerator"
+export const MYSTERY_BOX_V1 = "MysteryBoxV1"
+
 interface ContractJson {
   abi: any;
   networks: { [network: number]: any };

@@ -61,6 +61,10 @@ then
 	truffle test ./test/DODONFT/nftMainFlow.test.ts
 fi
 
+if [ "$1"x = "boxV1"x ]
+then
+	truffle test ./test/DODONFT/mysteryBoxV1.test.ts
+fi
 
 # if [ "$1"x = "route-incentive"x ]
 # then
