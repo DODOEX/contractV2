@@ -76,8 +76,8 @@ module.exports = {
 
 
         //================= MysteryBox =================
-        MysteryBoxV1: "",
-        RandomGenerator: "",
+        MysteryBoxV1: "0xC3745Dd86bcAAA1263ce444ef9C87efEAc1e720A",
+        RandomGenerator: "0x0E45F7C5419aD9cb096b535C8498de18638BE42e",
         RandomPool: [
             "0xa2e0ef85618732d80e5ef362773da1c92e8b1c57",
             "0xaCfc959e0E85726d09A36E6DFdD56FB2e5dB8F77",
