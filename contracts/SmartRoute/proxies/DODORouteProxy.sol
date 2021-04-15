@@ -72,7 +72,7 @@ contract DODORouteProxy {
         bytes[] memory sequence,
         uint256 deadLine
     ) external payable judgeExpired(deadLine) returns (uint256 returnAmount) {
-        require(assetFrom.length == splitNumber.length + 1, 'DODORouteProxy: PAIR_ASSETTO_NOT_MATCH');        
+        require(assetFrom.length == splitNumber.length, 'DODORouteProxy: PAIR_ASSETTO_NOT_MATCH');        
         require(minReturnAmount > 0, "DODORouteProxy: RETURN_AMOUNT_ZERO");
         
         uint256 _fromTokenAmount = fromTokenAmount;
@@ -124,7 +124,8 @@ contract DODORouteProxy {
                 uint256 weight = (0xffff & mixPara) >> 9;
                 uint256 poolEdition = (0xff & mixPara);
 
-                if(assetFrom[i] == address(this)) {
+
+                if(assetFrom[i-1] == address(this)) {
                     uint256 curAmount = curTotalAmount.div(curTotalWeight).mul(weight);
             
                     if(poolEdition == 1) {  
