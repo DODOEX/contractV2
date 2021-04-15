@@ -58,11 +58,7 @@ module.exports = async (deployer, network, accounts) => {
         logger.log("Deploy type: MysteryBoxV1");
 
         if (RandomGeneratorAddress == "") {
-            await deployer.deploy(RandomGenerator,[
-                RandomPool[0],
-                RandomPool[1],
-                RandomPool[2],
-            ]);
+            await deployer.deploy(RandomGenerator, RandomPool);
             RandomGeneratorAddress = RandomGenerator.address;
             logger.log("RandomGeneratorAddress: ", RandomGeneratorAddress);
         }

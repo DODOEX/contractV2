@@ -19,7 +19,7 @@ contract RandomGenerator {
     address[] public pools;
 
     constructor(address[] memory _pools) public {
-        for (uint256 i = 0; i < pools.length; i++) {
+        for (uint256 i = 0; i < _pools.length; i++) {
             pools.push(_pools[i]);
         }
     }
