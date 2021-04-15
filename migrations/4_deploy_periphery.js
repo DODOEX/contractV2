@@ -34,6 +34,7 @@ module.exports = async (deployer, network, accounts) => {
 
     let WETHAddress = CONFIG.WETH;
     let DODOTokenAddress = CONFIG.DODO;
+    let WETHAddress = CONFIG.WETH;
     let DODOApproveProxyAddress = CONFIG.DODOApproveProxy;
 
     let DspTemplateAddress = CONFIG.DSP;
@@ -369,5 +370,18 @@ module.exports = async (deployer, network, accounts) => {
 
         }
     }
+    if(deploySwitch.MULTIHOP) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
+        logger.log("Deploy type: RAB - Adapter");
 
+        await deployer.deploy(
+            RABSwap,
+            WETHAddress,
+            DODOApproveProxyAddress
+        );
+
+        logger.log("DODORAB Address: ", RABSwap.address);
+    }
 };
