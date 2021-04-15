@@ -17,6 +17,9 @@ const InitializableERC721 = artifacts.require("InitializableERC721");
 const InitializableERC1155 = artifacts.require("InitializableERC1155");
 const NFTTokenFactory = artifacts.require("NFTTokenFactory");
 
+const MysteryBoxV1 = artifacts.require("MysteryBoxV1");
+const RandomGenerator = artifacts.require("RandomGenerator");
+
 module.exports = async (deployer, network, accounts) => {
     let CONFIG = GetConfig(network, accounts)
     if (CONFIG == null) return;
@@ -41,8 +44,44 @@ module.exports = async (deployer, network, accounts) => {
     let ERC1155Address = CONFIG.InitializableERC1155;
     let NFTTokenFactoryAddress = CONFIG.NFTTokenFactory;
 
+    let MysteryBoxV1Address = CONFIG.MysteryBoxV1;
+    let RandomGeneratorAddress = CONFIG.RandomGenerator;
+    let RandomPool = CONFIG.RandomPool;
+
     let multiSigAddress = CONFIG.multiSigAddress;
     let defaultMaintainer = CONFIG.defaultMaintainer;
+
+    if (deploySwitch.MYSTERYBOX_V1) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
+        logger.log("Deploy type: MysteryBoxV1");
+
+        if (RandomGeneratorAddress == "") {
+            await deployer.deploy(RandomGenerator,[
+                RandomPool[0],
+                RandomPool[1],
+                RandomPool[2],
+            ]);
+            RandomGeneratorAddress = RandomGenerator.address;
+            logger.log("RandomGeneratorAddress: ", RandomGeneratorAddress);
+        }
+
+        if (MysteryBoxV1Address == "") {
+            await deployer.deploy(MysteryBoxV1);
+            MysteryBoxV1Address = MysteryBoxV1.address;
+            logger.log("MysteryBoxV1Address: ", MysteryBoxV1Address);
+            const MysteryBoxV1Instance = await MysteryBoxV1.at(MysteryBoxV1Address);
+            var tx = await MysteryBoxV1Instance.init(
+                "DODOMysteryBox",
+                "DODOBox",
+                "",
+                multiSigAddress,
+                RandomGeneratorAddress
+            );
+            logger.log("Init MysteryBoxV1 Tx:", tx.tx);
+        }
+    }
 
     if (deploySwitch.DEPLOY_NFT) {
         logger.log("====================================================");
