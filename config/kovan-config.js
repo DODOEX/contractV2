@@ -73,5 +73,15 @@ module.exports = {
 
         DODONFTRegistry: "0xF405372b7808363DCfbb5Eb81204889B7a69Aa3e",
         DODONFTProxy: "0x0727dEd495E35f4bA4F5D64794145152301Db23f",
+
+
+        //================= MysteryBox =================
+        MysteryBoxV1: "",
+        RandomGenerator: "",
+        RandomPool: [
+            "0xa2e0ef85618732d80e5ef362773da1c92e8b1c57",
+            "0xaCfc959e0E85726d09A36E6DFdD56FB2e5dB8F77",
+            "0x7A733869CB210393f3c02B740c58498EB1f8815C"
+        ]
     }
 }
