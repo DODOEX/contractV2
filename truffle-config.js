@@ -59,7 +59,8 @@ module.exports = {
     LockedVault:    false,
     MULTIHOP:       false,
     CpProxy:        false,
-    DEPLOY_NFT:     false
+    DEPLOY_NFT:     false,
+    MYSTERYBOX_V1:  false
   },
 
   networks: {
@@ -85,6 +86,17 @@ module.exports = {
       gas: 12000000,
       gasPrice: 10000000000,
       network_id: 42,
+      skipDryRun: true
+    },
+
+    rinkeby: {
+      networkCheckTimeout: 100000,
+      provider: function () {
+        return new HDWalletProvider(privKey, "https://rinkeby.infura.io/v3/" + infuraId);
+      },
+      gas: 10000000,
+      gasPrice: 10000000000,
+      network_id: 4,
       skipDryRun: true
     },
 

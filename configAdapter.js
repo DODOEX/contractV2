@@ -11,7 +11,11 @@ const { MATIC_CONFIG } = require("./config/matic-config");
 exports.GetConfig = function (network, accounts) {
     var CONFIG = {}
     switch (network) {
-        //mainnet
+        case "kovan":
+            CONFIG = KOVAN_CONFIG
+            CONFIG.multiSigAddress = accounts[0]
+            CONFIG.defaultMaintainer = accounts[0]
+            break;
         case "live":
             CONFIG = ETH_CONFIG
             break;

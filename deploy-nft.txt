@@ -147,3 +147,38 @@ Deploy type: MysteryBoxV1
 RandomGeneratorAddress:  0x0E45F7C5419aD9cb096b535C8498de18638BE42e
 MysteryBoxV1Address:  0xC3745Dd86bcAAA1263ce444ef9C87efEAc1e720A
 Init MysteryBoxV1 Tx: 0x9e767f2f7930985ba2b186021683380b7ed0dd5b6495d96b19373aad8cbb4cbb
+====================================================
+network type: rinkeby
+Deploy time: 2021/4/15 下午12:42:59
+Deploy type: MysteryBoxV1
+====================================================
+network type: rinkeby
+Deploy time: 2021/4/15 下午12:46:35
+Deploy type: MysteryBoxV1
+====================================================
+network type: rinkeby
+Deploy time: 2021/4/15 下午12:49:37
+Deploy type: MysteryBoxV1
+====================================================
+network type: kovan
+Deploy time: 2021/4/15 下午1:06:51
+Deploy type: MysteryBoxV1
+RandomGeneratorAddress:  0x450e7974870db053650A8300A2a5fDc3b8EEC4B3
+====================================================
+network type: kovan
+Deploy time: 2021/4/15 下午1:23:04
+Deploy type: MysteryBoxV1
+RandomGeneratorAddress:  0x53F54E4760FA5f839e5624782D032495613DF218
+MysteryBoxV1Address:  0x87457A7FDFE0a4A57aABB369A21690bF67b8dDbD
+Init MysteryBoxV1 Tx: 0x1019faa5caff6656b5991cec9ce05794757026ed4c3ce03beb9bd12261182fec
+====================================================
+network type: rinkeby
+Deploy time: 2021/4/15 下午1:29:37
+Deploy type: MysteryBoxV1
+====================================================
+network type: rinkeby
+Deploy time: 2021/4/15 下午1:31:27
+Deploy type: MysteryBoxV1
+RandomGeneratorAddress:  0x7e21BFAcDB5062C071Fad17451E85f070DDa5d8F
+MysteryBoxV1Address:  0x215BD4d983c571a840b89028CC005B6FF0734EbE
+Init MysteryBoxV1 Tx: 0x15439f29a1c7b446f2d0dcda7f21dcfdd2ce3c197e8c0a5d1338621ecdb9ddab
