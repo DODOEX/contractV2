@@ -140,3 +140,10 @@ FragmentAddress:  0x40F3bBe2f8C5F2E5f4adFf7d51f652F2B9F77315
 DODOApproveProxy unlockAddProxy tx:  0x78c7557de3325d8471bce3715070509a57b9db94e035178b8c65261393f463e1
 DODOApproveProxy addDODOProxy tx:  0x81723112e50c67f5bb6291bcbf52c8ea8f98c881185bcbf23a763aff29602ee9
 Add AdminList on DODONFTRegistry Tx: 0x72c664e55a09c59fbd46bd754482b4e56dd04560071e262253b7f7929a76ccb1
+====================================================
+network type: kovan
+Deploy time: 2021/4/15 上午11:19:44
+Deploy type: MysteryBoxV1
+RandomGeneratorAddress:  0x0E45F7C5419aD9cb096b535C8498de18638BE42e
+MysteryBoxV1Address:  0xC3745Dd86bcAAA1263ce444ef9C87efEAc1e720A
+Init MysteryBoxV1 Tx: 0x9e767f2f7930985ba2b186021683380b7ed0dd5b6495d96b19373aad8cbb4cbb
