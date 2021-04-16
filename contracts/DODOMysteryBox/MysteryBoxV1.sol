@@ -28,7 +28,6 @@ contract MysteryBoxV1 is ERC721URIStorage, InitializableOwnable {
     uint256 public _TICKET_UNIT_ = 1; // ticket consumed in a single lottery
 
     uint256[] public _TOKEN_IDS_;
-    uint256 public _ID_POINT_; 
 
     address public _RANDOM_GENERATOR_;
 
@@ -92,6 +91,11 @@ contract MysteryBoxV1 is ERC721URIStorage, InitializableOwnable {
         _TOTAL_TICKETS_ = _TOTAL_TICKETS_.sub(ticketNum);
     }
 
+    // ================= View ===================
+    function getTickets(address account) view external returns(uint256) {
+        return _USER_TICKETS_[account];
+    }
+
     // =============== Internal  ================
 
     function _redeemSinglePrize(address to) internal {
@@ -103,7 +107,7 @@ contract MysteryBoxV1 is ERC721URIStorage, InitializableOwnable {
             _TOKEN_IDS_[random] = _TOKEN_IDS_[range - 1];
         }
         _TOKEN_IDS_.pop();
-        safeTransferFrom(address(this), to, prizeId, "");
+        _safeTransfer(address(this), to, prizeId, "");
         emit RedeemPrize(to, prizeId);
     }
 
@@ -143,13 +147,12 @@ contract MysteryBoxV1 is ERC721URIStorage, InitializableOwnable {
         emit Withdraw(msg.sender, amount);
     }
 
-    function batchMint(string[] calldata urls) external onlyOwner {
-        for(uint256 i = 0; i < urls.length; i++) {
-            _mint(address(this), _ID_POINT_);
-            _TOKEN_IDS_.push(_ID_POINT_);
-            _setTokenURI(_ID_POINT_, urls[i]);
-            _ID_POINT_++;
+    function batchMint(uint256[] calldata ids, string[] calldata urls) external onlyOwner {
+        for(uint256 i = 0; i < ids.length; i++) {
+            _mint(address(this), ids[i]);
+            _TOKEN_IDS_.push(ids[i]);
+            _setTokenURI(ids[i], urls[i]);
         }
-        emit BatchMint(urls.length);
+        emit BatchMint(ids.length);
     }
 }

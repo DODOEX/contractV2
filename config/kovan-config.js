@@ -62,21 +62,21 @@ module.exports = {
 
         //================== NFT ====================
         ConstFeeRateModel: "0xBDAcEcF886a4F0C509260d9678D5673C3E8fa4b7",
-        FeeDistributor: "0xdE39C2901e72A883f7446951fB533219F3622b87",
-        Fragment: "0x40F3bBe2f8C5F2E5f4adFf7d51f652F2B9F77315",
-        NFTCollateralVault: "0xFDf7604649dfBb733e784afAEdC19892706cc683",
+        FeeDistributor: "0xC7da6C32E301C042C2237ca04aa4BB6D2e5C86B1",
+        Fragment: "0xc83c4aFdF216C7D0E15D50B9e1658298320A9551",
+        NFTCollateralVault: "0x7e83d9d94837eE82F0cc18a691da6f42F03F1d86",
         DODONFTRouteHelper: "0xAE683548702be6d651e179e5F9313272bb18596A",
 
-        InitializableERC721: "0x7563414479593394460d1bbaFE2Fc3E29D804007",
-        InitializableERC1155: "0xb971B0df71fB1778351F25a0e3bfe0C3eF06E1d1",
-        NFTTokenFactory: "0x38c109aF4f3454172BA4eecf5676aA213b589e75",
+        InitializableERC721: "0x62dC4615AC755959a82b6D22FA5652A037284c0b",
+        InitializableERC1155: "0xfa391c0Ed6898e0C6186605d69e877f1317Bb506",
+        NFTTokenFactory: "0xdeBB45aCffF3b5e610C1EdF45DFaaea0030EAdaF",
 
         DODONFTRegistry: "0xF405372b7808363DCfbb5Eb81204889B7a69Aa3e",
-        DODONFTProxy: "0x0727dEd495E35f4bA4F5D64794145152301Db23f",
+        DODONFTProxy: "0x8812E32b31530d21D1fE70A45bBa66bbEB3641C5",
 
 
         //================= MysteryBox =================
-        MysteryBoxV1: "0x87457A7FDFE0a4A57aABB369A21690bF67b8dDbD",
+        MysteryBoxV1: "",
         RandomGenerator: "0x53F54E4760FA5f839e5624782D032495613DF218",
         RandomPool: [
             "0xa2e0ef85618732d80e5ef362773da1c92e8b1c57",
