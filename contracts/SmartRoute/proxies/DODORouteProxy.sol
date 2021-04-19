@@ -124,7 +124,6 @@ contract DODORouteProxy {
                 uint256 weight = (0xffff & mixPara) >> 9;
                 uint256 poolEdition = (0xff & mixPara);
 
-
                 if(assetFrom[i-1] == address(this)) {
                     uint256 curAmount = curTotalAmount.div(curTotalWeight).mul(weight);
             
