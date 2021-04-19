@@ -20,17 +20,19 @@ interface IDSP {
         bool isOpenTWAP
     ) external;
 
-    function _BASE_TOKEN_() external returns (address);
+    function _BASE_TOKEN_() external view returns (address);
 
-    function _QUOTE_TOKEN_() external returns (address);
+    function _QUOTE_TOKEN_() external view returns (address);
 
-    function _MT_FEE_RATE_MODEL_() external returns (address);
+    function _I_() external view returns (uint256);
 
-    function getVaultReserve() external returns (uint256 baseReserve, uint256 quoteReserve);
+    function _MT_FEE_RATE_MODEL_() external view returns (address);
+
+    function getVaultReserve() external view returns (uint256 baseReserve, uint256 quoteReserve);
 
     function sellBase(address to) external returns (uint256);
 
     function sellQuote(address to) external returns (uint256);
 
-    function buyShares(address to) external returns (uint256);
+    function buyShares(address to) external returns (uint256,uint256,uint256);
 }

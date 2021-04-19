@@ -27,7 +27,6 @@ const DODOProxyV2 = artifacts.require("DODOV2Proxy02");
 const DODOIncentive = artifacts.require("DODOIncentive");
 const DODOSellHelper = artifacts.require("DODOSellHelper");
 const DODOCalleeHelper = artifacts.require("DODOCalleeHelper");
-const DODOV2RouteHelper = artifacts.require("DODOV2RouteHelper");
 const DODOV1PmmHelper = artifacts.require("DODOV1PmmHelper");
 
 const DODOV1Adapter = artifacts.require("DODOV1Adapter");
@@ -46,7 +45,7 @@ module.exports = async (deployer, network, accounts) => {
     //Helper
     let DODOSellHelperAddress = CONFIG.DODOSellHelper;
     let DODOCalleeHelperAddress = CONFIG.DODOCalleeHelper;
-    let DODORouteV2HelperAddress = CONFIG.DODOV2RouteHelper;
+    // let DODORouteV2HelperAddress = CONFIG.DODOV2RouteHelper;
     let DODOV1PmmHelperAddress = CONFIG.DODOV1PmmHelper;
 
     //Template
@@ -259,11 +258,11 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("Init CpFactory Tx:", tx.tx);
         }
 
-        if (DODORouteV2HelperAddress == "") {
-            await deployer.deploy(DODOV2RouteHelper, DvmFactoryAddress, DppFactoryAddress);
-            DODOV2RouteHelperAddress = DODOV2RouteHelper.address;
-            logger.log("DODOV2RouteHelper Address: ", DODOV2RouteHelperAddress);
-        }
+        // if (DODORouteV2HelperAddress == "") {
+        //     await deployer.deploy(DODOV2RouteHelper, DvmFactoryAddress, DppFactoryAddress);
+        //     DODOV2RouteHelperAddress = DODOV2RouteHelper.address;
+        //     logger.log("DODOV2RouteHelper Address: ", DODOV2RouteHelperAddress);
+        // }
 
         //Proxy 
         await deployer.deploy(

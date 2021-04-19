@@ -55,8 +55,9 @@ module.exports = {
     CP:             false,
     CPFactory:      false,
     MultiCall:      false,
+    DSP:            true,
     LockedVault:    false,
-    ERC20Mine:      true
+    ERC20Mine:      false,
   },
 
   networks: {
@@ -91,7 +92,7 @@ module.exports = {
         return new HDWalletProvider(privKey, "https://mainnet.infura.io/v3/" + infuraId);
       },
       gas: 6000000,
-      gasPrice: 200000000000,
+      gasPrice: 125000000000,
       network_id: 1,
       skipDryRun: true
     },
@@ -102,6 +103,7 @@ module.exports = {
       },
       network_id: 56,
       confirmations: 10,
+      gasPrice: 5000000000,
       timeoutBlocks: 200,
       skipDryRun: true
     },

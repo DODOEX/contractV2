@@ -18,6 +18,11 @@ const CpFactory = artifacts.require("CrowdPoolingFactory");
 const MultiCall = artifacts.require("Multicall");
 const LockedTokenVault = artifacts.require("LockedTokenVault");
 
+const DspTemplate = artifacts.require("DSP");
+const DspFactory = artifacts.require("DSPFactory");
+const DODODspProxy = artifacts.require("DODODspProxy");
+const DODOV2RouteHelper = artifacts.require("DODOV2RouteHelper");
+
 const ERC20Mine = artifacts.require("ERC20Mine");
 const vDODOMine = artifacts.require("vDODOMine");
 
@@ -25,8 +30,15 @@ module.exports = async (deployer, network, accounts) => {
     let CONFIG = GetConfig(network, accounts)
     if (CONFIG == null) return;
 
+    let WETHAddress = CONFIG.WETH;
     let DODOTokenAddress = CONFIG.DODO;
     let DODOApproveProxyAddress = CONFIG.DODOApproveProxy;
+
+    let DspTemplateAddress = CONFIG.DSP;
+    let DspFactoryAddress = CONFIG.DSPFactory;
+    let DvmFactoryAddress = CONFIG.DVMFactory;
+    let DppFactoryAddress = CONFIG.DPPFactory;
+
 
     let DODOCirculationHelperAddress = CONFIG.DODOCirculationHelper;
     let GovernanceAddress = CONFIG.Governance;
@@ -37,13 +49,12 @@ module.exports = async (deployer, network, accounts) => {
     let DefaultMtFeeRateAddress = CONFIG.FeeRateModel;
     let DefaultPermissionAddress = CONFIG.PermissionManager;
     let CpTemplateAddress = CONFIG.CP;
-    let DvmFactoryAddress = CONFIG.DVMFactory;
     let DvmTemplateAddress = CONFIG.DVM;
 
     let multiSigAddress = CONFIG.multiSigAddress;
     let defaultMaintainer = CONFIG.defaultMaintainer;
 
-    if(deploySwitch.ERC20Mine) {
+    if (deploySwitch.ERC20Mine) {
         logger.log("====================================================");
         logger.log("network type: " + network);
         logger.log("Deploy time: " + new Date().toLocaleString());
@@ -80,13 +91,13 @@ module.exports = async (deployer, network, accounts) => {
             endBlock
         );
         logger.log("Add rewardToken1 Tx:", tx.tx);
-        
+
         //init
         //addToken
         //TransferToken
     }
 
-    if(deploySwitch.LockedVault) {
+    if (deploySwitch.LockedVault) {
         logger.log("====================================================");
         logger.log("network type: " + network);
         logger.log("Deploy time: " + new Date().toLocaleString());
@@ -101,7 +112,48 @@ module.exports = async (deployer, network, accounts) => {
         logger.log("LockedVault address: ", LockedTokenVault.address);
         //TODO: approve && deposit
     }
-    
+
+    if (deploySwitch.DSP) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
+        logger.log("Deploy type: DSP");
+
+        if (DspTemplateAddress == "") {
+            await deployer.deploy(DspTemplate);
+            DspTemplateAddress = DspTemplate.address;
+            logger.log("DspTemplateAddress: ", DspTemplateAddress);
+        }
+
+        if (DspFactoryAddress == "") {
+            await deployer.deploy(
+                DspFactory,
+                CloneFactoryAddress,
+                DspTemplateAddress,
+                defaultMaintainer,
+                DefaultMtFeeRateAddress
+            );
+            DspFactoryAddress = DspFactory.address;
+            logger.log("DspFactoryAddress: ", DspFactoryAddress);
+            const DspFactoryInstance = await DspFactory.at(DspFactoryAddress);
+            var tx = await DspFactoryInstance.initOwner(multiSigAddress);
+            logger.log("Init DspFactory Tx:", tx.tx);
+        }
+
+        await deployer.deploy(DODOV2RouteHelper, DvmFactoryAddress, DppFactoryAddress, DspFactoryAddress);
+        DODOV2RouteHelperAddress = DODOV2RouteHelper.address;
+        logger.log("DODOV2RouteHelper Address: ", DODOV2RouteHelperAddress);
+
+        await deployer.deploy(
+            DODODspProxy,
+            DspFactoryAddress,
+            WETHAddress,
+            DODOApproveProxyAddress
+        );
+        logger.log("DODODspProxy Address: ", DODODspProxy.address);
+    }
+
+
     if (deploySwitch.UpCP) {
         logger.log("====================================================");
         logger.log("network type: " + network);

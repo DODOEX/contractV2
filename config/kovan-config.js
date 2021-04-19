@@ -9,7 +9,7 @@ module.exports = {
         DODOSellHelper: "0xbdEae617F2616b45DCB69B287D52940a76035Fe3",
         DODOCalleeHelper: "0x36ce1831941d35c3588759B2D084E240a094ad4A",
         DODOV1PmmHelper: "0xC972069473a686b1c11Bd9347D719c87e6745d39",
-        DODOV2RouteHelper: "0xcB3b6cdBe2e57D3e37feba0C55584992Cc1B973F",
+        DODOV2RouteHelper: "0x92a3E8c83D89aE6CdE4009e053b591fa0eC65e86",
 
         //Template
         CloneFactory: "0xf7959fe661124C49F96CF30Da33729201aEE1b27",
@@ -17,6 +17,7 @@ module.exports = {
         PermissionManager: "0x82C87c5EB912762676E7a87Aad67D916317c7D0e",
         DVM: "0x7B1eD6Be684b9c691C6C4bd5ccd7bF3e0d4E06fC",
         DPP: "0xEAdc4943329Cb8139Ee3c8575f6a9B3659cd0591",
+        DSP: "0xAD4E649c1771F5175081c2CcAC183fDb91cfCd6c",
         DPPAdmin: "0xf63e41A459D9AEcaE4bAE1278ef0ae84F7F2DE56",
         CP: "0x6092eFEf82CaDcd07f3a545cBe6C83dae713aE0A",
         ERC20: "0x77d2e257241e6971688b08bda9f658f065d7bb41",
@@ -25,6 +26,7 @@ module.exports = {
         //Factory
         DVMFactory: "0x322F8014C125Da09314d3a68d4d9F427823F17FD",
         DPPFactory: "0xC65F8087288aa0a118aa6F3228Ef9ecc8187F4b6",
+        DSPFactory: "0xd54d6b7261860a3a689135bA3D333D13b65F3CEe",
         CrowdPoolingFactory: "0x9e6E8985D52E91eDf1671f28Ca73bc4F3E219b72",
         UpCpFactory: "0x25AE560522165eacCFbF2287493AF12B8ad718e7",
         ERC20Factory: "0xCb1A2f64EfB02803276BFB5a8D511C4D950282a0",
@@ -43,6 +45,7 @@ module.exports = {
 
         //Proxy
         DODOV2Proxy: "0x85CAA68ae47f047aa01C48BCaA711CA70a950fFb",
+        DSPProxy: "0xC5fF477667E29df8887D258CaE593e04A1961A69",
 
         //vDODO
         DODOCirculationHelper: "",
