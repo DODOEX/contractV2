@@ -392,3 +392,8 @@ DspFactoryAddress:  0xaEc55245AB0cDcc03Bc5f104dAdCd0a33Ef50714
 Init DspFactory Tx: 0xa62cc600cdfe2378dc159eb18cdcff06a677804086354c185ee304ee90dc550e
 DODOV2RouteHelper Address:  0x67166F14E9aCf43A822BE147eA59CdDd01A7C00d
 DODODspProxy Address:  0x9951CdEc21F42ab69D02daAAFEF4C3fc810B36FF
+====================================================
+network type: heco
+Deploy time: 2021/4/20 下午12:41:59
+Deploy type: DODORouteProxy
+DODORouteProxy Address:  0x8D3102e4fe76B5E1a896D8BCBC1BA2643D8Bea1a

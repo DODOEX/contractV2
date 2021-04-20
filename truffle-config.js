@@ -58,6 +58,7 @@ module.exports = {
     DSP:            false,
     LockedVault:    false,
     ERC20Mine:      false,
+    MULTIHOP:       true
   },
 
   networks: {

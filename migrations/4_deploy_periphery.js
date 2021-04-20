@@ -17,6 +17,7 @@ const UpCrowdPoolingFactory = artifacts.require("UpCrowdPoolingFactory");
 const CpFactory = artifacts.require("CrowdPoolingFactory");
 const MultiCall = artifacts.require("Multicall");
 const LockedTokenVault = artifacts.require("LockedTokenVault");
+const DODORouteProxy = artifacts.require("DODORouteProxy");
 
 const DspTemplate = artifacts.require("DSP");
 const DspFactory = artifacts.require("DSPFactory");
@@ -277,6 +278,21 @@ module.exports = async (deployer, network, accounts) => {
         const dodoRechargeInstance = await DODORecharge.at(DODORechargeAddress);
         var tx = await dodoRechargeInstance.initOwner(multiSigAddress);
         logger.log("Init DODORechargeAddress Tx:", tx.tx);
+    }
+
+    if (deploySwitch.MULTIHOP) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
+        logger.log("Deploy type: DODORouteProxy");
+
+        await deployer.deploy(
+            DODORouteProxy,
+            WETHAddress,
+            DODOApproveProxyAddress
+        );
+
+        logger.log("DODORouteProxy Address: ", DODORouteProxy.address);
     }
 
 
