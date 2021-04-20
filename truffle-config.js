@@ -55,7 +55,7 @@ module.exports = {
     CP:             false,
     CPFactory:      false,
     MultiCall:      false,
-    DSP:            true,
+    DSP:            false,
     LockedVault:    false,
     ERC20Mine:      false,
   },
@@ -112,7 +112,7 @@ module.exports = {
       provider: function () {
         return new HDWalletProvider(privKey, "https://http-mainnet.hecochain.com");
       },
-      gasPrice: 1500000000,
+      gasPrice: 1000000000,
       network_id: 128
     },
 
