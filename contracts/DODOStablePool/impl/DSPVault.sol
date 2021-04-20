@@ -11,6 +11,7 @@ pragma experimental ABIEncoderV2;
 import {IERC20} from "../../intf/IERC20.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
+import {PMMPricing} from "../../lib/PMMPricing.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 import {DSPStorage} from "./DSPStorage.sol";
 
@@ -91,6 +92,19 @@ contract DSPVault is DSPStorage {
 
     function sync() external preventReentrant {
         _sync();
+    }
+
+    function correctRState() public {
+        if (_RState_ == uint32(PMMPricing.RState.BELOW_ONE) && _BASE_RESERVE_<_BASE_TARGET_) {
+          _RState_ = uint32(PMMPricing.RState.ONE);
+          _BASE_TARGET_ = _BASE_RESERVE_;
+          _QUOTE_TARGET_ = _QUOTE_RESERVE_;
+        }
+        if (_RState_ == uint32(PMMPricing.RState.ABOVE_ONE) && _QUOTE_RESERVE_<_QUOTE_TARGET_) {
+          _RState_ = uint32(PMMPricing.RState.ONE);
+          _BASE_TARGET_ = _BASE_RESERVE_;
+          _QUOTE_TARGET_ = _QUOTE_RESERVE_;
+        }
     }
 
     // ============ Asset Out ============
