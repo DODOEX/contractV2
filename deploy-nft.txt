@@ -204,3 +204,9 @@ Deploy time: 2021/4/16 下午1:41:43
 Deploy type: MysteryBoxV1
 MysteryBoxV1Address:  0x45136c2455Dd2631E31ab884cf167eC618CCf39a
 Init MysteryBoxV1 Tx: 0xa8c1a3700aa806f234566ee4948f9e8c5ce31ded4d35dbb33821b14dda0d9379
+====================================================
+network type: kovan
+Deploy time: 2021/4/20 下午9:05:43
+Deploy type: MysteryBoxV1
+MysteryBoxV1Address:  0x97DD3a2bB801028D6b65F62b4cce9D07e4907EC2
+Init MysteryBoxV1 Tx: 0x0a8525b2215fab6cd63c6f74e50ad0eb8d293894ab3db49f2be027b0a4ee9dad
