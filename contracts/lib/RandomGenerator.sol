@@ -15,7 +15,7 @@ interface IDODOMidPrice {
     function getMidPrice() external view returns (uint256 midPrice);
 }
 
-contract RandomGenerator {
+contract RandomGenerator is IRandomGenerator{
     address[] public pools;
 
     constructor(address[] memory _pools) public {
@@ -24,7 +24,7 @@ contract RandomGenerator {
         }
     }
 
-    function random(uint256 seed) external view returns (uint256) {
+    function random(uint256 seed) external override view returns (uint256) {
         uint256 priceSum;
         for (uint256 i = 0; i < pools.length; i++) {
             priceSum += IDODOMidPrice(pools[i]).getMidPrice();

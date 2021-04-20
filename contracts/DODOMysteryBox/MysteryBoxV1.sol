@@ -55,7 +55,9 @@ contract MysteryBoxV1 is ERC721URIStorage, InitializableOwnable {
         string memory baseUri,
         address owner,
         address randomGenerator
-    ) public {
+    ) external {
+        require(owner != address(0));
+
         _name = name;
         _symbol = symbol;
         _baseUri = baseUri;
@@ -84,11 +86,11 @@ contract MysteryBoxV1 is ERC721URIStorage, InitializableOwnable {
         require(_REDEEM_ALLOWED_, "REDEEM_CLOSED");
         require(!address(msg.sender).isContract(), "ONLY_ALLOW_EOA");
         require(ticketNum >= 1 && ticketNum <= _USER_TICKETS_[msg.sender], "TICKET_NUM_INVALID");
+        _USER_TICKETS_[msg.sender] = _USER_TICKETS_[msg.sender].sub(ticketNum);
+        _TOTAL_TICKETS_ = _TOTAL_TICKETS_.sub(ticketNum);
         for (uint256 i = 0; i < ticketNum; i++) {
             _redeemSinglePrize(msg.sender);
         }
-        _USER_TICKETS_[msg.sender] = _USER_TICKETS_[msg.sender].sub(ticketNum);
-        _TOTAL_TICKETS_ = _TOTAL_TICKETS_.sub(ticketNum);
     }
 
     // ================= View ===================
