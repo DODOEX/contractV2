@@ -397,3 +397,15 @@ network type: heco
 Deploy time: 2021/4/20 下午12:41:59
 Deploy type: DODORouteProxy
 DODORouteProxy Address:  0x8D3102e4fe76B5E1a896D8BCBC1BA2643D8Bea1a
+====================================================
+network type: kovan
+Deploy time: 2021/4/21 下午3:28:46
+Deploy type: DODOUpCpProxy
+UpCpProxy address:  0x6F9C270A13fB267216216C53e48de9e3B840aBB6
+====================================================
+network type: kovan
+Deploy time: 2021/4/21 下午3:35:09
+Deploy type: ERC20Mine
+erc20Mine address:  0x9DbbfFE2C5BA6c931C518199C861ff0b6067c2EB
+Init ERC20Mine Tx: 0xcac325824615f35b1a085985a1fa391419516dff41a7ad4464f43dcfc64e2b5e
+Add rewardToken0 Tx: 0x8377ceb97929a66f0276d6bae3dc98de60a6b54d219fc66ee8cd9985f2fd0c33

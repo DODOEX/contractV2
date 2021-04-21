@@ -57,8 +57,8 @@ module.exports = {
     MultiCall:      false,
     DSP:            false,
     LockedVault:    false,
-    ERC20Mine:      false,
-    MULTIHOP:       true
+    MULTIHOP:       false,
+    UpCpProxy:      false
   },
 
   networks: {
