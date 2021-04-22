@@ -119,6 +119,7 @@ module.exports = {
       confirmations: 10,
       gasPrice: 5000000000,
       timeoutBlocks: 200,
+      gasPrice: 6000000000,
       skipDryRun: true
     },
 

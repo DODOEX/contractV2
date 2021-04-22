@@ -58,5 +58,30 @@ module.exports = {
         //Account
         multiSigAddress: "0xcaa42F09AF66A8BAE3A7445a7f63DAD97c11638b",
         defaultMaintainer: "0xcaa42F09AF66A8BAE3A7445a7f63DAD97c11638b",
+
+
+        //================== NFT ====================
+        ConstFeeRateModel: "",
+        FeeDistributor: "",
+        Fragment: "",
+        NFTCollateralVault: "",
+        DODONFTRouteHelper: "",
+
+        InitializableERC721: "",
+        InitializableERC1155: "",
+        NFTTokenFactory: "",
+
+        DODONFTRegistry: "",
+        DODONFTProxy: "",
+
+
+        //================= MysteryBox =================
+        MysteryBoxV1: "",
+        RandomGenerator: "",
+        RandomPool: [
+            "0x82AfF931d74F0645Ce80e8f419b94c8F93952686",
+            "0xC64a1d5C819B3c9113cE3DB32B66D5D2b05B4CEf",
+            "0x89E5015ff12E4536691aBfe5f115B1cB37a35465"
+        ]
     }
 }
