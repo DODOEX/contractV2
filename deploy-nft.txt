@@ -216,3 +216,10 @@ Deploy time: 2021/4/21 上午9:22:17
 Deploy type: MysteryBoxV1
 MysteryBoxV1Address:  0x76ED6162166D1d7631ae67809bCABac2D395f07d
 Init MysteryBoxV1 Tx: 0x27f44607fdce76e4b4799000ba9c4ccba0d0382baf8ecb79f73f1f8369a7d7a8
+====================================================
+network type: bsclive
+Deploy time: 2021/4/22 上午10:59:41
+Deploy type: MysteryBoxV1
+RandomGeneratorAddress:  0xEFdA126191d461858fDCe83deBaEA2A561EFC758
+MysteryBoxV1Address:  0xc25286ef3BaE3f6Fe2d6d0A6e2acAd0301AF97b8
+Init MysteryBoxV1 Tx: 0xb42e4004b59cd3aed074be861271274391248a8b9e48ec7a85fe691826ec0d11
