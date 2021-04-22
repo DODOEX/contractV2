@@ -46,7 +46,7 @@ module.exports = {
         //Proxy
         DODOV2Proxy: "0xAc7cC7d2374492De2D1ce21e2FEcA26EB0d113e7",
         DSPProxy: "0x9951CdEc21F42ab69D02daAAFEF4C3fc810B36FF",
-        UpCpProxy: "",
+        UpCpProxy: "0x4E3d4cD40d3a7eaC8C0B064D37d0b5e35a186bC7",
 
         //vDODO
         DODOCirculationHelper: "",

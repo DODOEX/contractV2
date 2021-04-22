@@ -409,3 +409,18 @@ Deploy type: ERC20Mine
 erc20Mine address:  0x9DbbfFE2C5BA6c931C518199C861ff0b6067c2EB
 Init ERC20Mine Tx: 0xcac325824615f35b1a085985a1fa391419516dff41a7ad4464f43dcfc64e2b5e
 Add rewardToken0 Tx: 0x8377ceb97929a66f0276d6bae3dc98de60a6b54d219fc66ee8cd9985f2fd0c33
+====================================================
+network type: live
+Deploy time: 2021/4/22 下午3:52:34
+Deploy type: DODOUpCpProxy
+UpCpProxy address:  0x26D898A37782B04d6c460E11aEeCD8f3d99e91B8
+====================================================
+network type: bsclive
+Deploy time: 2021/4/22 下午4:00:06
+Deploy type: DODOUpCpProxy
+UpCpProxy address:  0x01d3E7271c278Aa3AA56EeBa6a109b2C200679fA
+====================================================
+network type: heco
+Deploy time: 2021/4/22 下午4:10:41
+Deploy type: DODOUpCpProxy
+UpCpProxy address:  0x4E3d4cD40d3a7eaC8C0B064D37d0b5e35a186bC7
