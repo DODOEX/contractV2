@@ -76,12 +76,11 @@ module.exports = {
 
 
         //================= MysteryBox =================
-        MysteryBoxV1: "",
-        RandomGenerator: "",
+        MysteryBoxV1: "0xc25286ef3BaE3f6Fe2d6d0A6e2acAd0301AF97b8",
+        RandomGenerator: "0x7C062B9C584fA6eC2504270790D38240A2c5fE72",
         RandomPool: [
-            "0x82AfF931d74F0645Ce80e8f419b94c8F93952686",
-            "0xC64a1d5C819B3c9113cE3DB32B66D5D2b05B4CEf",
-            "0x89E5015ff12E4536691aBfe5f115B1cB37a35465"
+            "0x82aff931d74f0645ce80e8f419b94c8f93952686",
+            "0x327134de48fcdd75320f4c32498d1980470249ae"
         ]
     }
 }
