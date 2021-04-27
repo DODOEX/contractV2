@@ -124,13 +124,14 @@ contract FeeDistributor {
     function _claim(address sender, address to) internal {
         uint256 allBase = _USER_BASE_REWARDS_[sender];
         uint256 allQuote = _USER_QUOTE_REWARDS_[sender];
-        IERC20(_BASE_TOKEN_).safeTransfer(to, allBase);
-        IERC20(_QUOTE_TOKEN_).safeTransfer(to, allQuote);
 
         _BASE_RESERVE_ = _BASE_RESERVE_.sub(allBase);
         _QUOTE_RESERVE_ = _QUOTE_RESERVE_.sub(allQuote);
         _USER_BASE_REWARDS_[sender] = 0;
         _USER_QUOTE_REWARDS_[sender] = 0;
+
+        IERC20(_BASE_TOKEN_).safeTransfer(to, allBase);
+        IERC20(_QUOTE_TOKEN_).safeTransfer(to, allQuote);
         
         emit Claim(sender, allBase, allQuote);
     }

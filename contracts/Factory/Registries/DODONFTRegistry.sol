@@ -9,6 +9,7 @@ pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
+import {IDVM} from "../../DODOVendingMachine/intf/IDVM.sol";
 
 interface IDODONFTRegistry {
     function addRegistry(
@@ -26,7 +27,7 @@ interface IDODONFTRegistry {
  *
  * @notice Register DODONFT Pools 
  */
-contract DODONFTRegistry is InitializableOwnable {
+contract DODONFTRegistry is InitializableOwnable, IDODONFTRegistry {
 
     mapping (address => bool) public isAdminListed;
     
@@ -62,7 +63,7 @@ contract DODONFTRegistry is InitializableOwnable {
         address quoteToken,
         address feeDistributor,
         address dvm
-    ) external {
+    ) override external {
         require(isAdminListed[msg.sender], "ACCESS_DENIED");
         _FRAG_FEE_REGISTRY_[fragment] = feeDistributor;
         _DVM_FEE_REGISTRY_[dvm] = feeDistributor;
@@ -79,14 +80,27 @@ contract DODONFTRegistry is InitializableOwnable {
         _FRAG_FEE_REGISTRY_[fragment] = address(0);
         _DVM_FEE_REGISTRY_[dvm] = address(0);
         _VAULT_FRAG_REGISTRY_[vault] = address(0);
+
+        address quoteToken = IDVM(dvm)._QUOTE_TOKEN_();
+        address[] memory registryList = _REGISTRY_[fragment][quoteToken];
+        for (uint256 i = 0; i < registryList.length; i++) {
+            if (registryList[i] == dvm) {
+                if(i != registryList.length - 1) {
+                    _REGISTRY_[fragment][quoteToken][i] = _REGISTRY_[fragment][quoteToken][registryList.length - 1];
+                }                
+                _REGISTRY_[fragment][quoteToken].pop();
+                break;
+            }
+        }
+
         emit RemoveRegistry(fragment);
     }
 
-    function addAmindList (address contractAddr) public onlyOwner {
+    function addAdminList (address contractAddr) external onlyOwner {
         isAdminListed[contractAddr] = true;
     }
 
-    function removeWhiteList (address contractAddr) public onlyOwner {
+    function removeAdminList (address contractAddr) external onlyOwner {
         isAdminListed[contractAddr] = false;
     }
 

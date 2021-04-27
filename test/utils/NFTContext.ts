@@ -122,7 +122,7 @@ export class NFTContext {
 
         await this.NFTProxy.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
 
-        await this.NFTRegister.methods.addAmindList(this.NFTProxy.options.address).send(this.sendParam(this.Deployer));
+        await this.NFTRegister.methods.addAdminList(this.NFTProxy.options.address).send(this.sendParam(this.Deployer));
 
 
         await this.DODOApprove.methods.init(this.Deployer, this.DODOApproveProxy.options.address).send(this.sendParam(this.Deployer));
