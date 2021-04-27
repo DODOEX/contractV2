@@ -434,3 +434,4 @@ network type: mbtestnet_offical
 Deploy time: 2021/4/27 下午2:16:05
 Deploy type: WETH9
 WETH9Address:  0x18AA6Bb215CDBd179E7beAE10F66C21B26971306
+MultiCallAddress:  0x3a60A76aCAe8feeC74D6B5b665d4DBaab2abC406

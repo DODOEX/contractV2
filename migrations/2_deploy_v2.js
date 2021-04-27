@@ -7,6 +7,7 @@ const { GetConfig } = require("../configAdapter.js")
 const CloneFactory = artifacts.require("CloneFactory");
 const FeeRateModelTemplate = artifacts.require("FeeRateModel");
 const PermissionManagerTemplate = artifacts.require("PermissionManager");
+const DODOV2RouteHelper = artifacts.require("DODOV2RouteHelper");
 
 const DvmTemplate = artifacts.require("DVM");
 const DppTemplate = artifacts.require("DPP");
@@ -45,7 +46,7 @@ module.exports = async (deployer, network, accounts) => {
     //Helper
     let DODOSellHelperAddress = CONFIG.DODOSellHelper;
     let DODOCalleeHelperAddress = CONFIG.DODOCalleeHelper;
-    // let DODORouteV2HelperAddress = CONFIG.DODOV2RouteHelper;
+    let DODORouteV2HelperAddress = CONFIG.DODOV2RouteHelper;
     let DODOV1PmmHelperAddress = CONFIG.DODOV1PmmHelper;
 
     //Template

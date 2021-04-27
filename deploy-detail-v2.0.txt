@@ -952,3 +952,40 @@ Deploy type: V2 - Adapter
 DODOV1Adapter Address:  0x1c31c6d0032768463EaBABe1A47D04c6470d31fE
 DODOV2Adapter Address:  0x8Fc0d51915D631Ff6B8b70dEEAE789cE5c792a62
 UniAdapter Address:  0x2F2f9460500F27db68AAfBfa0472cEDDb168a5a6
+====================================================
+network type: mbtestnet_offical
+Deploy time: 2021/4/27 下午2:58:19
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+====================================================
+network type: mbtestnet_offical
+Deploy time: 2021/4/27 下午2:58:53
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+====================================================
+network type: mbtestnet_offical
+Deploy time: 2021/4/27 下午3:14:07
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+DODOV2RouteHelper Address:  0xC679Fe3200D0d3c53Ba5cd3dC8e7111eC2DF939b
+====================================================
+network type: mbtestnet_offical
+Deploy time: 2021/4/27 下午3:39:34
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+DODOV2RouteHelper Address:  0xCFea63e3DE31De53D68780Dd65675F169439e470
+DODOV2Proxy02 Address:  0x96a75d73b3de29c009863fA6329D96b2181D3Dc4
+Init DODOProxyV2 Tx: 0x4421dc60db948a48e46bac8a6bc11881d5de07e58dcb0e40383b799a0273ae15
+====================================================
+network type: mbtestnet_offical
+Deploy time: 2021/4/27 下午3:42:07
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+====================================================
+network type: mbtestnet_offical
+Deploy time: 2021/4/27 下午3:42:47
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+DODOV2RouteHelper Address:  0x55793C2c8A796cCE00EF2D1a86CCA2E0399BF285
+DODOV2Proxy02 Address:  0x25B2f945Fec30F34b05d416C7c0b5c6c51A3ADdC
+Init DODOProxyV2 Tx: 0xeb923b51cc4ea3ec08107b3a7850471d523a358257e18a6abe3bbbc6e1933efa
