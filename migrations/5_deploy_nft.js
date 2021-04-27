@@ -198,7 +198,7 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("DODOApproveProxy addDODOProxy tx: ", tx.tx);
 
             const DODONFTRegistrynstance = await DODONFTRegistry.at(DODONFTRegistryAddress);
-            var tx = await DODONFTRegistrynstance.addAmindList(DODONFTProxyAddress);
+            var tx = await DODONFTRegistrynstance.addAdminList(DODONFTProxyAddress);
             logger.log("Add AdminList on DODONFTRegistry Tx:", tx.tx);            
         }
     }

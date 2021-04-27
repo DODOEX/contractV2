@@ -47,7 +47,7 @@ contract Fragment is InitializableERC20 {
       address dvm, 
       address vaultPreOwner,
       address collateralVault,
-      uint256 totalSupply, 
+      uint256 _totalSupply, 
       uint256 ownerRatio,
       uint256 buyoutTimestamp
     ) external {
@@ -66,12 +66,12 @@ contract Fragment is InitializableERC20 {
         name = string(abi.encodePacked(prefix, IDVM(_DVM_).addressToShortString(_COLLATERAL_VAULT_)));
         symbol = "FRAG";
         decimals = 18;
-        super.init(address(this), totalSupply, name, symbol, decimals);
+        super.init(address(this), _totalSupply, name, symbol, decimals);
 
         // init FRAG distribution
-        uint256 vaultPreOwnerBalance = DecimalMath.mulFloor(totalSupply, ownerRatio);
+        uint256 vaultPreOwnerBalance = DecimalMath.mulFloor(_totalSupply, ownerRatio);
         _transfer(address(this), _VAULT_PRE_OWNER_, vaultPreOwnerBalance);
-        _transfer(address(this), _DVM_, totalSupply.sub(vaultPreOwnerBalance));
+        _transfer(address(this), _DVM_, _totalSupply.sub(vaultPreOwnerBalance));
 
         // init DVM liquidity
         IDVM(_DVM_).buyShares(address(this));
@@ -100,12 +100,12 @@ contract Fragment is InitializableERC20 {
       _clearBalance(address(this));
 
       uint256 preOwnerQuote = DecimalMath.mulFloor(_BUYOUT_PRICE_, balances[_VAULT_PRE_OWNER_]);
-      IERC20(_QUOTE_).safeTransfer(_VAULT_PRE_OWNER_, preOwnerQuote);
       _clearBalance(_VAULT_PRE_OWNER_);
+      IERC20(_QUOTE_).safeTransfer(_VAULT_PRE_OWNER_, preOwnerQuote);
 
       uint256 newOwnerQuote = DecimalMath.mulFloor(_BUYOUT_PRICE_, balances[newVaultOwner]);
-      IERC20(_QUOTE_).safeTransfer(newVaultOwner, newOwnerQuote);
       _clearBalance(newVaultOwner);
+      IERC20(_QUOTE_).safeTransfer(newVaultOwner, newOwnerQuote);
 
       ICollateralVault(_COLLATERAL_VAULT_).directTransferOwnership(newVaultOwner);
 
@@ -118,8 +118,8 @@ contract Fragment is InitializableERC20 {
 
       uint256 baseAmount = balances[msg.sender];
       uint256 quoteAmount = DecimalMath.mulFloor(_BUYOUT_PRICE_, baseAmount);
-      IERC20(_QUOTE_).safeTransfer(to, quoteAmount);
       _clearBalance(msg.sender);
+      IERC20(_QUOTE_).safeTransfer(to, quoteAmount);
 
       if (data.length > 0) {
         IDODOCallee(to).NFTRedeemCall(
@@ -142,7 +142,7 @@ contract Fragment is InitializableERC20 {
     function _clearBalance(address account) internal {
       uint256 clearBalance = balances[account];
       balances[account] = 0;
-      balances[address(0)] = clearBalance;
+      balances[address(0)] = balances[address(0)].add(clearBalance);
       emit Transfer(account, address(0), clearBalance);
     }
 }
