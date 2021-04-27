@@ -903,3 +903,52 @@ DODOV2Proxy02 Address:  0xAc7cC7d2374492De2D1ce21e2FEcA26EB0d113e7
 Init DODOProxyV2 Tx: 0xaf68709cabcfa8efdd8d16eadf9ce2d51dd8cfdc074fea704c762cfc9cad6f94
 DODOApproveProxy Init tx:  0xad3f8af693cc90f8f7843ef7458c54fe7bf7bdd18951dbfbfcbcdec2e709813d
 DODOApprove Init tx:  0x64c084228573cc313470155da609ffc126dde54a942c0b221e7512e95d71fcb3
+====================================================
+network type: mbtestnet_offical
+Deploy time: 2021/4/27 下午2:17:05
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+DODOSellHelper Address:  0x67ee3Cb086F8a16f34beE3ca72FAD36F7Db929e2
+====================================================
+network type: mbtestnet_offical
+Deploy time: 2021/4/27 下午2:19:23
+Deploy type: V2
+multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
+DODOCalleeHelperAddress:  0xaaffAd1017D6a13E026A00121BF258C616B25f7C
+DODOV1RouterHelper Address:  0x4EE6398898F7FC3e648b3f6bA458310ac29cD352
+CloneFactoryAddress:  0x1ddD02f6d31C1eF04cFA0a1AA811406B5B2884E7
+DefaultMtFeeRateAddress:  0xD56281EF996B6B29874C77D2e1464216E8043127
+Init DefaultMtFeeRateAddress Tx: 0xb5a8e04de4ab824fa61e8725338c9e987a3b3d7430f61d9a38dbb5073bb37403
+DefaultPermissionAddress:  0x61b21603A527b487C4a3A80a69224b87751D0F6a
+Init DefaultPermissionAddress Tx: 0x9ed2dfeeb677ddf940e74e1e8d56a93a65f6955e54768b248f53c8ea572548ab
+DvmTemplateAddress:  0xF7c5311B618E6dFBBc34210c92D2C9675D7EdDCA
+DppTemplateAddress:  0x4EfF1D851366b8cc51d553a87e2d12dA8Da46F2a
+DppAdminTemplateAddress:  0x790B4A80Fb1094589A3c0eFC8740aA9b0C1733fB
+CpTemplateAddress:  0x97f0153E7F5749640aDF3Ff9CFC518b79D6Fe53b
+ERC20TemplateAddress:  0xAfe0A75DFFb395eaaBd0a7E1BBbd0b11f8609eeF
+MintableERC20TemplateAddress:  0xC3528D128CC227fd60793007b5e3FdF7c2945282
+ERC20FactoryAddress:  0x778DF5B12170e8af8dF94356BfC864E57CE185DC
+DODOApprove Address:  0x1565666CD77bB6DDE193e1D37Ad7b07900e6f4c0
+DODOApproveProxy Address:  0x1dc8D1f1600B7C1D39e6b60FBC7b021Bc4F9C993
+DODOIncentiveAddress:  0x8F8Dd7DB1bDA5eD3da8C9daf3bfa471c12d58486
+DODOIncentive Init tx:  0xd03218cb2bbaa90cfcf33c78cf58ae3c3347b94de9ca8c7c8be8a36507213b7c
+DvmFactoryAddress:  0x77106d0f8c5B8ADF95a7feaae5bea130b1D2D748
+Init DvmFactory Tx: 0x49c897aa1d69f836f37eb469618bbb688384a4a93bc5a3d12d1b43dd6927fa57
+DppFactoryAddress:  0x67e5a449EF6B0da29D338023e7cfc50a2975F9Bb
+Init DppFactory Tx: 0x6aeccb64cb1bcc955467db9d86da886a8a86abecf807ca2209423ce7d64a8cdb
+CpFactoryAddress:  0x0Fba7F96f3D7196FfAcaC46356F05Fdb7B24c38d
+Init CpFactory Tx: 0x5ab1c43bf5f92efaddd775de780904c46e21d4e2a19aa9afbae9ba1a993a308f
+DODOV2Proxy02 Address:  0xf94435Ad7Edc3D5aDd1C1345622Bb745D0387416
+Init DODOProxyV2 Tx: 0x6444bbaba13ff67b4dc863d80bcd3bb88beab945befc2d128ba8aa6597d99393
+====================================================
+network type: mbtestnet_offical
+Deploy time: 2021/4/27 下午2:40:02
+Deploy type: V2 - Adapter
+DODOV1Adapter Address:  0x80223ab1F41d4Ec8D8321b9cc88A835737D57592
+====================================================
+network type: mbtestnet_offical
+Deploy time: 2021/4/27 下午2:42:12
+Deploy type: V2 - Adapter
+DODOV1Adapter Address:  0x1c31c6d0032768463EaBABe1A47D04c6470d31fE
+DODOV2Adapter Address:  0x8Fc0d51915D631Ff6B8b70dEEAE789cE5c792a62
+UniAdapter Address:  0x2F2f9460500F27db68AAfBfa0472cEDDb168a5a6

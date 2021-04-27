@@ -424,3 +424,13 @@ network type: heco
 Deploy time: 2021/4/22 下午4:10:41
 Deploy type: DODOUpCpProxy
 UpCpProxy address:  0x4E3d4cD40d3a7eaC8C0B064D37d0b5e35a186bC7
+====================================================
+network type: mbtestnet_offical
+Deploy time: 2021/4/27 下午2:13:22
+Deploy type: DODOToken
+DODOTokenAddress:  0x1e0D4043C0CD3ed15F3c2AfE60B0F213c9b5E30d
+====================================================
+network type: mbtestnet_offical
+Deploy time: 2021/4/27 下午2:16:05
+Deploy type: WETH9
+WETH9Address:  0x18AA6Bb215CDBd179E7beAE10F66C21B26971306

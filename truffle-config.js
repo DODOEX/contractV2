@@ -39,26 +39,26 @@ module.exports = {
    * $ truffle test --network <network-name>
    */
   deploySwitch: {
-    DEPLOY_V1:      false,
-    DEPLOY_V2:      false,
-    ADAPTER:        false,
-    MOCK_TOKEN:     false,
-    MOCK_V2_POOL:   false,
-    vDODOToken:     false,
-    DODORecharge:   false,
-    MINE:           false,
-    FEERATEIMPL:    false,
-    WETH:           false,
-    DODO:           false,
-    UpCP:           false,
-    DVM:            false,
-    CP:             false,
-    CPFactory:      false,
-    MultiCall:      false,
-    DSP:            false,
-    LockedVault:    false,
-    MULTIHOP:       false,
-    UpCpProxy:      true
+    DEPLOY_V1:        false,
+    DEPLOY_V2:        false,
+    ADAPTER:          false,
+    MOCK_TOKEN:       false,
+    MOCK_V2_POOL:     false,
+    vDODOToken:       false,
+    DODORecharge:     false,
+    MINE:             false,
+    FEERATEIMPL:      false,
+    WETH:             false,
+    DODO:             false,
+    UpCP:             false,
+    DVM:              false,
+    CP:               false,
+    CPFactory:        false,
+    MultiCall:        false,
+    DSP:              false,
+    LockedVault:      false,
+    MULTIHOP:         false,
+    UpCpProxy:        false
   },
 
   networks: {
@@ -124,6 +124,13 @@ module.exports = {
       network_id: 1281,
     },
 
+    mbtestnet_offical: {
+      provider: () => {
+        return new HDWalletProvider(privKey, 'https://rpc.testnet.moonbeam.network');
+      },
+      network_id: 1287,
+    },
+
     oktest: {
       provider: () => {
         return new HDWalletProvider(privKey, 'https://exchaintest.okexcn.com')
@@ -133,7 +140,7 @@ module.exports = {
       timeoutBlocks: 200,
       skipDryRun: true
     },
-    
+
     arbtest: {
       provider: function () {
         return wrapProvider(
