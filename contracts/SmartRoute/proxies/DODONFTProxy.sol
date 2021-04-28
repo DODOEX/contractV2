@@ -150,6 +150,11 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
         uint256 quoteAmount,
         uint8 flag // 0 - ERC20, 1 - quoteInETH
     ) external payable preventReentrant {
+        if(flag == 1)
+            require(msg.value == quoteAmount, "DODONFTProxy: VALUE_INVALID");
+        else 
+            require(msg.value == 0, "DODONFTProxy: WE_SAVED_YOUR_MONEY");
+            
         _deposit(msg.sender, fragment, IFragment(fragment)._QUOTE_(), quoteAmount, flag == 1);
         IFragment(fragment).buyout(msg.sender);
         emit Buyout(msg.sender, fragment, quoteAmount);
@@ -160,6 +165,11 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
         uint256 stakeAmount,
         uint8 flag // 0 - ERC20, 1 - ETH
     ) external payable preventReentrant {
+        if(flag == 1)
+            require(msg.value == stakeAmount, "DODONFTProxy: VALUE_INVALID");
+        else 
+            require(msg.value == 0, "DODONFTProxy: WE_SAVED_YOUR_MONEY");
+
         address stakeVault = IFeeDistributor(feeDistributor)._STAKE_VAULT_();
         require(stakeVault != address(0), "DODONFTProxy:STAKE_VAULT_EMPTY");
         _deposit(msg.sender, stakeVault, IFeeDistributor(feeDistributor)._STAKE_TOKEN_(), stakeAmount, flag == 1);

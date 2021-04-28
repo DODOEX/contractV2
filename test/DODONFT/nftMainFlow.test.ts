@@ -143,7 +143,7 @@ describe("DODONFT", () => {
             assert(nftInfo.tokenId, '0')
         });
 
-        it.only("createFragment", async () => {
+        it("createFragment", async () => {
             var erc721Address = await ctx.createERC721(ctx, author);
             var vaultAddress = await ctx.createNFTVault(ctx, author);
             var nftVaultInstance = contracts.getContractWithAddress(contracts.NFT_VAULT, vaultAddress);
