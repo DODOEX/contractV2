@@ -58,7 +58,8 @@ module.exports = {
     DSP:              false,
     LockedVault:      false,
     MULTIHOP:         false,
-    UpCpProxy:        false
+    UpCpProxy:        false,
+    CpProxy:          true
   },
 
   networks: {

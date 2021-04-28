@@ -19,6 +19,7 @@ const MultiCall = artifacts.require("Multicall");
 const LockedTokenVault = artifacts.require("LockedTokenVault");
 const DODORouteProxy = artifacts.require("DODORouteProxy");
 const DODOUpCpProxy = artifacts.require("DODOUpCpProxy");
+const DODOCpProxy = artifacts.require("DODOCpProxy");
 
 const DspTemplate = artifacts.require("DSP");
 const DspFactory = artifacts.require("DSPFactory");
@@ -41,6 +42,7 @@ module.exports = async (deployer, network, accounts) => {
     let DvmFactoryAddress = CONFIG.DVMFactory;
     let DppFactoryAddress = CONFIG.DPPFactory;
     let UpCpFactoryAddress = CONFIG.UpCpFactory;
+    let CpFactoryAddress = CONFIG.CrowdPoolingFactory;
 
 
     let DODOCirculationHelperAddress = CONFIG.DODOCirculationHelper;
@@ -166,6 +168,20 @@ module.exports = async (deployer, network, accounts) => {
             DODOApproveProxyAddress
         );
         logger.log("UpCpProxy address: ", DODOUpCpProxy.address);
+    }
+
+    if (deploySwitch.CpProxy) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
+        logger.log("Deploy type: DODOCpProxy");
+        await deployer.deploy(
+            DODOCpProxy,
+            WETHAddress,
+            CpFactoryAddress,
+            DODOApproveProxyAddress
+        );
+        logger.log("CpProxy address: ", DODOCpProxy.address);
     }
 
 
