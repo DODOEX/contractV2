@@ -49,6 +49,8 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
     address public _DVM_TEMPLATE_;
     address public _MTFEE_TEMPLATE_;
 
+    uint256 public _DEFAULT_BUYOUT_FEE_;
+
     // ============ Events ============
     event ChangeVaultTemplate(address newVaultTemplate);
     event ChangeFragTemplate(address newFragTemplate);
@@ -59,6 +61,7 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
     event CreateFragment(address vault, address fragment, address dvm, address feeDistributor);
     event Buyout(address from, address fragment, uint256 amount);
     event Stake(address from, address feeDistributor, uint256 amount);
+    event ChangeBuyoutFee(uint256 newBuyoutFee);
 
     // ============ Modifiers ============
 
@@ -140,7 +143,9 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
             msg.sender, 
             _fragParams[0], 
             _fragParams[1], 
-            _fragParams[2]
+            _fragParams[2],
+            _DEFAULT_MAINTAINER_,
+            _DEFAULT_BUYOUT_FEE_
         );
         }
 
@@ -219,6 +224,12 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
         _DVM_TEMPLATE_ = newDvmTemplate;
         emit ChangeDvmTemplate(newDvmTemplate);
     }
+
+    function updateBuyoutFee(uint256 buyoutFee) external onlyOwner {
+        _DEFAULT_BUYOUT_FEE_ = buyoutFee;
+        emit ChangeBuyoutFee(buyoutFee);
+    }
+
 
     //============= Internal ================
 
