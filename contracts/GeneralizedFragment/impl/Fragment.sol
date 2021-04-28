@@ -85,71 +85,71 @@ contract Fragment is InitializableERC20 {
 
 
     function buyout(address newVaultOwner) external {
-      require(_BUYOUT_TIMESTAMP_ != 0, "DODOFragment: NOT_SUPPORT_BUYOUT");
-      require(block.timestamp > _BUYOUT_TIMESTAMP_, "DODOFragment: BUYOUT_NOT_START");
-      require(!_IS_BUYOUT_, "DODOFragment: ALREADY_BUYOUT");
-      _IS_BUYOUT_ = true;
+        require(_BUYOUT_TIMESTAMP_ != 0, "DODOFragment: NOT_SUPPORT_BUYOUT");
+        require(block.timestamp > _BUYOUT_TIMESTAMP_, "DODOFragment: BUYOUT_NOT_START");
+        require(!_IS_BUYOUT_, "DODOFragment: ALREADY_BUYOUT");
+        _IS_BUYOUT_ = true;
       
-      _BUYOUT_PRICE_ = IDVM(_DVM_).getMidPrice();
-      uint256 requireQuote = DecimalMath.mulCeil(_BUYOUT_PRICE_, totalSupply);
-      uint256 payQuote = IERC20(_QUOTE_).balanceOf(address(this));
-      require(payQuote >= requireQuote, "DODOFragment: QUOTE_NOT_ENOUGH");
+        _BUYOUT_PRICE_ = IDVM(_DVM_).getMidPrice();
+        uint256 requireQuote = DecimalMath.mulCeil(_BUYOUT_PRICE_, totalSupply);
+        uint256 payQuote = IERC20(_QUOTE_).balanceOf(address(this));
+        require(payQuote >= requireQuote, "DODOFragment: QUOTE_NOT_ENOUGH");
 
-      IDVM(_DVM_).sellShares(
-        IERC20(_DVM_).balanceOf(address(this)),
-        address(this),
-        0,
-        0,
-        "",
-        uint256(-1)
-      ); 
+        IDVM(_DVM_).sellShares(
+          IERC20(_DVM_).balanceOf(address(this)),
+          address(this),
+          0,
+          0,
+          "",
+          uint256(-1)
+        ); 
 
-      uint256 redeemFrag = totalSupply.sub(balances[address(this)]).sub(balances[_VAULT_PRE_OWNER_]);
-      uint256 ownerQuoteWithoutFee = IERC20(_QUOTE_).balanceOf(address(this)).sub(DecimalMath.mulCeil(_BUYOUT_PRICE_, redeemFrag));
-      _clearBalance(address(this));
-      _clearBalance(_VAULT_PRE_OWNER_);
+        uint256 redeemFrag = totalSupply.sub(balances[address(this)]).sub(balances[_VAULT_PRE_OWNER_]);
+        uint256 ownerQuoteWithoutFee = IERC20(_QUOTE_).balanceOf(address(this)).sub(DecimalMath.mulCeil(_BUYOUT_PRICE_, redeemFrag));
+        _clearBalance(address(this));
+        _clearBalance(_VAULT_PRE_OWNER_);
 
-      uint256 buyoutFee =  DecimalMath.mulFloor(ownerQuoteWithoutFee, _DEFAULT_BUYOUT_FEE_);
+        uint256 buyoutFee =  DecimalMath.mulFloor(ownerQuoteWithoutFee, _DEFAULT_BUYOUT_FEE_);
       
-      IERC20(_QUOTE_).safeTransfer(_DEFAULT_MAINTAINER_, buyoutFee);
-      IERC20(_QUOTE_).safeTransfer(_VAULT_PRE_OWNER_, ownerQuoteWithoutFee.sub(buyoutFee));
+        IERC20(_QUOTE_).safeTransfer(_DEFAULT_MAINTAINER_, buyoutFee);
+        IERC20(_QUOTE_).safeTransfer(_VAULT_PRE_OWNER_, ownerQuoteWithoutFee.sub(buyoutFee));
 
-      ICollateralVault(_COLLATERAL_VAULT_).directTransferOwnership(newVaultOwner);
+        ICollateralVault(_COLLATERAL_VAULT_).directTransferOwnership(newVaultOwner);
 
-      emit Buyout(newVaultOwner);
+        emit Buyout(newVaultOwner);
     }
 
 
     function redeem(address to, bytes calldata data) external {
-      require(_IS_BUYOUT_, "DODOFragment: NEED_BUYOUT");
+        require(_IS_BUYOUT_, "DODOFragment: NEED_BUYOUT");
 
-      uint256 baseAmount = balances[msg.sender];
-      uint256 quoteAmount = DecimalMath.mulFloor(_BUYOUT_PRICE_, baseAmount);
-      _clearBalance(msg.sender);
-      IERC20(_QUOTE_).safeTransfer(to, quoteAmount);
+        uint256 baseAmount = balances[msg.sender];
+        uint256 quoteAmount = DecimalMath.mulFloor(_BUYOUT_PRICE_, baseAmount);
+        _clearBalance(msg.sender);
+        IERC20(_QUOTE_).safeTransfer(to, quoteAmount);
 
-      if (data.length > 0) {
-        IDODOCallee(to).NFTRedeemCall(
-          msg.sender,
-          quoteAmount,
-          data
-        );
-      }
+        if (data.length > 0) {
+          IDODOCallee(to).NFTRedeemCall(
+            msg.sender,
+            quoteAmount,
+            data
+          );
+        }
 
-      emit Redeem(msg.sender, baseAmount, quoteAmount);
+        emit Redeem(msg.sender, baseAmount, quoteAmount);
     }
 
     function getBuyoutRequirement() external view returns (uint256 requireQuote){
-      require(_BUYOUT_TIMESTAMP_ != 0, "NOT SUPPORT BUYOUT");
-      require(!_IS_BUYOUT_, "ALREADY BUYOUT");
-      uint256 price = IDVM(_DVM_).getMidPrice();
-      requireQuote = DecimalMath.mulCeil(price, totalSupply);
+        require(_BUYOUT_TIMESTAMP_ != 0, "NOT SUPPORT BUYOUT");
+        require(!_IS_BUYOUT_, "ALREADY BUYOUT");
+        uint256 price = IDVM(_DVM_).getMidPrice();
+        requireQuote = DecimalMath.mulCeil(price, totalSupply);
     }
 
     function _clearBalance(address account) internal {
-      uint256 clearBalance = balances[account];
-      balances[account] = 0;
-      balances[address(0)] = balances[address(0)].add(clearBalance);
-      emit Transfer(account, address(0), clearBalance);
+        uint256 clearBalance = balances[account];
+        balances[account] = 0;
+        balances[address(0)] = balances[address(0)].add(clearBalance);
+        emit Transfer(account, address(0), clearBalance);
     }
 }
