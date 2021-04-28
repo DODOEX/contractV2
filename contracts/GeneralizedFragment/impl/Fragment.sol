@@ -86,7 +86,8 @@ contract Fragment is InitializableERC20 {
       
       _BUYOUT_PRICE_ = IDVM(_DVM_).getMidPrice();
       uint256 requireQuote = DecimalMath.mulCeil(_BUYOUT_PRICE_, totalSupply);
-      require(IERC20(_QUOTE_).balanceOf(address(this)) >= requireQuote, "DODOFragment: QUOTE_NOT_ENOUGH");
+      uint256 payQuote = IERC20(_QUOTE_).balanceOf(address(this));
+      require(payQuote >= requireQuote, "DODOFragment: QUOTE_NOT_ENOUGH");
 
       IDVM(_DVM_).sellShares(
         IERC20(_DVM_).balanceOf(address(this)),
@@ -95,17 +96,14 @@ contract Fragment is InitializableERC20 {
         0,
         "",
         uint256(-1)
-      );  
+      ); 
 
+      uint256 redeemFrag = totalSupply.sub(balances[address(this)]).sub(balances[_VAULT_PRE_OWNER_]);
+      uint256 preOwnerQuote = payQuote.sub(DecimalMath.mulCeil(_BUYOUT_PRICE_, redeemFrag));
       _clearBalance(address(this));
-
-      uint256 preOwnerQuote = DecimalMath.mulFloor(_BUYOUT_PRICE_, balances[_VAULT_PRE_OWNER_]);
       _clearBalance(_VAULT_PRE_OWNER_);
-      IERC20(_QUOTE_).safeTransfer(_VAULT_PRE_OWNER_, preOwnerQuote);
 
-      uint256 newOwnerQuote = DecimalMath.mulFloor(_BUYOUT_PRICE_, balances[newVaultOwner]);
-      _clearBalance(newVaultOwner);
-      IERC20(_QUOTE_).safeTransfer(newVaultOwner, newOwnerQuote);
+      IERC20(_QUOTE_).safeTransfer(_VAULT_PRE_OWNER_, preOwnerQuote);
 
       ICollateralVault(_COLLATERAL_VAULT_).directTransferOwnership(newVaultOwner);
 

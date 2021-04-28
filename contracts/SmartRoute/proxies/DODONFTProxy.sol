@@ -60,6 +60,12 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
     event Buyout(address from, address fragment, uint256 amount);
     event Stake(address from, address feeDistributor, uint256 amount);
 
+    // ============ Modifiers ============
+
+    modifier judgeExpired(uint256 deadLine) {
+        require(deadLine >= block.timestamp, "DODONFTProxy: EXPIRED");
+        _;
+    }
 
     fallback() external payable {}
 
@@ -147,17 +153,28 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
 
     function buyout(
         address fragment,
-        uint256 quoteAmount,
-        uint8 flag // 0 - ERC20, 1 - quoteInETH
-    ) external payable preventReentrant {
-        if(flag == 1)
-            require(msg.value == quoteAmount, "DODONFTProxy: VALUE_INVALID");
-        else 
+        uint256 quoteMaxAmount,
+        uint8 flag, // 0 - ERC20, 1 - quoteInETH
+        uint256 deadLine
+    ) external payable preventReentrant judgeExpired(deadLine) {
+        if(flag == 0)
             require(msg.value == 0, "DODONFTProxy: WE_SAVED_YOUR_MONEY");
-            
-        _deposit(msg.sender, fragment, IFragment(fragment)._QUOTE_(), quoteAmount, flag == 1);
+        
+        address dvm = IFragment(fragment)._DVM_();
+        uint256 fragTotalSupply = IFragment(fragment).totalSupply();
+        uint256 buyPrice = IDVM(dvm).getMidPrice();
+
+        uint256 curRequireQuote = DecimalMath.mulCeil(buyPrice, fragTotalSupply);
+
+        require(curRequireQuote <= quoteMaxAmount, "DODONFTProxy: CURRENT_TOTAL_VAULE_MORE_THAN_QUOTEMAX");
+
+        _deposit(msg.sender, fragment, IFragment(fragment)._QUOTE_(), curRequireQuote, flag == 1);
         IFragment(fragment).buyout(msg.sender);
-        emit Buyout(msg.sender, fragment, quoteAmount);
+
+        // refund dust eth
+        if (flag == 1 && msg.value > curRequireQuote) msg.sender.transfer(msg.value - curRequireQuote);
+
+        emit Buyout(msg.sender, fragment, curRequireQuote);
     }
 
     function stakeToFeeDistributor(
