@@ -47,6 +47,7 @@ contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Re
 
     // ============ Ownable ============
     function directTransferOwnership(address newOwner) external onlyOwner {
+        require(newOwner != address(0), "DODONftVault: ZERO_ADDRESS");
         _OWNER_ = newOwner;
         emit OwnershipTransferred(_OWNER_, newOwner);
     }
@@ -60,11 +61,13 @@ contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Re
     }
 
     function withdrawERC721(address nftContract, uint256 tokenId) external onlyOwner {
+        require(nftContract != address(0), "DODONftVault: ZERO_ADDRESS");
         _removeNftInfo(nftContract, tokenId, 1);
         IERC721(nftContract).safeTransferFrom(address(this), _OWNER_, tokenId, "");
     }
 
     function withdrawERC1155(address nftContract, uint256[] memory tokenIds, uint256[] memory amounts) external onlyOwner {
+        require(nftContract != address(0), "DODONftVault: ZERO_ADDRESS");
         require(tokenIds.length == amounts.length, "PARAMS_NOT_MATCH");
         for(uint256 i = 0; i < tokenIds.length; i++) {
             _removeNftInfo(nftContract, tokenIds[i], amounts[i]);
