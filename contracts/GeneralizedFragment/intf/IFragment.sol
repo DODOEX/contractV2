@@ -24,4 +24,8 @@ interface IFragment {
     function redeem(address to) external;
 
     function _QUOTE_() external view returns (address);
+
+    function _DVM_() external view returns (address);
+
+    function totalSupply() external view returns (uint256);
 }
