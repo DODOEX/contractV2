@@ -23,9 +23,7 @@ import {SafeMath} from "../../lib/SafeMath.sol";
 contract CP is CPVesting {
     using SafeMath for uint256;
 
-    receive() external payable {
-        require(_INITIALIZED_ == false, "WE_NOT_SAVE_ETH_AFTER_INIT");
-    }
+    receive() external payable {}
 
     function init(
         address[] calldata addressList,
