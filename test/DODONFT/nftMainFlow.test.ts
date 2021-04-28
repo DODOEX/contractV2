@@ -285,13 +285,14 @@ describe("DODONFT", () => {
             await getUserBalance(fragAddress, fragInstance, ctx.USDT, "FRAG Before");
 
             var requireQuote = await fragInstance.methods.getBuyoutRequirement().call();
-            await logGas(await ctx.NFTProxy.methods.buyout(fragAddress, requireQuote, 0), ctx.sendParam(buyer), "buyout");
+            await logGas(await ctx.NFTProxy.methods.buyout(fragAddress, requireQuote, 0, Math.floor(new Date().getTime() / 1000 + 60 * 10)), ctx.sendParam(buyer), "buyout");
 
             let [authorFrag, authorQuote] = await getUserBalance(author, fragInstance, ctx.USDT, "Author After");
             await getUserBalance(buyer, fragInstance, ctx.USDT, "Buyer After");
             await getUserBalance(dvmAddress, fragInstance, ctx.USDT, "DVM After");
             await getUserBalance(fragAddress, fragInstance, ctx.USDT, "FRAG After");
-            assert(authorQuote, "2034932000");
+            // assert(authorQuote, "2034932000");
+            assert(authorQuote, "10174055148");
             assert(authorFrag, "0");
 
             var vaultNewOwner = await vaultInstance.methods._OWNER_().call();

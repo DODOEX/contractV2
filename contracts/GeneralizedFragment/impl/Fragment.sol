@@ -26,11 +26,13 @@ contract Fragment is InitializableERC20 {
     bool public _IS_OPEN_BUYOUT_;
     uint256 public _BUYOUT_TIMESTAMP_;
     uint256 public _BUYOUT_PRICE_;
+    uint256 public _DEFAULT_BUYOUT_FEE_;
 
     address public _COLLATERAL_VAULT_;
     address public _VAULT_PRE_OWNER_;
     address public _QUOTE_;
     address public _DVM_;
+    address public _DEFAULT_MAINTAINER_;
 
     bool internal _FRAG_INITIALIZED_;
 
@@ -49,7 +51,9 @@ contract Fragment is InitializableERC20 {
       address collateralVault,
       uint256 _totalSupply, 
       uint256 ownerRatio,
-      uint256 buyoutTimestamp
+      uint256 buyoutTimestamp,
+      address defaultMaintainer,
+      uint256 defaultBuyoutFee
     ) external {
         require(!_FRAG_INITIALIZED_, "DODOFragment: ALREADY_INITIALIZED");
         _FRAG_INITIALIZED_ = true;
@@ -60,6 +64,8 @@ contract Fragment is InitializableERC20 {
         _VAULT_PRE_OWNER_ = vaultPreOwner;
         _COLLATERAL_VAULT_ = collateralVault;
         _BUYOUT_TIMESTAMP_ = buyoutTimestamp;
+        _DEFAULT_MAINTAINER_ = defaultMaintainer;
+        _DEFAULT_BUYOUT_FEE_ = defaultBuyoutFee;
 
         // init FRAG meta data
         string memory prefix = "FRAG_";
@@ -99,11 +105,14 @@ contract Fragment is InitializableERC20 {
       ); 
 
       uint256 redeemFrag = totalSupply.sub(balances[address(this)]).sub(balances[_VAULT_PRE_OWNER_]);
-      uint256 preOwnerQuote = payQuote.sub(DecimalMath.mulCeil(_BUYOUT_PRICE_, redeemFrag));
+      uint256 ownerQuoteWithoutFee = IERC20(_QUOTE_).balanceOf(address(this)).sub(DecimalMath.mulCeil(_BUYOUT_PRICE_, redeemFrag));
       _clearBalance(address(this));
       _clearBalance(_VAULT_PRE_OWNER_);
 
-      IERC20(_QUOTE_).safeTransfer(_VAULT_PRE_OWNER_, preOwnerQuote);
+      uint256 buyoutFee =  DecimalMath.mulFloor(ownerQuoteWithoutFee, _DEFAULT_BUYOUT_FEE_);
+      
+      IERC20(_QUOTE_).safeTransfer(_DEFAULT_MAINTAINER_, buyoutFee);
+      IERC20(_QUOTE_).safeTransfer(_VAULT_PRE_OWNER_, ownerQuoteWithoutFee.sub(buyoutFee));
 
       ICollateralVault(_COLLATERAL_VAULT_).directTransferOwnership(newVaultOwner);
 
