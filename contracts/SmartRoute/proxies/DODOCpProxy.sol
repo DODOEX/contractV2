@@ -18,7 +18,7 @@ import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
  * @title DODOCpProxy
  * @author DODO Breeder
  *
- * @notice CrowdPooling Proxy
+ * @notice CrowdPooling && UpCrowdPooling Proxy
  */
 contract DODOCpProxy is ReentrancyGuard {
     using SafeMath for uint256;
@@ -29,6 +29,7 @@ contract DODOCpProxy is ReentrancyGuard {
     address constant _ETH_ADDRESS_ = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     address public immutable _WETH_;
     address public immutable _DODO_APPROVE_PROXY_;
+    address public immutable _UPCP_FACTORY_;
     address public immutable _CP_FACTORY_;
 
     // ============ Modifiers ============
@@ -45,11 +46,51 @@ contract DODOCpProxy is ReentrancyGuard {
     constructor(
         address payable weth,
         address cpFactory,
+        address upCpFactory,
         address dodoApproveProxy
     ) public {
         _WETH_ = weth;
         _CP_FACTORY_ = cpFactory;
+        _UPCP_FACTORY_ = upCpFactory;
         _DODO_APPROVE_PROXY_ = dodoApproveProxy;
+    }
+
+    //============ UpCrowdPooling Functions (create) ============
+
+    function createUpCrowdPooling(
+        address baseToken,
+        address quoteToken,
+        uint256 baseInAmount,
+        uint256[] memory timeLine,
+        uint256[] memory valueList,
+        bool isOpenTWAP,
+        uint256 deadLine
+    ) external payable preventReentrant judgeExpired(deadLine) returns (address payable newUpCrowdPooling) {
+        address _baseToken = baseToken;
+        address _quoteToken = quoteToken == _ETH_ADDRESS_ ? _WETH_ : quoteToken;
+        
+        newUpCrowdPooling = IDODOV2(_UPCP_FACTORY_).createCrowdPooling();
+
+        _deposit(
+            msg.sender,
+            newUpCrowdPooling,
+            _baseToken,
+            baseInAmount,
+            false
+        );
+
+        (bool success, ) = newUpCrowdPooling.call{value: msg.value}("");
+        require(success, "DODOCpProxy: Transfer failed");
+
+        IDODOV2(_UPCP_FACTORY_).initCrowdPooling(
+            newUpCrowdPooling,
+            msg.sender,
+            _baseToken,
+            _quoteToken,
+            timeLine,
+            valueList,
+            isOpenTWAP
+        );
     }
 
     //============ CrowdPooling Functions (create) ============

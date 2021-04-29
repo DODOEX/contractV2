@@ -445,3 +445,33 @@ network type: live
 Deploy time: 2021/4/29 上午12:47:09
 Deploy type: DODOCpProxy
 CpProxy address:  0x471e1A083D76C4FC9e088FD259F64Eff0A37DAbD
+====================================================
+network type: kovan
+Deploy time: 2021/4/29 上午9:02:50
+Deploy type: DODOUpCpProxy
+UpCpProxy address:  0x1fcE72d3954BDBCdfEe99cd2649370E26180dD29
+====================================================
+network type: live
+Deploy time: 2021/4/29 上午9:15:13
+Deploy type: DODOUpCpProxy
+UpCpProxy address:  0x48D77f44416fD0b08f1Eca90Bc437D0a3e4e550d
+====================================================
+network type: kovan
+Deploy time: 2021/4/29 上午10:16:54
+Deploy type: DODOCpProxy
+CpProxy address:  0x0e3DAAa1eCfBF2fA4cb990dC34D760c38279C5a8
+====================================================
+network type: bsclive
+Deploy time: 2021/4/29 上午10:23:34
+Deploy type: DODOCpProxy
+CpProxy address:  0xA867241cDC8d3b0C07C85cC06F25a0cD3b5474d8
+====================================================
+network type: live
+Deploy time: 2021/4/29 上午10:28:14
+Deploy type: DODOCpProxy
+CpProxy address:  0x048B8926bb0eE9c52e05D61fDffbCCffbeE06Fc2
+====================================================
+network type: heco
+Deploy time: 2021/4/29 上午10:33:01
+Deploy type: DODOCpProxy
+CpProxy address:  0x8930101c6cFbe0f3cb31E7526a16E72255388E97
