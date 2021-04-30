@@ -10,15 +10,17 @@ pragma experimental ABIEncoderV2;
 
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 import {IDVM} from "../../DODOVendingMachine/intf/IDVM.sol";
+import {IFragment} from "../../GeneralizedFragment/intf/IFragment.sol";
 
 interface IDODONFTRegistry {
     function addRegistry(
         address vault,
         address fragment, 
         address quoteToken,
-        address feeDistributor,
         address dvm
     ) external;
+
+    function removeRegistry(address fragment) external;
 }
 
 /**
@@ -32,11 +34,6 @@ contract DODONFTRegistry is InitializableOwnable, IDODONFTRegistry {
     mapping (address => bool) public isAdminListed;
     
     // ============ Registry ============
-
-    // Frag -> FeeDistributor
-    mapping(address => address) public _FRAG_FEE_REGISTRY_;
-    // DVM -> FeeDistributor 
-    mapping(address => address) public _DVM_FEE_REGISTRY_;
     // Vault -> Frag
     mapping(address => address) public _VAULT_FRAG_REGISTRY_;
 
@@ -48,7 +45,6 @@ contract DODONFTRegistry is InitializableOwnable, IDODONFTRegistry {
     event NewRegistry(
         address vault,
         address fragment,
-        address feeDistributor,
         address dvm
     );
 
@@ -61,24 +57,19 @@ contract DODONFTRegistry is InitializableOwnable, IDODONFTRegistry {
         address vault,
         address fragment, 
         address quoteToken,
-        address feeDistributor,
         address dvm
     ) override external {
         require(isAdminListed[msg.sender], "ACCESS_DENIED");
-        _FRAG_FEE_REGISTRY_[fragment] = feeDistributor;
-        _DVM_FEE_REGISTRY_[dvm] = feeDistributor;
         _VAULT_FRAG_REGISTRY_[vault] = fragment;
         _REGISTRY_[fragment][quoteToken].push(dvm);
-        emit NewRegistry(vault, fragment, feeDistributor, dvm);
+        emit NewRegistry(vault, fragment, dvm);
     }
 
-    function removeRegistry(
-        address vault,
-        address fragment, 
-        address dvm
-    ) external onlyOwner {
-        _FRAG_FEE_REGISTRY_[fragment] = address(0);
-        _DVM_FEE_REGISTRY_[dvm] = address(0);
+    function removeRegistry(address fragment) override external {
+        require(isAdminListed[msg.sender], "ACCESS_DENIED");
+        address vault = IFragment(fragment)._COLLATERAL_VAULT_();
+        address dvm = IFragment(fragment)._DVM_();
+
         _VAULT_FRAG_REGISTRY_[vault] = address(0);
 
         address quoteToken = IDVM(dvm)._QUOTE_TOKEN_();

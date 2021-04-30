@@ -27,6 +27,8 @@ interface IFragment {
 
     function _QUOTE_() external view returns (address);
 
+    function _COLLATERAL_VAULT_() external view returns (address);
+
     function _DVM_() external view returns (address);
 
     function totalSupply() external view returns (uint256);

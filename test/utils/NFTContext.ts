@@ -28,11 +28,11 @@ export class NFTContext {
     NFTRegister: Contract;
     CollatteralVault: Contract;
     Fragment: Contract;
-    NFTFee: Contract;
 
     NFTProxy: Contract;
     DODOApprove: Contract;
     DODOApproveProxy: Contract;
+    mtFeeRateModel: Contract;
 
     //token
     USDT: Contract;
@@ -69,7 +69,8 @@ export class NFTContext {
             contracts.CLONE_FACTORY_CONTRACT_NAME
         );
         var dvmTemplate = await contracts.newContract(contracts.DVM_NAME)
-        var constFeeTemplate = await contracts.newContract(contracts.CONST_FEE_RATE_MODEL_NAME)
+        var mtFeeRateModelTemplate = await contracts.newContract(contracts.FEE_RATE_MODEL_NAME)
+        this.mtFeeRateModel = mtFeeRateModelTemplate;
 
         var ERC721Template = await contracts.newContract(contracts.ERC721)
         var ERC1155Template = await contracts.newContract(contracts.ERC1155)
@@ -103,19 +104,16 @@ export class NFTContext {
 
         this.Fragment = await contracts.newContract(contracts.NFT_FRAG)
 
-        this.NFTFee = await contracts.newContract(contracts.NFT_FEE)
-
         this.NFTProxy = await contracts.newContract(contracts.NFT_PROXY,
             [
                 cloneFactory.options.address,
                 this.WETH.options.address,
                 this.DODOApproveProxy.options.address,
                 this.Deployer,
+                this.mtFeeRateModel.options.address,
                 this.CollatteralVault.options.address,
                 this.Fragment.options.address,
-                this.NFTFee.options.address,
                 dvmTemplate.options.address,
-                constFeeTemplate.options.address,
                 this.NFTRegister.options.address
             ]
         )
@@ -152,10 +150,9 @@ export class NFTContext {
 
     async getRegistry(ctx: NFTContext, vaultAddress: string) {
         let fragAddress = await ctx.NFTRegister.methods._VAULT_FRAG_REGISTRY_(vaultAddress).call();
-        let feeDistrubitor = await ctx.NFTRegister.methods._FRAG_FEE_REGISTRY_(fragAddress).call();
         let fragInstance = contracts.getContractWithAddress(contracts.NFT_FRAG, fragAddress);
         let dvmAddress = await fragInstance.methods._DVM_().call();
-        return [fragAddress, feeDistrubitor, dvmAddress];
+        return [fragAddress, , dvmAddress];
     }
 
     async createNFTVault(ctx: NFTContext, author: string) {
@@ -191,7 +188,6 @@ export class NFTContext {
         if (dvmParams == null) {
             dvmParams = [
                 "0", //lpFeeRate
-                decimalStr("0.01"), //mtFeeRate
                 mweiStr("1"), // I
                 decimalStr("1") // K
             ];
@@ -207,13 +203,11 @@ export class NFTContext {
             addrs = []
             addrs.push(ctx.USDT.options.address);//quoteToken
             addrs.push(author);//vaultPreOwner
-            addrs.push("0x0000000000000000000000000000000000000000");//stakeToken
         }
 
         var callData = ctx.NFTProxy.methods.createFragment(
             addrs[0],
             addrs[1],
-            addrs[2],
             dvmParams,
             fragParams,
             false
@@ -224,8 +218,8 @@ export class NFTContext {
             callData
         ).send(ctx.sendParam(author));
 
-        let [fragAddress, feeAddress, dvmAddress] = await this.getRegistry(ctx, vaultAddress);
-        return [vaultAddress, fragAddress, feeAddress, dvmAddress, callData]
+        let [fragAddress, , dvmAddress] = await this.getRegistry(ctx, vaultAddress);
+        return [vaultAddress, fragAddress, , dvmAddress, callData]
     }
 
 
