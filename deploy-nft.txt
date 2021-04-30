@@ -234,3 +234,18 @@ Deploy time: 2021/4/25 上午9:11:04
 Deploy type: MysteryBoxV1
 MysteryBoxV1Address:  0xbfb19a7e788b2fbC47Bc9013694C6854Ce0e1fAd
 Init MysteryBoxV1 Tx: 0x02e6e632395e31343e4c4523e009fff8157e8dd6562a3578008e8cee5e7e6aa5
+====================================================
+network type: kovan
+Deploy time: 2021/4/30 下午12:24:56
+Deploy type: NFT
+multiSigAddress:  0x7e83d9d94837eE82F0cc18a691da6f42F03F1d86
+DODONFTRegistryAddress:  0xB97f300D49F00E2f20E00EB0ca5f5373195dc892
+Init DODONFTRegistryAddress Tx: 0x5593877464213c6b05e09b5502125934d5330ce935416e76c789d1c145b94d66
+DODONFTRouteHelperAddress:  0x4c651E4c476D1B6671B62568C657F178F5A9b8C9
+NFTCollateralVaultAddress:  0x3Cf6EC1daCFffE53a49Da22EF3ca3c053241Ac5d
+FragmentAddress:  0x04cA0f0b3BEC71D2A5ebB7FeD23b562465bEb788
+DODONFTProxyAddress:  0x3A54e02612C231CC0cE1e0b1a4c49d3aDF9dA39F
+Init DODONFTProxyAddress Tx: 0xc8052841c2f8641e039f13ba13cafd5cf238fb14b455ab61b52e5ccfec5d7d40
+DODOApproveProxy unlockAddProxy tx:  0x7968ba876ec167759cfaa66e26c8b3d6c920bade8c6a29a160b62f6642a68a17
+DODOApproveProxy addDODOProxy tx:  0xc1d54e062795d2a1fead453813cfb9f96723a9330905827c710ea8c7e63a34e3
+Add AdminList on DODONFTRegistry Tx: 0xcb1f687db83b48f1928610c2c04f4685666502a3d17986bb541cbd41b15fa2a9
