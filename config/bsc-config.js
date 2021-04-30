@@ -61,8 +61,6 @@ module.exports = {
 
 
         //================== NFT ====================
-        ConstFeeRateModel: "",
-        FeeDistributor: "",
         Fragment: "",
         NFTCollateralVault: "",
         DODONFTRouteHelper: "",
@@ -73,7 +71,6 @@ module.exports = {
 
         DODONFTRegistry: "",
         DODONFTProxy: "",
-
 
         //================= MysteryBox =================
         MysteryBoxV1: "0xc25286ef3BaE3f6Fe2d6d0A6e2acAd0301AF97b8",

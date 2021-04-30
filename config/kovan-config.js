@@ -61,19 +61,16 @@ module.exports = {
 
 
         //================== NFT ====================
-        ConstFeeRateModel: "0xBDAcEcF886a4F0C509260d9678D5673C3E8fa4b7",
-        FeeDistributor: "0xC7da6C32E301C042C2237ca04aa4BB6D2e5C86B1",
-        Fragment: "0xc83c4aFdF216C7D0E15D50B9e1658298320A9551",
-        NFTCollateralVault: "0x7e83d9d94837eE82F0cc18a691da6f42F03F1d86",
-        DODONFTRouteHelper: "0xAE683548702be6d651e179e5F9313272bb18596A",
+        Fragment: "",
+        NFTCollateralVault: "",
+        DODONFTRouteHelper: "",
 
         InitializableERC721: "0x62dC4615AC755959a82b6D22FA5652A037284c0b",
         InitializableERC1155: "0xfa391c0Ed6898e0C6186605d69e877f1317Bb506",
         NFTTokenFactory: "0xdeBB45aCffF3b5e610C1EdF45DFaaea0030EAdaF",
 
-        DODONFTRegistry: "0xF405372b7808363DCfbb5Eb81204889B7a69Aa3e",
-        DODONFTProxy: "0x8812E32b31530d21D1fE70A45bBa66bbEB3641C5",
-
+        DODONFTRegistry: "",
+        DODONFTProxy: "",
 
         //================= MysteryBox =================
         MysteryBoxV1: "0xbfb19a7e788b2fbC47Bc9013694C6854Ce0e1fAd",

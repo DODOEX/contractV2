@@ -5,10 +5,8 @@ let logger = new console.Console(file, file);
 const { GetConfig } = require("../configAdapter.js")
 
 const DODOApproveProxy = artifacts.require("DODOApproveProxy");
-const ConstFeeRateModel = artifacts.require("ConstFeeRateModel");
 const NFTCollateralVault = artifacts.require("NFTCollateralVault");
 const Fragment = artifacts.require("Fragment");
-const FeeDistributor = artifacts.require("FeeDistributor");
 const DODONFTRegistry = artifacts.require("DODONFTRegistry");
 const DODONFTProxy = artifacts.require("DODONFTProxy");
 const DODONFTRouteHelper = artifacts.require("DODONFTRouteHelper");
@@ -31,8 +29,7 @@ module.exports = async (deployer, network, accounts) => {
 
     if (DODOApproveProxyAddress == "" || CloneFactoryAddress == "") return;
 
-    let ConstFeeRateModelAddress = CONFIG.ConstFeeRateModel;
-    let FeeDistributorAddress = CONFIG.FeeDistributor;
+    let MtFeeRateModelAddress = CONFIG.FeeRateModel;
     let FragmentAddress = CONFIG.Fragment;
     let NFTCollateralVaultAddress = CONFIG.NFTCollateralVault;
     let DODONFTRouteHelperAddress = CONFIG.DODONFTRouteHelper;
@@ -152,21 +149,6 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("FragmentAddress: ", FragmentAddress);
         }
 
-        //FeeDistributor
-        if (FeeDistributorAddress == "") {
-            await deployer.deploy(FeeDistributor);
-            FeeDistributorAddress = FeeDistributor.address;
-            logger.log("FeeDistributorAddress: ", FeeDistributorAddress);
-        }
-
-        //ConstMtFeeModel
-        if (ConstFeeRateModelAddress == "") {
-            await deployer.deploy(ConstFeeRateModel);
-            ConstFeeRateModelAddress = ConstFeeRateModel.address;
-            logger.log("ConstFeeRateModelAddress: ", ConstFeeRateModelAddress);
-        }
-
-
         if (DODONFTProxyAddress == "") {
             await deployer.deploy(
                 DODONFTProxy,
@@ -174,11 +156,10 @@ module.exports = async (deployer, network, accounts) => {
                 WETHAddress,
                 DODOApproveProxyAddress,
                 defaultMaintainer,
+                MtFeeRateModelAddress,
                 NFTCollateralVaultAddress,
                 FragmentAddress,
-                FeeDistributorAddress,
                 DVMTemplateAddress,
-                ConstFeeRateModelAddress,
                 DODONFTRegistryAddress
             );
             DODONFTProxyAddress = DODONFTProxy.address;
@@ -188,7 +169,7 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("Init DODONFTProxyAddress Tx:", tx.tx);
         }
 
-        if (network == 'kovan' || network == 'mbtestnet') {
+        if (network == 'kovan') {
 
             const DODOApproveProxyInstance = await DODOApproveProxy.at(DODOApproveProxyAddress);
             var tx = await DODOApproveProxyInstance.unlockAddProxy(DODONFTProxyAddress);

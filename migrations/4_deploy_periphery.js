@@ -57,7 +57,6 @@ module.exports = async (deployer, network, accounts) => {
     let DefaultPermissionAddress = CONFIG.PermissionManager;
     let CpTemplateAddress = CONFIG.CP;
     let DvmTemplateAddress = CONFIG.DVM;
-    let UpCpFactoryAddress = CONFIG.UpCpFactory;
 
     let multiSigAddress = CONFIG.multiSigAddress;
     let defaultMaintainer = CONFIG.defaultMaintainer;
