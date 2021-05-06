@@ -13,13 +13,13 @@ contract InitializableERC20 {
     using SafeMath for uint256;
 
     string public name;
-    uint256 public decimals;
+    uint8 public decimals;
     string public symbol;
     uint256 public totalSupply;
 
     bool public initialized;
 
-    mapping(address => uint256) balances;
+    mapping(address => uint256) internal balances;
     mapping(address => mapping(address => uint256)) internal allowed;
 
     event Transfer(address indexed from, address indexed to, uint256 amount);
@@ -30,7 +30,7 @@ contract InitializableERC20 {
         uint256 _totalSupply,
         string memory _name,
         string memory _symbol,
-        uint256 _decimals
+        uint8 _decimals
     ) public {
         require(!initialized, "TOKEN_INITIALIZED");
         initialized = true;

@@ -12,16 +12,19 @@ import {Ownable} from "../lib/Ownable.sol";
 contract UserQuota is Ownable {
 
     mapping(address => uint256) public userQuota;
-    uint256 constant quota = 375 * 10**6; //For example 375u on eth
+    
+    event SetQuota(address user, uint256 amount);
 
-    function setUserQuota(address[] memory users) external onlyOwner {
+    function setUserQuota(address[] memory users, uint256[] memory quotas) external onlyOwner {
+        require(users.length == quotas.length, "PARAMS_LENGTH_NOT_MATCH");
         for(uint256 i = 0; i< users.length; i++) {
             require(users[i] != address(0), "USER_INVALID");
-            userQuota[users[i]] = quota;
+            userQuota[users[i]] = quotas[i];
+            emit SetQuota(users[i],quotas[i]);
         }
     }
 
-    function getUserQuota(address user) external view returns (uint256) {
-        return userQuota[user];
+    function getUserQuota(address user) external view returns (int) {
+        return int(userQuota[user]);
     }
 }

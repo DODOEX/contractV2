@@ -15,12 +15,15 @@ contract InitializableERC1155 is ERC1155 {
     
     mapping (uint256 => string) private _tokenURIs;
     string internal _baseUri = "";
+    bool internal _INITIALIZED_;
     
     function init(
         address creator,
         uint256 amount,
         string memory uri
     ) public {
+        require(!_INITIALIZED_, "INITIALIZED");
+        _INITIALIZED_ = true;
         _mint(creator, 0, amount ,"");
         _setTokenURI(0, uri);
     }

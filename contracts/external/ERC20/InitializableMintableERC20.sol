@@ -14,11 +14,11 @@ contract InitializableMintableERC20 is InitializableOwnable {
     using SafeMath for uint256;
 
     string public name;
-    uint256 public decimals;
+    uint8 public decimals;
     string public symbol;
     uint256 public totalSupply;
 
-    mapping(address => uint256) balances;
+    mapping(address => uint256) internal balances;
     mapping(address => mapping(address => uint256)) internal allowed;
 
     event Transfer(address indexed from, address indexed to, uint256 amount);
@@ -31,7 +31,7 @@ contract InitializableMintableERC20 is InitializableOwnable {
         uint256 _initSupply,
         string memory _name,
         string memory _symbol,
-        uint256 _decimals
+        uint8 _decimals
     ) public {
         initOwner(_creator);
         name = _name;

@@ -476,7 +476,4 @@ Deploy time: 2021/4/29 上午10:33:01
 Deploy type: DODOCpProxy
 CpProxy address:  0x8930101c6cFbe0f3cb31E7526a16E72255388E97
 ====================================================
-network type: heco
-Deploy time: 2021/5/7 下午5:07:08
-Deploy type: test - Adapter
-test_Adapter Address:  0x31AC053c31a77055b2ae2d3899091C0A9c19cE3a
+
