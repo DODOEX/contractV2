@@ -249,3 +249,9 @@ Init DODONFTProxyAddress Tx: 0xc8052841c2f8641e039f13ba13cafd5cf238fb14b455ab61b
 DODOApproveProxy unlockAddProxy tx:  0x7968ba876ec167759cfaa66e26c8b3d6c920bade8c6a29a160b62f6642a68a17
 DODOApproveProxy addDODOProxy tx:  0xc1d54e062795d2a1fead453813cfb9f96723a9330905827c710ea8c7e63a34e3
 Add AdminList on DODONFTRegistry Tx: 0xcb1f687db83b48f1928610c2c04f4685666502a3d17986bb541cbd41b15fa2a9
+====================================================
+network type: kovan
+Deploy time: 2021/5/6 上午9:45:28
+Deploy type: MysteryBoxV1
+MysteryBoxV1Address:  0x47d2b27525b93A9c9E03001E1D19310A08748D55
+Init MysteryBoxV1 Tx: 0xa76bca56c6974b8760390e3b5181ef5e01fa3254aa868eebb4e285d617f835fc

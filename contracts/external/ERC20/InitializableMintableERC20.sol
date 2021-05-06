@@ -18,7 +18,7 @@ contract InitializableMintableERC20 is InitializableOwnable {
     string public symbol;
     uint256 public totalSupply;
 
-    mapping(address => uint256) balances;
+    mapping(address => uint256) internal balances;
     mapping(address => mapping(address => uint256)) internal allowed;
 
     event Transfer(address indexed from, address indexed to, uint256 amount);
