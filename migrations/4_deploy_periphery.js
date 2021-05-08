@@ -28,13 +28,14 @@ const DODOV2RouteHelper = artifacts.require("DODOV2RouteHelper");
 const ERC20Mine = artifacts.require("ERC20Mine");
 const vDODOMine = artifacts.require("vDODOMine");
 
+const DepthAdapter = artifacts.require("DepthUnderlyingAdapter");
+
 module.exports = async (deployer, network, accounts) => {
     let CONFIG = GetConfig(network, accounts)
     if (CONFIG == null) return;
 
     let WETHAddress = CONFIG.WETH;
     let DODOTokenAddress = CONFIG.DODO;
-    let WETHAddress = CONFIG.WETH;
     let DODOApproveProxyAddress = CONFIG.DODOApproveProxy;
 
     let DspTemplateAddress = CONFIG.DSP;
@@ -374,7 +375,7 @@ module.exports = async (deployer, network, accounts) => {
         logger.log("====================================================");
         logger.log("network type: " + network);
         logger.log("Deploy time: " + new Date().toLocaleString());
-        logger.log("Deploy type: RAB - Adapter");
+        logger.log("Deploy type: MaxHops - Adapter");
 
         await deployer.deploy(
             RABSwap,
@@ -382,6 +383,17 @@ module.exports = async (deployer, network, accounts) => {
             DODOApproveProxyAddress
         );
 
-        logger.log("DODORAB Address: ", RABSwap.address);
+        logger.log("DODOMaxHops Address: ", RABSwap.address);
+    }
+
+    if(deploySwitch.test_ADAPTER) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
+        logger.log("Deploy type: test - Adapter");
+
+        await deployer.deploy(DepthAdapter);
+
+        logger.log("test_Adapter Address: ", DepthAdapter.address);
     }
 };

@@ -24,10 +24,13 @@ contract UniAdapter is IDODOAdapter {
         uint balance0 = IERC20(baseToken).balanceOf(pool);
         uint sellBaseAmount = balance0 - reserveIn;
         
+        uint receiveQuoteAmount = 0;
+        {
         uint sellBaseAmountWithFee = sellBaseAmount.mul(997);
         uint numerator = sellBaseAmountWithFee.mul(reserveOut);
         uint denominator = reserveIn.mul(1000).add(sellBaseAmountWithFee);
-        uint receiveQuoteAmount = numerator / denominator;
+        receiveQuoteAmount = numerator / denominator;
+        }
         IUni(pool).swap(0, receiveQuoteAmount, to, new bytes(0));
     }
 
@@ -40,10 +43,13 @@ contract UniAdapter is IDODOAdapter {
         uint balance1 = IERC20(quoteToken).balanceOf(pool);
         uint sellQuoteAmount = balance1 - reserveIn;
 
+        uint receiveBaseAmount = 0;
+        {
         uint sellQuoteAmountWithFee = sellQuoteAmount.mul(997);
         uint numerator = sellQuoteAmountWithFee.mul(reserveOut);
         uint denominator = reserveIn.mul(1000).add(sellQuoteAmountWithFee);
-        uint receiveBaseAmount = numerator / denominator;
+        receiveBaseAmount = numerator / denominator;
+        }
         IUni(pool).swap(receiveBaseAmount, 0, to, new bytes(0));
     }
 }
