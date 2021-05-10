@@ -50,7 +50,7 @@ contract ERC20Factory {
         uint256 totalSupply,
         string memory name,
         string memory symbol,
-        uint256 decimals
+        uint8 decimals
     ) external returns (address newERC20) {
         newERC20 = ICloneFactory(_CLONE_FACTORY_).clone(_ERC20_TEMPLATE_);
         InitializableERC20(newERC20).init(msg.sender, totalSupply, name, symbol, decimals);
@@ -62,7 +62,7 @@ contract ERC20Factory {
         uint256 initSupply,
         string memory name,
         string memory symbol,
-        uint256 decimals
+        uint8 decimals
     ) external returns (address newMintableERC20) {
         newMintableERC20 = ICloneFactory(_CLONE_FACTORY_).clone(_MINTABLE_ERC20_TEMPLATE_);
         InitializableMintableERC20(newMintableERC20).init(

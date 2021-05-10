@@ -23,7 +23,6 @@ contract Fragment is InitializableERC20 {
     // ============ Storage ============
     
     bool public _IS_BUYOUT_;
-    bool public _IS_OPEN_BUYOUT_;
     uint256 public _BUYOUT_TIMESTAMP_;
     uint256 public _BUYOUT_PRICE_;
     uint256 public _DEFAULT_BUYOUT_FEE_;

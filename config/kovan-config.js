@@ -61,16 +61,16 @@ module.exports = {
 
 
         //================== NFT ====================
-        Fragment: "",
-        NFTCollateralVault: "",
-        DODONFTRouteHelper: "",
+        Fragment: "0x446014c6060ea7DE7DD9Ce3B8026a50c74F9B7eD",
+        NFTCollateralVault: "0xBC57c99df21E306bEf61251aa068F46686F057AF",
+        DODONFTRouteHelper: "0xDD1511f2Bcdb0E6F916F9740BF83f31dF0fb63b4",
 
         InitializableERC721: "0x62dC4615AC755959a82b6D22FA5652A037284c0b",
-        InitializableERC1155: "0xfa391c0Ed6898e0C6186605d69e877f1317Bb506",
-        NFTTokenFactory: "0xdeBB45aCffF3b5e610C1EdF45DFaaea0030EAdaF",
+        InitializableERC1155: "0xc4d86FFB26EB6EcAe80D3f1e2c8519832Fd478B2",
+        NFTTokenFactory: "0x834D13Ca0322Ccfe67596f09Cc26Ee3584297B94",
 
-        DODONFTRegistry: "",
-        DODONFTProxy: "",
+        DODONFTRegistry: "0x579eBcC668b5517F733587091C35D495FE8d6b68",
+        DODONFTProxy: "0x649CFCC1713Cb7f4866DcAF0FAD52903a3902373",
 
         //================= MysteryBox =================
         MysteryBoxV1: "0x47d2b27525b93A9c9E03001E1D19310A08748D55",
