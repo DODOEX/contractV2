@@ -8,7 +8,7 @@
 pragma solidity 0.6.9;
 
 import {IDODOAdapter} from "../intf/IDODOAdapter.sol";
-import {IDepth} from "../intf/IDepth.sol";
+import {ICurve} from "../intf/IDepth.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {UniversalERC20} from "../lib/UniversalERC20.sol";
