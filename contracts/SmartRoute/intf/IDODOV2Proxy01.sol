@@ -91,15 +91,6 @@ interface IDODOV2Proxy01 {
         uint256 deadLine
     ) external payable;
 
-    function createCrowdPooling(
-        address baseToken,
-        address quoteToken,
-        uint256 baseInAmount,
-        uint256[] memory timeLine,
-        uint256[] memory valueList,
-        bool isOpenTWAP,
-        uint256 deadLine
-    ) external payable returns (address payable newCrowdPooling);
 
     function bid(
         address cpAddress,

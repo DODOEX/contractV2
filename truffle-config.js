@@ -39,26 +39,26 @@ module.exports = {
    * $ truffle test --network <network-name>
    */
   deploySwitch: {
-    DEPLOY_V1:        false,
-    DEPLOY_V2:        false,
-    ADAPTER:          false,
-    MOCK_TOKEN:       false,
-    MOCK_V2_POOL:     false,
-    vDODOToken:       false,
-    DODORecharge:     false,
-    MINE:             false,
-    FEERATEIMPL:      false,
-    WETH:             false,
-    DODO:             false,
-    UpCP:             false,
-    DVM:              false,
-    CP:               false,
-    CPFactory:        false,
-    MultiCall:        false,
-    DSP:              false,
-    LockedVault:      false,
-    MULTIHOP:         false,
-    CpProxy:          false
+    DEPLOY_V1:      false,
+    DEPLOY_V2:      false,
+    ADAPTER:        false,
+    MOCK_TOKEN:     false,
+    MOCK_V2_POOL:   false,
+    vDODOToken:     false,
+    DODORecharge:   false,
+    MINE:           false,
+    FEERATEIMPL:    false,
+    WETH:           false,
+    DODO:           false,
+    UpCP:           false,
+    DVM:            false,
+    CP:             false,
+    CPFactory:      false,
+    MultiCall:      false,
+    DSP:            false,
+    LockedVault:    false,
+    MULTIHOP:       false,
+    CpProxy:        false
   },
 
   networks: {
@@ -150,6 +150,17 @@ module.exports = {
       network_id: '212984383488152',
       gas: 1000000000,
       gasPrice: 0,
+    },
+
+    matic: {
+      provider: () => {
+        return new HDWalletProvider(privKey, 'https://matic-mainnet-archive-rpc.bwarelabs.com')
+      },
+      network_id: 137,
+      gasPrice: 1000000000,
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: true
     },
 
     coverage: {

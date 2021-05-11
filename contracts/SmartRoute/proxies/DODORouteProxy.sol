@@ -137,9 +137,9 @@ contract DODORouteProxy {
                 }
                 
                 if(direction == 0) {
-                    IDODOAdapter(adapter).sellBase(assetFrom[i], pool);
+                    IDODOAdapter(adapter).sellBase(assetFrom[i], pool, "");
                 } else {
-                    IDODOAdapter(adapter).sellQuote(assetFrom[i], pool);
+                    IDODOAdapter(adapter).sellQuote(assetFrom[i], pool, "");
                 }
             }
         }

@@ -16,7 +16,7 @@ contract UniAdapter is IDODOAdapter {
     using SafeMath for uint;
 
     //fromToken == token0
-    function sellBase(address to, address pool) external override {
+    function sellBase(address to, address pool, bytes memory) external override {
         address baseToken = IUni(pool).token0();
         (uint reserveIn, uint reserveOut,) = IUni(pool).getReserves();
         require(reserveIn > 0 && reserveOut > 0, 'UniAdapter: INSUFFICIENT_LIQUIDITY');
@@ -32,7 +32,7 @@ contract UniAdapter is IDODOAdapter {
     }
 
     //fromToken == token1
-    function sellQuote(address to, address pool) external override {
+    function sellQuote(address to, address pool, bytes memory) external override {
         address quoteToken = IUni(pool).token1();
         (uint reserveOut, uint reserveIn,) = IUni(pool).getReserves();
         require(reserveIn > 0 && reserveOut > 0, 'UniAdapter: INSUFFICIENT_LIQUIDITY');

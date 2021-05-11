@@ -10,7 +10,7 @@ pragma experimental ABIEncoderV2;
 
 interface IDODOAdapter {
     
-    function sellBase(address to, address pool) external;
+    function sellBase(address to, address pool, bytes memory data) external;
 
-    function sellQuote(address to, address pool) external;
+    function sellQuote(address to, address pool, bytes memory data) external;
 }

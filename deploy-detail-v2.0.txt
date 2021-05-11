@@ -989,3 +989,99 @@ multiSigAddress:  0x7081685Ff3ff16FB6c0dF08AC93bdB7299EEEfc9
 DODOV2RouteHelper Address:  0x55793C2c8A796cCE00EF2D1a86CCA2E0399BF285
 DODOV2Proxy02 Address:  0x25B2f945Fec30F34b05d416C7c0b5c6c51A3ADdC
 Init DODOProxyV2 Tx: 0xeb923b51cc4ea3ec08107b3a7850471d523a358257e18a6abe3bbbc6e1933efa
+====================================================
+network type: matic
+Deploy time: 2021/5/11 上午11:10:26
+Deploy type: V2
+multiSigAddress:  0x7e83d9d94837eE82F0cc18a691da6f42F03F1d86
+====================================================
+network type: matic
+Deploy time: 2021/5/11 上午11:11:25
+Deploy type: V2
+multiSigAddress:  0x16CC37d06FE5061CD0023fb8d142ABaAbB396A2b
+====================================================
+network type: matic
+Deploy time: 2021/5/11 上午11:15:24
+Deploy type: V2
+multiSigAddress:  0x16CC37d06FE5061CD0023fb8d142ABaAbB396A2b
+====================================================
+network type: matic
+Deploy time: 2021/5/11 上午11:17:21
+Deploy type: V2
+multiSigAddress:  0x16CC37d06FE5061CD0023fb8d142ABaAbB396A2b
+DODOSellHelper Address:  0xDfaf9584F5d229A9DBE5978523317820A8897C5A
+DODOCalleeHelperAddress:  0x2BBD66fC4898242BDBD2583BBe1d76E8b8f71445
+DODOV1RouterHelper Address:  0x18DFdE99F578A0735410797e949E8D3e2AFCB9D2
+CloneFactoryAddress:  0x729f7f44bf64Ce814716b6261e267DbE6cdf021c
+DefaultMtFeeRateAddress:  0x18b0bD918b55f995Fd404B872404378A62cb403b
+Init DefaultMtFeeRateAddress Tx: 0x70107ad441ad6b7d32e5fec2f4eaa3ef93761d8aa7387efa726a65807fbf7ce0
+DefaultPermissionAddress:  0x550B2e7bD9605b8dcdd20d01bA73f1feB6ce289b
+Init DefaultPermissionAddress Tx: 0x095d5c4301448893c74d6649ad133b9c5f2fffcab4d51a7bffa8360e8e4cbff8
+DvmTemplateAddress:  0x041ABa00c57Dd47abC37A2931dF569a2A2cc57Be
+DspTemplateAddress:  0x72d220cE168C4f361dD4deE5D826a01AD8598f6C
+DppTemplateAddress:  0x80930Cb1849F7D42531506fF45E66724338A821b
+DppAdminTemplateAddress:  0xB5Dc5E183c2aCf02aB879A8569aB4EDAf147d537
+CpTemplateAddress:  0xf50BDc9E90B7a1c138cb7935071b85c417C4cb8e
+ERC20TemplateAddress:  0xE8C9A78725D0451FA19878D5f8A3dC0D55FECF25
+MintableERC20TemplateAddress:  0x7737fd30535c69545deeEa54AB8Dd590ccaEBD3c
+ERC20FactoryAddress:  0xaeB5CF31b97dce6134e416129845e01106fFB177
+DODOApprove Address:  0x9aE501385Bc7996A2A4a1FBb00c8d3820611BCB5
+DODOApproveProxy Address:  0x738Ebf387A0CE0eb46b0eF8Fa5DEa2EaE6B1Df51
+DvmFactoryAddress:  0xbAb9F4ff4A19a0e8EEBC56b06750253228ffAc6E
+Init DvmFactory Tx: 0xf674e3f917c602d41e911f4f8c0173f826c9ff2acccf1501b2c790e9271c552c
+DppFactoryAddress:  0xE55154D09265b18aC7CDAC6E646672A5460389a1
+Init DppFactory Tx: 0x81d2fab9f9f3c894d43f355fd1ba70b3e07951fc8fe21c04aa9a430daa4b66ad
+CpFactoryAddress:  0x85351262f7474Ebe23FfAcD633cf20A491F1325D
+Init CpFactory Tx: 0x73f56fce4b149093e603b15cb6acfa7e489385067fb35912d2228344a219cda9
+DspFactoryAddress:  0x44D5dF24d5Ef52A791D6436Fa45A8D426f6de34e
+Init DspFactory Tx: 0x4a1f64ac7d48184dae5fbec62dc5140f169839bccbb2e0855858a6a6f56fc2e3
+DODOV2RouteHelper Address:  0x9B64c81ba54eA51e1f6B7fefb3cfF8AA6F1e2A09
+DODODspProxy Address:  0x5515363c0412AdD5c72d3E302fE1bD7dCBCF93Fe
+====================================================
+====================================================
+network type: matic
+Deploy time: 2021/5/11 下午12:04:30
+Deploy type: V2
+multiSigAddress:  0x16CC37d06FE5061CD0023fb8d142ABaAbB396A2b
+====================================================
+network type: matic
+Deploy time: 2021/5/11 下午12:05:19
+Deploy type: V2
+multiSigAddress:  0x16CC37d06FE5061CD0023fb8d142ABaAbB396A2b
+====================================================
+network type: matic
+Deploy time: 2021/5/11 下午12:06:33
+Deploy type: V2
+multiSigAddress:  0x16CC37d06FE5061CD0023fb8d142ABaAbB396A2b
+UpCrowdPoolingFactory address:  0x335aC99bb3E51BDbF22025f092Ebc1Cf2c5cC619
+Init UpCpFactory Tx: 0xfa4c72a31a0b31c453fb7195a9fbc38723ecfbd7f43104883a65eb0d2fd24102
+DODODspProxy Address:  0x40672211D4310ad71daDc8cDE7Aa3Fb90d420855
+====================================================
+network type: matic
+Deploy time: 2021/5/11 下午2:33:18
+Deploy type: V2
+multiSigAddress:  0x16CC37d06FE5061CD0023fb8d142ABaAbB396A2b
+====================================================
+network type: matic
+Deploy time: 2021/5/11 下午2:34:25
+Deploy type: V2
+multiSigAddress:  0x16CC37d06FE5061CD0023fb8d142ABaAbB396A2b
+DspFactoryAddress:  0xa356867fDCEa8e71AEaF87805808803806231FdC
+Init DspFactory Tx: 0x7bb88a8910a2bb324920d732456c047a007784f04e8c8bb06d6204b387718429
+DODOV2RouteHelper Address:  0xa2CB66EBB947D217f61510882096F6e95c1DE97D
+DODODspProxy Address:  0xfDDCA6ffCE24dF5bE3e8AaD32081822f86178048
+CpProxy address:  0x5480B32c03647ff5E5A653F0465E798DBe558B57
+DODOV2Proxy02 Address:  0x45894C062E6f4E58B257e0826675355305dfef0d
+Init DODOProxyV2 Tx: 0x4c1f2f9889776da4d118955accd3aaa05fc1eaa318707e8fe59706a067db4705
+DODOApproveProxy Init tx:  0x0bf2c291e8c3bcc1db6596eddb4e97cac3c7f0ec66166b5eb64e888b0b0f5599
+====================================================
+network type: matic
+Deploy time: 2021/5/11 下午2:56:31
+Deploy type: V2 - Adapter
+====================================================
+network type: matic
+Deploy time: 2021/5/11 下午2:57:22
+Deploy type: V2 - Adapter
+DODOV1Adapter Address:  0xB5397B2210f49e96a5EB2c9747Aa2bD9397d90C0
+DODOV2Adapter Address:  0x02fCB21dc1cf221939C1d4277fB54016b5d32bC7
+UniAdapter Address:  0xbef0C8Cd420b76e9d31509abbfd7f8C9f664527c

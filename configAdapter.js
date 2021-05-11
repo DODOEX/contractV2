@@ -6,6 +6,7 @@ const { MBTEST_CONFIG } = require("./config/mbtest-config");
 const { MBTESTNET_CONFIG } = require("./config/mbtestnet-config");
 const { OKTEST_CONFIG } = require("./config/oktest-config");
 const { ARBTEST_CONFIG } = require("./config/arbtest-config");
+const { MATIC_CONFIG } = require("./config/matic-config");
 
 exports.GetConfig = function (network, accounts) {
     var CONFIG = {}
@@ -41,6 +42,11 @@ exports.GetConfig = function (network, accounts) {
             break;
         case "arbtest":
             CONFIG = ARBTEST_CONFIG
+            CONFIG.multiSigAddress = accounts[0]
+            CONFIG.defaultMaintainer = accounts[0]
+            break;
+        case "matic":
+            CONFIG = MATIC_CONFIG
             CONFIG.multiSigAddress = accounts[0]
             CONFIG.defaultMaintainer = accounts[0]
             break;

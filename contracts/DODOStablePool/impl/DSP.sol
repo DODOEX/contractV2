@@ -91,6 +91,6 @@ contract DSP is DSPTrader, DSPFunding {
     // ============ Version Control ============
 
     function version() external pure returns (string memory) {
-        return "DSP 1.0.0";
+        return "DSP 1.0.1";
     }
 }

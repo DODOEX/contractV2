@@ -25,7 +25,7 @@ contract DODOV1Adapter is IDODOAdapter {
         _DODO_SELL_HELPER_ = dodoSellHelper;
     }
     
-    function sellBase(address to, address pool) external override {
+    function sellBase(address to, address pool, bytes memory) external override {
         address curBase = IDODOV1(pool)._BASE_TOKEN_();
         uint256 curAmountIn = IERC20(curBase).tokenBalanceOf(address(this));
         IERC20(curBase).universalApproveMax(pool, curAmountIn);
@@ -36,7 +36,7 @@ contract DODOV1Adapter is IDODOAdapter {
         }
     }
 
-    function sellQuote(address to, address pool) external override {
+    function sellQuote(address to, address pool, bytes memory) external override {
         address curQuote = IDODOV1(pool)._QUOTE_TOKEN_();
         uint256 curAmountIn = IERC20(curQuote).tokenBalanceOf(address(this));
         IERC20(curQuote).universalApproveMax(pool, curAmountIn);
