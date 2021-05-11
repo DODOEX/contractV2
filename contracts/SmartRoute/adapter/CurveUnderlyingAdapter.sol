@@ -15,7 +15,7 @@ import {UniversalERC20} from "../lib/UniversalERC20.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 
 // for two tokens
-contract DepthUnderlyingAdapter is IDODOAdapter {
+contract CurveUnderlyingAdapter is IDODOAdapter {
     using SafeMath for uint;
 
     //fromToken == token[0], underlying

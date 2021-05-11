@@ -1,7 +1,7 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-interface IDepth {
+interface ICurve {
     // solium-disable-next-line mixedcase
     function get_dy_underlying(int128 i, int128 j, uint256 dx) external view returns(uint256 dy);
 
