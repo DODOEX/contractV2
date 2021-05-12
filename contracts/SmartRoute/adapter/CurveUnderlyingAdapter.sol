@@ -33,12 +33,10 @@ contract CurveUnderlyingAdapter is IDODOAdapter {
         }
     }
 
-    //fromToken == token[0], underlying
     function sellBase(address to, address pool, bytes memory moreInfo) external override {
         _curveSwap(to, pool, moreInfo);
     }
 
-    //fromToken == token[1], underlying
     function sellQuote(address to, address pool, bytes memory moreInfo) external override {
         _curveSwap(to, pool, moreInfo);
     }
