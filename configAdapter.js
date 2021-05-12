@@ -11,11 +11,7 @@ const { MATIC_CONFIG } = require("./config/matic-config");
 exports.GetConfig = function (network, accounts) {
     var CONFIG = {}
     switch (network) {
-        case "kovan":
-            CONFIG = KOVAN_CONFIG
-            CONFIG.multiSigAddress = accounts[0]
-            CONFIG.defaultMaintainer = accounts[0]
-            break;
+        //mainnet
         case "live":
             CONFIG = ETH_CONFIG
             break;
@@ -24,6 +20,15 @@ exports.GetConfig = function (network, accounts) {
             break;
         case "heco":
             CONFIG = HECO_CONFIG
+            break;
+        case "matic":
+            CONFIG = MATIC_CONFIG
+            break;
+        //testnet
+        case "kovan":
+            CONFIG = KOVAN_CONFIG
+            CONFIG.multiSigAddress = accounts[0]
+            CONFIG.defaultMaintainer = accounts[0]
             break;
         case "mbtestnet":
             CONFIG = MBTEST_CONFIG
@@ -42,11 +47,6 @@ exports.GetConfig = function (network, accounts) {
             break;
         case "arbtest":
             CONFIG = ARBTEST_CONFIG
-            CONFIG.multiSigAddress = accounts[0]
-            CONFIG.defaultMaintainer = accounts[0]
-            break;
-        case "matic":
-            CONFIG = MATIC_CONFIG
             CONFIG.multiSigAddress = accounts[0]
             CONFIG.defaultMaintainer = accounts[0]
             break;
