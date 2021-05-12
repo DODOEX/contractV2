@@ -18,35 +18,28 @@ import {SafeERC20} from "../../lib/SafeERC20.sol";
 contract CurveUnderlyingAdapter is IDODOAdapter {
     using SafeMath for uint;
 
-    //fromToken == token[0], underlying
-    function sellBase(address to, address pool, bytes memory moreInfo) external override {
+    function _curveSwap(address to, address pool, bytes memory moreInfo) internal {
         (address fromToken, address toToken, int128 i, int128 j) = abi.decode(moreInfo, (address, address, int128, int128));
-        require(fromToken == ICurve(pool).underlying_coins(i), 'DepthAdapter: WRONG_TOKEN');
-        require(toToken == ICurve(pool).underlying_coins(j), 'DepthAdapter: WRONG_TOKEN');
-        uint256 sellBaseAmount = IERC20(fromToken).balanceOf(address(this));
+        require(fromToken == ICurve(pool).underlying_coins(i), 'CurveAdapter: WRONG_TOKEN');
+        require(toToken == ICurve(pool).underlying_coins(j), 'CurveAdapter: WRONG_TOKEN');
+        uint256 sellAmount = IERC20(fromToken).balanceOf(address(this));
 
         // approve
-        IERC20(fromToken).approve(pool, sellBaseAmount);
+        IERC20(fromToken).approve(pool, sellAmount);
         // swap
-        ICurve(pool).exchange_underlying(i, j, sellBaseAmount, 0);
+        ICurve(pool).exchange_underlying(i, j, sellAmount, 0);
         if(to != address(this)) {
             SafeERC20.safeTransfer(IERC20(toToken), to, IERC20(toToken).balanceOf(address(this)));
         }
     }
 
+    //fromToken == token[0], underlying
+    function sellBase(address to, address pool, bytes memory moreInfo) external override {
+        _curveSwap(to, pool, moreInfo);
+    }
+
     //fromToken == token[1], underlying
     function sellQuote(address to, address pool, bytes memory moreInfo) external override {
-        (address fromToken, address toToken, int128 i, int128 j) = abi.decode(moreInfo, (address, address, int128, int128));
-        require(fromToken == ICurve(pool).underlying_coins(i), 'DepthAdapter: WRONG_TOKEN');
-        require(toToken == ICurve(pool).underlying_coins(j), 'DepthAdapter: WRONG_TOKEN');
-        uint256 sellQuoteAmount = IERC20(toToken).balanceOf(address(this));
-
-        // approve
-        IERC20(toToken).approve(pool, sellQuoteAmount);
-        // swap
-        ICurve(pool).exchange_underlying(i, j, sellQuoteAmount, 0);
-        if(to != address(this)) {
-            SafeERC20.safeTransfer(IERC20(fromToken), to, IERC20(fromToken).balanceOf(address(this)));
-        }
+        _curveSwap(to, pool, moreInfo);
     }
 }

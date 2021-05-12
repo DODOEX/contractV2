@@ -1,8 +1,6 @@
 /*
-
     Copyright 2020 DODO ZOO.
     SPDX-License-Identifier: Apache-2.0
-
 */
 
 pragma solidity 0.6.9;
@@ -24,13 +22,10 @@ contract UniAdapter is IDODOAdapter {
         uint balance0 = IERC20(baseToken).balanceOf(pool);
         uint sellBaseAmount = balance0 - reserveIn;
         
-        uint receiveQuoteAmount = 0;
-        {
         uint sellBaseAmountWithFee = sellBaseAmount.mul(997);
         uint numerator = sellBaseAmountWithFee.mul(reserveOut);
         uint denominator = reserveIn.mul(1000).add(sellBaseAmountWithFee);
-        receiveQuoteAmount = numerator / denominator;
-        }
+        uint receiveQuoteAmount = numerator / denominator;
         IUni(pool).swap(0, receiveQuoteAmount, to, new bytes(0));
     }
 
@@ -43,13 +38,10 @@ contract UniAdapter is IDODOAdapter {
         uint balance1 = IERC20(quoteToken).balanceOf(pool);
         uint sellQuoteAmount = balance1 - reserveIn;
 
-        uint receiveBaseAmount = 0;
-        {
         uint sellQuoteAmountWithFee = sellQuoteAmount.mul(997);
         uint numerator = sellQuoteAmountWithFee.mul(reserveOut);
         uint denominator = reserveIn.mul(1000).add(sellQuoteAmountWithFee);
-        receiveBaseAmount = numerator / denominator;
-        }
+        uint receiveBaseAmount = numerator / denominator;
         IUni(pool).swap(receiveBaseAmount, 0, to, new bytes(0));
     }
 }

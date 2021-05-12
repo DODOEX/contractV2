@@ -28,7 +28,7 @@ const DODOV2RouteHelper = artifacts.require("DODOV2RouteHelper");
 const ERC20Mine = artifacts.require("ERC20Mine");
 const vDODOMine = artifacts.require("vDODOMine");
 
-const DepthAdapter = artifacts.require("DepthUnderlyingAdapter");
+const CurveAdapter = artifacts.require("CurveUnderlyingAdapter");
 
 module.exports = async (deployer, network, accounts) => {
     let CONFIG = GetConfig(network, accounts)
@@ -371,20 +371,6 @@ module.exports = async (deployer, network, accounts) => {
 
         }
     }
-    if(deploySwitch.MULTIHOP) {
-        logger.log("====================================================");
-        logger.log("network type: " + network);
-        logger.log("Deploy time: " + new Date().toLocaleString());
-        logger.log("Deploy type: MaxHops - Adapter");
-
-        await deployer.deploy(
-            RABSwap,
-            WETHAddress,
-            DODOApproveProxyAddress
-        );
-
-        logger.log("DODOMaxHops Address: ", RABSwap.address);
-    }
 
     if(deploySwitch.test_ADAPTER) {
         logger.log("====================================================");
@@ -392,8 +378,8 @@ module.exports = async (deployer, network, accounts) => {
         logger.log("Deploy time: " + new Date().toLocaleString());
         logger.log("Deploy type: test - Adapter");
 
-        await deployer.deploy(DepthAdapter);
+        await deployer.deploy(CurveAdapter);
 
-        logger.log("test_Adapter Address: ", DepthAdapter.address);
+        logger.log("test_Adapter Address: ", CurveAdapter.address);
     }
 };

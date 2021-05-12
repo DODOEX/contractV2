@@ -80,13 +80,13 @@ contract DODORouteProxy {
         address[] memory mixPairs,
         address[] memory assetTo,
         uint256 directions,
-        bool isIncentive,
+        bool,
         uint256 deadLine
     ) external payable judgeExpired(deadLine) returns (uint256 returnAmount) {
-        require(mixPairs.length > 0, "DODOV2Proxy02: PAIRS_EMPTY");
-        require(mixPairs.length == mixAdapters.length, "DODOV2Proxy02: PAIR_ADAPTER_NOT_MATCH");
-        require(mixPairs.length == assetTo.length - 1, "DODOV2Proxy02: PAIR_ASSETTO_NOT_MATCH");
-        require(minReturnAmount > 0, "DODOV2Proxy02: RETURN_AMOUNT_ZERO");
+        require(mixPairs.length > 0, "DODORouteProxy: PAIRS_EMPTY");
+        require(mixPairs.length == mixAdapters.length, "DODORouteProxy: PAIR_ADAPTER_NOT_MATCH");
+        require(mixPairs.length == assetTo.length - 1, "DODORouteProxy: PAIR_ASSETTO_NOT_MATCH");
+        require(minReturnAmount > 0, "DODORouteProxy: RETURN_AMOUNT_ZERO");
 
         address _fromToken = fromToken;
         address _toToken = toToken;
@@ -113,7 +113,7 @@ contract DODORouteProxy {
             returnAmount = IERC20(_toToken).tokenBalanceOf(msg.sender).sub(toTokenOriginBalance);
         }
 
-        require(returnAmount >= minReturnAmount, "DODOV2Proxy02: Return amount is not enough");
+        require(returnAmount >= minReturnAmount, "DODORouteProxy: Return amount is not enough");
 
         emit OrderHistory(
             _fromToken,
