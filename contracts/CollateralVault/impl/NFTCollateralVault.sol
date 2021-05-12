@@ -16,19 +16,12 @@ import {IERC1155Receiver} from "../../intf/IERC1155Receiver.sol";
 import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 
 
-contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Receiver,ReentrancyGuard {
+contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Receiver, ReentrancyGuard {
     using SafeMath for uint256;
 
     // ============ Storage ============
     string public name;
     string public baseURI;
-
-    struct NftInfo {
-        uint256 tokenId; 
-        uint256 amount;
-        address nftContract;
-    }
-    NftInfo[] public nftInfos;
 
     function init(
         address owner,
@@ -48,8 +41,8 @@ contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Re
     // ============ Ownable ============
     function directTransferOwnership(address newOwner) external onlyOwner {
         require(newOwner != address(0), "DODONftVault: ZERO_ADDRESS");
-        _OWNER_ = newOwner;
         emit OwnershipTransferred(_OWNER_, newOwner);
+        _OWNER_ = newOwner;
     }
 
     function createFragment(address nftProxy, bytes calldata data) external preventReentrant onlyOwner {
@@ -62,37 +55,17 @@ contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Re
 
     function withdrawERC721(address nftContract, uint256 tokenId) external onlyOwner {
         require(nftContract != address(0), "DODONftVault: ZERO_ADDRESS");
-        _removeNftInfo(nftContract, tokenId, 1);
         IERC721(nftContract).safeTransferFrom(address(this), _OWNER_, tokenId, "");
+        emit RemoveNftToken(nftContract, tokenId, 1);
     }
 
     function withdrawERC1155(address nftContract, uint256[] memory tokenIds, uint256[] memory amounts) external onlyOwner {
         require(nftContract != address(0), "DODONftVault: ZERO_ADDRESS");
         require(tokenIds.length == amounts.length, "PARAMS_NOT_MATCH");
-        for(uint256 i = 0; i < tokenIds.length; i++) {
-            _removeNftInfo(nftContract, tokenIds[i], amounts[i]);
-        }
         IERC1155(nftContract).safeBatchTransferFrom(address(this), _OWNER_, tokenIds, amounts, "");
-    }
-
-    // ============ View ============
-    
-    function getNftInfoById(uint256 i) external view returns (address nftContract, uint256 tokenId, uint256 amount) {
-        require(i < nftInfos.length, "ID_OVERFLOW");
-        NftInfo memory ni = nftInfos[i];
-        nftContract = ni.nftContract;
-        tokenId = ni.tokenId;
-        amount = ni.amount;
-    }
-
-    function getIdByTokenIdAndAddr(address nftContract, uint256 tokenId) external view returns(uint256) {
-        uint256 len = nftInfos.length;
-        for (uint256 i = 0; i < len; i++) {
-            if (nftContract == nftInfos[i].nftContract && tokenId == nftInfos[i].tokenId) {
-                return i;
-            }
+        for(uint256 i = 0; i < tokenIds.length; i++) {
+            emit RemoveNftToken(nftContract, tokenIds[i], amounts[i]);
         }
-        require(false, "TOKEN_ID_NOT_FOUND");
     }
 
     function supportsInterface(bytes4 interfaceId) public override view returns (bool) {
@@ -107,7 +80,7 @@ contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Re
         uint256 tokenId,
         bytes calldata
     ) external override returns (bytes4) {
-        _addNftInfo(msg.sender, tokenId, 1);
+        emit AddNftToken(msg.sender, tokenId, 1);
         return IERC721Receiver.onERC721Received.selector;
     }
 
@@ -118,7 +91,7 @@ contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Re
         uint256 value,
         bytes calldata
     ) external override returns (bytes4){
-        _addNftInfo(msg.sender, id, value);
+        emit AddNftToken(msg.sender, id, value);
         return IERC1155Receiver.onERC1155Received.selector;
     }
 
@@ -131,48 +104,8 @@ contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Re
     ) external override returns (bytes4){
         require(ids.length == values.length, "PARAMS_NOT_MATCH");
         for(uint256 i = 0; i < ids.length; i++) {
-            _addNftInfo(msg.sender, ids[i], values[i]);
+            emit AddNftToken(msg.sender, ids[i], values[i]);
         }
         return IERC1155Receiver.onERC1155BatchReceived.selector;
-    }
-
-    // ========== internal ===============
-    function _addNftInfo(address nftContract, uint256 tokenId, uint256 addAmount) internal {
-        uint256 len = nftInfos.length;
-        for(uint256 i = 0; i < len; i++) {
-            NftInfo memory nftInfo = nftInfos[i];
-            if (nftContract == nftInfo.nftContract && tokenId == nftInfo.tokenId) {
-                nftInfos[i].amount = nftInfo.amount.add(addAmount);
-                emit AddNftToken(nftContract, tokenId, addAmount);
-                return;
-            }
-        }
-        nftInfos.push(
-            NftInfo({   
-                tokenId: tokenId,
-                amount: addAmount,
-                nftContract: nftContract
-            })
-        );
-        emit AddNftToken(nftContract, tokenId, addAmount);
-    }
-
-    function _removeNftInfo(address nftContract, uint256 tokenId, uint256 removeAmount) internal {
-        uint256 len = nftInfos.length;
-        for (uint256 i = 0; i < len; i++) {
-            NftInfo memory nftInfo = nftInfos[i];
-            if (nftContract == nftInfo.nftContract && tokenId == nftInfo.tokenId) {
-                if(removeAmount >= nftInfo.amount) {
-                    if(i != len - 1) {
-                        nftInfos[i] = nftInfos[len - 1];
-                    }
-                    nftInfos.pop();
-                }else {
-                    nftInfos[i].amount = nftInfo.amount.sub(removeAmount);
-                }
-                emit RemoveNftToken(nftContract, tokenId, removeAmount);
-                break;
-            }
-        }
     }
 }

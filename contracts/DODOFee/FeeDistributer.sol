@@ -86,9 +86,8 @@ contract FeeDistributor {
         if (withClaim) {
             _claim(msg.sender, to);
         }
-
-        StakeVault(_STAKE_VAULT_).transferOut(_STAKE_TOKEN_, amount, to);
         _removeShares(amount, msg.sender);
+        StakeVault(_STAKE_VAULT_).transferOut(_STAKE_TOKEN_, amount, to);
         
         emit UnStake(msg.sender, amount);
     }
