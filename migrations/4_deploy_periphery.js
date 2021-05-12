@@ -28,6 +28,8 @@ const DODOV2RouteHelper = artifacts.require("DODOV2RouteHelper");
 const ERC20Mine = artifacts.require("ERC20Mine");
 const vDODOMine = artifacts.require("vDODOMine");
 
+const CurveAdapter = artifacts.require("CurveUnderlyingAdapter");
+
 module.exports = async (deployer, network, accounts) => {
     let CONFIG = GetConfig(network, accounts)
     if (CONFIG == null) return;
@@ -370,4 +372,14 @@ module.exports = async (deployer, network, accounts) => {
         }
     }
 
+    if(deploySwitch.test_ADAPTER) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
+        logger.log("Deploy type: test - Adapter");
+
+        await deployer.deploy(CurveAdapter);
+
+        logger.log("test_Adapter Address: ", CurveAdapter.address);
+    }
 };

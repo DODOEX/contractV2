@@ -33,6 +33,15 @@ contract DODORouteProxy {
     address public immutable _WETH_;
     address public immutable _DODO_APPROVE_PROXY_;
 
+    struct PoolInfo {
+        uint256 direction;
+        uint256 poolEdition;
+        uint256 weight;
+        address pool;
+        address adapter;
+        bytes moreInfo;
+    }
+
     // ============ Events ============
 
      event OrderHistory(
@@ -60,6 +69,59 @@ contract DODORouteProxy {
     ) public {
         _WETH_ = weth;
         _DODO_APPROVE_PROXY_ = dodoApproveProxy;
+    }
+
+    function mixSwap(
+        address fromToken,
+        address toToken,
+        uint256 fromTokenAmount,
+        uint256 minReturnAmount,
+        address[] memory mixAdapters,
+        address[] memory mixPairs,
+        address[] memory assetTo,
+        uint256 directions,
+        bool,
+        uint256 deadLine
+    ) external payable judgeExpired(deadLine) returns (uint256 returnAmount) {
+        require(mixPairs.length > 0, "DODORouteProxy: PAIRS_EMPTY");
+        require(mixPairs.length == mixAdapters.length, "DODORouteProxy: PAIR_ADAPTER_NOT_MATCH");
+        require(mixPairs.length == assetTo.length - 1, "DODORouteProxy: PAIR_ASSETTO_NOT_MATCH");
+        require(minReturnAmount > 0, "DODORouteProxy: RETURN_AMOUNT_ZERO");
+
+        address _fromToken = fromToken;
+        address _toToken = toToken;
+        uint256 _fromTokenAmount = fromTokenAmount;
+        
+        uint256 toTokenOriginBalance = IERC20(_toToken).universalBalanceOf(msg.sender);
+        
+        _deposit(msg.sender, assetTo[0], _fromToken, _fromTokenAmount, _fromToken == _ETH_ADDRESS_);
+
+        for (uint256 i = 0; i < mixPairs.length; i++) {
+            if (directions & 1 == 0) {
+                IDODOAdapter(mixAdapters[i]).sellBase(assetTo[i + 1],mixPairs[i], "");
+            } else {
+                IDODOAdapter(mixAdapters[i]).sellQuote(assetTo[i + 1],mixPairs[i], "");
+            }
+            directions = directions >> 1;
+        }
+
+        if(_toToken == _ETH_ADDRESS_) {
+            returnAmount = IWETH(_WETH_).balanceOf(address(this));
+            IWETH(_WETH_).withdraw(returnAmount);
+            msg.sender.transfer(returnAmount);
+        }else {
+            returnAmount = IERC20(_toToken).tokenBalanceOf(msg.sender).sub(toTokenOriginBalance);
+        }
+
+        require(returnAmount >= minReturnAmount, "DODORouteProxy: Return amount is not enough");
+
+        emit OrderHistory(
+            _fromToken,
+            _toToken,
+            msg.sender,
+            _fromTokenAmount,
+            returnAmount
+        );
     }
 
     function dodoMutliSwap(
@@ -119,27 +181,34 @@ contract DODORouteProxy {
             uint256 curTotalWeight = totalWeight[i-1];
             
             for(uint256 j = splitNumber[i-1]; j < splitNumber[i]; j++) {
-                (address pool, address adapter, uint256 mixPara) = abi.decode(swapSequence[j], (address, address, uint256));
-                uint256 direction = mixPara >> 17;
-                uint256 weight = (0xffff & mixPara) >> 9;
-                uint256 poolEdition = (0xff & mixPara);
+                PoolInfo memory curPoolInfo;
+                {
+                    (address pool, address adapter, uint256 mixPara, bytes memory moreInfo) = abi.decode(swapSequence[j], (address, address, uint256, bytes));
+                
+                    curPoolInfo.direction = mixPara >> 17;
+                    curPoolInfo.weight = (0xffff & mixPara) >> 9;
+                    curPoolInfo.poolEdition = (0xff & mixPara);
+                    curPoolInfo.pool = pool;
+                    curPoolInfo.adapter = adapter;
+                    curPoolInfo.moreInfo = moreInfo;
+                }
 
                 if(assetFrom[i-1] == address(this)) {
-                    uint256 curAmount = curTotalAmount.div(curTotalWeight).mul(weight);
+                    uint256 curAmount = curTotalAmount.div(curTotalWeight).mul(curPoolInfo.weight);
             
-                    if(poolEdition == 1) {  
-                        //For using transferFrom pool (like dodoV1)
-                        IERC20(midToken[i]).transfer(adapter, curAmount);
+                    if(curPoolInfo.poolEdition == 1) {   
+                        //For using transferFrom pool (like dodoV1, Curve)
+                        IERC20(midToken[i]).transfer(curPoolInfo.adapter, curAmount);
                     } else {
                         //For using transfer pool (like dodoV2)
-                        IERC20(midToken[i]).transfer(pool, curAmount);
+                        IERC20(midToken[i]).transfer(curPoolInfo.pool, curAmount);
                     }
                 }
                 
-                if(direction == 0) {
-                    IDODOAdapter(adapter).sellBase(assetFrom[i], pool, "");
+                if(curPoolInfo.direction == 0) {
+                    IDODOAdapter(curPoolInfo.adapter).sellBase(assetFrom[i], curPoolInfo.pool, curPoolInfo.moreInfo);
                 } else {
-                    IDODOAdapter(adapter).sellQuote(assetFrom[i], pool, "");
+                    IDODOAdapter(curPoolInfo.adapter).sellQuote(assetFrom[i], curPoolInfo.pool, curPoolInfo.moreInfo);
                 }
             }
         }
