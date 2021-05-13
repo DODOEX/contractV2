@@ -80,7 +80,7 @@ contract DODORouteProxy {
         address[] memory mixPairs,
         address[] memory assetTo,
         uint256 directions,
-        bool,
+        bytes[] memory moreInfos,
         uint256 deadLine
     ) external payable judgeExpired(deadLine) returns (uint256 returnAmount) {
         require(mixPairs.length > 0, "DODORouteProxy: PAIRS_EMPTY");
@@ -98,9 +98,9 @@ contract DODORouteProxy {
 
         for (uint256 i = 0; i < mixPairs.length; i++) {
             if (directions & 1 == 0) {
-                IDODOAdapter(mixAdapters[i]).sellBase(assetTo[i + 1],mixPairs[i], "");
+                IDODOAdapter(mixAdapters[i]).sellBase(assetTo[i + 1],mixPairs[i], moreInfos[i]);
             } else {
-                IDODOAdapter(mixAdapters[i]).sellQuote(assetTo[i + 1],mixPairs[i], "");
+                IDODOAdapter(mixAdapters[i]).sellQuote(assetTo[i + 1],mixPairs[i], moreInfos[i]);
             }
             directions = directions >> 1;
         }
