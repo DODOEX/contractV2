@@ -8,19 +8,18 @@ pragma solidity 0.6.9;
 
 import {IDODOApproveProxy} from "../DODOApproveProxy.sol";
 import {IERC20} from "../../intf/IERC20.sol";
-import {IWETH} from "../../intf/IWETH.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 
 interface IDODOMysteryBox {
     function _BUY_TOKEN_() external view returns (address);
-    function _FEE_MODEL_() external view returns (address);
+    function _DEFAULT_FEE_MODEL_() external view returns (address);
     function getPriceAndSellAmount() external view returns (uint256, uint256, uint256);
     function buyTickets(address assetTo, uint256 ticketAmount) external;
 }
 
-interface IMysteryBoxPay {
+interface IMysteryBoxFeeModel {
     function getPayAmount(address mysteryBox, address user, uint256 originalPrice, uint256 ticketAmount) external view returns (uint256, uint256);
 }
 
@@ -35,8 +34,7 @@ contract DODOMysteryBoxProxy is ReentrancyGuard {
 
     // ============ Storage ============
 
-    address constant _ETH_ADDRESS_ = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
-    address public immutable _WETH_;
+    address constant _BASE_COIN_ = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     address public immutable _DODO_APPROVE_PROXY_;
 
     // ============ Events ============
@@ -46,11 +44,7 @@ contract DODOMysteryBoxProxy is ReentrancyGuard {
 
     receive() external payable {}
 
-    constructor(
-        address payable weth,
-        address dodoApproveProxy
-    ) public {
-        _WETH_ = weth;
+    constructor(address dodoApproveProxy) public {
         _DODO_APPROVE_PROXY_ = dodoApproveProxy;
     }
 
@@ -59,12 +53,12 @@ contract DODOMysteryBoxProxy is ReentrancyGuard {
         require(curPrice > 0 && sellAmount > 0, "CAN_NOT_BUY");
         require(ticketAmount <= sellAmount, "TICKETS_NOT_ENOUGH");
 
-        address feeModel = IDODOMysteryBox(dodoMysteryBox)._FEE_MODEL_();
-        (uint256 payAmount,) = IMysteryBoxPay(feeModel).getPayAmount(dodoMysteryBox, msg.sender, curPrice, ticketAmount);
+        address feeModel = IDODOMysteryBox(dodoMysteryBox)._DEFAULT_FEE_MODEL_();
+        (uint256 payAmount,) = IMysteryBoxFeeModel(feeModel).getPayAmount(dodoMysteryBox, msg.sender, curPrice, ticketAmount);
         require(payAmount > 0, "UnQualified");
         address buyToken = IDODOMysteryBox(dodoMysteryBox)._BUY_TOKEN_();
 
-        if(buyToken == _ETH_ADDRESS_) {
+        if(buyToken == _BASE_COIN_) {
             require(msg.value >= payAmount, "PAYAMOUNT_NOT_ENOUGH");
             dodoMysteryBox.transfer(payAmount);
         }else {

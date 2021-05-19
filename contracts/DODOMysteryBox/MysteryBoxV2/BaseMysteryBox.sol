@@ -6,7 +6,6 @@ pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
 import {IERC20} from "../../intf/IERC20.sol";
-import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {UniversalERC20} from "../../SmartRoute/lib/UniversalERC20.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {Address} from "../../external/utils/Address.sol";
@@ -15,7 +14,7 @@ import {IRandomGenerator} from "../../lib/RandomGenerator.sol";
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 import {InitializableERC20} from "../../external/ERC20/InitializableERC20.sol";
 
-interface IMysteryBoxPay {
+interface IMysteryBoxFeeModel {
     function getPayAmount(address mysteryBox, address user, uint256 originalPrice, uint256 ticketAmount) external view returns (uint256, uint256);
 }
 
@@ -34,7 +33,7 @@ contract BaseMysteryBox is InitializableERC20, InitializableOwnable, ReentrancyG
     
     address public _BUY_TOKEN_;
     uint256 public _BUY_RESERVE_;
-    address public _FEE_MODEL_;
+    address public _DEFAULT_FEE_MODEL_;
     address payable public _DEFAULT_MAINTAINER_;
     address public _NFT_TOKEN_;
 
@@ -46,9 +45,9 @@ contract BaseMysteryBox is InitializableERC20, InitializableOwnable, ReentrancyG
     uint256 public _REDEEM_ALLOWED_TIME_;
 
     uint256[] public _BOX_INTERVAL_; // index => Interval probability (For ProbMode)  index => tokenId (For FixedAmount mode)
-    uint256[][] public _TOKEN_ID_SET_; // Interval index => tokenIds (For ProbMode)
+    uint256[][] public _TOKEN_ID_SET_; // Interval index => tokenIds (Only For ProbMode)
     
-    bool public _IS_PROB_MODE; // false FixedAmount true ProbMode
+    bool public _IS_PROB_MODE; // false = FixedAmount mode,  true = ProbMode
     bool public _IS_REVEAL_MODE_;
     uint256 public _REVEAL_RNG_ = 0; 
     address public _RANDOM_GENERATOR_;
@@ -75,13 +74,13 @@ contract BaseMysteryBox is InitializableERC20, InitializableOwnable, ReentrancyG
 
     event SetPriceInterval();
     event SetBoxInterval();
-    event SetTokenIds();
-    event SetTokenIdByIndex(uint256 index);
+    event SetTokenIds(); // only for ProbMode
+    event SetTokenIdByIndex(uint256 index); // only for ProbMode
 
 
     function init(
-        address[] memory contractList, //0 owner, 1 buyToken, 2 feeModel, 3 defaultMaintainer 4 randomGenerator 5 nftToken
-        uint256[][] memory priceList, //0 priceTimeInterval, 1 priceSet, 2 sellAmount
+        address[] memory addrList, //0 owner, 1 buyToken, 2 feeModel, 3 defaultMaintainer 4 randomGenerator 5 nftToken
+        uint256[][] memory priceSetList, //0 priceTimeInterval, 1 priceSet, 2 sellAmount
         uint256[] memory boxIntervals,
         uint256[][] memory tokenIds,
         uint256 redeemAllowedTime,
@@ -89,15 +88,15 @@ contract BaseMysteryBox is InitializableERC20, InitializableOwnable, ReentrancyG
         bool isProbMode,
         uint256 totalTickets
     ) public {
-        initOwner(contractList[0]);
-        _BUY_TOKEN_ = contractList[1];
-        _FEE_MODEL_ = contractList[2];
-        _DEFAULT_MAINTAINER_ = payable(contractList[3]);
-        _RANDOM_GENERATOR_ = contractList[4];
-        _NFT_TOKEN_ = contractList[5];
+        initOwner(addrList[0]);
+        _BUY_TOKEN_ = addrList[1];
+        _DEFAULT_FEE_MODEL_ = addrList[2];
+        _DEFAULT_MAINTAINER_ = payable(addrList[3]);
+        _RANDOM_GENERATOR_ = addrList[4];
+        _NFT_TOKEN_ = addrList[5];
 
         _REDEEM_ALLOWED_TIME_ = redeemAllowedTime;
-        if(priceList.length > 0) _setPrice(priceList[0], priceList[1], priceList[2]);
+        if(priceSetList.length > 0) _setPrice(priceSetList[0], priceSetList[1], priceSetList[2]);
         
         _IS_REVEAL_MODE_ = isRevealMode;
         _IS_PROB_MODE = isProbMode;
@@ -116,7 +115,7 @@ contract BaseMysteryBox is InitializableERC20, InitializableOwnable, ReentrancyG
         (uint256 curPrice, uint256 sellAmount, uint256 index) = getPriceAndSellAmount();
         require(curPrice > 0 && sellAmount > 0, "CAN_NOT_BUY");
         require(ticketAmount <= sellAmount, "TICKETS_NOT_ENOUGH");
-        (uint256 payAmount, uint256 feeAmount) = IMysteryBoxPay(_FEE_MODEL_).getPayAmount(address(this), assetTo, curPrice, ticketAmount);
+        (uint256 payAmount, uint256 feeAmount) = IMysteryBoxFeeModel(_DEFAULT_FEE_MODEL_).getPayAmount(address(this), assetTo, curPrice, ticketAmount);
         require(payAmount > 0, "UnQualified");
 
         uint256 baseBalance = IERC20(_BUY_TOKEN_).universalBalanceOf(address(this));
@@ -189,8 +188,8 @@ contract BaseMysteryBox is InitializableERC20, InitializableOwnable, ReentrancyG
         require(priceIntervals.length == prices.length && prices.length == amounts.length, "PARAM_NOT_INVALID");
         for (uint256 i = 0; i < priceIntervals.length - 1; i++) {
             require(priceIntervals[i] < priceIntervals[i + 1], "INTERVAL_INVALID");
-            require(prices[i] != 0, "INTERVAL_INVALID");
-            require(amounts[i] != 0, "INTERVAL_INVALID");
+            require(prices[i] != 0, "PRICE_INVALID");
+            require(amounts[i] != 0, "SELL_AMOUNT_INVALID");
         }
         _PRICE_TIME_INTERVAL_ = priceIntervals;
         _PRICE_SET_ = prices;
@@ -292,8 +291,8 @@ contract BaseMysteryBox is InitializableERC20, InitializableOwnable, ReentrancyG
                     break;
                 }
             }
-            sellAmount = _SELLING_AMOUNT_SET_[i-1];
             curPrice = _PRICE_SET_[i-1];
+            sellAmount = _SELLING_AMOUNT_SET_[i-1];
             index = i - 1;
         }
     }

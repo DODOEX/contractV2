@@ -10,15 +10,21 @@ pragma solidity 0.6.9;
 import {ERC721} from "../../external/ERC721/ERC721.sol";
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 
-contract MysteryBoxERC721 is ERC721,InitializableOwnable {
+contract MysteryBoxERC721 is ERC721, InitializableOwnable {
     mapping (address => bool) public _IS_ALLOWED_MINT_;
+
+    // ============ Event =============
+    event addMinter(address account);
+    event removeMinter(address account);
 
     function addMintAccount(address account) public onlyOwner {
         _IS_ALLOWED_MINT_[account] = true;
+        emit addMinter(account);
     }
 
     function removeMintAccount(address account) public onlyOwner {
         _IS_ALLOWED_MINT_[account] = false;
+        emit removeMinter(account);
     }
 
     function init(
