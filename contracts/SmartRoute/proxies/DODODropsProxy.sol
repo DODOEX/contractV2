@@ -12,24 +12,24 @@ import {SafeMath} from "../../lib/SafeMath.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 
-interface IDODOMysteryBox {
+interface IDODODrops {
     function _BUY_TOKEN_() external view returns (address);
-    function _DEFAULT_FEE_MODEL_() external view returns (address);
-    function getPriceAndSellAmount() external view returns (uint256, uint256, uint256);
+    function _FEE_MODEL_() external view returns (address);
+    function getSellingInfo() external view returns (uint256, uint256, uint256);
     function buyTickets(address assetTo, uint256 ticketAmount) external;
 }
 
-interface IMysteryBoxFeeModel {
+interface IDropsFeeModel {
     function getPayAmount(address mysteryBox, address user, uint256 originalPrice, uint256 ticketAmount) external view returns (uint256, uint256);
 }
 
 /**
- * @title DODO MysteryBoxProxy
+ * @title DODO DropsProxy
  * @author DODO Breeder
  *
- * @notice Entrance of MysteryBox in DODO platform
+ * @notice Entrance of Drops in DODO platform
  */
-contract DODOMysteryBoxProxy is ReentrancyGuard {
+contract DODODropsProxy is ReentrancyGuard {
     using SafeMath for uint256;
 
     // ============ Storage ============
@@ -48,25 +48,25 @@ contract DODOMysteryBoxProxy is ReentrancyGuard {
         _DODO_APPROVE_PROXY_ = dodoApproveProxy;
     }
 
-    function buyTickets(address payable dodoMysteryBox, uint256 ticketAmount) external payable preventReentrant {
-        (uint256 curPrice, uint256 sellAmount,) = IDODOMysteryBox(dodoMysteryBox).getPriceAndSellAmount();
+    function buyTickets(address payable dodoDrops, uint256 ticketAmount) external payable preventReentrant {
+        (uint256 curPrice, uint256 sellAmount,) = IDODODrops(dodoDrops).getSellingInfo();
         require(curPrice > 0 && sellAmount > 0, "CAN_NOT_BUY");
         require(ticketAmount <= sellAmount, "TICKETS_NOT_ENOUGH");
 
-        address feeModel = IDODOMysteryBox(dodoMysteryBox)._DEFAULT_FEE_MODEL_();
-        (uint256 payAmount,) = IMysteryBoxFeeModel(feeModel).getPayAmount(dodoMysteryBox, msg.sender, curPrice, ticketAmount);
+        address feeModel = IDODODrops(dodoDrops)._FEE_MODEL_();
+        (uint256 payAmount,) = IDropsFeeModel(feeModel).getPayAmount(dodoDrops, msg.sender, curPrice, ticketAmount);
         require(payAmount > 0, "UnQualified");
-        address buyToken = IDODOMysteryBox(dodoMysteryBox)._BUY_TOKEN_();
+        address buyToken = IDODODrops(dodoDrops)._BUY_TOKEN_();
 
         if(buyToken == _BASE_COIN_) {
-            require(msg.value >= payAmount, "PAYAMOUNT_NOT_ENOUGH");
-            dodoMysteryBox.transfer(payAmount);
+            require(msg.value == payAmount, "PAYAMOUNT_NOT_ENOUGH");
+            dodoDrops.transfer(payAmount);
         }else {
-            IDODOApproveProxy(_DODO_APPROVE_PROXY_).claimTokens(buyToken, msg.sender, dodoMysteryBox, payAmount);
+            IDODOApproveProxy(_DODO_APPROVE_PROXY_).claimTokens(buyToken, msg.sender, dodoDrops, payAmount);
         }
 
-        IDODOMysteryBox(dodoMysteryBox).buyTickets(msg.sender, ticketAmount);
+        IDODODrops(dodoDrops).buyTickets(msg.sender, ticketAmount);
 
-        emit BuyTicket(msg.sender, dodoMysteryBox, ticketAmount);
+        emit BuyTicket(msg.sender, dodoDrops, ticketAmount);
     } 
 }

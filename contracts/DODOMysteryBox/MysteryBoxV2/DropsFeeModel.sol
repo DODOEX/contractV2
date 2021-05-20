@@ -19,48 +19,48 @@ interface IPrice {
     function getUserPrice(address user, uint256 originalPrice, uint256 ticketAmount) external view returns (uint256);
 }
 
-contract MysteryBoxFeeModel is InitializableOwnable {
+contract DropsFeeModel is InitializableOwnable {
     using SafeMath for uint256;
 
-    struct MysteryBoxInfo {
+    struct DropBoxInfo {
         bool isSet;
         uint256 globalFee;
         address feeAddr;
         address priceAddr;
     }
 
-    mapping(address => MysteryBoxInfo) mysteryBoxes;
+    mapping(address => DropBoxInfo) dropBoxes;
 
-    function addMysteryBoxInfo(address mysteryBox, uint256 globalFee, address feeAddr, address priceAddr) external onlyOwner {
-        MysteryBoxInfo memory boxInfo =  MysteryBoxInfo({
+    function addMysteryBoxInfo(address dropBox, uint256 globalFee, address feeAddr, address priceAddr) external onlyOwner {
+        DropBoxInfo memory dropBoxInfo =  DropBoxInfo({
             isSet: true,
             globalFee: globalFee,
             feeAddr: feeAddr,
             priceAddr: priceAddr
         });
-        mysteryBoxes[mysteryBox] = boxInfo;
+        dropBoxes[dropBox] = dropBoxInfo;
     }
 
-    function setMysteryBoxInfo(address mysteryBox, uint256 globalFee, address feeAddr, address priceAddr) external onlyOwner {
-        require(mysteryBoxes[mysteryBox].isSet, "NOT_FOUND_BOX");
-        mysteryBoxes[mysteryBox].globalFee = globalFee;
-        mysteryBoxes[mysteryBox].feeAddr = feeAddr;
-        mysteryBoxes[mysteryBox].priceAddr = priceAddr;
+    function setDropBoxInfo(address dropBox, uint256 globalFee, address feeAddr, address priceAddr) external onlyOwner {
+        require(dropBoxes[dropBox].isSet, "NOT_FOUND_BOX");
+        dropBoxes[dropBox].globalFee = globalFee;
+        dropBoxes[dropBox].feeAddr = feeAddr;
+        dropBoxes[dropBox].priceAddr = priceAddr;
     }
 
-    function getPayAmount(address mysteryBox, address user, uint256 originalPrice, uint256 ticketAmount) external view returns (uint256 payAmount, uint256 feeAmount) {
-        MysteryBoxInfo memory boxInfo = mysteryBoxes[mysteryBox];
-        if(!mysteryBoxes[mysteryBox].isSet) {
+    function getPayAmount(address dropBox, address user, uint256 originalPrice, uint256 ticketAmount) external view returns (uint256 payAmount, uint256 feeAmount) {
+        DropBoxInfo memory dropBoxInfo = dropBoxes[dropBox];
+        if(!dropBoxInfo.isSet) {
             payAmount = originalPrice.mul(ticketAmount);
             feeAmount = 0;
         } else {
-            uint256 feeRate = boxInfo.globalFee;
-            address feeAddr = boxInfo.feeAddr;
+            uint256 feeRate = dropBoxInfo.globalFee;
+            address feeAddr = dropBoxInfo.feeAddr;
             if(feeAddr != address(0))
                 feeRate = IFee(feeAddr).getUserFee(user, ticketAmount);
             
             uint256 price = originalPrice;
-            address priceAddr = boxInfo.priceAddr;
+            address priceAddr = dropBoxInfo.priceAddr;
             if(priceAddr != address(0))
                 price = IPrice(priceAddr).getUserPrice(user, originalPrice, ticketAmount);
             

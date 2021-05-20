@@ -10,7 +10,7 @@ pragma solidity 0.6.9;
 import {ERC1155} from "../../external/ERC1155/ERC1155.sol";
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 
-contract MysteryBoxERC1155 is ERC1155, InitializableOwnable {
+contract DropsERC1155 is ERC1155, InitializableOwnable {
     mapping (address => bool) public _IS_ALLOWED_MINT_;
 
     // ============ Event =============

@@ -83,13 +83,21 @@ contract InitializableMintableERC20 is InitializableOwnable {
     }
 
     function mint(address user, uint256 value) external onlyOwner {
+        _mint(user, value);
+    }
+
+    function burn(address user, uint256 value) external onlyOwner {
+        _burn(user, value);
+    }
+
+    function _mint(address user, uint256 value) internal {
         balances[user] = balances[user].add(value);
         totalSupply = totalSupply.add(value);
         emit Mint(user, value);
         emit Transfer(address(0), user, value);
     }
 
-    function burn(address user, uint256 value) external onlyOwner {
+    function _burn(address user, uint256 value) internal {
         balances[user] = balances[user].sub(value);
         totalSupply = totalSupply.sub(value);
         emit Burn(user, value);
