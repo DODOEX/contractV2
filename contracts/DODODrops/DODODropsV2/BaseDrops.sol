@@ -82,15 +82,13 @@ contract BaseDrops is InitializableMintableERC20, ReentrancyGuard {
 
     function init(
         address[] memory addrList, //0 owner, 1 buyToken, 2 feeModel, 3 defaultMaintainer 4 rng 5 nftToken
-        uint256[][] memory sellingInfoList, //0 sellingTimeInterval, 1 sellingPrice, 2 sellingAmount
-        uint256[] memory probInterval,
-        uint256[][] memory tokenIdMap,
-        uint256[] memory tokenIdList,
+        uint256[] memory sellingTimeInterval,
+        uint256[] memory sellingPrice,
+        uint256[] memory sellingAmount,
         uint256 redeemAllowedTime,
         bool isRevealMode,
         bool isProbMode
     ) public {
-        initOwner(addrList[0]);
         _BUY_TOKEN_ = addrList[1];
         _FEE_MODEL_ = addrList[2];
         _MAINTAINER_ = payable(addrList[3]);
@@ -101,18 +99,21 @@ contract BaseDrops is InitializableMintableERC20, ReentrancyGuard {
         _IS_PROB_MODE_ = isProbMode;
         _REDEEM_ALLOWED_TIME_ = redeemAllowedTime;
 
-        if(sellingInfoList.length > 0) _setSellingInfo(sellingInfoList[0], sellingInfoList[1], sellingInfoList[2]);
+        if(sellingTimeInterval.length > 0) _setSellingInfo(sellingTimeInterval, sellingPrice, sellingAmount);
         
-        if(isProbMode) {
-            if(probInterval.length > 0) _setProbInfo(probInterval, tokenIdMap);
-        }else {
-            if(tokenIdList.length > 0) _setFixedAmountInfo(tokenIdList);
-        }
+        // if(isProbMode) {
+        //     // (uint256[][] memory tokenIdMap) = abi.decode(tokenIdMapBytes, (uint256[][]));
+        //     // if(probInterval.length > 0) _setProbInfo(probInterval, tokenIdMap);
+        // }else {
+        //     // if(tokenIdList.length > 0) _setFixedAmountInfo(tokenIdList);
+        // }
         
         string memory prefix = "DROPS_";
         name = string(abi.encodePacked(prefix, addressToShortString(address(this))));
         symbol = name;
         decimals = 0;
+
+        //init Owner
         super.init(addrList[0], 0, name, symbol, decimals);
     }
 
@@ -238,7 +239,9 @@ contract BaseDrops is InitializableMintableERC20, ReentrancyGuard {
         _setSellingInfo(sellingTimeIntervals, prices, amounts);
     }
 
-    function setProbInfo(uint256[] memory probIntervals,uint256[][] memory tokenIdMap) external notStart() onlyOwner {
+    //TODO: 待测试
+    function setProbInfo(uint256[] memory probIntervals,bytes memory tokenIdMapBytes) external notStart() onlyOwner {
+        (uint256[][] memory tokenIdMap) = abi.decode(tokenIdMapBytes, (uint256[][]));
         _setProbInfo(probIntervals, tokenIdMap);
     }
 

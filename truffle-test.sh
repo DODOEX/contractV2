@@ -66,6 +66,11 @@ then
 	truffle test ./test/DODONFT/mysteryBoxV1.test.ts
 fi
 
+if [ "$1"x = "boxV2"x ]
+then
+	truffle test ./test/DODODrops/dropsV2-fixedAmount.test.ts
+fi
+
 # if [ "$1"x = "route-incentive"x ]
 # then
 # 	truffle test ./test/Route/Incentive.test.ts

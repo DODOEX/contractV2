@@ -65,7 +65,13 @@ export const NFT_REGISTER = "DODONFTRegistry"
 export const NFT_PROXY = "DODONFTProxy"
 
 export const RANDOM_GENERATOR = "RandomGenerator"
-export const MYSTERY_BOX_V1 = "MysteryBoxV1"
+export const MYSTERY_BOX_V1 = "DODODropsV1"
+
+export const DROPS_V2 = "BaseDrops"
+export const DROPS_ERC721 = "DropsERC721"
+export const DROPS_ERC1155 = "DropsERC1155"
+export const DROPS_FEE_MODEL = "DropsFeeModel"
+export const DROPS_PROXY = "DODODropsProxy"
 
 interface ContractJson {
   abi: any;

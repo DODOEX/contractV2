@@ -6,12 +6,15 @@
 */
 
 pragma solidity 0.6.9;
+pragma experimental ABIEncoderV2;
 
 import {ERC1155} from "../../external/ERC1155/ERC1155.sol";
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 
 contract DropsERC1155 is ERC1155, InitializableOwnable {
     mapping (address => bool) public _IS_ALLOWED_MINT_;
+    mapping (uint256 => string) private _tokenURIs;
+    string internal _baseUri = "";
 
     // ============ Event =============
     event addMinter(address account);
@@ -32,11 +35,33 @@ contract DropsERC1155 is ERC1155, InitializableOwnable {
         string memory uri
     ) public {
         initOwner(owner);
-        _setURI(uri);
+        _baseUri = uri;
     }
 
     function mint(address account, uint256 id, uint256 amount, bytes memory data) external {
         require(_IS_ALLOWED_MINT_[msg.sender], "Mint restricted");
         _mint(account, id, amount, data);
+    }
+
+    function batchSetTokenURI(uint256[] calldata ids, string[] calldata urls) external onlyOwner {
+        require(ids.length == urls.length, "NOT_MATCH");
+        for(uint256 i = 0; i < ids.length; i++) {
+            _setTokenURI(ids[i], urls[i]);
+        }
+    }
+
+    function uri(uint256 tokenId) public view override returns (string memory) {
+        string memory _tokenURI = _tokenURIs[tokenId];
+        string memory base = _baseUri;
+
+        if (bytes(base).length == 0) {
+            return _tokenURI;
+        }
+
+        return string(abi.encodePacked(base, _tokenURI));
+    }
+
+    function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal {
+        _tokenURIs[tokenId] = _tokenURI;
     }
 }
