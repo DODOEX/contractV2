@@ -320,3 +320,17 @@ Init DODONFTProxyAddress Tx: 0xb4c5fd59e7d4bf2705295aeb0a05ccb745df3603af902d6b8
 DODOApproveProxy unlockAddProxy tx:  0xe8915536c6f0b5cae8df32fc5e62ed344b1cf9eb8e8c79a59c90f78d34680a47
 DODOApproveProxy addDODOProxy tx:  0xe81647348464194ec395de39fd088f06feed5abe428209b3ed264abeed6358b6
 Add AdminList on DODONFTRegistry Tx: 0x774f02629e4635303a28faa1914460ed07516facfc2e2818d2908a93488f1b5d
+====================================================
+network type: rinkeby
+Deploy time: 2021/5/25 下午3:32:48
+Deploy type: MysteryBoxKAKA
+====================================================
+network type: rinkeby
+Deploy time: 2021/5/25 下午3:37:18
+Deploy type: MysteryBoxKAKA
+====================================================
+network type: rinkeby
+Deploy time: 2021/5/25 下午3:39:50
+Deploy type: MysteryBoxKAKA
+MysteryBoxV1Address:  0x77915e3AC19E0465F6c0895779A9A4778B56C387
+Init MysteryBoxV1 Tx: 0xc707aad96a65d12a04234b912bd466f91d5f56f99f6c849a6b2a431ada6b519b

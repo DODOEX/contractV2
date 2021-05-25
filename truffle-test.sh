@@ -68,7 +68,7 @@ fi
 
 if [ "$1"x = "boxV2"x ]
 then
-	truffle test ./test/DODODrops/dropsV2-fixedAmount.test.ts
+	truffle test ./test/DODODrops/dropsV2.test.ts
 fi
 
 # if [ "$1"x = "route-incentive"x ]

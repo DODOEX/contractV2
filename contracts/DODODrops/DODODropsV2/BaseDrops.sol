@@ -101,13 +101,6 @@ contract BaseDrops is InitializableMintableERC20, ReentrancyGuard {
 
         if(sellingTimeInterval.length > 0) _setSellingInfo(sellingTimeInterval, sellingPrice, sellingAmount);
         
-        // if(isProbMode) {
-        //     // (uint256[][] memory tokenIdMap) = abi.decode(tokenIdMapBytes, (uint256[][]));
-        //     // if(probInterval.length > 0) _setProbInfo(probInterval, tokenIdMap);
-        // }else {
-        //     // if(tokenIdList.length > 0) _setFixedAmountInfo(tokenIdList);
-        // }
-        
         string memory prefix = "DROPS_";
         name = string(abi.encodePacked(prefix, addressToShortString(address(this))));
         symbol = name;
@@ -239,10 +232,8 @@ contract BaseDrops is InitializableMintableERC20, ReentrancyGuard {
         _setSellingInfo(sellingTimeIntervals, prices, amounts);
     }
 
-    //TODO: 待测试
-    function setProbInfo(uint256[] memory probIntervals,bytes memory tokenIdMapBytes) external notStart() onlyOwner {
-        (uint256[][] memory tokenIdMap) = abi.decode(tokenIdMapBytes, (uint256[][]));
-        _setProbInfo(probIntervals, tokenIdMap);
+    function setProbInfo(uint256[] memory probIntervals,uint256[][] memory tokenIdMaps) external notStart() onlyOwner {
+        _setProbInfo(probIntervals, tokenIdMaps);
     }
 
     function setFixedAmountInfo(uint256[] memory tokenIdList) external notStart() onlyOwner {

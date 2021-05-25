@@ -5,7 +5,10 @@ const { KOVAN_CONFIG } = require("./config/kovan-config");
 const { MBTEST_CONFIG } = require("./config/mbtest-config");
 const { MBTESTNET_CONFIG } = require("./config/mbtestnet-config");
 const { MATIC_CONFIG } = require("./config/matic-config");
+<<<<<<< HEAD
 const { ARB_CONFIG } = require("./config/arb-config");
+=======
+>>>>>>> update drops test
 const { RINKEBY_CONFIG } = require("./config/rinkeby-config");
 
 exports.GetConfig = function (network, accounts) {

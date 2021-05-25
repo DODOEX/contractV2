@@ -17,7 +17,7 @@ let user1: string;
 let user2: string;
 let user3: string;
 
-async function init(ctx: DropsContext): Promise<void> {
+async function init(ctx: DropsContext, mode: Boolean): Promise<void> {
     maintainer = ctx.SpareAccounts[0];
     user1 = ctx.SpareAccounts[1];
     user2 = ctx.SpareAccounts[2];
@@ -44,11 +44,11 @@ async function init(ctx: DropsContext): Promise<void> {
     await ctx.DropsV2.methods.init(
         addrList,
         [curTime + 10, curTime + 20, curTime + 30],
-        [10000000000000, 10000000000000, 10000000000000],
+        [10000000000000, 10000000000000, 0],
         [10, 10, 0],
-        curTime+10,
-        true,
-        false
+        curTime + 10,
+        false,
+        mode
     ).send(ctx.sendParam(ctx.Deployer));
 
 }
@@ -60,7 +60,7 @@ async function getTicketsInfo(ctx: DropsContext, user: string): Promise<[string,
     return [totalTickets, userTickets];
 }
 
-async function getBuyTokenBalance(ctx: DropsContext, user: string, token: Contract): Promise<[string,string]> {
+async function getBuyTokenBalance(ctx: DropsContext, user: string, token: Contract): Promise<[string, string]> {
     var userDodo = await token.methods.balanceOf(user).call();
     var dropsDodo = await token.methods.balanceOf(ctx.DropsV2.options.address).call();
     console.log("User Dodo:" + userDodo + " Drops Dodo:" + dropsDodo);
@@ -74,7 +74,6 @@ describe("DODODropsV2", () => {
 
     before(async () => {
         ctx = await getDropsContext();
-        await init(ctx);
     });
 
     beforeEach(async () => {
@@ -87,22 +86,47 @@ describe("DODODropsV2", () => {
 
     describe("DODODropsV2", () => {
         it("buyTicket", async () => {
-            // await ctx.EVM.increaseTime(10);
-            // await logGas(await ctx.DropsProxy.methods.buyTickets(ctx.DropsV2.options.address,2), ctx.sendParam(user1), "buyTickets");
-            // await logGas(await ctx.DropsProxy.methods.buyTickets(ctx.DropsV2.options.address,3), ctx.sendParam(user2), "buyTickets");
+            await init(ctx, false);
+            await ctx.EVM.increaseTime(10);
+            await logGas(await ctx.DropsProxy.methods.buyTickets(ctx.DropsV2.options.address, 2), ctx.sendParam(user1), "buyTickets-user1");
+            await logGas(await ctx.DropsProxy.methods.buyTickets(ctx.DropsV2.options.address, 3), ctx.sendParam(user2), "buyTickets-user2");
 
-            // await getTicketsInfo(ctx, user1)
-            // await getTicketsInfo(ctx, user2)
+            var [totalSupply,] = await getTicketsInfo(ctx, user1)
+            assert(totalSupply, '5')
 
-            // await getBuyTokenBalance(ctx, user1, ctx.DODO)
-            // await getBuyTokenBalance(ctx, user2, ctx.DODO)
+            var [, dropsDodoBalance] = await getBuyTokenBalance(ctx, user1, ctx.DODO)
+            assert(dropsDodoBalance, decimalStr('0.00005'))
         });
 
         it("redeemPrize", async () => {
 
         });
 
-        //Owner 设置
+
+        it.only("setProbMap", async () => {
+            await init(ctx, true);
+            var probIntervals = [4, 10, 50, 100, 105]
+            var tokenIdMaps = [
+                [0],
+                [1, 38],
+                [3, 4, 5],
+                [6, 7],
+                [19,30,35,40]
+            ]
+            await logGas(await ctx.DropsV2.methods.setProbInfo(probIntervals, tokenIdMaps), ctx.sendParam(ctx.Deployer), "setProbInfo");
+            var prob = await ctx.DropsV2.methods._PROB_INTERVAL_(0).call();
+            assert(prob, '4')
+            var tokenId = await ctx.DropsV2.methods._TOKEN_ID_MAP_(1, 1).call();
+            assert(tokenId, '38')
+        })
+
+        it.only("setTokenList", async () => {
+            await init(ctx, false);
+            var tokenList = [4, 10, 50, 100, 105]
+            await logGas(await ctx.DropsV2.methods.setFixedAmountInfo(tokenList), ctx.sendParam(ctx.Deployer), "setFixedAmountInfo");
+            var tokenId = await ctx.DropsV2.methods._TOKEN_ID_LIST_(1).call();
+            assert(tokenId, '10')
+        })
 
     });
 });
