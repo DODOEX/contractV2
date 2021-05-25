@@ -18,7 +18,8 @@ interface IFragment {
       uint256 ownerRatio,
       uint256 buyoutTimestamp,
       address defaultMaintainer,
-      uint256 defaultBuyoutFee
+      uint256 defaultBuyoutFee,
+      uint256 distributionRatio
     ) external;
 
     function buyout(address newVaultOwner) external;

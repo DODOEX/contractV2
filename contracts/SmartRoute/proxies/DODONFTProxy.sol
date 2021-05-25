@@ -101,7 +101,7 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
         address quoteToken,
         address vaultPreOwner,
         uint256[] calldata dvmParams, //0 - lpFeeRate, 1 - I, 2 - K
-        uint256[] calldata fragParams, //0 - totalSupply, 1 - ownerRatio, 2 - buyoutTimestamp
+        uint256[] calldata fragParams, //0 - totalSupply, 1 - ownerRatio, 2 - buyoutTimestamp, 3 - distributionRatio
         bool isOpenTwap 
     ) external returns (address newFragment, address newDvm) {
         newFragment = ICloneFactory(_CLONE_FACTORY_).clone(_FRAG_TEMPLATE_);
@@ -130,7 +130,8 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
             _fragParams[1], 
             _fragParams[2],
             _DEFAULT_MAINTAINER_,
-            _DEFAULT_BUYOUT_FEE_
+            _DEFAULT_BUYOUT_FEE_,
+            _fragParams[3]
         );
         }
 

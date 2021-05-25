@@ -13,7 +13,7 @@ import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 import {Address} from "../external/utils/Address.sol";
 import {ERC721URIStorage} from "../external/ERC721/ERC721URIStorage.sol";
 
-contract DODODropsV1 is ERC721URIStorage, InitializableOwnable {
+contract MysteryBoxKAKA is ERC721URIStorage, InitializableOwnable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
     using Address for address;

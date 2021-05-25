@@ -137,10 +137,10 @@ describe("DODONFT", () => {
             var nftVaultInstance = contracts.getContractWithAddress(contracts.NFT_VAULT, vaultAddress);
             var erc721Instance = contracts.getContractWithAddress(contracts.ERC721, erc721Address);
             await erc721Instance.methods.safeTransferFrom(author, vaultAddress, 0).send(ctx.sendParam(author));
-            var nftIndex = await nftVaultInstance.methods.getIdByTokenIdAndAddr(erc721Address, 0).call();
-            var nftInfo = await nftVaultInstance.methods.getNftInfoById(nftIndex).call();
-            assert(nftInfo.amount, '1')
-            assert(nftInfo.tokenId, '0')
+            // var nftIndex = await nftVaultInstance.methods.getIdByTokenIdAndAddr(erc721Address, 0).call();
+            // var nftInfo = await nftVaultInstance.methods.getNftInfoById(nftIndex).call();
+            // assert(nftInfo.amount, '1')
+            // assert(nftInfo.tokenId, '0')
         });
 
         it("createFragment", async () => {
@@ -163,7 +163,8 @@ describe("DODONFT", () => {
             var fragParams = [
                 decimalStr("100000000"), //totalSupply
                 decimalStr("0.2"), //ownerRatio
-                Math.floor(new Date().getTime() / 1000 + 60 * 60) //buyoutTimeStamp 1h later
+                Math.floor(new Date().getTime() / 1000 + 60 * 60), //buyoutTimeStamp 1h later
+                decimalStr("0")
             ]
 
             var isOpenTwap = false
@@ -266,7 +267,8 @@ describe("DODONFT", () => {
             var fragParams = [
                 decimalStr("10000"), //totalSupply
                 decimalStr("0.2"), //ownerRatio
-                Math.floor(new Date().getTime() / 1000) //buyoutTimeStamp
+                Math.floor(new Date().getTime() / 1000), //buyoutTimeStamp
+                decimalStr("0")
             ]
             let [vaultAddress, fragAddress, , dvmAddress] = await ctx.createFragment(ctx, author, null, fragParams, null);
             var dvmInstance = contracts.getContractWithAddress(contracts.DVM_NAME, dvmAddress);
@@ -316,28 +318,28 @@ describe("DODONFT", () => {
             var erc1155Instance = contracts.getContractWithAddress(contracts.ERC1155, erc1155Address);
             await erc721Instance.methods.safeTransferFrom(author, vaultAddress, 0).send(ctx.sendParam(author));
             await erc1155Instance.methods.safeTransferFrom(author, vaultAddress, 0, 100, "0x").send(ctx.sendParam(author));
-            var nftIndex = await nftVaultInstance.methods.getIdByTokenIdAndAddr(erc721Address, 0).call();
-            var nftInfo = await nftVaultInstance.methods.getNftInfoById(nftIndex).call();
-            assert(nftInfo.amount, '1')
-            assert(nftInfo.tokenId, '0')
+            // var nftIndex = await nftVaultInstance.methods.getIdByTokenIdAndAddr(erc721Address, 0).call();
+            // var nftInfo = await nftVaultInstance.methods.getNftInfoById(nftIndex).call();
+            // assert(nftInfo.amount, '1')
+            // assert(nftInfo.tokenId, '0')
 
-            nftIndex = await nftVaultInstance.methods.getIdByTokenIdAndAddr(erc1155Address, 0).call();
-            nftInfo = await nftVaultInstance.methods.getNftInfoById(nftIndex).call();
-            assert(nftInfo.amount, '100')
-            assert(nftInfo.tokenId, '0')
+            // nftIndex = await nftVaultInstance.methods.getIdByTokenIdAndAddr(erc1155Address, 0).call();
+            // nftInfo = await nftVaultInstance.methods.getNftInfoById(nftIndex).call();
+            // assert(nftInfo.amount, '100')
+            // assert(nftInfo.tokenId, '0')
 
-            await logGas(await nftVaultInstance.methods.withdrawERC721(erc721Address,0), ctx.sendParam(author), "withdrawERC721");
+            await logGas(await nftVaultInstance.methods.withdrawERC721(erc721Address,[0]), ctx.sendParam(author), "withdrawERC721");
             await logGas(await nftVaultInstance.methods.withdrawERC1155(erc1155Address,[0], [50]), ctx.sendParam(author), "withdrawERC1155");
 
-            await truffleAssert.reverts(
-                nftVaultInstance.methods.getIdByTokenIdAndAddr(erc721Address, 0).call(),
-                "TOKEN_ID_NOT_FOUND"
-            )
+            // await truffleAssert.reverts(
+            //     nftVaultInstance.methods.getIdByTokenIdAndAddr(erc721Address, 0).call(),
+            //     "TOKEN_ID_NOT_FOUND"
+            // )
 
-            nftIndex = await nftVaultInstance.methods.getIdByTokenIdAndAddr(erc1155Address, 0).call();
-            nftInfo = await nftVaultInstance.methods.getNftInfoById(nftIndex).call();
-            assert(nftInfo.amount, '50')
-            assert(nftInfo.tokenId, '0')
+            // nftIndex = await nftVaultInstance.methods.getIdByTokenIdAndAddr(erc1155Address, 0).call();
+            // nftInfo = await nftVaultInstance.methods.getNftInfoById(nftIndex).call();
+            // assert(nftInfo.amount, '50')
+            // assert(nftInfo.tokenId, '0')
         });
     });
 });

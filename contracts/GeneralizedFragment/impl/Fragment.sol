@@ -26,6 +26,7 @@ contract Fragment is InitializableERC20 {
     uint256 public _BUYOUT_TIMESTAMP_;
     uint256 public _BUYOUT_PRICE_;
     uint256 public _DEFAULT_BUYOUT_FEE_;
+    uint256 public _DISTRIBUTION_RATIO_;
 
     address public _COLLATERAL_VAULT_;
     address public _VAULT_PRE_OWNER_;
@@ -52,7 +53,8 @@ contract Fragment is InitializableERC20 {
       uint256 ownerRatio,
       uint256 buyoutTimestamp,
       address defaultMaintainer,
-      uint256 defaultBuyoutFee
+      uint256 defaultBuyoutFee,
+      uint256 distributionRatio
     ) external {
         require(!_FRAG_INITIALIZED_, "DODOFragment: ALREADY_INITIALIZED");
         _FRAG_INITIALIZED_ = true;
@@ -65,6 +67,7 @@ contract Fragment is InitializableERC20 {
         _BUYOUT_TIMESTAMP_ = buyoutTimestamp;
         _DEFAULT_MAINTAINER_ = defaultMaintainer;
         _DEFAULT_BUYOUT_FEE_ = defaultBuyoutFee;
+        _DISTRIBUTION_RATIO_ = distributionRatio;
 
         // init FRAG meta data
         string memory prefix = "FRAG_";
@@ -75,7 +78,10 @@ contract Fragment is InitializableERC20 {
 
         // init FRAG distribution
         uint256 vaultPreOwnerBalance = DecimalMath.mulFloor(_totalSupply, ownerRatio);
-        _transfer(address(this), _VAULT_PRE_OWNER_, vaultPreOwnerBalance);
+        uint256 distributionBalance = DecimalMath.mulFloor(vaultPreOwnerBalance, distributionRatio);
+        
+        if(distributionBalance > 0) _transfer(address(this), _DEFAULT_MAINTAINER_, distributionBalance);
+        _transfer(address(this), _VAULT_PRE_OWNER_, vaultPreOwnerBalance.sub(distributionBalance));
         _transfer(address(this), _DVM_, _totalSupply.sub(vaultPreOwnerBalance));
 
         // init DVM liquidity

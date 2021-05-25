@@ -39,13 +39,21 @@ contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Re
 
     // ============ TransferFrom NFT ============
     function depositERC721(address nftContract, uint256[] memory tokenIds) public {
-
+        require(nftContract != address(0), "DODONftVault: ZERO_ADDRESS");
+        for(uint256 i = 0; i < tokenIds.length; i++) {
+            IERC721(nftContract).safeTransferFrom(msg.sender, address(this), tokenIds[i]);
+            emit AddNftToken(nftContract, tokenIds[i], 1);
+        }
     }
 
     function depoistERC1155(address nftContract, uint256[] memory tokenIds, uint256[] memory amounts) public {
-
+        require(nftContract != address(0), "DODONftVault: ZERO_ADDRESS");
+        require(tokenIds.length == amounts.length, "PARAMS_NOT_MATCH");
+        IERC1155(nftContract).safeBatchTransferFrom(msg.sender, address(this), tokenIds, amounts, "");
+        for(uint256 i = 0; i < tokenIds.length; i++) {
+            emit AddNftToken(nftContract, tokenIds[i], amounts[i]);
+        }
     }
-
 
     // ============ Ownable ============
     function directTransferOwnership(address newOwner) external onlyOwner {
@@ -62,10 +70,12 @@ contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Re
         emit OwnershipTransferred(_OWNER_, nftProxy);
     }
 
-    function withdrawERC721(address nftContract, uint256 tokenId) external onlyOwner {
+    function withdrawERC721(address nftContract, uint256[] memory tokenIds) external onlyOwner {
         require(nftContract != address(0), "DODONftVault: ZERO_ADDRESS");
-        IERC721(nftContract).safeTransferFrom(address(this), _OWNER_, tokenId, "");
-        emit RemoveNftToken(nftContract, tokenId, 1);
+        for(uint256 i = 0; i < tokenIds.length; i++) {
+            IERC721(nftContract).safeTransferFrom(address(this), _OWNER_, tokenIds[i]);
+            emit RemoveNftToken(nftContract, tokenIds[i], 1);
+        }
     }
 
     function withdrawERC1155(address nftContract, uint256[] memory tokenIds, uint256[] memory amounts) external onlyOwner {

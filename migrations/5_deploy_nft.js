@@ -15,7 +15,7 @@ const InitializableERC721 = artifacts.require("InitializableERC721");
 const InitializableERC1155 = artifacts.require("InitializableERC1155");
 const NFTTokenFactory = artifacts.require("NFTTokenFactory");
 
-const DODODropsV1 = artifacts.require("DODODropsV1");
+const DODODropsV1 = artifacts.require("MysteryBoxKAKA");
 const RandomGenerator = artifacts.require("RandomGenerator");
 
 module.exports = async (deployer, network, accounts) => {
@@ -52,7 +52,7 @@ module.exports = async (deployer, network, accounts) => {
         logger.log("====================================================");
         logger.log("network type: " + network);
         logger.log("Deploy time: " + new Date().toLocaleString());
-        logger.log("Deploy type: MysteryBoxV1");
+        logger.log("Deploy type: MysteryBoxKAKA");
 
         if (RandomGeneratorAddress == "") {
             await deployer.deploy(RandomGenerator, RandomPool);
@@ -66,8 +66,8 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("MysteryBoxV1Address: ", MysteryBoxV1Address);
             const MysteryBoxV1Instance = await DODODropsV1.at(MysteryBoxV1Address);
             var tx = await MysteryBoxV1Instance.init(
-                "DODOMysteryBox",
-                "DODOBox",
+                "DODOMysteryBoxKAKA",
+                "KAKA_Marvel",
                 "",
                 multiSigAddress,
                 RandomGeneratorAddress
