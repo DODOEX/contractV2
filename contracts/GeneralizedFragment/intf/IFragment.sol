@@ -19,7 +19,8 @@ interface IFragment {
       uint256 buyoutTimestamp,
       address defaultMaintainer,
       uint256 defaultBuyoutFee,
-      uint256 distributionRatio
+      uint256 distributionRatio,
+      string memory fragSymbol
     ) external;
 
     function buyout(address newVaultOwner) external;

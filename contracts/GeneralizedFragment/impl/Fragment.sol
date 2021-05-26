@@ -54,7 +54,8 @@ contract Fragment is InitializableERC20 {
       uint256 buyoutTimestamp,
       address defaultMaintainer,
       uint256 defaultBuyoutFee,
-      uint256 distributionRatio
+      uint256 distributionRatio,
+      string memory _symbol
     ) external {
         require(!_FRAG_INITIALIZED_, "DODOFragment: ALREADY_INITIALIZED");
         _FRAG_INITIALIZED_ = true;
@@ -70,9 +71,8 @@ contract Fragment is InitializableERC20 {
         _DISTRIBUTION_RATIO_ = distributionRatio;
 
         // init FRAG meta data
-        string memory prefix = "FRAG_";
-        name = string(abi.encodePacked(prefix, IDVM(_DVM_).addressToShortString(_COLLATERAL_VAULT_)));
-        symbol = "FRAG";
+        name = string(abi.encodePacked("DODO_FRAG_", _symbol));
+        symbol = string(abi.encodePacked("d_", _symbol));
         decimals = 18;
         super.init(address(this), _totalSupply, name, symbol, decimals);
 

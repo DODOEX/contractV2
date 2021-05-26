@@ -185,20 +185,28 @@ export class NFTContext {
         var nftVaultInstance = contracts.getContractWithAddress(contracts.NFT_VAULT, vaultAddress);
         var erc721Instance = contracts.getContractWithAddress(contracts.ERC721, erc721Address);
         await erc721Instance.methods.safeTransferFrom(author, vaultAddress,0).send(ctx.sendParam(author));
+        var params = []
         if (dvmParams == null) {
-            dvmParams = [
-                "0", //lpFeeRate
-                mweiStr("1"), // I
-                decimalStr("1") // K
-            ];
+            params.push("0")
+            params.push(mweiStr("1"))
+            params.push(decimalStr("1"))
+        } else {
+            params.push(dvmParams[0])
+            params.push(dvmParams[1])
+            params.push(dvmParams[2])
         }
         if (fragParams == null) {
-            fragParams = [
-                decimalStr("100000000"), //totalSupply
-                decimalStr("0.2"), //ownerRatio
-                Math.floor(new Date().getTime() / 1000 + 60 * 60) //buyoutTimeStamp 1h later
-            ]
+            params.push(decimalStr("100000000"))
+            params.push(decimalStr("0.2"))
+            params.push(Math.floor(new Date().getTime() / 1000 + 60 * 60))
+            params.push(decimalStr("0"))
+        } else {
+            params.push(fragParams[0])
+            params.push(fragParams[1])
+            params.push(fragParams[2])
+            params.push(fragParams[3])
         }
+
         if (addrs == null) {
             addrs = []
             addrs.push(ctx.USDT.options.address);//quoteToken
@@ -206,11 +214,10 @@ export class NFTContext {
         }
 
         var callData = ctx.NFTProxy.methods.createFragment(
-            addrs[0],
-            addrs[1],
-            dvmParams,
-            fragParams,
-            false
+            addrs,
+            params,
+            false,
+            "HAHA"
         ).encodeABI();
 
         await nftVaultInstance.methods.createFragment(

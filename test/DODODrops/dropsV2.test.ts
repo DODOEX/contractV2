@@ -4,20 +4,22 @@
     SPDX-License-Identifier: Apache-2.0
 
 */
-import { decimalStr, fromWei } from '../utils/Converter';
+import { decimalStr } from '../utils/Converter';
 import { logGas } from '../utils/Log';
 import { assert } from 'chai';
-import * as contracts from '../utils/Contracts';
 import { Contract } from 'web3-eth-contract';
+import * as contracts from '../utils/Contracts';
 import { DropsContext, getDropsContext } from '../utils/DropsContext';
-const truffleAssert = require('truffle-assertions');
+import { DVMContext, getDVMContext } from '../utils/DVMContext';
 
 let maintainer: string;
 let user1: string;
 let user2: string;
 let user3: string;
+let ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
+let RandomGenerator: Contract;
 
-async function init(ctx: DropsContext, mode: Boolean): Promise<void> {
+async function init(ctx: DropsContext, ctxDVM: DVMContext, isReveal: Boolean, mode: Boolean): Promise<void> {
     maintainer = ctx.SpareAccounts[0];
     user1 = ctx.SpareAccounts[1];
     user2 = ctx.SpareAccounts[2];
@@ -30,13 +32,41 @@ async function init(ctx: DropsContext, mode: Boolean): Promise<void> {
     await ctx.approveProxy(ctx.DODO, user2);
     await ctx.approveProxy(ctx.DODO, user3);
 
+
+    var nftContract;
+    if(mode) {
+        nftContract = ctx.DropsERC1155.options.address
+    }else {
+        nftContract = ctx.DropsERC721.options.address
+    }
+    var rngAddress;
+    if (isReveal) {
+        rngAddress = ZERO_ADDRESS;
+    }else {
+        await ctxDVM.mintTestToken(maintainer, decimalStr("10"), decimalStr("1000"));
+        await ctxDVM.transferBaseToDVM(maintainer, decimalStr("10"))
+        await ctxDVM.transferQuoteToDVM(maintainer, decimalStr("1000"))
+        await ctxDVM.DVM.methods.buyShares(maintainer).send(ctx.sendParam(maintainer));
+
+        RandomGenerator = await contracts.newContract(contracts.RANDOM_GENERATOR,
+            [
+                [
+                    ctxDVM.DVM.options.address,
+                    ctxDVM.DVM.options.address,
+                    ctxDVM.DVM.options.address
+                ]
+            ]
+        )
+        rngAddress = RandomGenerator.options.address
+    }
+
     var addrList = [
         ctx.Deployer,
         ctx.DODO.options.address,
         ctx.DropsFeeModel.options.address,
         maintainer,
-        "0x0000000000000000000000000000000000000000",
-        ctx.DropsERC721.options.address
+        rngAddress,
+        nftContract
     ]
 
     var curTime = Math.floor(new Date().getTime() / 1000)
@@ -47,10 +77,31 @@ async function init(ctx: DropsContext, mode: Boolean): Promise<void> {
         [10000000000000, 10000000000000, 0],
         [10, 10, 0],
         curTime + 10,
-        false,
+        isReveal,
         mode
     ).send(ctx.sendParam(ctx.Deployer));
 
+}
+
+async function setReveal(ctx: DropsContext) {
+    await ctx.DropsV2.methods.setRevealRn().send(ctx.sendParam(ctx.Deployer));
+}
+
+async function setTokenIdList(ctx: DropsContext) {
+    var tokenList = [1, 2, 3, 4, 5, 6, 7, 8]
+    await ctx.DropsV2.methods.setFixedAmountInfo(tokenList).send(ctx.sendParam(ctx.Deployer));
+}
+
+async function setProbMap(ctx: DropsContext) {
+    var probIntervals = [1, 5, 20, 50, 100]
+    var tokenIdMaps = [
+        [0],
+        [1, 2],
+        [3, 4, 5],
+        [6, 7],
+        [8, 9, 10, 11]
+    ]
+    await ctx.DropsV2.methods.setProbInfo(probIntervals, tokenIdMaps).send(ctx.sendParam(ctx.Deployer));
 }
 
 async function getTicketsInfo(ctx: DropsContext, user: string): Promise<[string, string]> {
@@ -67,12 +118,30 @@ async function getBuyTokenBalance(ctx: DropsContext, user: string, token: Contra
     return [userDodo, dropsDodo];
 }
 
+async function getNFTOwner(nft721: Contract, tokenId: number): Promise<string> {
+    var userAddr = await nft721.methods.ownerOf(tokenId).call();
+    return userAddr
+}
+
+async function getNFTBalance(nft1155: Contract, user:string, tokenId: number): Promise<[number]> {
+    var num = await nft1155.methods.balanceOf(user, tokenId).call();
+    return num
+}
+
 
 describe("DODODropsV2", () => {
     let snapshotId: string;
     let ctx: DropsContext;
+    let ctxDVM: DVMContext;
 
     before(async () => {
+        let config = {
+            lpFeeRate: decimalStr("0.002"),
+            mtFeeRate: decimalStr("0.001"),
+            k: decimalStr("1"),
+            i: "1",
+        };
+        ctxDVM = await getDVMContext(config);
         ctx = await getDropsContext();
     });
 
@@ -86,7 +155,7 @@ describe("DODODropsV2", () => {
 
     describe("DODODropsV2", () => {
         it("buyTicket", async () => {
-            await init(ctx, false);
+            await init(ctx, ctxDVM, true, false);
             await ctx.EVM.increaseTime(10);
             await logGas(await ctx.DropsProxy.methods.buyTickets(ctx.DropsV2.options.address, 2), ctx.sendParam(user1), "buyTickets-user1");
             await logGas(await ctx.DropsProxy.methods.buyTickets(ctx.DropsV2.options.address, 3), ctx.sendParam(user2), "buyTickets-user2");
@@ -98,20 +167,80 @@ describe("DODODropsV2", () => {
             assert(dropsDodoBalance, decimalStr('0.00005'))
         });
 
-        it("redeemPrize", async () => {
+        it("redeemPrize-fixedAmount-reveal", async () => {
+            await init(ctx, ctxDVM, true, false);
+            await setTokenIdList(ctx);
+            await ctx.EVM.increaseTime(10);
+            await logGas(await ctx.DropsProxy.methods.buyTickets(ctx.DropsV2.options.address, 2), ctx.sendParam(user1), "buyTickets-user1");
 
+            await setReveal(ctx);
+
+            var tx = await logGas(await ctx.DropsV2.methods.redeemTicket(1, ZERO_ADDRESS), ctx.sendParam(user1), "redeem-prize");
+            var tokenId = tx.events['RedeemPrize'].returnValues['tokenId'];
+
+            var nftOwner = await getNFTOwner(ctx.DropsERC721, tokenId);
+
+            assert(user1, nftOwner);
+        });
+
+        it("redeemPrize-probAmount-reveal", async () => {
+            await init(ctx, ctxDVM, true, true);
+            await setProbMap(ctx);
+            await ctx.EVM.increaseTime(10);
+            await logGas(await ctx.DropsProxy.methods.buyTickets(ctx.DropsV2.options.address, 2), ctx.sendParam(user1), "buyTickets-user1");
+
+            await setReveal(ctx);
+
+            var tx = await logGas(await ctx.DropsV2.methods.redeemTicket(1, ZERO_ADDRESS), ctx.sendParam(user1), "redeem-prize");
+            var tokenId = tx.events['RedeemPrize'].returnValues['tokenId'];
+
+            var nftAmount = await getNFTBalance(ctx.DropsERC1155, user1, tokenId);
+
+            console.log("nftAmount:", nftAmount);
+
+            assert(nftAmount, '1');
         });
 
 
-        it.only("setProbMap", async () => {
-            await init(ctx, true);
+        it("redeemPrize-fixedAmount-rng", async () => {
+            await init(ctx, ctxDVM, false, false);
+            await setTokenIdList(ctx);
+            await ctx.EVM.increaseTime(10);
+            await logGas(await ctx.DropsProxy.methods.buyTickets(ctx.DropsV2.options.address, 2), ctx.sendParam(user1), "buyTickets-user1");
+
+            var tx = await logGas(await ctx.DropsV2.methods.redeemTicket(1, ZERO_ADDRESS), ctx.sendParam(user1), "redeem-prize");
+            var tokenId = tx.events['RedeemPrize'].returnValues['tokenId'];
+            console.log("tokenId:", tokenId);
+            var nftOwner = await getNFTOwner(ctx.DropsERC721, tokenId);
+
+            assert(user1, nftOwner);
+        });
+
+        it("redeemPrize-probAmount-rng", async () => {
+            await init(ctx, ctxDVM, false, true);
+            await setProbMap(ctx);
+            await ctx.EVM.increaseTime(10);
+            await logGas(await ctx.DropsProxy.methods.buyTickets(ctx.DropsV2.options.address, 2), ctx.sendParam(user1), "buyTickets-user1");
+
+            var tx = await logGas(await ctx.DropsV2.methods.redeemTicket(1, ZERO_ADDRESS), ctx.sendParam(user1), "redeem-prize");
+            var tokenId = tx.events['RedeemPrize'].returnValues['tokenId'];
+
+            var nftAmount = await getNFTBalance(ctx.DropsERC1155, user1, tokenId);
+
+            console.log("nftAmount:", nftAmount);
+
+            assert(nftAmount, '1');
+        });
+
+        it("setProbMap", async () => {
+            await init(ctx, ctxDVM, true, true);
             var probIntervals = [4, 10, 50, 100, 105]
             var tokenIdMaps = [
                 [0],
                 [1, 38],
                 [3, 4, 5],
                 [6, 7],
-                [19,30,35,40]
+                [19, 30, 35, 40]
             ]
             await logGas(await ctx.DropsV2.methods.setProbInfo(probIntervals, tokenIdMaps), ctx.sendParam(ctx.Deployer), "setProbInfo");
             var prob = await ctx.DropsV2.methods._PROB_INTERVAL_(0).call();
@@ -120,12 +249,17 @@ describe("DODODropsV2", () => {
             assert(tokenId, '38')
         })
 
-        it.only("setTokenList", async () => {
-            await init(ctx, false);
+        it("setTokenList", async () => {
+            await init(ctx, ctxDVM, true, false);
             var tokenList = [4, 10, 50, 100, 105]
             await logGas(await ctx.DropsV2.methods.setFixedAmountInfo(tokenList), ctx.sendParam(ctx.Deployer), "setFixedAmountInfo");
             var tokenId = await ctx.DropsV2.methods._TOKEN_ID_LIST_(1).call();
             assert(tokenId, '10')
+        })
+
+        //TODO:
+        it("withdraw", async () => {
+
         })
 
     });

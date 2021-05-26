@@ -155,12 +155,12 @@ describe("DODONFT", () => {
             var quoteToken = ctx.USDT.options.address;
             var vaultPreOwner = author;
 
-            var dvmParams = [
+            var symbol = "HAHA"
+
+            var params = [
                 "0", //lpFeeRate
                 mweiStr("1"), // I
-                decimalStr("1") // K
-            ];
-            var fragParams = [
+                decimalStr("1"), // K
                 decimalStr("100000000"), //totalSupply
                 decimalStr("0.2"), //ownerRatio
                 Math.floor(new Date().getTime() / 1000 + 60 * 60), //buyoutTimeStamp 1h later
@@ -169,11 +169,10 @@ describe("DODONFT", () => {
 
             var isOpenTwap = false
             var callData = ctx.NFTProxy.methods.createFragment(
-                quoteToken,
-                vaultPreOwner,
-                dvmParams,
-                fragParams,
-                isOpenTwap
+                [quoteToken,vaultPreOwner],
+                params,
+                isOpenTwap,
+                symbol
             ).encodeABI();
             console.log("data:", callData);
 

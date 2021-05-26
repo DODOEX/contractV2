@@ -93,8 +93,8 @@ export class DropsContext {
             contracts.DROPS_V2
         );
 
-        await this.DropsERC721.methods.addMintAccount(this.DropsProxy.options.address).send(this.sendParam(this.Deployer));
-        await this.DropsERC1155.methods.addMintAccount(this.DropsProxy.options.address).send(this.sendParam(this.Deployer));
+        await this.DropsERC721.methods.addMintAccount(this.DropsV2.options.address).send(this.sendParam(this.Deployer));
+        await this.DropsERC1155.methods.addMintAccount(this.DropsV2.options.address).send(this.sendParam(this.Deployer));
 
         await this.DODOApprove.methods.init(this.Deployer, this.DODOApproveProxy.options.address).send(this.sendParam(this.Deployer));
         await this.DODOApproveProxy.methods.init(this.Deployer, [this.DropsProxy.options.address]).send(this.sendParam(this.Deployer));

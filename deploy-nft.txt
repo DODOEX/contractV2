@@ -333,4 +333,14 @@ network type: rinkeby
 Deploy time: 2021/5/25 下午3:39:50
 Deploy type: MysteryBoxKAKA
 MysteryBoxV1Address:  0x77915e3AC19E0465F6c0895779A9A4778B56C387
-Init MysteryBoxV1 Tx: 0xc707aad96a65d12a04234b912bd466f91d5f56f99f6c849a6b2a431ada6b519b
+Init MysteryBoxV1 Tx: 0xc707aad96a65d12a04234b912bd466f91d5f56f99f6c849a6b2a431ada6b519b====================================================
+network type: kovan
+Deploy time: 2021/5/26 下午7:11:55
+Deploy type: NFT
+multiSigAddress:  0x7e83d9d94837eE82F0cc18a691da6f42F03F1d86
+FragmentAddress:  0x96d07E96F703B2De722a8671638776924ab81E80
+DODONFTProxyAddress:  0xe121c6C90735e2Ca12e21708F2F379A55Ce61426
+Init DODONFTProxyAddress Tx: 0x6b72dd067b291dfb731af0304ceb0127e6b82696a0dca40e6269276c569ee91d
+DODOApproveProxy unlockAddProxy tx:  0x181aea8369c404f6626b17f843a61e7c51511730360fd112e8b45f89ac2a1865
+DODOApproveProxy addDODOProxy tx:  0x65363a442ef5cf984374d9add8a0c5f97a0cd72f34dba0a1ed1243aa9e5d4ee8
+Add AdminList on DODONFTRegistry Tx: 0x67c34c94a14ba9ee7639f7ff0ba8379eff062d219f16177398803d853b45f253

@@ -98,40 +98,39 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
     }
     
     function createFragment(
-        address quoteToken,
-        address vaultPreOwner,
-        uint256[] calldata dvmParams, //0 - lpFeeRate, 1 - I, 2 - K
-        uint256[] calldata fragParams, //0 - totalSupply, 1 - ownerRatio, 2 - buyoutTimestamp, 3 - distributionRatio
-        bool isOpenTwap 
+        address[] calldata addrList, //0 - quoteToken, 1 - vaultPreOwner
+        uint256[] calldata params, //(DVM: 0 - lpFeeRate 1 - I, 2 - K) , (FRAG: 3 - totalSupply, 4 - ownerRatio, 5 - buyoutTimestamp, 6 - distributionRatio)
+        bool isOpenTwap,
+        string memory fragSymbol
     ) external returns (address newFragment, address newDvm) {
         newFragment = ICloneFactory(_CLONE_FACTORY_).clone(_FRAG_TEMPLATE_);
-        address _quoteToken = quoteToken == _ETH_ADDRESS_ ? _WETH_ : quoteToken;
+        address _quoteToken = addrList[0] == _ETH_ADDRESS_ ? _WETH_ : addrList[0];
         
         {
-        uint256[] memory  _dvmParams = dvmParams;
-        uint256[] memory  _fragParams = fragParams;
+        uint256[] memory  _params = params;
         
         newDvm = ICloneFactory(_CLONE_FACTORY_).clone(_DVM_TEMPLATE_);
         IDVM(newDvm).init(
             _DEFAULT_MAINTAINER_,
             newFragment,
             _quoteToken,
-            _dvmParams[0],
+            _params[0],
             _MT_FEE_RATE_MODEL_,
-            _dvmParams[1],
-            _dvmParams[2],
+            _params[1],
+            _params[2],
             isOpenTwap
         );
         IFragment(newFragment).init(
             newDvm, 
-            vaultPreOwner, 
+            addrList[1], 
             msg.sender, 
-            _fragParams[0], 
-            _fragParams[1], 
-            _fragParams[2],
+            _params[3], 
+            _params[4], 
+            _params[5],
             _DEFAULT_MAINTAINER_,
             _DEFAULT_BUYOUT_FEE_,
-            _fragParams[3]
+            _params[6],
+            fragSymbol
         );
         }
 
