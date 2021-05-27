@@ -4,7 +4,7 @@
     SPDX-License-Identifier: Apache-2.0
 
 */
-import { decimalStr } from '../utils/Converter';
+import { decimalStr, fromWei} from '../utils/Converter';
 import { logGas } from '../utils/Log';
 import { assert } from 'chai';
 import { Contract } from 'web3-eth-contract';
@@ -257,10 +257,27 @@ describe("DODODropsV2", () => {
             assert(tokenId, '10')
         })
 
-        //TODO:
         it("withdraw", async () => {
+            await init(ctx, ctxDVM, true, true);
+            await setProbMap(ctx);
+            await ctx.EVM.increaseTime(10);
+            await logGas(await ctx.DropsProxy.methods.buyTickets(ctx.DropsV2.options.address, 2), ctx.sendParam(user1), "buyTickets-user1");
+            await logGas(await ctx.DropsProxy.methods.buyTickets(ctx.DropsV2.options.address, 3), ctx.sendParam(user2), "buyTickets-user2");
 
+            var b_drops_balance = await ctx.DODO.methods.balanceOf(ctx.DropsV2.options.address).call()
+            var b_owner = await ctx.DODO.methods.balanceOf(ctx.Deployer).call();
+            
+            await ctx.DropsV2.methods.withdraw().send(ctx.sendParam(ctx.Deployer));
+
+            var a_drops_balance = await ctx.DODO.methods.balanceOf(ctx.DropsV2.options.address).call()
+            var a_owner = await ctx.DODO.methods.balanceOf(ctx.Deployer).call();
+
+            console.log("b_drops_balance:", fromWei(b_drops_balance, 'ether'))
+            console.log("a_drops_balance:", fromWei(a_drops_balance, 'ether'))
+
+            console.log("b_owner:", fromWei(b_owner, 'ether'))
+            console.log("a_owner:", fromWei(a_owner, 'ether'))
+            assert(a_owner, decimalStr("0.00005"))
         })
-
     });
 });

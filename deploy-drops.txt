@@ -1,0 +1,14 @@
+====================================================
+network type: kovan
+Deploy time: 2021/5/27 下午2:08:33
+Deploy type: Drops_V2
+DropsFeeModelAddress:  0xDBe1C360050638C9d0f28f23B51b198C8B70D9eA
+Init DropsFeeModel Tx: 0xd53bf7c0258fb92f11c0cfd46d016627e1c42daf1d8ba39ecc09d2992370e965
+DropsERC721Address:  0xaF5801b7814926DD1D6a69C1D3a3429784131E2A
+Init DropsERC721 Tx: 0x9d1711c4bb1bc158482e362c07744b7abdf142d1f03abcca2b4b6b4e88cf4586
+DropsProxyAddress:  0xa3a23cee044F995a97D86defeABf769bAd57c7c8
+BaseDropsAddress:  0xbe7a24D7E4af1C509D97d6972898389821143844
+Init BaseDrops Tx: 0x53876ec779656923d19304c951f9eee3de7c12b22d7bc0e33e185a0f30788a30
+DODOApproveProxy unlockAddProxy tx:  0x4bdefa4cdd3ea157228532b881816343bc08e6b4997085ba12340311f1756802
+DODOApproveProxy addDODOProxy tx:  0xfded36432e52dd6b631e0f9ed375a38b9d921ac7a8a848b54082c95c34e63bca
+AddMinter DropsERC721 Tx: 0x3b1272e13bd90268b25d03732f1719b7fcc5e4f4ba74981ca32f3062c24fc36e

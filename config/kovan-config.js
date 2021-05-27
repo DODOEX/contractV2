@@ -73,7 +73,7 @@ module.exports = {
         DODONFTRegistry: "0x579eBcC668b5517F733587091C35D495FE8d6b68",
         DODONFTProxy: "0xe121c6C90735e2Ca12e21708F2F379A55Ce61426",
 
-        //================= MysteryBox =================
+        //================= DropsV1 =================
         // MysteryBoxV1: "0x47d2b27525b93A9c9E03001E1D19310A08748D55",//波老师
         MysteryBoxV1: "0xd56Fd300aE2e4C46cd34460776007dCE1C4F2043",
         RandomGenerator: "0x53F54E4760FA5f839e5624782D032495613DF218",
@@ -81,6 +81,10 @@ module.exports = {
             "0xa2e0ef85618732d80e5ef362773da1c92e8b1c57",
             "0xaCfc959e0E85726d09A36E6DFdD56FB2e5dB8F77",
             "0x7A733869CB210393f3c02B740c58498EB1f8815C"
-        ]
+        ],
+
+        //================= DropsV2 ==================
+        DropsFeeModel: "0xDBe1C360050638C9d0f28f23B51b198C8B70D9eA",
+        DropsProxy: "0xa3a23cee044F995a97D86defeABf769bAd57c7c8"
     }
 }

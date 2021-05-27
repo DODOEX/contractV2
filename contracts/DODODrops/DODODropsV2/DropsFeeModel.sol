@@ -31,7 +31,7 @@ contract DropsFeeModel is InitializableOwnable {
 
     mapping(address => DropBoxInfo) dropBoxes;
 
-    function addMysteryBoxInfo(address dropBox, uint256 globalFee, address feeAddr, address priceAddr) external onlyOwner {
+    function addDropBoxInfo(address dropBox, uint256 globalFee, address feeAddr, address priceAddr) external onlyOwner {
         DropBoxInfo memory dropBoxInfo =  DropBoxInfo({
             isSet: true,
             globalFee: globalFee,

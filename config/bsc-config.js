@@ -75,13 +75,17 @@ module.exports = {
         DODONFTRegistry: "",
         DODONFTProxy: "",
 
-        //================= MysteryBox =================
+        //================= DropsV1 =================
         // MysteryBoxV1: "0xc25286ef3BaE3f6Fe2d6d0A6e2acAd0301AF97b8", //波老师
         MysteryBoxV1: "0xDf7E00Cd0bb91D1502a1A14575E58b5d8f20C8D4", //KAVA
         RandomGenerator: "0x7C062B9C584fA6eC2504270790D38240A2c5fE72",
         RandomPool: [
             "0x82aff931d74f0645ce80e8f419b94c8f93952686",
             "0x327134de48fcdd75320f4c32498d1980470249ae"
-        ]
+        ],
+
+        //================= DropsV2 ==================
+        DropsFeeModel: "",
+        DropsProxy: ""
     }
 }
