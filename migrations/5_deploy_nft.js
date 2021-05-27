@@ -15,6 +15,9 @@ const InitializableERC721 = artifacts.require("InitializableERC721");
 const InitializableERC1155 = artifacts.require("InitializableERC1155");
 const NFTTokenFactory = artifacts.require("NFTTokenFactory");
 
+const DodoNftErc721 = artifacts.require("DODONFT");
+const DodoNftErc1155 = artifacts.require("DODONFT1155");
+
 const DODODropsV1 = artifacts.require("MysteryBoxKAKA");
 const RandomGenerator = artifacts.require("RandomGenerator");
 
@@ -45,6 +48,9 @@ module.exports = async (deployer, network, accounts) => {
     let RandomGeneratorAddress = CONFIG.RandomGenerator;
     let RandomPool = CONFIG.RandomPool;
 
+    let DodoNftErc721Address = CONFIG.DodoNftErc721;
+    let DodoNftErc1155Address = CONFIG.DodoNftErc1155;
+
     let multiSigAddress = CONFIG.multiSigAddress;
     let defaultMaintainer = CONFIG.defaultMaintainer;
 
@@ -73,6 +79,37 @@ module.exports = async (deployer, network, accounts) => {
                 RandomGeneratorAddress
             );
             logger.log("Init MysteryBoxV1 Tx:", tx.tx);
+        }
+    }
+
+    if (deploySwitch.COLLECTIONS) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
+        logger.log("Deploy type: DODO Collections");
+
+        //ERC721
+        if (DodoNftErc721Address == "") {
+            await deployer.deploy(DodoNftErc721);
+            DodoNftErc721Address = DodoNftErc721.address;
+            logger.log("DodoNftErc721Address: ", DodoNftErc721Address);
+            const DodoNftErc721Instance = await DodoNftErc721.at(DodoNftErc721Address);
+            var tx = await DodoNftErc721Instance.init(
+                multiSigAddress,
+                "DODONFT",
+                "DODONFT"
+            );
+            logger.log("Init DodoNftErc721 Tx:", tx.tx);
+        }
+
+        //ERC1155
+        if (DodoNftErc1155Address == "") {
+            await deployer.deploy(DodoNftErc1155);
+            DodoNftErc1155Address = DodoNftErc1155.address;
+            logger.log("DodoNftErc1155Address: ", DodoNftErc1155Address);
+            const DodoNftErc1155Instance = await DodoNftErc1155.at(DodoNftErc1155Address);
+            var tx = await DodoNftErc1155Instance.initOwner(multiSigAddress);
+            logger.log("Init DodoNftErc1155 Tx:", tx.tx);
         }
     }
 
@@ -180,7 +217,7 @@ module.exports = async (deployer, network, accounts) => {
 
             const DODONFTRegistrynstance = await DODONFTRegistry.at(DODONFTRegistryAddress);
             var tx = await DODONFTRegistrynstance.addAdminList(DODONFTProxyAddress);
-            logger.log("Add AdminList on DODONFTRegistry Tx:", tx.tx);            
+            logger.log("Add AdminList on DODONFTRegistry Tx:", tx.tx);
         }
     }
 };

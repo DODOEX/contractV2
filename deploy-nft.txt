@@ -344,3 +344,15 @@ Init DODONFTProxyAddress Tx: 0x6b72dd067b291dfb731af0304ceb0127e6b82696a0dca40e6
 DODOApproveProxy unlockAddProxy tx:  0x181aea8369c404f6626b17f843a61e7c51511730360fd112e8b45f89ac2a1865
 DODOApproveProxy addDODOProxy tx:  0x65363a442ef5cf984374d9add8a0c5f97a0cd72f34dba0a1ed1243aa9e5d4ee8
 Add AdminList on DODONFTRegistry Tx: 0x67c34c94a14ba9ee7639f7ff0ba8379eff062d219f16177398803d853b45f253
+====================================================
+network type: kovan
+Deploy time: 2021/5/27 下午7:32:05
+Deploy type: DODO Collections
+====================================================
+network type: kovan
+Deploy time: 2021/5/27 下午7:33:49
+Deploy type: DODO Collections
+DodoNftErc721Address:  0x98f2A8d6100635Ecb40ADA1B1FFb1ff4f0b3c5D8
+Init DodoNftErc721 Tx: 0x13011015953cf45401c13204bf8b89c85daa00b238eb588d8570bd2d5886b31e
+DodoNftErc1155Address:  0xE9C572287936dB1B0a951ca0768C1b0d26b62A04
+Init DodoNftErc1155 Tx: 0xb2fe57187897820c91a35a66b2480d5ff03aef8a1c354780539894c1ec0074a2

@@ -61,8 +61,9 @@ module.exports = {
     CpProxy:        false,
     ERC20V2Factory: false,
     DEPLOY_NFT:     false,
+    COLLECTIONS:    false,
     MYSTERYBOX_V1:  false,
-    Drops_V2:       true
+    Drops_V2:       false,
   },
 
   networks: {

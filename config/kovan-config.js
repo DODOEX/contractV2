@@ -70,6 +70,9 @@ module.exports = {
         InitializableERC1155: "0xc4d86FFB26EB6EcAe80D3f1e2c8519832Fd478B2",
         NFTTokenFactory: "0x834D13Ca0322Ccfe67596f09Cc26Ee3584297B94",
 
+        DodoNftErc721: "",
+        DodoNftErc1155: "",
+
         DODONFTRegistry: "0x579eBcC668b5517F733587091C35D495FE8d6b68",
         DODONFTProxy: "0xe121c6C90735e2Ca12e21708F2F379A55Ce61426",
 
@@ -85,6 +88,6 @@ module.exports = {
 
         //================= DropsV2 ==================
         DropsFeeModel: "0xDBe1C360050638C9d0f28f23B51b198C8B70D9eA",
-        DropsProxy: "0xa3a23cee044F995a97D86defeABf769bAd57c7c8"
+        DropsProxy: "0xa3a23cee044F995a97D86defeABf769bAd57c7c8",
     }
 }
