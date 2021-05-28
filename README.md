@@ -19,8 +19,10 @@
 - contracts/SmartRoute/proxies/DODONFTProxy.sol
 
 
-# Aduit Scope of DODO Drops
+# Aduit Scope of DODO Drops And RouteProxy
 
 - contracts/DODODrops/DODODropsV2/
 
 - contracts/SmartRoute/proxies/DODODropsProxy.sol
+
+- contracts/SmartRoute/proxies/DODORouteProxy.sol
