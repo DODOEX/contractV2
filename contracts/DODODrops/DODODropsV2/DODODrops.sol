@@ -23,7 +23,7 @@ interface IDropsNft {
     function mint(address account, uint256 id, uint256 amount, bytes memory data) external;
 }
 
-contract BaseDrops is InitializableMintableERC20, ReentrancyGuard {
+contract DODODrops is InitializableMintableERC20, ReentrancyGuard {
     using SafeMath for uint256;
     using Address for address;
     using UniversalERC20 for IERC20;
@@ -266,6 +266,10 @@ contract BaseDrops is InitializableMintableERC20, ReentrancyGuard {
     }
 
     // ================= View ===================
+
+    function getSellingStage() public view returns (uint256 stageLen) {
+        stageLen = _SELLING_TIME_INTERVAL_.length;
+    }
 
     function getSellingInfo() public view returns (uint256 curPrice, uint256 sellAmount, uint256 index) {
         uint256 curBlockTime = block.timestamp;

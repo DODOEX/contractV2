@@ -12,3 +12,19 @@ Init BaseDrops Tx: 0x53876ec779656923d19304c951f9eee3de7c12b22d7bc0e33e185a0f307
 DODOApproveProxy unlockAddProxy tx:  0x4bdefa4cdd3ea157228532b881816343bc08e6b4997085ba12340311f1756802
 DODOApproveProxy addDODOProxy tx:  0xfded36432e52dd6b631e0f9ed375a38b9d921ac7a8a848b54082c95c34e63bca
 AddMinter DropsERC721 Tx: 0x3b1272e13bd90268b25d03732f1719b7fcc5e4f4ba74981ca32f3062c24fc36e
+====================================================
+network type: kovan
+Deploy time: 2021/5/28 上午10:55:05
+Deploy type: Drops_V2
+DropsERC721Address:  0xAD1d3ff765e49988745cE74A47eAEE09163a769b
+Init DropsERC721 Tx: 0x78b5e5f67efa5aa6de90c4329155f81e9c6449f203312ae752fdcd92db625d79
+BaseDropsAddress:  0x9382c0657FfECB304F2Df61B693776D3dbf6A3f5
+Init BaseDrops Tx: 0x32adb679b49b94b60968cfb48753f048663af40e5fe652df5acc8fb24f24d349
+DODOApproveProxy unlockAddProxy tx:  0x4361331e73a927e4b24296f7b241743cd29577f92f47bae1ded1bfd7af4bd42b
+DODOApproveProxy addDODOProxy tx:  0xed88b36a3d8d542b75907749c4bceb68debbc0c9052a62688c1c2ff32a246195
+AddMinter DropsERC721 Tx: 0xb513035977baa77edcd61d3e92f42573d16ea21149d3eff5155cafbf2510e07e
+====================================================
+network type: development
+Deploy time: 2021/5/28 上午11:10:04
+Deploy type: Drops_V2
+DropsERC721Address:  0x26ac0c147B77304a1f6BD3627F20aB6D375dc3CE

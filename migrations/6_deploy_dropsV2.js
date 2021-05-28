@@ -9,7 +9,7 @@ const DropsFeeModel = artifacts.require("DropsFeeModel");
 const DropsERC721 = artifacts.require("DropsERC721");
 const DropsERC1155 = artifacts.require("DropsERC1155");
 const DODODropsProxy = artifacts.require("DODODropsProxy")
-const BaseDrops = artifacts.require("BaseDrops");
+const DODODrops = artifacts.require("DODODrops");
 const RandomGenerator = artifacts.require("RandomGenerator");
 
 module.exports = async (deployer, network, accounts) => {
@@ -39,10 +39,10 @@ module.exports = async (deployer, network, accounts) => {
     var name = "DROPS"
     var symbol = "DROPS"
     var buyToken = "0x854b0f89BAa9101e49Bfb357A38071C9db5d0DFa" //Kovan DODO
-    var sellTimeIntervals = [curTime + 60 * 10, curTime + 60 * 60, curTime + 60 * 120]
+    var sellTimeIntervals = [curTime + 60 * 10, curTime + 60 * 60 * 24 * 2, curTime + 60 * 60 * 24 * 7]
     var sellPrices = ["1000000000000000000", "2000000000000000000", "0"]
-    var sellAmount = [30, 30, 0]
-    var redeemTime = curTime + 60 * 10
+    var sellAmount = [30, 50, 0]
+    var redeemTime = curTime + 60 * 30
     var probIntervals = [4, 10, 50, 100, 105]
     var tokenIdMaps = [
         [0],
@@ -51,7 +51,10 @@ module.exports = async (deployer, network, accounts) => {
         [6, 7],
         [19, 30, 35, 40]
     ]
-    var tokenIdList = [1, 2, 3, 4, 5, 6, 7, 8]
+    var tokenIdList = []
+    for (var i = 0; i < 80; i++) {
+        tokenIdList.push(i + 1);
+    }
 
     if (deploySwitch.Drops_V2) {
         logger.log("====================================================");
@@ -106,9 +109,9 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("DropsProxyAddress: ", DropsProxyAddress);
         }
 
-        await deployer.deploy(BaseDrops);
-        BaseDropsAddress = BaseDrops.address;
-        logger.log("BaseDropsAddress: ", BaseDropsAddress);
+        await deployer.deploy(DODODrops);
+        DODODropsAddress = DODODrops.address;
+        logger.log("DODODropsAddress: ", DODODropsAddress);
 
         //drops init
         var addrList = [
@@ -120,8 +123,8 @@ module.exports = async (deployer, network, accounts) => {
             nftContractAddress
         ]
 
-        const BaseDropsInstance = await BaseDrops.at(BaseDropsAddress);
-        var tx = await BaseDropsInstance.init(
+        const DODODropsInstance = await DODODrops.at(DODODropsAddress);
+        var tx = await DODODropsInstance.init(
             addrList,
             sellTimeIntervals,
             sellPrices,
@@ -130,7 +133,7 @@ module.exports = async (deployer, network, accounts) => {
             isReveal,
             isProb
         );
-        logger.log("Init BaseDrops Tx:", tx.tx);
+        logger.log("Init DODODrops Tx:", tx.tx);
 
 
         if (network == 'kovan') {
@@ -148,14 +151,14 @@ module.exports = async (deployer, network, accounts) => {
                 var tx = await DropsERC1155Instance.addMintAccount(DropsProxyAddress);
                 logger.log("AddMinter DropsERC1155 Tx:", tx.tx);
 
-                await BaseDropsInstance.setProbInfo(probIntervals, tokenIdMaps);
+                await DODODropsInstance.setProbInfo(probIntervals, tokenIdMaps);
 
             } else {
                 const DropsERC721Instance = await DropsERC721.at(DropsERC721Address);
                 var tx = await DropsERC721Instance.addMintAccount(DropsProxyAddress);
                 logger.log("AddMinter DropsERC721 Tx:", tx.tx);
-                
-                await BaseDropsInstance.setFixedAmountInfo(tokenIdList);
+
+                await DODODropsInstance.setFixedAmountInfo(tokenIdList);
             }
         }
     }
