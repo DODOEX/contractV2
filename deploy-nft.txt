@@ -356,3 +356,15 @@ DodoNftErc721Address:  0x98f2A8d6100635Ecb40ADA1B1FFb1ff4f0b3c5D8
 Init DodoNftErc721 Tx: 0x13011015953cf45401c13204bf8b89c85daa00b238eb588d8570bd2d5886b31e
 DodoNftErc1155Address:  0xE9C572287936dB1B0a951ca0768C1b0d26b62A04
 Init DodoNftErc1155 Tx: 0xb2fe57187897820c91a35a66b2480d5ff03aef8a1c354780539894c1ec0074a2
+====================================================
+network type: rinkeby
+Deploy time: 2021/5/31 下午12:02:12
+Deploy type: MysteryBoxKAKA
+MysteryBoxV1Address:  0x722BaEb4d4d7b3915be607c7544375dA17A68ec4
+Init MysteryBoxV1 Tx: 0x680854792a879dd266694977fce84cc72a734f61b41659a82cf68788a0b734ec
+====================================================
+network type: rinkeby
+Deploy time: 2021/5/31 下午12:08:05
+Deploy type: MysteryBoxKAKA
+MysteryBoxV1Address:  0x72C4Ac83F7CF0C34735E216c3CA0fc56987A7106
+Init MysteryBoxV1 Tx: 0xa0c46836ee6f58447a89992dd37d879b0a91c021007c330e52f469fc46274a54

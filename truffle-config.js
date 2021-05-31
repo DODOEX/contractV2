@@ -180,6 +180,16 @@ module.exports = {
       gasPrice: 0,
     },
 
+    arb: {
+      provider: function () {
+        return wrapProvider(
+          new HDWalletProvider(privKey, "https://arb1.arbitrum.io/rpc")
+        )
+      },
+      network_id: '42161',
+      gasPrice: 100000000,
+    },
+
     matic: {
       networkCheckTimeout: 1000000,
       provider: () => {

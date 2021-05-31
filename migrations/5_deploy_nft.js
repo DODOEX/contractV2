@@ -18,7 +18,7 @@ const NFTTokenFactory = artifacts.require("NFTTokenFactory");
 const DodoNftErc721 = artifacts.require("DODONFT");
 const DodoNftErc1155 = artifacts.require("DODONFT1155");
 
-const DODODropsV1 = artifacts.require("MysteryBoxKAKA");
+const DODODropsV1 = artifacts.require("DODODropsV1");
 const RandomGenerator = artifacts.require("RandomGenerator");
 
 module.exports = async (deployer, network, accounts) => {
@@ -72,8 +72,8 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("MysteryBoxV1Address: ", MysteryBoxV1Address);
             const MysteryBoxV1Instance = await DODODropsV1.at(MysteryBoxV1Address);
             var tx = await MysteryBoxV1Instance.init(
-                "DODOMysteryBoxKAKA",
-                "KAKA_Marvel",
+                "FearNft",
+                "FearNft",
                 "",
                 multiSigAddress,
                 RandomGeneratorAddress
