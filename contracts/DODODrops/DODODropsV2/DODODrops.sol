@@ -73,6 +73,7 @@ contract DODODrops is InitializableMintableERC20, ReentrancyGuard {
     event ChangeRedeemTime(uint256 redeemTime);
     event ChangeTicketUnit(uint256 newTicketUnit);
     event Withdraw(address account, uint256 amount);
+    event SetReveal();
 
     event SetSellingInfo();
     event SetProbInfo(); // only for ProbMode
@@ -226,6 +227,7 @@ contract DODODrops is InitializableMintableERC20, ReentrancyGuard {
     function setRevealRn() external onlyOwner {
         require(_REVEAL_RN_ == 0, "ALREADY_SET");
         _REVEAL_RN_ = uint256(keccak256(abi.encodePacked(blockhash(block.number - 1))));
+        emit SetReveal();
     }
     
     function setSellingInfo(uint256[] memory sellingTimeIntervals, uint256[] memory prices, uint256[] memory amounts) external notStart() onlyOwner {

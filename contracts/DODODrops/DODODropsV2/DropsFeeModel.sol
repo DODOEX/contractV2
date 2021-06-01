@@ -31,6 +31,11 @@ contract DropsFeeModel is InitializableOwnable {
 
     mapping(address => DropBoxInfo) dropBoxes;
 
+    // ============ Event =============
+    event AddDropBoxInfo(address dropBox, uint256 globalFee, address feeAddr, address priceAddr);
+    event SetDropBoxInfo(address dropBox, uint256 globalFee, address feeAddr, address priceAddr);
+
+
     function addDropBoxInfo(address dropBox, uint256 globalFee, address feeAddr, address priceAddr) external onlyOwner {
         DropBoxInfo memory dropBoxInfo =  DropBoxInfo({
             isSet: true,
@@ -39,6 +44,7 @@ contract DropsFeeModel is InitializableOwnable {
             priceAddr: priceAddr
         });
         dropBoxes[dropBox] = dropBoxInfo;
+        emit AddDropBoxInfo(dropBox, globalFee, feeAddr, priceAddr);
     }
 
     function setDropBoxInfo(address dropBox, uint256 globalFee, address feeAddr, address priceAddr) external onlyOwner {
@@ -46,6 +52,7 @@ contract DropsFeeModel is InitializableOwnable {
         dropBoxes[dropBox].globalFee = globalFee;
         dropBoxes[dropBox].feeAddr = feeAddr;
         dropBoxes[dropBox].priceAddr = priceAddr;
+        emit SetDropBoxInfo(dropBox, globalFee, feeAddr, priceAddr);
     }
 
     function getPayAmount(address dropBox, address user, uint256 originalPrice, uint256 ticketAmount) external view returns (uint256 payAmount, uint256 feeAmount) {
