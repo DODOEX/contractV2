@@ -45,7 +45,6 @@ module.exports = async (deployer, network, accounts) => {
     if (CONFIG == null) return;
     //TOKEN
     let WETHAddress = CONFIG.WETH;
-    let DODOTokenAddress = CONFIG.DODO;
 
     //Helper
     let DODOSellHelperAddress = CONFIG.DODOSellHelper;
@@ -103,7 +102,6 @@ module.exports = async (deployer, network, accounts) => {
         logger.log("Deploy type: V2");
         logger.log("multiSigAddress: ", multiSigAddress)
 
-        if (DODOTokenAddress == "") return;
         //Helper
         if (DODOSellHelperAddress == "") {
             await deployer.deploy(DODOSellHelper);
@@ -333,7 +331,7 @@ module.exports = async (deployer, network, accounts) => {
         logger.log("Init DODOProxyV2 Tx:", tx.tx);
 
 
-        if (network == 'kovan' || network == 'mbtestnet' || network == 'oktest' || network == 'matic') {
+        if (network == 'kovan' || network == 'mbtestnet' || network == 'oktest' || network == 'matic' || network == 'arb') {
 
             const DODOApproveProxyInstance = await DODOApproveProxy.at(DODOApproveProxyAddress);
             var tx = await DODOApproveProxyInstance.init(multiSigAddress, [DODOProxyV2.address, DODOCpProxy.address, DODODspProxy.address]);

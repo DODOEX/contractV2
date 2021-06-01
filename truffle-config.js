@@ -40,7 +40,7 @@ module.exports = {
    */
   deploySwitch: {
     DEPLOY_V1:      false,
-    DEPLOY_V2:      false,
+    DEPLOY_V2:      true,
     ADAPTER:        false,
     MOCK_TOKEN:     false,
     MOCK_V2_POOL:   false,
@@ -139,6 +139,17 @@ module.exports = {
       confirmations: 10,
       timeoutBlocks: 200,
       skipDryRun: true
+    },
+
+    arb: {
+      provider: function () {
+        return wrapProvider(
+          new HDWalletProvider(privKey, "https://arb1.arbitrum.io/rpc")
+        )
+      },
+      network_id: 42161,
+      gas: 200000000,
+      gasPrice: 400000000,
     },
 
     arbtest: {

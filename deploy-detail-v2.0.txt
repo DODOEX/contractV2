@@ -1085,3 +1085,56 @@ Deploy type: V2 - Adapter
 DODOV1Adapter Address:  0xB5397B2210f49e96a5EB2c9747Aa2bD9397d90C0
 DODOV2Adapter Address:  0x02fCB21dc1cf221939C1d4277fB54016b5d32bC7
 UniAdapter Address:  0xbef0C8Cd420b76e9d31509abbfd7f8C9f664527c
+====================================================
+network type: arb
+Deploy time: 2021/5/31 下午2:41:43
+Deploy type: V2
+multiSigAddress:  0x1e0D4043C0CD3ed15F3c2AfE60B0F213c9b5E30d
+====================================================
+network type: arb
+Deploy time: 2021/5/31 下午2:43:10
+Deploy type: V2
+multiSigAddress:  0x1e0D4043C0CD3ed15F3c2AfE60B0F213c9b5E30d
+====================================================
+network type: arb
+Deploy time: 2021/5/31 下午2:48:23
+Deploy type: V2
+multiSigAddress:  0x1e0D4043C0CD3ed15F3c2AfE60B0F213c9b5E30d
+====================================================
+network type: arb
+Deploy time: 2021/5/31 下午2:49:26
+Deploy type: V2
+multiSigAddress:  0x1e0D4043C0CD3ed15F3c2AfE60B0F213c9b5E30d
+====================================================
+network type: arb
+Deploy time: 2021/5/31 下午2:51:29
+Deploy type: V2
+multiSigAddress:  0x1e0D4043C0CD3ed15F3c2AfE60B0F213c9b5E30d
+====================================================
+network type: arb
+Deploy time: 2021/5/31 下午2:59:16
+Deploy type: V2
+multiSigAddress:  0x1e0D4043C0CD3ed15F3c2AfE60B0F213c9b5E30d
+====================================================
+network type: arb
+Deploy time: 2021/5/31 下午3:00:44
+Deploy type: V2
+multiSigAddress:  0x1e0D4043C0CD3ed15F3c2AfE60B0F213c9b5E30d
+DODOCalleeHelperAddress:  0xaaffAd1017D6a13E026A00121BF258C616B25f7C
+DODOV1RouterHelper Address:  0x4EE6398898F7FC3e648b3f6bA458310ac29cD352
+CloneFactoryAddress:  0x1ddD02f6d31C1eF04cFA0a1AA811406B5B2884E7
+DefaultMtFeeRateAddress:  0xD56281EF996B6B29874C77D2e1464216E8043127
+Init DefaultMtFeeRateAddress Tx: 0x4a624beab88b081995bddaf3510e6d00cc86ca82c51eac227203fade882c8784
+DefaultPermissionAddress:  0x61b21603A527b487C4a3A80a69224b87751D0F6a
+Init DefaultPermissionAddress Tx: 0x7a52ed73784396fdf95fa610e59264ae434635464ddd880b2188827511f05261
+====================================================
+network type: arb
+Deploy time: 2021/5/31 下午3:04:16
+Deploy type: V2
+multiSigAddress:  0x1e0D4043C0CD3ed15F3c2AfE60B0F213c9b5E30d
+====================================================
+network type: arb
+Deploy time: 2021/5/31 下午3:05:10
+Deploy type: V2
+multiSigAddress:  0x1e0D4043C0CD3ed15F3c2AfE60B0F213c9b5E30d
+DvmTemplateAddress:  0x790B4A80Fb1094589A3c0eFC8740aA9b0C1733fB
