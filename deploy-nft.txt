@@ -368,3 +368,40 @@ Deploy time: 2021/5/31 下午12:08:05
 Deploy type: MysteryBoxKAKA
 MysteryBoxV1Address:  0x72C4Ac83F7CF0C34735E216c3CA0fc56987A7106
 Init MysteryBoxV1 Tx: 0xa0c46836ee6f58447a89992dd37d879b0a91c021007c330e52f469fc46274a54
+====================================================
+network type: rinkeby
+Deploy time: 2021/6/2 上午9:18:24
+Deploy type: NFT
+multiSigAddress:  0x7e83d9d94837eE82F0cc18a691da6f42F03F1d86
+ERC721Address:  0xC0ccfC832BD45Cd3A2d62e47FE92Fc50DD2210ac
+ERC1155Address:  0x9DC9086B65cCBec43F92bFa37Db81150Ed1DDDed
+====================================================
+network type: rinkeby
+Deploy time: 2021/6/2 上午9:38:35
+Deploy type: NFT
+multiSigAddress:  0x7e83d9d94837eE82F0cc18a691da6f42F03F1d86
+NFTTokenFactoryAddress:  0xd2BffcCBC1F2a7356f8DaBB55B33E47D62de1bB1
+DODONFTRegistryAddress:  0x69efeCA5070Cb22c1094cffEbacafC09c058c139
+Init DODONFTRegistryAddress Tx: 0x1940b26c543921b40155171707ce98a9b2a81848c2a9c4bb74d3f0b1397ee88a
+DODONFTRouteHelperAddress:  0xb0Ca341b6fbdC607A507D821780e29f9601a58B3
+NFTCollateralVaultAddress:  0x23d72eA97a9E43411Eeb908d128DF337aD334582
+FragmentAddress:  0x20f7205c4addF7D4Bf8521754d57003013bC49d2
+====================================================
+network type: rinkeby
+Deploy time: 2021/6/2 上午9:44:42
+Deploy type: DODO Collections
+DodoNftErc721Address:  0x3Bc20358B31aD498d5a245B36bC993DDBE9A4405
+Init DodoNftErc721 Tx: 0x4e5ba8a421af2c75e6ce67ae83f4c5a8184801cbe59fd6945d9da57765738c1c
+DodoNftErc1155Address:  0xc498F36eF82Aa5dBE0ecF6DD56DD55398E80E13D
+Init DodoNftErc1155 Tx: 0xc92e04d20456d3526648c55bc44cd39edc38e152abbc738612760357b3623b88
+====================================================
+network type: rinkeby
+Deploy time: 2021/6/2 上午9:52:22
+Deploy type: MysteryBoxKAKA
+====================================================
+network type: rinkeby
+Deploy time: 2021/6/2 上午9:54:28
+Deploy type: MysteryBoxKAKA
+RandomGeneratorAddress:  0x69C8a7fc6E05d7aa36114B3e35F62DEcA8E11F6E
+MysteryBoxV1Address:  0x94a2eF99CD4F11b57Daaf688183eae536B3fbBe9
+Init MysteryBoxV1 Tx: 0x0d7bcc945f26b036ee54446cfa00b561d7acc44f35ab115ce2a5ed035796ec65
