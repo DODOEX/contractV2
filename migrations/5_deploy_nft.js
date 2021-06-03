@@ -58,7 +58,7 @@ module.exports = async (deployer, network, accounts) => {
         logger.log("====================================================");
         logger.log("network type: " + network);
         logger.log("Deploy time: " + new Date().toLocaleString());
-        logger.log("Deploy type: MysteryBoxKAKA");
+        logger.log("Deploy type: FearNFT");
 
         if (RandomGeneratorAddress == "") {
             await deployer.deploy(RandomGenerator, RandomPool);
@@ -72,8 +72,8 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("MysteryBoxV1Address: ", MysteryBoxV1Address);
             const MysteryBoxV1Instance = await DODODropsV1.at(MysteryBoxV1Address);
             var tx = await MysteryBoxV1Instance.init(
-                "FearNft",
-                "FearNft",
+                "FearNFT",
+                "FearNFT",
                 "",
                 multiSigAddress,
                 RandomGeneratorAddress

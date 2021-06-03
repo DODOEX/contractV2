@@ -405,3 +405,9 @@ Deploy type: MysteryBoxKAKA
 RandomGeneratorAddress:  0x69C8a7fc6E05d7aa36114B3e35F62DEcA8E11F6E
 MysteryBoxV1Address:  0x94a2eF99CD4F11b57Daaf688183eae536B3fbBe9
 Init MysteryBoxV1 Tx: 0x0d7bcc945f26b036ee54446cfa00b561d7acc44f35ab115ce2a5ed035796ec65
+====================================================
+network type: rinkeby
+Deploy time: 2021/6/3 上午10:43:08
+Deploy type: FearNFT
+MysteryBoxV1Address:  0xfCD7Add1CF3CC27e9c35e6C43930a686b57818D3
+Init MysteryBoxV1 Tx: 0xbf20980520f4984327e3fdda3912db47efb688e472f1f8d2e1a3505abaf6ad54
