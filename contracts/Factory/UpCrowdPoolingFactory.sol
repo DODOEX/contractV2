@@ -27,9 +27,9 @@ contract UpCrowdPoolingFactory is InitializableOwnable {
 
     address public immutable _CLONE_FACTORY_;
     address public immutable _DVM_FACTORY_;
-    address public immutable _DEFAULT_MAINTAINER_;
     address public immutable _DEFAULT_MT_FEE_RATE_MODEL_;
     address public immutable _DEFAULT_PERMISSION_MANAGER_;
+    address public _DEFAULT_MAINTAINER_;
     address public _CP_TEMPLATE_;
 
     // ============ Settings =============
@@ -157,6 +157,10 @@ contract UpCrowdPoolingFactory is InitializableOwnable {
     
     function updateCPTemplate(address _newCPTemplate) external onlyOwner {
         _CP_TEMPLATE_ = _newCPTemplate;
+    }
+
+    function updateDefaultMaintainer(address _newMaintainer) external onlyOwner {
+        _DEFAULT_MAINTAINER_ = _newMaintainer;
     }
 
     function setFreezeDuration(uint256 _newFreeDuration) public onlyOwner {

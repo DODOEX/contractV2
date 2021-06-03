@@ -480,3 +480,9 @@ network type: heco
 Deploy time: 2021/5/7 下午5:07:08
 Deploy type: test - Adapter
 test_Adapter Address:  0x31AC053c31a77055b2ae2d3899091C0A9c19cE3a
+====================================================
+network type: arb
+Deploy time: 2021/6/2 上午11:20:42
+Deploy type: FeeRateImpl
+FeeRateImplAddress:  0x4F57F6929E58AE564F6AB090fE0AEEcb39B0f270
+Init feeRateImpl Tx: 0xbafcadf128e2d5fbab1927e32bc87d0db8d905b7bee5c8e3edc40f137942e6a9

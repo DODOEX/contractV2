@@ -33,8 +33,8 @@ contract DSPFactory is InitializableOwnable {
     // ============ Templates ============
 
     address public immutable _CLONE_FACTORY_;
-    address public immutable _DEFAULT_MAINTAINER_;
     address public immutable _DEFAULT_MT_FEE_RATE_MODEL_;
+    address public _DEFAULT_MAINTAINER_;
     address public _DSP_TEMPLATE_;
 
     // ============ Registry ============
@@ -94,6 +94,10 @@ contract DSPFactory is InitializableOwnable {
 
     function updateDSPTemplate(address _newDSPTemplate) external onlyOwner {
         _DSP_TEMPLATE_ = _newDSPTemplate;
+    }
+
+    function updateDefaultMaintainer(address _newMaintainer) external onlyOwner {
+        _DEFAULT_MAINTAINER_ = _newMaintainer;
     }
 
     function addPoolByAdmin(

@@ -24,9 +24,9 @@ contract DPPFactory is InitializableOwnable {
     // ============ Templates ============
 
     address public immutable _CLONE_FACTORY_;
-    address public immutable _DEFAULT_MAINTAINER_;
     address public immutable _DEFAULT_MT_FEE_RATE_MODEL_;
     address public immutable _DODO_APPROVE_PROXY_;
+    address public _DEFAULT_MAINTAINER_;
     address public _DPP_TEMPLATE_;
     address public _DPP_ADMIN_TEMPLATE_;
 
@@ -121,6 +121,10 @@ contract DPPFactory is InitializableOwnable {
     
     function updateAdminTemplate(address _newDPPAdminTemplate) external onlyOwner {
         _DPP_ADMIN_TEMPLATE_ = _newDPPAdminTemplate;
+    }
+
+    function updateDefaultMaintainer(address _newMaintainer) external onlyOwner {
+        _DEFAULT_MAINTAINER_ = _newMaintainer;
     }
 
     function updateDppTemplate(address _newDPPTemplate) external onlyOwner {
