@@ -93,7 +93,7 @@ module.exports = {
         return new HDWalletProvider(privKey, "https://mainnet.infura.io/v3/" + infuraId);
       },
       gas: 6000000,
-      gasPrice: 80000000000,
+      gasPrice: 25000000000,
       network_id: 1,
       skipDryRun: true
     },
@@ -165,10 +165,10 @@ module.exports = {
 
     matic: {
       provider: () => {
-        return new HDWalletProvider(privKey, 'https://matic-mainnet-archive-rpc.bwarelabs.com')
+        return new HDWalletProvider(privKey, 'https://rpc-mainnet.matic.network')
       },
-      network_id: 137,
-      gasPrice: 1000000000,
+      network_id: '137',
+      gasPrice: 2000000000,
       confirmations: 2,
       timeoutBlocks: 200,
       skipDryRun: true

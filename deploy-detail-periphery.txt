@@ -486,3 +486,18 @@ Deploy time: 2021/6/2 上午11:20:42
 Deploy type: FeeRateImpl
 FeeRateImplAddress:  0x4F57F6929E58AE564F6AB090fE0AEEcb39B0f270
 Init feeRateImpl Tx: 0xbafcadf128e2d5fbab1927e32bc87d0db8d905b7bee5c8e3edc40f137942e6a9
+====================================================
+network type: bsclive
+Deploy time: 2021/6/3 下午2:24:18
+Deploy type: DODORouteProxy
+DODORouteProxy Address:  0x6B3D817814eABc984d51896b1015C0b89E9737Ca
+====================================================
+network type: live
+Deploy time: 2021/6/3 下午2:29:00
+Deploy type: DODORouteProxy
+DODORouteProxy Address:  0xa2398842F37465f89540430bDC00219fA9E4D28a
+====================================================
+network type: arb
+Deploy time: 2021/6/3 下午4:23:04
+Deploy type: DODORouteProxy
+DODORouteProxy Address:  0x3E64F18168651d140AaE57e0cF325874d066bA9E

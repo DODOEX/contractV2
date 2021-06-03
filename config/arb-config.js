@@ -45,7 +45,7 @@ module.exports = {
         DODOV2Proxy: "0xeCEaDe494FD5F913Fd937C5CAc4577236395Dc32",
         DSPProxy: "0x3a343F2e4e142412c5dD130359edb765a6054965",
         CpProxy: "0x2cD18557E14aF72DAA8090BcAA95b231ffC9ea26",
-        RouteProxy: "",
+        RouteProxy: "0x3E64F18168651d140AaE57e0cF325874d066bA9E",
 
         //Account
         multiSigAddress: "0x1e0D4043C0CD3ed15F3c2AfE60B0F213c9b5E30d",
