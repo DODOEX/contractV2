@@ -86,7 +86,11 @@ module.exports = {
         DODONFTProxy: "0x0CF019E13C6527BD34eC6c8323F11aB5DF6f0922",
 
         //================= DropsV1 =================
+<<<<<<< HEAD
         MysteryBoxV1: "",
+=======
+        MysteryBoxV1: "0xff29114d297Fd2945636239E09Ab8333dA5601eA",
+>>>>>>> ing
         RandomGenerator: "0x69C8a7fc6E05d7aa36114B3e35F62DEcA8E11F6E",
         RandomPool: [],
 

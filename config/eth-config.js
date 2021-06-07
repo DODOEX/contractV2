@@ -41,9 +41,9 @@ module.exports = {
         DODOIncentive: "0x989DcAA95801C527C5B73AA65d3962dF9aCe1b0C",
 
         //Adpater
-        DODOV1Adapter: "0x9B64c81ba54eA51e1f6B7fefb3cfF8AA6F1e2A09",
-        DODOV2Adapter: "0xE55154D09265b18aC7CDAC6E646672A5460389a1",
-        UniAdapter: "0x043957f7554275b90c5178872faE851dcfC1089D",
+        DODOV1Adapter: "0x91E1c84BA8786B1FaE2570202F0126C0b88F6Ec7",
+        DODOV2Adapter: "0xe6AafA1c45D9d0C64686c1f1D17B9fe9c7DAB05b",
+        UniAdapter: "0x50D148D0908C602A56884B8628A36470a875EEb2",
 
         //Proxy
         DODOV2Proxy: "",

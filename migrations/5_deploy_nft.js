@@ -72,8 +72,8 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("MysteryBoxV1Address: ", MysteryBoxV1Address);
             const MysteryBoxV1Instance = await DODODropsV1.at(MysteryBoxV1Address);
             var tx = await MysteryBoxV1Instance.init(
-                "FearNFT",
-                "FearNFT",
+                "Fear",
+                "Fear",
                 "",
                 multiSigAddress,
                 RandomGeneratorAddress

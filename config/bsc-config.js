@@ -42,9 +42,9 @@ module.exports = {
 
 
         //Adapter
-        DODOV1Adapter: "0x0596908263Ef2724fBfBcAfA1c983FCD7a629038",
-        DODOV2Adapter: "0xAB623fBcaeb522046185051911209F5b2C2a2e1f",
-        UniAdapter: "0x5e530cD60931d9DE694a86827e76BB24493A1520",
+        DODOV1Adapter: "0x8E4842d0570c85Ba3805A9508Dce7C6A458359d0",
+        DODOV2Adapter: "0x165BA87e882208100672b6C56f477eE42502c820",
+        UniAdapter: "0xE223AcD7CBAFabCFfcAfeC5e69877424c4760aC2",
 
         //Proxy
         DODOV2Proxy: "",
@@ -80,7 +80,8 @@ module.exports = {
 
         //================= DropsV1 =================
         // MysteryBoxV1: "0xc25286ef3BaE3f6Fe2d6d0A6e2acAd0301AF97b8", //波老师
-        MysteryBoxV1: "0xDf7E00Cd0bb91D1502a1A14575E58b5d8f20C8D4", //KAVA
+        // MysteryBoxV1: "0xDf7E00Cd0bb91D1502a1A14575E58b5d8f20C8D4", //KAVA
+        MysteryBoxV1: "0x3E629332c51046a17ec236553cB931CF0548B5e1", //Fear
         RandomGenerator: "0x7C062B9C584fA6eC2504270790D38240A2c5fE72",
         RandomPool: [
             "0x82aff931d74f0645ce80e8f419b94c8f93952686",
