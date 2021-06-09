@@ -16,7 +16,7 @@ import {IERC20} from "../../intf/IERC20.sol";
 interface IRewardVault {
     function reward(address to, uint256 amount) external;
     function withdrawLeftOver(address to, uint256 amount) external; 
-    function depositReward() external;
+    function syncValue() external;
     function _TOTAL_REWARD_() external view returns(uint256);
 }
 
@@ -47,7 +47,7 @@ contract RewardVault is Ownable {
         IERC20(_REWARD_TOKEN_).safeTransfer(to, amount);
     }
 
-    function depositReward() external {
+    function syncValue() external {
         uint256 rewardBalance = IERC20(_REWARD_TOKEN_).balanceOf(address(this));
         uint256 rewardInput = rewardBalance.sub(_REWARD_RESERVE_);
 

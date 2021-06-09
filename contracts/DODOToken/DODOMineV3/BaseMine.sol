@@ -172,6 +172,10 @@ contract BaseMine is InitializableOwnable {
         rt.rewardPerBlock = rewardPerBlock;
         rt.rewardVault = address(new RewardVault(rewardToken));
 
+        uint256 rewardAmount = rewardPerBlock.mul(endBlock.sub(startBlock));
+        IERC20(rewardToken).transfer(rt.rewardVault, rewardAmount);
+        RewardVault(rt.rewardVault).syncValue();
+
         emit NewRewardToken(len, rewardToken);
     }
 
@@ -182,6 +186,12 @@ contract BaseMine is InitializableOwnable {
         require(i < rewardTokenInfos.length, "DODOMineV3: REWARD_ID_NOT_FOUND");
         _updateReward(address(0), i);
         RewardTokenInfo storage rt = rewardTokenInfos[i];
+
+
+        uint256 totalDepositReward = RewardVault(rt.rewardVault)._TOTAL_REWARD_();
+        uint256 gap = newEndBlock.sub(rt.lastFlagBlock);
+        uint256 totalReward = rt.workThroughReward.add(gap.mul(rt.rewardPerBlock));
+        require(totalDepositReward >= totalReward, "DODOMineV3: REWARD_NOT_ENOUGH");
 
         require(block.number < newEndBlock, "DODOMineV3: END_BLOCK_INVALID");
         require(block.number > rt.startBlock, "DODOMineV3: NOT_START");
@@ -204,6 +214,11 @@ contract BaseMine is InitializableOwnable {
         rt.workThroughReward = rt.workThroughReward.add((block.number.sub(rt.lastFlagBlock)).mul(rt.rewardPerBlock));
         rt.rewardPerBlock = newRewardPerBlock;
         rt.lastFlagBlock = block.number;
+
+        uint256 totalDepositReward = RewardVault(rt.rewardVault)._TOTAL_REWARD_();
+        uint256 gap = rt.endBlock.sub(block.number);
+        uint256 totalReward = rt.workThroughReward.add(gap.mul(newRewardPerBlock));
+        require(totalDepositReward >= totalReward, "DODOMineV3: REWARD_NOT_ENOUGH");
 
         emit UpdateReward(i, newRewardPerBlock);
     }
