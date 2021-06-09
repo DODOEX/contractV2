@@ -38,11 +38,11 @@ module.exports = async (deployer, network, accounts) => {
     var baseUri = ""
     var name = "DROPS"
     var symbol = "DROPS"
-    var buyToken = "0x854b0f89BAa9101e49Bfb357A38071C9db5d0DFa" //Kovan DODO
-    var sellTimeIntervals = [curTime + 60 * 10, curTime + 60 * 60 * 24 * 2, curTime + 60 * 60 * 24 * 7]
+    var buyToken = CONFIG.DODO //DODO
+    var sellTimeIntervals = [curTime + 60 * 60 * 12, curTime + 60 * 60 * 24 * 2, curTime + 60 * 60 * 24 * 4]
     var sellPrices = ["1000000000000000000", "2000000000000000000", "0"]
     var sellAmount = [30, 50, 0]
-    var redeemTime = curTime + 60 * 30
+    var redeemTime = curTime + 60 * 60 * 12
     var probIntervals = [4, 10, 50, 100, 105]
     var tokenIdMaps = [
         [0],
@@ -136,7 +136,7 @@ module.exports = async (deployer, network, accounts) => {
         logger.log("Init DODODrops Tx:", tx.tx);
 
 
-        if (network == 'kovan') {
+        if (network == 'kovan' || network == 'rinkeby') {
 
             const DODOApproveProxyInstance = await DODOApproveProxy.at(DODOApproveProxyAddress);
             var tx = await DODOApproveProxyInstance.unlockAddProxy(DropsProxyAddress);

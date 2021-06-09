@@ -51,7 +51,7 @@
     "web3-eth-contract": "^1.2.8"
   },
   "devDependencies": {
-    "@truffle/hdwallet-provider": "^1.0.36",
+    "@truffle/hdwallet-provider": "1.2.6",
     "chai": "^4.2.0",
     "ganache-cli": "^6.9.1",
     "prettier": "^2.0.5",

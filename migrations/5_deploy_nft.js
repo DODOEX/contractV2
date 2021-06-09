@@ -206,7 +206,7 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("Init DODONFTProxyAddress Tx:", tx.tx);
         }
 
-        if (network == 'kovan') {
+        if (network == 'kovan' || network == 'rinkeby') {
 
             const DODOApproveProxyInstance = await DODOApproveProxy.at(DODOApproveProxyAddress);
             var tx = await DODOApproveProxyInstance.unlockAddProxy(DODONFTProxyAddress);
