@@ -10,3 +10,4 @@
 
 - contracts/Factory/ERC20V2Factory.sol
 
+- contracts/SmartRoute/proxies/DODORouteProxy.sol
