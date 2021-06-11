@@ -9,7 +9,11 @@ pragma solidity 0.6.9;
 
 import {Ownable} from "../lib/Ownable.sol";
 
-contract UserQuota is Ownable {
+interface IQuota {
+    function getUserQuota(address user) external view returns (int);
+}
+
+contract UserQuota is Ownable, IQuota {
 
     mapping(address => uint256) public userQuota;
     uint256 constant quota = 375 * 10**6; //For example 375u on eth
@@ -21,7 +25,7 @@ contract UserQuota is Ownable {
         }
     }
 
-    function getUserQuota(address user) external view returns (uint256) {
-        return userQuota[user];
+    function getUserQuota(address user) override external view returns (int) {
+        return int(userQuota[user]);
     }
 }
