@@ -49,7 +49,7 @@ contract ERC20V2Factory is InitializableOwnable {
     address public _CUSTOM_ERC20_TEMPLATE_;
 
     // ============ Events ============
-    // 0 Std 1 Custom
+    // 0 Std 1 TradeBurn or TradeFee 2 Mintable
     event NewERC20(address erc20, address creator, uint256 erc20Type);
 
     // ============ Registry ============
@@ -106,7 +106,10 @@ contract ERC20V2Factory is InitializableOwnable {
         );
 
         _USER_CUSTOM_REGISTRY_[msg.sender].push(newCustomERC20);
-        emit NewERC20(newCustomERC20, msg.sender, 1);
+        if(isMintable)
+            emit NewERC20(newCustomERC20, msg.sender, 2);
+        else 
+            emit NewERC20(newCustomERC20, msg.sender, 1);
     }
 
 
