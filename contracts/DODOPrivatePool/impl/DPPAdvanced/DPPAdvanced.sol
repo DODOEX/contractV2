@@ -8,7 +8,7 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {DPP} from "./DPP.sol";
+import {DPP} from "../DPP.sol";
 
 /**
  * @title DODO PrivatePool
