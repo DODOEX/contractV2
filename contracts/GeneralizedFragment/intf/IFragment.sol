@@ -18,7 +18,7 @@ interface IFragment {
       uint256 ownerRatio,
       uint256 buyoutTimestamp,
       address defaultMaintainer,
-      uint256 defaultBuyoutFee,
+      address buyoutModel,
       uint256 distributionRatio,
       string memory fragSymbol
     ) external;

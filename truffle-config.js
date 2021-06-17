@@ -158,15 +158,13 @@ module.exports = {
       skipDryRun: true
     },
 
-    arb: {
-      provider: function () {
-        return wrapProvider(
-          new HDWalletProvider(privKey, "https://arb1.arbitrum.io/rpc")
-        )
+    omgTest: {
+      networkCheckTimeout: 100000,
+      provider: () => {
+        return new HDWalletProvider(privKey, 'https://rinkeby.omgx.network')
       },
-      network_id: 42161,
-      gas: 200000000,
-      gasPrice: 400000000,
+      network_id: 28,
+      gasPrice: 0,
     },
 
     arbtest: {

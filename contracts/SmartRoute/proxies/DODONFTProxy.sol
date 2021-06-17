@@ -45,15 +45,14 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
     address public _VAULT_TEMPLATE_;
     address public _FRAG_TEMPLATE_;
     address public _DVM_TEMPLATE_;
-
-    uint256 public _DEFAULT_BUYOUT_FEE_;
+    address public _BUYOUT_MODEL_;
 
     // ============ Events ============
     event ChangeVaultTemplate(address newVaultTemplate);
     event ChangeFragTemplate(address newFragTemplate);
     event ChangeDvmTemplate(address newDvmTemplate);
     event ChangeMtFeeRateTemplate(address newMtFeeRateTemplate);
-    event ChangeBuyoutFee(uint256 newBuyoutFee);
+    event ChangeBuyoutModel(address newBuyoutModel);
     event CreateNFTCollateralVault(address creator, address vault, string name, string baseURI);
     event CreateFragment(address vault, address fragment, address dvm);
     event Buyout(address from, address fragment, uint256 amount);
@@ -74,6 +73,7 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
         address payable weth,
         address dodoApproveProxy,
         address defaultMaintainer,
+        address buyoutModel,
         address mtFeeRateModel,
         address vaultTemplate,
         address fragTemplate,
@@ -85,6 +85,7 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
         _DODO_APPROVE_PROXY_ = dodoApproveProxy;
         _DEFAULT_MAINTAINER_ = defaultMaintainer;
         _MT_FEE_RATE_MODEL_ = mtFeeRateModel;
+        _BUYOUT_MODEL_ = buyoutModel;
         _VAULT_TEMPLATE_ = vaultTemplate;
         _FRAG_TEMPLATE_ = fragTemplate;
         _DVM_TEMPLATE_ = dvmTemplate;
@@ -128,7 +129,7 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
             _params[4], 
             _params[5],
             _DEFAULT_MAINTAINER_,
-            _DEFAULT_BUYOUT_FEE_,
+            _BUYOUT_MODEL_,
             _params[6],
             fragSymbol
         );
@@ -190,9 +191,9 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
         emit ChangeDvmTemplate(newDvmTemplate);
     }
 
-    function updateBuyoutFee(uint256 buyoutFee) external onlyOwner {
-        _DEFAULT_BUYOUT_FEE_ = buyoutFee;
-        emit ChangeBuyoutFee(buyoutFee);
+    function updateBuyoutModel(address newBuyoutModel) external onlyOwner {
+        _BUYOUT_MODEL_ = newBuyoutModel;
+        emit ChangeBuyoutModel(newBuyoutModel);
     }
 
 

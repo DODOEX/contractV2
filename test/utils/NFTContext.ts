@@ -28,6 +28,7 @@ export class NFTContext {
     NFTRegister: Contract;
     CollatteralVault: Contract;
     Fragment: Contract;
+    BuyoutModel: Contract;
 
     NFTProxy: Contract;
     DODOApprove: Contract;
@@ -102,7 +103,9 @@ export class NFTContext {
             contracts.NFT_VAULT
         );
 
-        this.Fragment = await contracts.newContract(contracts.NFT_FRAG)
+        this.Fragment = await contracts.newContract(contracts.NFT_FRAG);
+
+        this.BuyoutModel = await contracts.newContract(contracts.BUYOUT_MODEL);
 
         this.NFTProxy = await contracts.newContract(contracts.NFT_PROXY,
             [
@@ -110,6 +113,7 @@ export class NFTContext {
                 this.WETH.options.address,
                 this.DODOApproveProxy.options.address,
                 this.Deployer,
+                this.BuyoutModel.options.address,
                 this.mtFeeRateModel.options.address,
                 this.CollatteralVault.options.address,
                 this.Fragment.options.address,

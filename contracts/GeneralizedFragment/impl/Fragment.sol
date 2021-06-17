@@ -16,6 +16,10 @@ import {IERC20} from "../../intf/IERC20.sol";
 import {InitializableERC20} from "../../external/ERC20/InitializableERC20.sol";
 import {ICollateralVault} from "../../CollateralVault/intf/ICollateralVault.sol";
 
+interface IBuyoutModel {
+  function getBuyoutStatus(address fragAddr, address user) external view returns (int);
+}
+
 contract Fragment is InitializableERC20 {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
@@ -25,7 +29,6 @@ contract Fragment is InitializableERC20 {
     bool public _IS_BUYOUT_;
     uint256 public _BUYOUT_TIMESTAMP_;
     uint256 public _BUYOUT_PRICE_;
-    uint256 public _DEFAULT_BUYOUT_FEE_;
     uint256 public _DISTRIBUTION_RATIO_;
 
     address public _COLLATERAL_VAULT_;
@@ -33,6 +36,7 @@ contract Fragment is InitializableERC20 {
     address public _QUOTE_;
     address public _DVM_;
     address public _DEFAULT_MAINTAINER_;
+    address public _BUYOUT_MODEL_;
 
     bool internal _FRAG_INITIALIZED_;
 
@@ -53,7 +57,7 @@ contract Fragment is InitializableERC20 {
       uint256 ownerRatio,
       uint256 buyoutTimestamp,
       address defaultMaintainer,
-      uint256 defaultBuyoutFee,
+      address buyoutModel,
       uint256 distributionRatio,
       string memory _symbol
     ) external {
@@ -67,7 +71,7 @@ contract Fragment is InitializableERC20 {
         _COLLATERAL_VAULT_ = collateralVault;
         _BUYOUT_TIMESTAMP_ = buyoutTimestamp;
         _DEFAULT_MAINTAINER_ = defaultMaintainer;
-        _DEFAULT_BUYOUT_FEE_ = defaultBuyoutFee;
+        _BUYOUT_MODEL_ = buyoutModel;
         _DISTRIBUTION_RATIO_ = distributionRatio;
 
         // init FRAG meta data
@@ -93,6 +97,10 @@ contract Fragment is InitializableERC20 {
         require(_BUYOUT_TIMESTAMP_ != 0, "DODOFragment: NOT_SUPPORT_BUYOUT");
         require(block.timestamp > _BUYOUT_TIMESTAMP_, "DODOFragment: BUYOUT_NOT_START");
         require(!_IS_BUYOUT_, "DODOFragment: ALREADY_BUYOUT");
+
+        int buyoutFee = IBuyoutModel(_BUYOUT_MODEL_).getBuyoutStatus(address(this), newVaultOwner);
+        require(buyoutFee != -1, "DODOFragment: USER_UNABLE_BUYOUT");
+
         _IS_BUYOUT_ = true;
       
         _BUYOUT_PRICE_ = IDVM(_DVM_).getMidPrice();
@@ -114,10 +122,10 @@ contract Fragment is InitializableERC20 {
         _clearBalance(address(this));
         _clearBalance(_VAULT_PRE_OWNER_);
 
-        uint256 buyoutFee =  DecimalMath.mulFloor(ownerQuoteWithoutFee, _DEFAULT_BUYOUT_FEE_);
+        uint256 buyoutFeeAmount =  DecimalMath.mulFloor(ownerQuoteWithoutFee, uint256(buyoutFee));
       
-        IERC20(_QUOTE_).safeTransfer(_DEFAULT_MAINTAINER_, buyoutFee);
-        IERC20(_QUOTE_).safeTransfer(_VAULT_PRE_OWNER_, ownerQuoteWithoutFee.sub(buyoutFee));
+        IERC20(_QUOTE_).safeTransfer(_DEFAULT_MAINTAINER_, buyoutFeeAmount);
+        IERC20(_QUOTE_).safeTransfer(_VAULT_PRE_OWNER_, ownerQuoteWithoutFee.sub(buyoutFeeAmount));
 
         ICollateralVault(_COLLATERAL_VAULT_).directTransferOwnership(newVaultOwner);
 

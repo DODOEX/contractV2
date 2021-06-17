@@ -276,6 +276,8 @@ describe("DODONFT", () => {
 
             await mockTrade(ctx, dvmAddress, dvmInstance, fragInstance);
 
+            await fragInstance.methods.transfer(buyer, decimalStr("1002")).send(ctx.sendParam(author));
+
             await getUserBalance(author, fragInstance, ctx.USDT, "Author Before");
             await getUserBalance(buyer, fragInstance, ctx.USDT, "Buyer Before");
             await getUserBalance(dvmAddress, fragInstance, ctx.USDT, "DVM Before");

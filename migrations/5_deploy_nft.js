@@ -6,6 +6,7 @@ const { GetConfig } = require("../configAdapter.js")
 
 const DODOApproveProxy = artifacts.require("DODOApproveProxy");
 const NFTCollateralVault = artifacts.require("NFTCollateralVault");
+const BuyoutModel = artifacts.require("BuyoutModel");
 const Fragment = artifacts.require("Fragment");
 const DODONFTRegistry = artifacts.require("DODONFTRegistry");
 const DODONFTProxy = artifacts.require("DODONFTProxy");
@@ -34,6 +35,7 @@ module.exports = async (deployer, network, accounts) => {
 
     let MtFeeRateModelAddress = CONFIG.FeeRateModel;
     let FragmentAddress = CONFIG.Fragment;
+    let BuyoutModelAddress = CONFIG.BuyoutModel;
     let NFTCollateralVaultAddress = CONFIG.NFTCollateralVault;
     let DODONFTRouteHelperAddress = CONFIG.DODONFTRouteHelper;
 
@@ -161,6 +163,12 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("DODONFTRouteHelperAddress: ", DODONFTRouteHelperAddress);
         }
 
+        //BuyoutModel
+        if(BuyoutModelAddress == "") {
+            await deployer.deploy(BuyoutModel);
+            BuyoutModelAddress = BuyoutModel.address;
+            logger.log("BuyoutModelAddress: ", BuyoutModelAddress);
+        }
 
         //DODONFTRouteHelper
         if (DODONFTRouteHelperAddress == "") {
@@ -193,6 +201,7 @@ module.exports = async (deployer, network, accounts) => {
                 WETHAddress,
                 DODOApproveProxyAddress,
                 defaultMaintainer,
+                BuyoutModelAddress,
                 MtFeeRateModelAddress,
                 NFTCollateralVaultAddress,
                 FragmentAddress,

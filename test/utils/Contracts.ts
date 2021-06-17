@@ -63,6 +63,7 @@ export const CONST_FEE_RATE_MODEL_NAME = "ConstFeeRateModel"
 export const NFT_TOKEN_FACTORY = "NFTTokenFactory"
 export const NFT_REGISTER = "DODONFTRegistry"
 export const NFT_PROXY = "DODONFTProxy"
+export const BUYOUT_MODEL = "BuyoutModel"
 
 export const RANDOM_GENERATOR = "RandomGenerator"
 export const MYSTERY_BOX_V1 = "DODODropsV1"
@@ -72,6 +73,7 @@ export const DROPS_ERC721 = "DropsERC721"
 export const DROPS_ERC1155 = "DropsERC1155"
 export const DROPS_FEE_MODEL = "DropsFeeModel"
 export const DROPS_PROXY = "DODODropsProxy"
+
 
 interface ContractJson {
   abi: any;
