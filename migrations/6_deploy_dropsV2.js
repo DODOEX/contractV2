@@ -33,16 +33,18 @@ module.exports = async (deployer, network, accounts) => {
 
     //配置信息
     var isProb = false;
-    var isReveal = true;
+    var isReveal = false;
     var curTime = Math.floor(new Date().getTime() / 1000)
-    var baseUri = ""
+    var baseUri = "https://ipfs.io/ipfs/QmTTdGzUGkhQwZX8F6v3GEw9cJP3feaP69tuk41ZN2gqfR/"
     var name = "DROPS"
     var symbol = "DROPS"
-    var buyToken = CONFIG.DODO //DODO
-    var sellTimeIntervals = [curTime + 60 * 60 * 12, curTime + 60 * 60 * 24 * 2, curTime + 60 * 60 * 24 * 4]
-    var sellPrices = ["1000000000000000000", "2000000000000000000", "0"]
-    var sellAmount = [30, 50, 0]
-    var redeemTime = curTime + 60 * 60 * 12
+    // var buyToken = CONFIG.DODO //DODO
+    var buyToken = "0x0aDCBAE18580120667f7Ff6c6451A426B13c67B7" //USDT Rinkeby
+    var sellTimeIntervals = [curTime + 60 * 60 * 0.1, curTime + 60 * 60 * 24 * 10, curTime + 60 * 60 * 24 * 20]
+    var sellPrices = ["1000000", "3000000", "0"]
+    var sellAmount = [500, 626, 0]
+    var redeemTime = curTime + 60 * 60 * 0.1
+
     var probIntervals = [4, 10, 50, 100, 105]
     var tokenIdMaps = [
         [0],
@@ -51,10 +53,11 @@ module.exports = async (deployer, network, accounts) => {
         [6, 7],
         [19, 30, 35, 40]
     ]
+    
     var tokenIdList = []
-    for (var i = 0; i < 80; i++) {
-        tokenIdList.push(i + 1);
-    }
+    // for (var i = 1; i <= 300; i++) {
+    //     tokenIdList.push(i);
+    // }
 
     if (deploySwitch.Drops_V2) {
         logger.log("====================================================");
@@ -148,17 +151,34 @@ module.exports = async (deployer, network, accounts) => {
 
             if (isProb) {
                 const DropsERC1155Instance = await DropsERC1155.at(DropsERC1155Address);
-                var tx = await DropsERC1155Instance.addMintAccount(DropsProxyAddress);
+                var tx = await DropsERC1155Instance.addMintAccount(DODODropsAddress);
                 logger.log("AddMinter DropsERC1155 Tx:", tx.tx);
 
                 await DODODropsInstance.setProbInfo(probIntervals, tokenIdMaps);
 
             } else {
                 const DropsERC721Instance = await DropsERC721.at(DropsERC721Address);
-                var tx = await DropsERC721Instance.addMintAccount(DropsProxyAddress);
+                var tx = await DropsERC721Instance.addMintAccount(DODODropsAddress);
                 logger.log("AddMinter DropsERC721 Tx:", tx.tx);
-
-                await DODODropsInstance.setFixedAmountInfo(tokenIdList);
+                for (var i = 1; i <= 300; i++) {
+                    tokenIdList.push(i);
+                }
+                await DODODropsInstance.addFixedAmountInfo(tokenIdList);
+                tokenIdList = []
+                for (var i = 301; i <= 600; i++) {
+                    tokenIdList.push(i);
+                }
+                await DODODropsInstance.addFixedAmountInfo(tokenIdList);
+                tokenIdList = []
+                for (var i = 601; i <= 900; i++) {
+                    tokenIdList.push(i);
+                }
+                await DODODropsInstance.addFixedAmountInfo(tokenIdList);
+                tokenIdList = []
+                for (var i = 901; i <= 1126; i++) {
+                    tokenIdList.push(i);
+                }
+                await DODODropsInstance.addFixedAmountInfo(tokenIdList);
             }
         }
     }

@@ -96,6 +96,7 @@ module.exports = {
       networkCheckTimeout: 100000,
       provider: function () {
         return new HDWalletProvider(privKey, "https://rinkeby.infura.io/v3/" + infuraId);
+        // return new HDWalletProvider(privKey, "https://eth-rinkeby.dodoex.io/");
       },
       gas: 10000000,
       gasPrice: 1500000000,

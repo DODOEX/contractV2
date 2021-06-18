@@ -8,10 +8,10 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {ERC721URIStorage} from "../../external/ERC721/ERC721URIStorage.sol";
+import {ERC721Enumerable} from "../../external/ERC721/ERC721Enumerable.sol";
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 
-contract DropsERC721 is ERC721URIStorage, InitializableOwnable {
+contract DropsERC721 is ERC721Enumerable, InitializableOwnable {
     mapping (address => bool) public _IS_ALLOWED_MINT_;
 
     // ============ Event =============
@@ -43,12 +43,5 @@ contract DropsERC721 is ERC721URIStorage, InitializableOwnable {
     function mint(address to, uint256 tokenId) external {
         require(_IS_ALLOWED_MINT_[msg.sender], "restricted");
         _mint(to, tokenId);
-    }
-
-    function batchSetTokenURI(uint256[] calldata ids, string[] calldata urls) external onlyOwner {
-        require(ids.length == urls.length, "NOT_MATCH");
-        for(uint256 i = 0; i < ids.length; i++) {
-            _setTokenURI(ids[i], urls[i]);
-        }
     }
 }

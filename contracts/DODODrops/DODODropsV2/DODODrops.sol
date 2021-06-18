@@ -242,6 +242,13 @@ contract DODODrops is InitializableMintableERC20, ReentrancyGuard {
         _setFixedAmountInfo(tokenIdList);
     }
 
+    function addFixedAmountInfo(uint256[] memory addTokenIdList) external notStart() onlyOwner {
+        for (uint256 i = 0; i < addTokenIdList.length; i++) {
+            _TOKEN_ID_LIST_.push(addTokenIdList[i]);
+        }
+        emit SetFixedAmountInfo();
+    }
+
     function setTokenIdMapByIndex(uint256 index, uint256[] memory tokenIds) external notStart() onlyOwner {
         require(_IS_PROB_MODE_, "ONLY_ALLOW_PROB_MODE");
         require(tokenIds.length > 0 && index < _TOKEN_ID_MAP_.length,"PARAM_NOT_INVALID");

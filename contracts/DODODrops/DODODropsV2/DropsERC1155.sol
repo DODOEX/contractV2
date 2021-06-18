@@ -10,10 +10,12 @@ pragma experimental ABIEncoderV2;
 
 import {ERC1155} from "../../external/ERC1155/ERC1155.sol";
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
+import {Strings} from "../../external/utils/Strings.sol";
 
 contract DropsERC1155 is ERC1155, InitializableOwnable {
+    using Strings for uint256;
+
     mapping (address => bool) public _IS_ALLOWED_MINT_;
-    mapping (uint256 => string) private _tokenURIs;
     string internal _baseUri = "";
 
     // ============ Event =============
@@ -43,25 +45,11 @@ contract DropsERC1155 is ERC1155, InitializableOwnable {
         _mint(account, id, amount, data);
     }
 
-    function batchSetTokenURI(uint256[] calldata ids, string[] calldata urls) external onlyOwner {
-        require(ids.length == urls.length, "NOT_MATCH");
-        for(uint256 i = 0; i < ids.length; i++) {
-            _setTokenURI(ids[i], urls[i]);
-        }
-    }
-
     function uri(uint256 tokenId) public view override returns (string memory) {
-        string memory _tokenURI = _tokenURIs[tokenId];
-        string memory base = _baseUri;
+        string memory baseURI = _baseUri;
 
-        if (bytes(base).length == 0) {
-            return _tokenURI;
-        }
-
-        return string(abi.encodePacked(base, _tokenURI));
-    }
-
-    function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal {
-        _tokenURIs[tokenId] = _tokenURI;
+        return bytes(baseURI).length > 0
+            ? string(abi.encodePacked(baseURI, tokenId.toString()))
+            : '';
     }
 }

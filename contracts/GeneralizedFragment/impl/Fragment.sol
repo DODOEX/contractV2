@@ -13,14 +13,14 @@ import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {IDVM} from "../../DODOVendingMachine/intf/IDVM.sol";
 import {IDODOCallee} from "../../intf/IDODOCallee.sol";
 import {IERC20} from "../../intf/IERC20.sol";
-import {InitializableERC20} from "../../external/ERC20/InitializableERC20.sol";
+import {InitializableFragERC20} from "../../external/ERC20/InitializableFragERC20.sol";
 import {ICollateralVault} from "../../CollateralVault/intf/ICollateralVault.sol";
 
 interface IBuyoutModel {
   function getBuyoutStatus(address fragAddr, address user) external view returns (int);
 }
 
-contract Fragment is InitializableERC20 {
+contract Fragment is InitializableFragERC20 {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
@@ -77,8 +77,7 @@ contract Fragment is InitializableERC20 {
         // init FRAG meta data
         name = string(abi.encodePacked("DODO_FRAG_", _symbol));
         symbol = string(abi.encodePacked("d_", _symbol));
-        decimals = 18;
-        super.init(address(this), _totalSupply, name, symbol, decimals);
+        super.init(address(this), _totalSupply, name, symbol);
 
         // init FRAG distribution
         uint256 vaultPreOwnerBalance = DecimalMath.mulFloor(_totalSupply, ownerRatio);
