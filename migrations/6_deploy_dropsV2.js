@@ -35,15 +35,15 @@ module.exports = async (deployer, network, accounts) => {
     var isProb = false;
     var isReveal = false;
     var curTime = Math.floor(new Date().getTime() / 1000)
-    var baseUri = "https://ipfs.io/ipfs/QmTTdGzUGkhQwZX8F6v3GEw9cJP3feaP69tuk41ZN2gqfR/"
+    var baseUri = "ipfs://QmTpcX9YE13EcBrU4dg8GNcKXVXTvJaH9MoQzHZYrQtdjk/"
     var name = "DROPS"
     var symbol = "DROPS"
     // var buyToken = CONFIG.DODO //DODO
     var buyToken = "0x0aDCBAE18580120667f7Ff6c6451A426B13c67B7" //USDT Rinkeby
-    var sellTimeIntervals = [curTime + 60 * 60 * 0.1, curTime + 60 * 60 * 24 * 10, curTime + 60 * 60 * 24 * 20]
-    var sellPrices = ["1000000", "3000000", "0"]
-    var sellAmount = [500, 626, 0]
-    var redeemTime = curTime + 60 * 60 * 0.1
+    var sellTimeIntervals = [curTime + 60 * 60, curTime + 60 * 60 * 24 * 15, curTime + 60 * 60 * 24 * 25]
+    var sellPrices = ["1000000", "5000000", "0"]
+    var sellAmount = [500, 606, 0]
+    var redeemTime = curTime + 60 * 60
 
     var probIntervals = [4, 10, 50, 100, 105]
     var tokenIdMaps = [
@@ -175,7 +175,7 @@ module.exports = async (deployer, network, accounts) => {
                 }
                 await DODODropsInstance.addFixedAmountInfo(tokenIdList);
                 tokenIdList = []
-                for (var i = 901; i <= 1126; i++) {
+                for (var i = 901; i <= 1106; i++) {
                     tokenIdList.push(i);
                 }
                 await DODODropsInstance.addFixedAmountInfo(tokenIdList);
