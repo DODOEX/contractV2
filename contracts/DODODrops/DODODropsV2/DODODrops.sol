@@ -132,7 +132,8 @@ contract DODODrops is InitializableMintableERC20, ReentrancyGuard {
     }
 
     function redeemTicket(uint256 ticketNum, address referer) external {
-        require(!address(msg.sender).isContract(), "ONLY_ALLOW_EOA");
+        // require(!address(msg.sender).isContract(), "ONLY_ALLOW_EOA");
+        require(tx.origin == msg.sender, "ONLY_ALLOW_EOA");
         require(ticketNum >= 1 && ticketNum <= balanceOf(msg.sender), "TICKET_NUM_INVALID");
         _burn(msg.sender,ticketNum);
         for (uint256 i = 0; i < ticketNum; i++) {

@@ -84,7 +84,8 @@ contract DODODropsV1 is ERC721URIStorage, InitializableOwnable {
 
     function redeemPrize(uint256 ticketNum) external {
         require(_REDEEM_ALLOWED_, "REDEEM_CLOSED");
-        require(!address(msg.sender).isContract(), "ONLY_ALLOW_EOA");
+        // require(!address(msg.sender).isContract(), "ONLY_ALLOW_EOA");
+        require(tx.origin == msg.sender, "ONLY_ALLOW_EOA");
         require(ticketNum >= 1 && ticketNum <= _USER_TICKETS_[msg.sender], "TICKET_NUM_INVALID");
         _USER_TICKETS_[msg.sender] = _USER_TICKETS_[msg.sender].sub(ticketNum);
         _TOTAL_TICKETS_ = _TOTAL_TICKETS_.sub(ticketNum);
