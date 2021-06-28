@@ -97,4 +97,10 @@ contract CP is CPVesting {
 
         require(address(this).balance == _SETTEL_FUND_, "SETTLE_FUND_NOT_MATCH");
     }
+
+    // ============ Version Control ============
+
+    function version() virtual external pure returns (string memory) {
+        return "CP 1.0.0";
+    }
 }
