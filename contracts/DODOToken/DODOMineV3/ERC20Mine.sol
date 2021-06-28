@@ -10,9 +10,10 @@ pragma experimental ABIEncoderV2;
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
+import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 import {BaseMine} from "./BaseMine.sol";
 
-contract ERC20Mine is BaseMine {
+contract ERC20Mine is ReentrancyGuard, BaseMine {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
@@ -32,7 +33,7 @@ contract ERC20Mine is BaseMine {
 
     // ============ Deposit && Withdraw && Exit ============
 
-    function deposit(uint256 amount) external {
+    function deposit(uint256 amount) external preventReentrant {
         require(amount > 0, "DODOMineV3: CANNOT_DEPOSIT_ZERO");
 
         _updateAllReward(msg.sender);
@@ -47,7 +48,7 @@ contract ERC20Mine is BaseMine {
         emit Deposit(msg.sender, actualStakeAmount);
     }
 
-    function withdraw(uint256 amount) external {
+    function withdraw(uint256 amount) external preventReentrant {
         require(amount > 0, "DODOMineV3: CANNOT_WITHDRAW_ZERO");
 
         _updateAllReward(msg.sender);

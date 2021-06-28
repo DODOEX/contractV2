@@ -39,6 +39,10 @@ contract DODOMineV3Registry is InitializableOwnable, IDODOMineV3Registry {
     // ============ Events ============
     event NewMineV3(address mine, address stakeToken, bool isLpToken);
     event RemoveMineV3(address mine, address stakeToken);
+    event addAdmin(address admin);
+    event removeAdmin(address admin);
+    event addSingleToken(address token);
+    event removeSingleToken(address token);
 
 
     function addMineV3(
@@ -86,17 +90,21 @@ contract DODOMineV3Registry is InitializableOwnable, IDODOMineV3Registry {
 
     function addAdminList (address contractAddr) external onlyOwner {
         isAdminListed[contractAddr] = true;
+        emit addAdmin(contractAddr);
     }
 
     function removeAdminList (address contractAddr) external onlyOwner {
         isAdminListed[contractAddr] = false;
+        emit removeAdmin(contractAddr);
     }
 
     function addSingleTokenList(address token) external onlyOwner {
         singleTokenList[token] = true;
+        emit addSingleToken(token);
     }
 
     function removeSingleTokenList(address token) external onlyOwner {
         singleTokenList[token] = false;
+        emit removeSingleToken(token);
     }
 }

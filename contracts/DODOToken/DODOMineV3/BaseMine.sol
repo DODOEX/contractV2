@@ -173,7 +173,7 @@ contract BaseMine is InitializableOwnable {
         rt.rewardVault = address(new RewardVault(rewardToken));
 
         uint256 rewardAmount = rewardPerBlock.mul(endBlock.sub(startBlock));
-        IERC20(rewardToken).transfer(rt.rewardVault, rewardAmount);
+        IERC20(rewardToken).safeTransfer(rt.rewardVault, rewardAmount);
         RewardVault(rt.rewardVault).syncValue();
 
         emit NewRewardToken(len, rewardToken);

@@ -73,7 +73,7 @@ contract ERC20V2Factory is InitializableOwnable {
         uint256 totalSupply,
         string memory name,
         string memory symbol,
-        uint256 decimals
+        uint8 decimals
     ) external returns (address newERC20) {
         newERC20 = ICloneFactory(_CLONE_FACTORY_).clone(_ERC20_TEMPLATE_);
         IStdERC20(newERC20).init(msg.sender, totalSupply, name, symbol, decimals);
@@ -85,7 +85,7 @@ contract ERC20V2Factory is InitializableOwnable {
         uint256 initSupply,
         string memory name,
         string memory symbol,
-        uint256 decimals,
+        uint8 decimals,
         uint256 tradeBurnRatio,
         uint256 tradeFeeRatio,
         address teamAccount,

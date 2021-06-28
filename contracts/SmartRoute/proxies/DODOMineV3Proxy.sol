@@ -50,6 +50,7 @@ contract DODOMineV3Proxy is InitializableOwnable {
     event DepositRewardToVault(address mine, address rewardToken, uint256 amount);
     event DepositRewardToMine(address mine, address rewardToken, uint256 amount);
     event CreateMineV3(address account, address mineV3);
+    event ChangeMineV3Template(address mineV3);
 
     constructor(
         address cloneFactory,
@@ -125,7 +126,8 @@ contract DODOMineV3Proxy is InitializableOwnable {
 
     // ============ Admin Operation Functions ============
     
-    function updateMineV2Template(address _newMineV3Template) external onlyOwner {
+    function updateMineV3Template(address _newMineV3Template) external onlyOwner {
         _MINEV3_TEMPLATE_ = _newMineV3Template;
+        emit ChangeMineV3Template(_newMineV3Template);
     }
 }
