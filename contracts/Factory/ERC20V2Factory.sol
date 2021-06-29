@@ -47,10 +47,15 @@ contract ERC20V2Factory is InitializableOwnable {
     address public immutable _CLONE_FACTORY_;
     address public _ERC20_TEMPLATE_;
     address public _CUSTOM_ERC20_TEMPLATE_;
+    uint256 public _CREATE_FEE_;
 
     // ============ Events ============
     // 0 Std 1 TradeBurn or TradeFee 2 Mintable
     event NewERC20(address erc20, address creator, uint256 erc20Type);
+    event ChangeCreateFee(uint256 newFee);
+    event Withdraw(address account, uint256 amount);
+    event ChangeStdTemplate(address newStdTemplate);
+    event ChangeCustomTemplate(address newCustomTemplate);
 
     // ============ Registry ============
     // creator -> token address list
@@ -58,6 +63,10 @@ contract ERC20V2Factory is InitializableOwnable {
     mapping(address => address[]) public _USER_CUSTOM_REGISTRY_;
 
     // ============ Functions ============
+
+    fallback() external payable {}
+
+    receive() external payable {}
 
     constructor(
         address cloneFactory,
@@ -74,7 +83,8 @@ contract ERC20V2Factory is InitializableOwnable {
         string memory name,
         string memory symbol,
         uint8 decimals
-    ) external returns (address newERC20) {
+    ) external payable returns (address newERC20) {
+        require(msg.value >= _CREATE_FEE_, "CREATE_FEE_NOT_ENOUGH");
         newERC20 = ICloneFactory(_CLONE_FACTORY_).clone(_ERC20_TEMPLATE_);
         IStdERC20(newERC20).init(msg.sender, totalSupply, name, symbol, decimals);
         _USER_STD_REGISTRY_[msg.sender].push(newERC20);
@@ -90,7 +100,8 @@ contract ERC20V2Factory is InitializableOwnable {
         uint256 tradeFeeRatio,
         address teamAccount,
         bool isMintable
-    ) external returns (address newCustomERC20) {
+    ) external payable returns (address newCustomERC20) {
+        require(msg.value >= _CREATE_FEE_, "CREATE_FEE_NOT_ENOUGH");
         newCustomERC20 = ICloneFactory(_CLONE_FACTORY_).clone(_CUSTOM_ERC20_TEMPLATE_);
 
         ICustomERC20(newCustomERC20).init(
@@ -120,5 +131,27 @@ contract ERC20V2Factory is InitializableOwnable {
         returns (address[] memory stds,address[] memory customs)
     {
         return (_USER_STD_REGISTRY_[user], _USER_CUSTOM_REGISTRY_[user]);
+    }
+
+    // ============ Ownable =============
+    function changeCreateFee(uint256 newFee) external onlyOwner {
+        _CREATE_FEE_ = newFee;
+        emit ChangeCreateFee(newFee);
+    }
+
+    function withdraw() external onlyOwner {
+        uint256 amount = address(this).balance;
+        msg.sender.transfer(amount);
+        emit Withdraw(msg.sender, amount);
+    }
+
+    function updateStdTemplate(address newStdTemplate) external onlyOwner {
+        _ERC20_TEMPLATE_ = newStdTemplate;
+        emit ChangeStdTemplate(newStdTemplate);
+    }
+
+    function updateCustomTemplate(address newCustomTemplate) external onlyOwner {
+        _CUSTOM_ERC20_TEMPLATE_ = newCustomTemplate;
+        emit ChangeCustomTemplate(newCustomTemplate);
     }
 }

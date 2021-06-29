@@ -3,7 +3,7 @@ module.exports = {
         //TOKEN
         WETH: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
         CHI: "0x0000000000000000000000000000000000000000",
-        DODO: "",
+        DODO: "0x69Eb4FA4a2fbd498C257C57Ea8b7655a2559A581",
 
         //Helper
         DODOSellHelper: "0x18AA6Bb215CDBd179E7beAE10F66C21B26971306",
@@ -23,6 +23,7 @@ module.exports = {
         CP: "0x8F8Dd7DB1bDA5eD3da8C9daf3bfa471c12d58486",
         ERC20: "0xC3528D128CC227fd60793007b5e3FdF7c2945282",
         MintableERC20: "0x70eFB31271C0796833f80dA4E6538d05B2AFA72C",
+        CustomERC20: "",
 
         //Factory
         DVMFactory: "0xb0C7cB15b52b0093130487209e96CFeC0Ba4Ff66",
@@ -31,6 +32,7 @@ module.exports = {
         UpCpFactory: "0x69f52AC40185A2A005D49114F0B77b7bA856F0a0",
         CrowdPoolingFactory: "0x884E3EE9e25896c57E7d8d6FAACef22B02BCD6bE",
         ERC20Factory: "0x141b4497a298340E8B451ac4eeE947B00aDbe07A",
+        ERC20V2Factory: "",
 
         //Approve
         DODOApprove: "0xCDFD45f965De9932367833Ca7187e4c9C43A2380",

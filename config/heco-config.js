@@ -22,6 +22,7 @@ module.exports = {
         CP: "0x5B67cF070ce4303Ff4d450f21Cc371F9f0549335",
         ERC20: "0x62e1622a47c9fe74b2cf0bade5ecb8669ff9bfbf",
         MintableERC20: "0xdd9de5ed7a11b1ed3314cd7f754f27a15dedc63f",
+        CustomERC20: "",
 
         //Factory
         DVMFactory: "0xd8c77CF0F01222b07B8343A681C46eFA3faEa985",
@@ -30,6 +31,7 @@ module.exports = {
         UpCpFactory: "0xF7c3467786efAA9BD4022941ecd5a00C61b17FA9",
         CrowdPoolingFactory: "0x56133d0b63abf7A15D5697dD2dB9e04730f1A9C2",
         ERC20Factory: "0x2cCDF6F742afBe813B68Ec6bb421C1BEa74fBd46",
+        ERC20V2Factory: "",
 
         //Approve
         DODOApprove: "0x68b6c06Ac8Aa359868393724d25D871921E97293",
