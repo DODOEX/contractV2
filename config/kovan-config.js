@@ -23,7 +23,6 @@ module.exports = {
         ERC20: "0x4DdcDcCe3BCDD84c8E15d50Bd9384c25B3Ca9eff",
         MintableERC20: "",
         CustomERC20: "0xFC8fb4CD3A77F138E53F92F5EC483e9887508CCe",
-
         //Factory
         DVMFactory: "0x322F8014C125Da09314d3a68d4d9F427823F17FD",
         DPPFactory: "0xC65F8087288aa0a118aa6F3228Ef9ecc8187F4b6",

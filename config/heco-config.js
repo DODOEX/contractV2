@@ -32,7 +32,6 @@ module.exports = {
         CrowdPoolingFactory: "0x56133d0b63abf7A15D5697dD2dB9e04730f1A9C2",
         ERC20Factory: "0x2cCDF6F742afBe813B68Ec6bb421C1BEa74fBd46",
         ERC20V2Factory: "0x1297264617bd34270B77c2fFD3aA110D3fd2f7aF",
-
         //Approve
         DODOApprove: "0x68b6c06Ac8Aa359868393724d25D871921E97293",
         DODOApproveProxy: "0x91737709De4b2eDEE3a2B78A84e21a60C0b4D70b",
