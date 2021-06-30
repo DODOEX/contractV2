@@ -54,6 +54,8 @@ contract DODODrops is InitializableMintableERC20, ReentrancyGuard {
     uint256 public _REVEAL_RN_ = 0; 
     address public _RNG_;
 
+    bool public _CAN_TRANSFER_;
+
     fallback() external payable {}
 
     receive() external payable {}
@@ -62,6 +64,11 @@ contract DODODrops is InitializableMintableERC20, ReentrancyGuard {
 
     modifier notStart() {
         require(block.timestamp < _SELLING_TIME_INTERVAL_[0] || _SELLING_TIME_INTERVAL_[0]  == 0, "ALREADY_START");
+        _;
+    }
+
+    modifier canTransfer() {
+        require(_CAN_TRANSFER_, "DropsTickets: not allowed transfer");
         _;
     }
 
@@ -79,6 +86,8 @@ contract DODODrops is InitializableMintableERC20, ReentrancyGuard {
     event SetProbInfo(); // only for ProbMode
     event SetTokenIdMapByIndex(uint256 index); // only for ProbMode
     event SetFixedAmountInfo(); // only for FixedAmount mode
+
+    event SetCantransfer(bool allowed);
 
 
     function init(
@@ -217,7 +226,28 @@ contract DODODrops is InitializableMintableERC20, ReentrancyGuard {
         emit SetFixedAmountInfo();
     }
 
+
+    function approve(address spender, uint256 amount) canTransfer public override returns (bool) {
+        return super.approve(spender, amount);
+    }
+
+    function transferFrom(
+        address from,
+        address to,
+        uint256 amount
+    ) canTransfer public override returns (bool) {
+        return super.transferFrom(from, to, amount);
+    }
+
+    function transfer(address to, uint256 amount) canTransfer public override returns (bool) {
+        return super.transfer(to, amount);
+    }
+
     // ================= Owner ===================
+    function setCantransfer(bool allowed) public onlyOwner {
+        _CAN_TRANSFER_ = allowed;
+        emit SetCantransfer(allowed);
+    }
 
     function withdraw() external onlyOwner {
         uint256 amount = IERC20(_BUY_TOKEN_).universalBalanceOf(address(this));
@@ -227,6 +257,7 @@ contract DODODrops is InitializableMintableERC20, ReentrancyGuard {
 
     function setRevealRn() external onlyOwner {
         require(_REVEAL_RN_ == 0, "ALREADY_SET");
+        require(!_CAN_TRANSFER_, "NEED_CLOSE_TRANSFER");
         _REVEAL_RN_ = uint256(keccak256(abi.encodePacked(blockhash(block.number - 1))));
         emit SetReveal();
     }

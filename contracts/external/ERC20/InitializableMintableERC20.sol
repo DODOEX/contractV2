@@ -42,7 +42,7 @@ contract InitializableMintableERC20 is InitializableOwnable {
         emit Transfer(address(0), _creator, _initSupply);
     }
 
-    function transfer(address to, uint256 amount) public returns (bool) {
+    function transfer(address to, uint256 amount) public virtual returns (bool) {
         require(to != address(0), "TO_ADDRESS_IS_EMPTY");
         require(amount <= balances[msg.sender], "BALANCE_NOT_ENOUGH");
 
@@ -60,7 +60,7 @@ contract InitializableMintableERC20 is InitializableOwnable {
         address from,
         address to,
         uint256 amount
-    ) public returns (bool) {
+    ) public virtual returns (bool) {
         require(to != address(0), "TO_ADDRESS_IS_EMPTY");
         require(amount <= balances[from], "BALANCE_NOT_ENOUGH");
         require(amount <= allowed[from][msg.sender], "ALLOWANCE_NOT_ENOUGH");
@@ -72,7 +72,7 @@ contract InitializableMintableERC20 is InitializableOwnable {
         return true;
     }
 
-    function approve(address spender, uint256 amount) public returns (bool) {
+    function approve(address spender, uint256 amount) public virtual returns (bool) {
         allowed[msg.sender][spender] = amount;
         emit Approval(msg.sender, spender, amount);
         return true;
