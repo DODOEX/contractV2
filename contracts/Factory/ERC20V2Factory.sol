@@ -17,7 +17,7 @@ interface IStdERC20 {
         uint256 _totalSupply,
         string memory _name,
         string memory _symbol,
-        uint256 _decimals
+        uint8 _decimals
     ) external;
 }
 
@@ -27,7 +27,7 @@ interface ICustomERC20 {
         uint256 _initSupply,
         string memory _name,
         string memory _symbol,
-        uint256 _decimals,
+        uint8 _decimals,
         uint256 _tradeBurnRatio,
         uint256 _tradeFeeRatio,
         address _team,

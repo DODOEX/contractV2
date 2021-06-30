@@ -515,3 +515,19 @@ Deploy type: ERC20V2Factory
 CustomERC20Address:  0x3a0e0F2EDFC0e96BD700815f953Bcb6d8a6FF0AB
 ERC20V2FactoryAddress:  0xce4Bdc3151bF9F9dcADAED961a65D32f7bAC5460
 Init ERC20V2Factory Tx: 0x5c03786d3e12b5c9532429f83c548a892c2d1ec613a44db81a9595e3bf017490
+====================================================
+network type: kovan
+Deploy time: 2021/6/30 下午4:16:43
+Deploy type: ERC20V2Factory
+ERC20Address:  0x4DdcDcCe3BCDD84c8E15d50Bd9384c25B3Ca9eff
+CustomERC20Address:  0xFC8fb4CD3A77F138E53F92F5EC483e9887508CCe
+ERC20V2FactoryAddress:  0xa2c1eA946dA567248c70F792b64D5F2551f29204
+Init ERC20V2Factory Tx: 0xea9b31add78c4d926733697abec3051133ad0a13dee7c8ef02938f675e4e9dbd
+====================================================
+network type: rinkeby
+Deploy time: 2021/6/30 下午4:19:52
+Deploy type: ERC20V2Factory
+====================================================
+network type: rinkeby
+Deploy time: 2021/6/30 下午4:32:54
+Deploy type: ERC20V2Factory
