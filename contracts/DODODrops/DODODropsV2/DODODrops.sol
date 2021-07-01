@@ -67,6 +67,11 @@ contract DODODrops is InitializableMintableERC20, ReentrancyGuard {
         _;
     }
 
+    modifier buyTicketsFinish() {
+        require(block.timestamp > _SELLING_TIME_INTERVAL_[_SELLING_TIME_INTERVAL_.length - 1] && _SELLING_TIME_INTERVAL_[0]  != 0, "BUY_TICKETS_NOT_FINISH");
+        _;
+    }
+
     modifier canTransfer() {
         require(_CAN_TRANSFER_, "DropsTickets: not allowed transfer");
         _;
@@ -197,6 +202,10 @@ contract DODODrops is InitializableMintableERC20, ReentrancyGuard {
             require(sellingTimeIntervals[i] < sellingTimeIntervals[i + 1], "INTERVAL_INVALID");
             require(sellingPrice[i] != 0, "PRICE_INVALID");
         }
+        if(_IS_REVEAL_MODE_) {
+            require(sellingAmount[sellingTimeIntervals.length - 1] == 0, "AMOUNT_INVALID");
+            require(sellingPrice[sellingTimeIntervals.length - 1] == 0, "PRICE_INVALID");
+        }
         _SELLING_TIME_INTERVAL_ = sellingTimeIntervals;
         _SELLING_PRICE_SET_ = sellingPrice;
         _SELLING_AMOUNT_SET_ = sellingAmount;
@@ -255,7 +264,7 @@ contract DODODrops is InitializableMintableERC20, ReentrancyGuard {
         emit Withdraw(msg.sender, amount);
     }
 
-    function setRevealRn() external onlyOwner {
+    function setRevealRn() buyTicketsFinish external onlyOwner {
         require(_REVEAL_RN_ == 0, "ALREADY_SET");
         require(!_CAN_TRANSFER_, "NEED_CLOSE_TRANSFER");
         _REVEAL_RN_ = uint256(keccak256(abi.encodePacked(blockhash(block.number - 1))));
