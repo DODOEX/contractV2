@@ -106,7 +106,7 @@ module.exports = {
         return new HDWalletProvider(privKey, "https://mainnet.infura.io/v3/" + infuraId);
       },
       gas: 6000000,
-      gasPrice: 25000000000,
+      gasPrice: 18000000000,
       network_id: 1,
       skipDryRun: true
     },
@@ -126,7 +126,7 @@ module.exports = {
       provider: function () {
         return new HDWalletProvider(privKey, "https://http-mainnet.hecochain.com");
       },
-      gasPrice: 1000000000,
+      gasPrice: 3000000000,
       network_id: 128
     },
 
@@ -177,13 +177,15 @@ module.exports = {
     },
 
     matic: {
+      networkCheckTimeout: 1000000,
       provider: () => {
-        return new HDWalletProvider(privKey, 'https://rpc-mainnet.matic.network')
+        return new HDWalletProvider(privKey, 'https://polygon-mainnet.infura.io/v3/' + infuraId)
       },
-      network_id: '137',
-      gasPrice: 2000000000,
-      confirmations: 2,
-      timeoutBlocks: 200,
+      network_id: 137,
+      gas: 6000000,
+      gasPrice: 3000000000,
+      // confirmations: 2,
+      // timeoutBlocks: 200,
       skipDryRun: true
     },
 

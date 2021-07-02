@@ -531,3 +531,35 @@ Deploy type: ERC20V2Factory
 network type: rinkeby
 Deploy time: 2021/6/30 下午4:32:54
 Deploy type: ERC20V2Factory
+====================================================
+network type: bsclive
+Deploy time: 2021/7/1 下午12:24:28
+Deploy type: ERC20V2Factory
+ERC20Address:  0x99155E68aC1523B6f461F6427A90607ecCF7bDF5
+CustomERC20Address:  0x4777A6f28c8Bb260D9a945dddeFabB942aE10f1f
+ERC20V2FactoryAddress:  0x652C09785c15db4adAce871eD8874b8968A19A4D
+Init ERC20V2Factory Tx: 0x48d9f612f6d30fef0b3a00900a93b6c046bffa012a2feb12e5a8850b29fbd777
+====================================================
+network type: matic
+Deploy time: 2021/7/1 下午1:07:14
+Deploy type: ERC20V2Factory
+====================================================
+network type: live
+Deploy time: 2021/7/1 下午1:14:05
+Deploy type: ERC20V2Factory
+ERC20Address:  0x8443a5bD91C8f68582F90dD3354f750900C5E8Cc
+CustomERC20Address:  0x9Cd85f012050FE030271dCB7c0a0C1e2043Ce4a9
+ERC20V2FactoryAddress:  0xAA810cd0363d3378F0a13e327EC2Aee7051aDa73
+Init ERC20V2Factory Tx: 0x33cbdea04ff59f06e52aa100383a5222798e9ccc269407474d05fbcfea4a13bb
+====================================================
+network type: heco
+Deploy time: 2021/7/1 下午1:21:21
+Deploy type: ERC20V2Factory
+====================================================
+network type: heco
+Deploy time: 2021/7/1 下午1:23:07
+Deploy type: ERC20V2Factory
+ERC20Address:  0x2870fB656C7D245dc74afbA34B0d453FA67Ce4fA
+CustomERC20Address:  0x2cE80F95eD3d2a76694896843F18413ae83baF40
+ERC20V2FactoryAddress:  0x1297264617bd34270B77c2fFD3aA110D3fd2f7aF
+Init ERC20V2Factory Tx: 0x0b056fb56d6982dcc0f38b3a4b4a4fddc4d4d83fd1fa876db5121076013bafa8
