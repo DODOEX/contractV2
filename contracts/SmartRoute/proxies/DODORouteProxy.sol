@@ -195,6 +195,8 @@ contract DODORouteProxy {
 
                 if(assetFrom[i-1] == address(this)) {
                     uint256 curAmount = curTotalAmount.div(curTotalWeight).mul(curPoolInfo.weight);
+                    //can improved
+                    // uint256 curAmount = curTotalAmount.mul(curPoolInfo.weight).div(curTotalWeight);
             
                     if(curPoolInfo.poolEdition == 1) {   
                         //For using transferFrom pool (like dodoV1, Curve)

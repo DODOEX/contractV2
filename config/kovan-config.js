@@ -20,9 +20,9 @@ module.exports = {
         DSP: "0xAD4E649c1771F5175081c2CcAC183fDb91cfCd6c",
         DPPAdmin: "0xf63e41A459D9AEcaE4bAE1278ef0ae84F7F2DE56",
         CP: "0x6092eFEf82CaDcd07f3a545cBe6C83dae713aE0A",
-        ERC20: "0x77d2e257241e6971688b08bda9f658f065d7bb41",
-        MintableERC20: "0xa45a64daba80757432fa4d654df12f65f020c13c",
-
+        ERC20: "0x4DdcDcCe3BCDD84c8E15d50Bd9384c25B3Ca9eff",
+        MintableERC20: "",
+        CustomERC20: "0xFC8fb4CD3A77F138E53F92F5EC483e9887508CCe",
         //Factory
         DVMFactory: "0x322F8014C125Da09314d3a68d4d9F427823F17FD",
         DPPFactory: "0xC65F8087288aa0a118aa6F3228Ef9ecc8187F4b6",
@@ -30,6 +30,7 @@ module.exports = {
         CrowdPoolingFactory: "0x9e6E8985D52E91eDf1671f28Ca73bc4F3E219b72",
         UpCpFactory: "0x25AE560522165eacCFbF2287493AF12B8ad718e7",
         ERC20Factory: "0xCb1A2f64EfB02803276BFB5a8D511C4D950282a0",
+        ERC20V2Factory: "0xa2c1eA946dA567248c70F792b64D5F2551f29204",
 
         //Approve
         DODOApprove: "0xa375b128e139ae54EF7F189BC8fEb4624f1c2Afa",

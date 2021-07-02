@@ -27,6 +27,9 @@ const DODOV2RouteHelper = artifacts.require("DODOV2RouteHelper");
 
 const ERC20Mine = artifacts.require("ERC20Mine");
 const vDODOMine = artifacts.require("vDODOMine");
+const ERC20V2Factory = artifacts.require("ERC20V2Factory");
+const ERC20 = artifacts.require("InitializableERC20");
+const CustomERC20 = artifacts.require("CustomERC20");
 
 const CurveAdapter = artifacts.require("CurveUnderlyingAdapter");
 
@@ -44,7 +47,7 @@ module.exports = async (deployer, network, accounts) => {
     let DppFactoryAddress = CONFIG.DPPFactory;
     let UpCpFactoryAddress = CONFIG.UpCpFactory;
     let CpFactoryAddress = CONFIG.CrowdPoolingFactory;
-
+    let ERC20V2FactoryAddress = CONFIG.ERC20V2Factory;
 
     let DODOCirculationHelperAddress = CONFIG.DODOCirculationHelper;
     let GovernanceAddress = CONFIG.Governance;
@@ -56,9 +59,46 @@ module.exports = async (deployer, network, accounts) => {
     let DefaultPermissionAddress = CONFIG.PermissionManager;
     let CpTemplateAddress = CONFIG.CP;
     let DvmTemplateAddress = CONFIG.DVM;
+    let CustomERC20Address = CONFIG.CustomERC20;
+    let ERC20Address = CONFIG.ERC20;
 
     let multiSigAddress = CONFIG.multiSigAddress;
     let defaultMaintainer = CONFIG.defaultMaintainer;
+
+    if (deploySwitch.ERC20V2Factory) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
+        logger.log("Deploy type: ERC20V2Factory");
+
+        if (ERC20Address == "") {
+            await deployer.deploy(ERC20);
+            ERC20Address = ERC20.address;
+            logger.log("ERC20Address: ", ERC20Address);
+        }
+        if (CustomERC20Address == "") {
+            await deployer.deploy(CustomERC20);
+            CustomERC20Address = CustomERC20.address;
+            logger.log("CustomERC20Address: ", CustomERC20Address);
+        }
+
+        if (ERC20V2FactoryAddress == "") {
+            await deployer.deploy(
+                ERC20V2Factory,
+                CloneFactoryAddress,
+                ERC20Address,
+                CustomERC20Address
+            );
+            ERC20V2FactoryAddress = ERC20V2Factory.address;
+            logger.log("ERC20V2FactoryAddress: ", ERC20V2FactoryAddress);
+            
+            const erc20V2FactoryInstance = await ERC20V2Factory.at(ERC20V2FactoryAddress);
+            var tx = await erc20V2FactoryInstance.initOwner(multiSigAddress);
+            logger.log("Init ERC20V2Factory Tx:", tx.tx);
+        }
+
+    }
+
 
     if (deploySwitch.ERC20Mine) {
         logger.log("====================================================");

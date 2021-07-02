@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2020 DODO ZOO.
+    Copyright 2021 DODO ZOO.
     SPDX-License-Identifier: Apache-2.0
 
 */
@@ -8,17 +8,17 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {IDPP} from "../intf/IDPP.sol";
-import {IDODOApproveProxy} from "../../SmartRoute/DODOApproveProxy.sol";
-import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
+import {IDPPOracle} from "../../intf/IDPPOracle.sol";
+import {IDODOApproveProxy} from "../../../SmartRoute/DODOApproveProxy.sol";
+import {InitializableOwnable} from "../../../lib/InitializableOwnable.sol";
 
 /**
- * @title DPPAdmin
+ * @title DPPOracleAdmin
  * @author DODO Breeder
  *
- * @notice Admin of Advanced DODOPrivatePool
+ * @notice Admin of Oracle DODOPrivatePool
  */
-contract DPPAdvancedAdmin is InitializableOwnable {
+contract DPPOracleAdmin is InitializableOwnable {
     address public _DPP_;
     address public _OPERATOR_;
     address public _DODO_APPROVE_PROXY_;
@@ -43,7 +43,7 @@ contract DPPAdvancedAdmin is InitializableOwnable {
     }
 
     function sync() external notFreezed onlyOwner {
-        IDPP(_DPP_).ratioSync();
+        IDPPOracle(_DPP_).ratioSync();
     }
 
     function setFreezeTimestamp(uint256 timestamp) external notFreezed onlyOwner {
@@ -59,13 +59,12 @@ contract DPPAdvancedAdmin is InitializableOwnable {
         address token,
         uint256 amount
     ) external notFreezed onlyOwner {
-        IDPP(_DPP_).retrieve(to, token, amount);
+        IDPPOracle(_DPP_).retrieve(to, token, amount);
     }
 
     function tuneParameters(
         address operator,
         uint256 newLpFeeRate,
-        uint256 newI,
         uint256 newK,
         uint256 minBaseReserve,
         uint256 minQuoteReserve
@@ -74,42 +73,21 @@ contract DPPAdvancedAdmin is InitializableOwnable {
             msg.sender == _OWNER_ ||
                 (IDODOApproveProxy(_DODO_APPROVE_PROXY_).isAllowedProxy(msg.sender) &&
                     operator == _OPERATOR_),
-            "TUNEPARAMS FORBIDDEN！"
+            "TUNEPARAMS FORBIDDEN!"
         );
         return
-            IDPP(_DPP_).tuneParameters(
+            IDPPOracle(_DPP_).tuneParameters(
                 newLpFeeRate,
-                newI,
                 newK,
                 minBaseReserve,
                 minQuoteReserve
             );
     }
 
-    function tunePrice(
-        address operator,
-        uint256 newI,
-        uint256 minBaseReserve,
-        uint256 minQuoteReserve
-    ) external notFreezed returns (bool) {
-        require(
-            msg.sender == _OWNER_ ||
-                (IDODOApproveProxy(_DODO_APPROVE_PROXY_).isAllowedProxy(msg.sender) &&
-                    operator == _OPERATOR_),
-            "TUNEPRICE FORBIDDEN！"
-        );
-        return
-            IDPP(_DPP_).tunePrice(
-                newI,
-                minBaseReserve,
-                minQuoteReserve
-            );
-    }
 
     function reset(
         address operator,
         uint256 newLpFeeRate,
-        uint256 newI,
         uint256 newK,
         uint256 baseOutAmount,
         uint256 quoteOutAmount,
@@ -123,10 +101,9 @@ contract DPPAdvancedAdmin is InitializableOwnable {
             "RESET FORBIDDEN！"
         );
         return
-            IDPP(_DPP_).reset(
-                msg.sender,
+            IDPPOracle(_DPP_).reset(
+                _OWNER_, //only support asset transfer out to owner
                 newLpFeeRate,
-                newI,
                 newK,
                 baseOutAmount,
                 quoteOutAmount,
@@ -138,6 +115,6 @@ contract DPPAdvancedAdmin is InitializableOwnable {
     // ============ Admin Version Control ============
 
     function version() external pure returns (string memory) {
-        return "DPPAdvanced Admin 1.0.0"; // 1.0.0
+        return "DPPOracle Admin 1.0.0"; // 1.0.0
     }
 }
