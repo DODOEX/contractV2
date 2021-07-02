@@ -12,6 +12,12 @@ lint/
 script/
 flattered/
 
+deploy-detail-v2.0.txt
+deploy-detail-periphery.txt
+deploy-drops.txt
+deploy-nft.txt
+kovan-mock-v2.0.txt
+
 # VIM
 *.swo
 *.swp
