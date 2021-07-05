@@ -1,0 +1,618 @@
+====================================================
+network type: bsclive
+Deploy time: 2021/2/4 下午4:56:38
+Deploy type: DODOBscToken
+DODOBscTokenAddress:  0x67ee3Cb086F8a16f34beE3ca72FAD36F7Db929e2
+Init DODOBscTokenAddress Tx: 0xf66264c2669f904527de63fab104250275247c014bfb6f42f57441997551cef6
+====================================================
+network type: kovan
+Deploy time: 2021/2/4 下午6:12:05
+Deploy type: vDODOToken
+vDODOTokenAddress:  0x2cF0B8F94361c52f23c1bBC0d2F213Ea5cD61397
+Init vDODOTokenAddress Tx: 0xed856ab816302df0575dc05910246d37ff4f239bf3c75f6969560df5d725fcf0
+DODOCirculationHelperAddress:  0x0bfb5Beb854e3104f47C1Cb057DEEB90CB7B9464
+Init DODOCirculationHelperAddress Tx: 0x8b2d1b9d3455db665f7ac06b465f1bfc2e0ccddb0aa5cd4bca72bc9c7b69b2d9
+vDODOToken changeReward tx:  0x8ed4b35edff17b8ef9480b9c40b7673cf7a50088afb9fb7c7fe50d439930c4cf
+vDODOToken setDODOCirculationHelper tx:  0x402a9d1abd299ac8df019cff5d6f79e49b82cae34b356a0f1e0afdb47d7bd811
+====================================================
+network type: live
+Deploy time: 2021/2/8 下午3:08:35
+Deploy type: DODOMigrationBSC
+DODOMigrationBSCAddress:  0xb159260989012fA98af560A3Fa6D9cd11a64cf6E
+Init DODOMigrationBSCAddress Tx: 0x5e825f52f1eae7f251acd5f36281dcbcd8a7520c3d271aad4907fbbf586da392
+====================================================
+network type: live
+Deploy time: 2021/2/8 下午3:27:50
+Deploy type: DODOMigrationBSC
+DODOMigrationBSCAddress:  0x958f79e2998DFe417208b9A07D799265B0298e58
+Init DODOMigrationBSCAddress Tx: 0x9b9ed65c536b5b53d83b811a754383d48cae00e4e5c80bee74f755c30a9c0748
+====================================================
+network type: kovan
+Deploy time: 2021/2/9 下午10:43:23
+Deploy type: vDODOToken
+vDODOTokenAddress:  0x8e565B96C3B6BB36363183f5D43D667927164e91
+Init vDODOTokenAddress Tx: 0x14ed266c46601e4ac34918dd09219551825cf53b87746f39b2b5967a86f35291
+DODOCirculationHelperAddress:  0xC4d70FdD0310BcAcA8a6eC85e66e95576CB096E4
+Init DODOCirculationHelperAddress Tx: 0xfe3a2e2373f5c3e4a1edf9c508fe6e7065718a93c3d2dc088605ef005eeffa10
+vDODOToken setDODOCirculationHelper tx:  0xb8081353a0ce44b7158419992ab8f1c0e2ce9ed74f37299682ca98a29c8d38d1
+====================================================
+network type: kovan
+Deploy time: 2021/2/9 下午10:51:22
+Deploy type: vDODOToken
+DODOApproveProxy Unlock tx:  0x898ee9683fd23561eacc2c7997a1fbc8784ce71e98d726a99653498f3b8ca978
+DODOApproveProxy add tx:  0xc9b63fc733fef275c5d4ded72d63c6b5c16d529f3be9d8d053446b8f850bbc9a
+vDODOToken first mint tx:  0x8bf4e65fb02588e8f806f33c813424b10d16c2c5756f05faba92de3d94a4b5fc
+vDODOToken injected dodo tx:  0x146f5a4446ff3427e87f3e64b7953f139b5effcf92036bdb880be280bf03fa2d
+vDODOToken changeReward tx:  0x913602870c7d25fedc7f21eb9314b7329db032c5141dc3ed432f1d9661a19804
+====================================================
+network type: live
+Deploy time: 2021/2/9 下午11:22:45
+Deploy type: DODOMigrationBSC
+DODOMigrationBSCAddress:  0x02fCB21dc1cf221939C1d4277fB54016b5d32bC7
+====================================================
+network type: kovan
+Deploy time: 2021/2/13 下午12:25:51
+Deploy type: vDODOToken
+vDODOTokenAddress:  0x188A86C23c596C8b907b227C1DB34EfE769e5c0b
+Init vDODOTokenAddress Tx: 0x203c468d95005fe957e0ee22717b1a098a893be916dc18926de98f8d752832e3
+DODOCirculationHelperAddress:  0xbF5B98D74B249B86a2f1099D34CF568e2b5EB5b6
+Init DODOCirculationHelperAddress Tx: 0xfc46968cf93ff5324b70ca838e66ab5a4b95a2477a352f30e5e92f02d2cbce4a
+vDODOToken setDODOCirculationHelper tx:  0x47216bde498446ee2ed3e4e534c8814ad1e919e4c86f95d5ac619cbf1c1529aa
+DODOApproveProxy Unlock tx:  0xac285c252c052144c80722ca67b9e765280f2c45b8e4ff73282fabe26158aba6
+DODOApproveProxy add tx:  0x0a9174ac009af95a3273ad3a3a961e997aef48d5c3d2537e0389dd48619f1d06
+vDODOToken first mint tx:  0x600c5714df725a86725b36a01c3bf5cfc60853f02b7f7214ca9d80c98eb9e72d
+vDODOToken injected dodo tx:  0xf2415de9bafeef0d80afe990b5e36a0ebcd339d6cd604d6388fd72e4f01e0de7
+vDODOToken changeReward tx:  0x80c01b5e630acdccc2a96f97d884e207488ee64a18cdfcb4566820473ffe3a1f
+====================================================
+network type: live
+Deploy time: 2021/2/13 下午9:54:02
+Deploy type: vDODOToken
+vDODOTokenAddress:  0xc4436fBAE6eBa5d95bf7d53Ae515F8A707Bd402A
+Init vDODOTokenAddress Tx: 0x89392c1bd215fff0d5da44e27c0d0d2099a97788a28d371fa55d19af74895d9a
+DODOCirculationHelperAddress:  0x53233ABD9108761258a4B6B7822abFD6716B129B
+Init DODOCirculationHelperAddress Tx: 0xc26313165161badec354d39c999a85223965df186246b8ea37182eae894e7442
+====================================================
+network type: bsclive
+Deploy time: 2021/2/13 下午10:20:21
+Deploy type: DODORecharge
+DODORechargeAddress:  0x61b21603A527b487C4a3A80a69224b87751D0F6a
+Init DODORechargeAddress Tx: 0x47bc2d2f46aac266ecf7c7743cc935fa06cf862e26463a9a8c1ebe91cee47611
+====================================================
+network type: bsclive
+Deploy time: 2021/2/13 下午10:24:52
+Deploy type: DODORecharge
+DODORechargeAddress:  0xF7c5311B618E6dFBBc34210c92D2C9675D7EdDCA
+Init DODORechargeAddress Tx: 0xc22cdde8436f28ae2343ebcd628091104545a60c6550a2cedf47344c5b337b09
+====================================================
+network type: kovan
+Deploy time: 2021/2/14 上午10:48:21
+Deploy type: vDODOToken
+vDODOTokenAddress:  0xf7119Bf8bE41Dd9080Bd0A9AB04788B5EcA140d5
+Init vDODOTokenAddress Tx: 0xc12344a7e49744698ae1be542583105e63330131f6392e53b0e9e183068bd573
+DODOCirculationHelperAddress:  0x41D3841c63C6D7d8Db2A06Dca895084DaB8F176a
+Init DODOCirculationHelperAddress Tx: 0x0e6e7126a1b28d11eb4a42e2786e7a8ce64b8fb47059766f592efb4fc4b13a5d
+vDODOToken setDODOCirculationHelper tx:  0x63149745bd5043ae8f6540bd7c99d870258f8640bb6237200bcbc767aaf1ae73
+DODOApproveProxy Unlock tx:  0x9131d3d3ad49a464b228ba617b2673fcad28d7f5598cd28de35e384d3ec226bc
+DODOApproveProxy add tx:  0xbfe3caf75502ac8d0ed7f02c42c14607734dd19bcc077b0859bcd26c56936b3e
+vDODOToken first mint tx:  0x4c9ad5eab14d664c1bb5c570856694c0d3612846debbd4731b5085232c3bf0de
+vDODOToken injected dodo tx:  0x39cea7a3064b40d19575d5f8908bdb99a360d6a7098b8e197d7226ee562d9b03
+vDODOToken changeReward tx:  0x6a0cb6f9cd115d9f14627ec8bbaad513e1ef03ca5dfc2bacf81ff9a87013490c
+====================================================
+network type: kovan
+Deploy time: 2021/2/15 下午4:54:48
+Deploy type: DODOMigrationBSC
+DODOMigrationBSCAddress:  0xA1191eED438A9C10D478698848E460F0c7528351
+Init DODOMigrationBSCAddress Tx: 0x7ddbbb24711e7577adf93982ad84d6b356ceee7bc53842991898226ee18021df
+DODOApproveProxy Unlock tx:  0x1a45a960f65acb7f63351e16a880ca0242e4d4994105755c74e6dd009e7c1740
+DODOApproveProxy add tx:  0x9315b57c5aca05b3e56fcb5a8b892c787639785fbb1b8e0a5892f063a41be740
+====================================================
+network type: kovan
+Deploy time: 2021/2/15 下午5:10:17
+Deploy type: vDODOToken
+DODOCirculationHelperAddress:  0x77e43757e0a43dAd8a909e1839930430e8B0Ffc9
+Init DODOCirculationHelperAddress Tx: 0xe78086b4c3bd34e44e9a6615d3c8af0db88ca77cc0533aac6022bc74c642664b
+vDODOToken setDODOCirculationHelper tx:  0xfe99a4ef2d15ab37645e7c50d62d36c4d17b20f955ba7aed007cae1a6ed9456a
+====================================================
+network type: live
+Deploy time: 2021/2/15 下午5:15:38
+Deploy type: vDODOToken
+DODOCirculationHelperAddress:  0x357c5E9cfA8B834EDcef7C7aAbD8F9Db09119d11
+Init DODOCirculationHelperAddress Tx: 0x011ff39955bbc878e0bb4c70fe349801fcd79de4fa8f8cb3b642a9db64c1f3bb
+====================================================
+network type: kovan
+Deploy time: 2021/2/16 下午10:23:21
+Deploy type: DODOMine
+DODOMineAddress:  0xc4023f2A71c03cc64d985691b019bEE68f48c108
+Add DODO Tx: 0x0cbcaff85dcd3ce32ebea5b596bbb1b74affa6112a845403cc0c73a808cf2ebd
+Set blockReward Tx: 0xd8d2bc6a4c0efb94294836b6ed35546d853ef1480c16b9ef1c18902d194cc679
+====================================================
+network type: bsclive
+Deploy time: 2021/2/19 下午12:38:10
+Deploy type: DODOMine
+DODOMineAddress:  0x01f9BfAC04E6184e90bD7eaFD51999CE430Cc750
+Add DODO Tx: 0x8d3491ce942c125d2c0541f5eb1d784e7ab6960a0218b9bd94dcbe23c7457f65
+Set blockReward Tx: 0x2ad01291228653755cd000acd27b5283e5cefe7f7741a4f5934474ab2b0e69db
+====================================================
+network type: bsclive
+Deploy time: 2021/3/1 下午9:36:19
+Deploy type: FeeRateImpl
+FeeRateImplAddress:  0x2b0d94Eb7A63B8a2909dE1CB3951ecF7Ae76D2fE
+Init feeRateImpl Tx: 0xa068d42bf27fceebee49b4e16209190c37f06b898caf5fe5fc89e791a432a285
+====================================================
+network type: live
+Deploy time: 2021/3/1 下午10:01:43
+Deploy type: FeeRateImpl
+FeeRateImplAddress:  0x4775b1858f1e417C9609D455C3Ad8751ec01daC4
+Init feeRateImpl Tx: 0x315beb6888ca62d957bd4f84bca3452ba19e55179e1e55b7d40a3f1a83b3a438
+====================================================
+network type: mbtestnet
+Deploy time: 2021/3/2 下午5:49:07
+Deploy type: FeeRateImpl
+FeeRateImplAddress:  0x1a3fa978909d86dF1244216b02733136b438D83E
+====================================================
+network type: mbtestnet
+Deploy time: 2021/3/2 下午9:34:32
+Deploy type: WETH9
+WETH9Address:  0x0e1630bd2bc047fF6338F78Dc45410e1c0Fc32a0
+====================================================
+network type: mbtestnet
+Deploy time: 2021/3/2 下午9:41:03
+Deploy type: DODOToken
+DODOTokenAddress:  0x1E7727eDad5a2ef47C5AB95a20FEd515735591B2
+====================================================
+network type: mbdev
+Deploy time: 2021/3/3 上午8:59:59
+Deploy type: DODOToken
+DODOTokenAddress:  0xC2Bf5F29a4384b1aB0C063e1c666f02121B6084a
+====================================================
+network type: mbdev
+Deploy time: 2021/3/3 下午11:02:11
+Deploy type: DODOToken
+DODOTokenAddress:  0x5c4242beB94dE30b922f57241f1D02f36e906915
+====================================================
+network type: mbdev
+Deploy time: 2021/3/3 下午11:03:01
+Deploy type: WETH9
+WETH9Address:  0x42e2EE7Ba8975c473157634Ac2AF4098190fc741
+====================================================
+network type: bsclive
+Deploy time: 2021/3/4 下午2:17:56
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x69f52AC40185A2A005D49114F0B77b7bA856F0a0
+Init UpCpFactory Tx: 0x64d621c61b16c60523bc3b9afadd7dc50b78ecbf038f2a66ee28cf53729f330b
+====================================================
+network type: live
+Deploy time: 2021/3/4 下午3:10:50
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0xD734a08359296e44b87F4d404135cd0832A7a363
+Init UpCpFactory Tx: 0x58798e736d419ef9ce9753fc32a847d2a5a65957623a83e3d258ef2a1c9f8ca8
+====================================================
+network type: kovan
+Deploy time: 2021/3/10 下午9:18:58
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x84F391bE6EE31bC32f0C956C7997E0a2eCF36c6d
+Init UpCpFactory Tx: 0xfab59285ac78ad435db86bf96e38f34a7757ab97151250863e6ea19c762483f3
+====================================================
+network type: kovan
+Deploy time: 2021/3/10 下午11:27:00
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0xe1C4300B47ccE8B162D8d036Db356c563a904757
+Init UpCpFactory Tx: 0x97ad372abbb2321e24e3e388585d47f0b1120980566abc3268c8305b04dc61f7
+====================================================
+network type: bsclive
+Deploy time: 2021/3/13 下午11:36:30
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x69f52AC40185A2A005D49114F0B77b7bA856F0a0
+====================================================
+network type: bsclive
+Deploy time: 2021/3/13 下午11:39:14
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0xeCEaDe494FD5F913Fd937C5CAc4577236395Dc32
+Init UpCpFactory Tx: 0x0f78a88904cc4bb32147014c85f4154be41959ed64f24eea75ac7c0d66277725
+====================================================
+network type: live
+Deploy time: 2021/3/13 下午11:43:58
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x0c4b4F1D5F5c989457cdD6f5102308b33c922281
+Init UpCpFactory Tx: 0xd03546fa116a1eff47d729bc86e5b56143522fc846f0413f6b0b7dda1dd37a04
+====================================================
+network type: development
+Deploy time: 2021/3/14 下午12:01:16
+Deploy type: UpCrowdPoolingFactory
+DvmTemplateAddress:  0xe44F14BFDe673B7339734a28152cCd6b821753C9
+DvmTemplateAddress:  0x01FEEA29da5Ae41B0b5F6b10b93EE34752eF80d7
+CpTemplateAddress:  0x5D6e6A0BFB2176AFCc4FB809822D8e009216b245
+CpTemplateAddress:  0x327344B382EE1b44FB0a72945fCDCC7243200dD7
+====================================================
+network type: live
+Deploy time: 2021/3/14 下午8:24:14
+Deploy type: CrowdPoolingFactory
+CrowdPoolingFactory address:  0x79887f65f83bdf15Bcc8736b5e5BcDB48fb8fE13
+Init CpFactory Tx: 0x3f501092f4b2319aee8ef98e7258113012766e0024d2352435ece2f3739525df
+====================================================
+network type: live
+Deploy time: 2021/3/14 下午8:28:48
+Deploy type: CrowdPoolingFactory
+CrowdPoolingFactory address:  0x95E887aDF9EAa22cC1c6E3Cb7f07adC95b4b25a8
+Init CpFactory Tx: 0xe49c57bdb78d18852e48fedb18a29bec86dd6fa4671c6f53b370f032d0f75389
+====================================================
+network type: bsclive
+Deploy time: 2021/3/14 下午8:36:12
+Deploy type: CrowdPoolingFactory
+CrowdPoolingFactory address:  0xd5a7E197bacE1F3B26E2760321d6ce06Ad07281a
+DvmTemplateAddress:  0x409E377A7AfFB1FD3369cfc24880aD58895D1dD9
+====================================================
+network type: bsclive
+Deploy time: 2021/3/15 下午6:47:55
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x4F57F6929E58AE564F6AB090fE0AEEcb39B0f270
+Init UpCpFactory Tx: 0x3626155c9eb35ca325ff7e013e6da73959b7cc266905af6bb9142b2e662bedd5
+====================================================
+network type: live
+Deploy time: 2021/3/15 下午6:55:06
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x0c4b4F1D5F5c989457cdD6f5102308b33c922281
+====================================================
+network type: live
+Deploy time: 2021/3/15 下午6:56:35
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x0c4b4F1D5F5c989457cdD6f5102308b33c922281
+====================================================
+network type: live
+Deploy time: 2021/3/15 下午6:57:39
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x78D338F9d54E9e41872E68cB1c01d9499d87eE52
+Init UpCpFactory Tx: 0xcd2e30bfd8fc76105dfb8e0a14df12d96a3a0e151d48cb95773d8f7fb69b4e57
+====================================================
+network type: bsclive
+Deploy time: 2021/3/15 下午7:04:59
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x3E64F18168651d140AaE57e0cF325874d066bA9E
+Init UpCpFactory Tx: 0x134491330aa75dd8c6131b5c173365dfd464885bdf14b3a09949258f8512419a
+DvmTemplateAddress:  0x7B1eD6Be684b9c691C6C4bd5ccd7bF3e0d4E06fC
+CpTemplateAddress:  0x6092eFEf82CaDcd07f3a545cBe6C83dae713aE0A
+====================================================
+network type: kovan
+Deploy time: 2021/3/15 下午8:00:28
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0x25AE560522165eacCFbF2287493AF12B8ad718e7
+Init UpCpFactory Tx: 0x9692b9458c3f3f4c1682f58cc46c14c662e5b7b7f72c7b8afabc494d2eb75d16
+====================================================
+network type: mbtestnet
+Deploy time: 2021/3/15 下午9:01:02
+Deploy type: DODOToken
+DODOTokenAddress:  0x5c4242beB94dE30b922f57241f1D02f36e906915
+====================================================
+network type: mbtestnet
+Deploy time: 2021/3/15 下午9:02:37
+Deploy type: DODOToken
+DODOTokenAddress:  0x42e2EE7Ba8975c473157634Ac2AF4098190fc741
+====================================================
+network type: mbtestnet
+Deploy time: 2021/3/15 下午9:02:47
+Deploy type: WETH9
+WETH9Address:  0xF8cef78E923919054037a1D03662bBD884fF4edf
+MultiCallAddress:  0xb61c30c1612504d334b39E5172D8215cb5Ad576C
+====================================================
+network type: oktest
+Deploy time: 2021/3/18 下午5:50:20
+Deploy type: DODOToken
+DODOTokenAddress:  0x19DA73be23Cea6bFA804Ec020041b8F3971BC522
+MultiCallAddress:  0x1Cc229Ac0ef9ba932e4dEbB898C77901C9AFB694
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午9:16:44
+Deploy type: WETH9
+WETH9Address:  0x1e0D4043C0CD3ed15F3c2AfE60B0F213c9b5E30d
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午9:22:11
+Deploy type: DODOToken
+====================================================
+network type: arbtest
+Deploy time: 2021/4/5 下午9:24:48
+Deploy type: DODOToken
+DODOTokenAddress:  0x67ee3Cb086F8a16f34beE3ca72FAD36F7Db929e2
+====================================================
+network type: heco
+Deploy time: 2021/4/6 下午9:02:51
+Deploy type: UpCrowdPoolingFactory
+UpCrowdPoolingFactory address:  0xF7c3467786efAA9BD4022941ecd5a00C61b17FA9
+Init UpCpFactory Tx: 0x27d493acbed5e6425c86a48fe8ebfd65a49b884570e44cb87a6164c902aa52c9
+====================================================
+network type: kovan
+Deploy time: 2021/4/12 下午5:24:15
+Deploy type: ERC20Mine
+====================================================
+network type: kovan
+Deploy time: 2021/4/12 下午5:32:39
+Deploy type: ERC20Mine
+====================================================
+network type: kovan
+Deploy time: 2021/4/12 下午5:34:36
+Deploy type: ERC20Mine
+erc20Mine address:  0x888B9d4C25664F8B1BF744e8F4397d1429314155
+Init ERC20Mine Tx: 0x993b5ccbc038eaeb58db7891f74eb53e4b47fada5051b179fbbf68351295d4d7
+Add rewardToken0 Tx: 0x78add1f55782e99e84bd0390049750c03b470bca1d4fbf0cd8b145c3945d43e8
+Add rewardToken1 Tx: 0x52edb6a993999817fe26acbd92c267b63ac36c94989f4f2676ba81b9c452dcce
+====================================================
+network type: kovan
+Deploy time: 2021/4/12 下午8:12:13
+Deploy type: ERC20Mine
+erc20Mine address:  0x3b5a083dB74A639CdB7940298783ec975cDdfe76
+Init ERC20Mine Tx: 0x318ecc12d9452f1b7e518cbce2eaf9d03e9f6b76d58863de3e5b6bcd88b4d90e
+====================================================
+network type: kovan
+Deploy time: 2021/4/12 下午8:15:52
+Deploy type: ERC20Mine
+erc20Mine address:  0x5cba33Ecd715c780922210758813Ad599E98bDB8
+Init ERC20Mine Tx: 0xf73f5b7a8694fcac91b9f72ac8b604389db792072fc4f4ef33c4bbea7c2ff510
+Add rewardToken0 Tx: 0xcee550cfc5fc52f9b0224247927ee63a4e9bf83ac0332c3b5c4979d2bb2d3088
+Add rewardToken1 Tx: 0xe5127653d59ba4530be0e2d873adc80191005ee1b131db45deb06d141975a4af
+====================================================
+network type: kovan
+Deploy time: 2021/4/12 下午8:32:13
+Deploy type: ERC20Mine
+DspTemplateAddress:  0x2f658Fd3f09b8Ec3C57c40AbBDecbBAF1Afaaa30
+DspTemplateAddress:  0x9359189E6B649ae16B7993d61F8b1BC98C86C614
+DspFactoryAddress:  0xE7A8A1cfb95fF12C48Ed7fA5769C6335e69CF45b
+Init DspFactory Tx: 0x5e1fcea19e7d215f8d2a7287cf1fd25cee2aa2169061376d4d6606bad9fbcf2c
+DspTemplateAddress:  0x1F0F58aa235ec44d36a8d6156488A62a23D33Fa2
+DspFactoryAddress:  0x5e675A237B4F333B252f63bA141cEfc0b3bdf836
+Init DspFactory Tx: 0xe436bc79ef476afc998cd8d0fca6010a452d6f1fc61669ed6b539327465843cc
+DODOV2RouteHelper Address:  0x2b34f6dC371f2129Ad53EB70dB5Ae90235a93F22
+DspTemplateAddress:  0x20D68Cf24211F24Fa0F78a48ab44Dc7da5f55e38
+DspFactoryAddress:  0x08E485cF3A2d62DC43c37A783abBC85df540E821
+Init DspFactory Tx: 0xfe9538552ae4d41276117086bd07e9877ca977e91c927c1f5707c34fac9ce05b
+DODOV2RouteHelper Address:  0xFA50887AA9b223B307A4130826de11BB2b6589cC
+DspTemplateAddress:  0x7B85Ec7b03c8eeA3d51c61C915f897d8A8536F4E
+DspFactoryAddress:  0x3Be227fA238A2961357df4623D21B56D3D7FE2eD
+Init DspFactory Tx: 0x087fcb80b90c6347f54f29c54b45b359419f0cacff67972ebecfbf464bcf3c98
+DODOV2RouteHelper Address:  0xc2Af45eb3A272D49BD55945A83117daf6B4081fF
+DODODspProxy Address:  0xA0d0304559f6179f917DFD9EF7831a4954a8faC1
+DspFactoryAddress:  0xd54d6b7261860a3a689135bA3D333D13b65F3CEe
+Init DspFactory Tx: 0xc3a1f453103ac64f9f3dffc51559d16bf80044d732fcd47ca11b4ff5acee559b
+DODOV2RouteHelper Address:  0x92a3E8c83D89aE6CdE4009e053b591fa0eC65e86
+DODODspProxy Address:  0xC5fF477667E29df8887D258CaE593e04A1961A69
+DspTemplateAddress:  0x7C073b1C1a7E68ffBCcca4E49c0592407380022a
+DspFactoryAddress:  0xBb245F54569841906eC7eDFFf72a910557B81378
+DspFactoryAddress:  0x0fb9815938Ad069Bf90E14FE6C596c514BEDe767
+Init DspFactory Tx: 0x13f0c2ff5ba088d091937035a158818e3726c202e87057568921c7e0ea0543c6
+DODOV2RouteHelper Address:  0xC1CCE4C003B10052f168072A4c3c02051053d957
+DODODspProxy Address:  0x2442A8B5cdf1E659F3F949A7E454Caa554D4E65a
+DspFactoryAddress:  0x6fdDB76c93299D985f4d3FC7ac468F9A168577A4
+Init DspFactory Tx: 0xed3706c06c19a02844ba17d6d0e141063b9d33c54bdce5843b972cedd1ec4d90
+DODOV2RouteHelper Address:  0x0672952Fab6BD1336C57AE09E49DB6D3e78B1896
+DODODspProxy Address:  0x4599ed18F34cFE06820E3684bF0aACB8D75c644d
+====================================================
+network type: heco
+Deploy time: 2021/4/20 上午9:20:49
+Deploy type: DSP
+DspFactoryAddress:  0xaEc55245AB0cDcc03Bc5f104dAdCd0a33Ef50714
+Init DspFactory Tx: 0xa62cc600cdfe2378dc159eb18cdcff06a677804086354c185ee304ee90dc550e
+DODOV2RouteHelper Address:  0x67166F14E9aCf43A822BE147eA59CdDd01A7C00d
+DODODspProxy Address:  0x9951CdEc21F42ab69D02daAAFEF4C3fc810B36FF
+====================================================
+network type: heco
+Deploy time: 2021/4/20 下午12:41:59
+Deploy type: DODORouteProxy
+DODORouteProxy Address:  0x8D3102e4fe76B5E1a896D8BCBC1BA2643D8Bea1a
+====================================================
+network type: kovan
+Deploy time: 2021/4/21 下午3:28:46
+Deploy type: DODOUpCpProxy
+UpCpProxy address:  0x6F9C270A13fB267216216C53e48de9e3B840aBB6
+====================================================
+network type: kovan
+Deploy time: 2021/4/21 下午3:35:09
+Deploy type: ERC20Mine
+erc20Mine address:  0x9DbbfFE2C5BA6c931C518199C861ff0b6067c2EB
+Init ERC20Mine Tx: 0xcac325824615f35b1a085985a1fa391419516dff41a7ad4464f43dcfc64e2b5e
+Add rewardToken0 Tx: 0x8377ceb97929a66f0276d6bae3dc98de60a6b54d219fc66ee8cd9985f2fd0c33
+====================================================
+network type: live
+Deploy time: 2021/4/22 下午3:52:34
+Deploy type: DODOUpCpProxy
+UpCpProxy address:  0x26D898A37782B04d6c460E11aEeCD8f3d99e91B8
+====================================================
+network type: bsclive
+Deploy time: 2021/4/22 下午4:00:06
+Deploy type: DODOUpCpProxy
+UpCpProxy address:  0x01d3E7271c278Aa3AA56EeBa6a109b2C200679fA
+====================================================
+network type: heco
+Deploy time: 2021/4/22 下午4:10:41
+Deploy type: DODOUpCpProxy
+UpCpProxy address:  0x4E3d4cD40d3a7eaC8C0B064D37d0b5e35a186bC7
+====================================================
+network type: mbtestnet_offical
+Deploy time: 2021/4/27 下午2:13:22
+Deploy type: DODOToken
+DODOTokenAddress:  0x1e0D4043C0CD3ed15F3c2AfE60B0F213c9b5E30d
+====================================================
+network type: mbtestnet_offical
+Deploy time: 2021/4/27 下午2:16:05
+Deploy type: WETH9
+WETH9Address:  0x18AA6Bb215CDBd179E7beAE10F66C21B26971306
+MultiCallAddress:  0x3a60A76aCAe8feeC74D6B5b665d4DBaab2abC406
+====================================================
+network type: kovan
+Deploy time: 2021/4/29 上午12:41:17
+Deploy type: DODOCpProxy
+CpProxy address:  0x648586084AC06cFC8D2A91a55EAc0ca49473eF27
+====================================================
+network type: live
+Deploy time: 2021/4/29 上午12:47:09
+Deploy type: DODOCpProxy
+CpProxy address:  0x471e1A083D76C4FC9e088FD259F64Eff0A37DAbD
+====================================================
+network type: kovan
+Deploy time: 2021/4/29 上午9:02:50
+Deploy type: DODOUpCpProxy
+UpCpProxy address:  0x1fcE72d3954BDBCdfEe99cd2649370E26180dD29
+====================================================
+network type: live
+Deploy time: 2021/4/29 上午9:15:13
+Deploy type: DODOUpCpProxy
+UpCpProxy address:  0x48D77f44416fD0b08f1Eca90Bc437D0a3e4e550d
+====================================================
+network type: kovan
+Deploy time: 2021/4/29 上午10:16:54
+Deploy type: DODOCpProxy
+CpProxy address:  0x0e3DAAa1eCfBF2fA4cb990dC34D760c38279C5a8
+====================================================
+network type: bsclive
+Deploy time: 2021/4/29 上午10:23:34
+Deploy type: DODOCpProxy
+CpProxy address:  0xA867241cDC8d3b0C07C85cC06F25a0cD3b5474d8
+====================================================
+network type: live
+Deploy time: 2021/4/29 上午10:28:14
+Deploy type: DODOCpProxy
+CpProxy address:  0x048B8926bb0eE9c52e05D61fDffbCCffbeE06Fc2
+====================================================
+network type: heco
+Deploy time: 2021/4/29 上午10:33:01
+Deploy type: DODOCpProxy
+CpProxy address:  0x8930101c6cFbe0f3cb31E7526a16E72255388E97
+====================================================
+network type: heco
+Deploy time: 2021/5/7 下午5:07:08
+Deploy type: test - Adapter
+test_Adapter Address:  0x31AC053c31a77055b2ae2d3899091C0A9c19cE3a
+====================================================
+network type: arb
+Deploy time: 2021/6/2 上午11:20:42
+Deploy type: FeeRateImpl
+FeeRateImplAddress:  0x4F57F6929E58AE564F6AB090fE0AEEcb39B0f270
+Init feeRateImpl Tx: 0xbafcadf128e2d5fbab1927e32bc87d0db8d905b7bee5c8e3edc40f137942e6a9
+====================================================
+network type: bsclive
+Deploy time: 2021/6/3 下午2:24:18
+Deploy type: DODORouteProxy
+DODORouteProxy Address:  0x6B3D817814eABc984d51896b1015C0b89E9737Ca
+====================================================
+network type: live
+Deploy time: 2021/6/3 下午2:29:00
+Deploy type: DODORouteProxy
+DODORouteProxy Address:  0xa2398842F37465f89540430bDC00219fA9E4D28a
+====================================================
+network type: arb
+Deploy time: 2021/6/3 下午4:23:04
+Deploy type: DODORouteProxy
+DODORouteProxy Address:  0x3E64F18168651d140AaE57e0cF325874d066bA9E
+====================================================
+network type: rinkeby
+Deploy time: 2021/6/29 上午10:05:29
+Deploy type: ERC20V2Factory
+CustomERC20Address:  0x0Cd57DC8367362314C510446FD106B66989Eb81a
+ERC20V2FactoryAddress:  0x6659fB6fc609e8c5159Aaccb80e49cCB8F64442a
+Init ERC20V2Factory Tx: 0xbeb3138087efe8f2c41805c8b7a4fe94b17f8abbef4e5d739da8125d1e44e504
+====================================================
+network type: kovan
+Deploy time: 2021/6/29 上午10:30:59
+Deploy type: ERC20V2Factory
+CustomERC20Address:  0x3a0e0F2EDFC0e96BD700815f953Bcb6d8a6FF0AB
+ERC20V2FactoryAddress:  0xce4Bdc3151bF9F9dcADAED961a65D32f7bAC5460
+Init ERC20V2Factory Tx: 0x5c03786d3e12b5c9532429f83c548a892c2d1ec613a44db81a9595e3bf017490
+====================================================
+network type: rinkeby
+Deploy time: 2021/7/6 上午11:45:50
+Deploy type: MineV3
+ERC20MineV3Address:  0xB1Ba664b39785eD1321Be4f6389c83c7231353aF
+DODOMineV3RegistryAddress:  0x3c2885e0943FDD38503593D911B34C84C814FF24
+Init DODOMineV3Registry Tx: 0x79aa148ba0cc4f21c8525cf14442e3ffed6d702bfde64c3ab8b03928c969f1f8
+DODOMineV3ProxyAddress:  0x0beC8cd51dF39f8d09a1Db5AD3A8e6ed994d889D
+Init DODOMineV3Proxy Tx: 0xd9c200aa85e16f383d0e68efa0ff889c198e017e86d3730ca162f89450d8b015
+DODOMineV3RegistryAddress Init tx:  0x30f6bf822329c02d910c4d65a234f6c9856e328da3019ee08cbf126da1fb80c2
+====================================================
+network type: rinkeby
+Deploy time: 2021/7/8 上午11:16:51
+Deploy type: MineV3
+DODOMineV3RegistryAddress:  0xeA12A4F762B6D8e2a122847aB1ecF60BB690fEd8
+Init DODOMineV3Registry Tx: 0x69015e802dfe452c1358203789bde48c073294c8fab0b47fff5ce90fd078c3a8
+DODOMineV3ProxyAddress:  0xcb15BBb59AC8a4B64A4db9B8d9F66c397d89Bd22
+Init DODOMineV3Proxy Tx: 0x36267d6e0231235d7be2d83546af371cce5fe73bd9e2fc99807fcbfd96e74de4
+DODOMineV3RegistryAddress Init tx:  0x89bcbd0d40d5c4596cb16953b236ee7c013086dbc1bbe2f07fe443c977800ffe
+====================================================
+network type: rinkeby
+Deploy time: 2021/7/8 上午11:26:11
+Deploy type: MineV3
+DODOMineV3RegistryAddress Init tx:  0x907607d1b96595c1ceba9d515a02bea5197c9db86f5e23a5097073d0adcf9a63
+DODOApproveProxy Unlock tx:  0x64b4e96618a6dad94575f3fb162389e8ae10e90903460d7740d45cc0fc8a8dc6
+DODOApproveProxy AddProxy tx:  0x23416aa911f38a3babcb22226765a553c8458f68914906506f3acab675a75661
+====================================================
+network type: bsclive
+Deploy time: 2021/7/28 上午10:41:27
+Deploy type: MineV3
+ERC20MineV3Address:  0x1eB6Cc182184007265E826beEb16103174fdbCee
+DODOMineV3RegistryAddress:  0xf1ED17F78Dad13f3B9caaD90b9aF18b94e0C6d6a
+Init DODOMineV3Registry Tx: 0xd0d88ed2ba4236ac3303d5ab856c68be2201b17214178e701aa0bce32075b495
+DODOMineV3ProxyAddress:  0x3c1336d70972f55C2b78e515CE2730691aD07eE2
+Init DODOMineV3Proxy Tx: 0x92f27d8e713f47fe318e0581055833e23e476633da82ddfc9df49dd4d214136a
+====================================================
+network type: bsclive
+Deploy time: 2021/7/28 上午11:11:27
+Deploy type: MineV3
+DODOMineV3RegistryAddress:  0x2A5aa99095E3724b8955BF7b5E47dbe2730dabD8
+Init DODOMineV3Registry Tx: 0x6ecf2f50f91cebc3930f580bdd1dd7f27699ca1eb98cc830c40a361f57fc5716
+DODOMineV3ProxyAddress:  0x3c39dCb3630D305530a30419b3DEEcea629597AC
+Init DODOMineV3Proxy Tx: 0xe8bf59875830af8a5e006f8c276b0626bf439021a93d916ca31b820d701619dd
+====================================================
+network type: heco
+Deploy time: 2021/7/28 上午11:24:14
+Deploy type: MineV3
+DODOMineV3RegistryAddress:  0xeA73542FbF76b35e46901e0Ca19BcC5A0361F5BF
+Init DODOMineV3Registry Tx: 0x6904819b486b40c7d2a3ad637a5ead9362023f1611f93ec20ea9149b65046cec
+DODOMineV3ProxyAddress:  0x50832DEdCF8b390160D892654530Fb96042d674B
+Init DODOMineV3Proxy Tx: 0x918d1ab979bc05391719005b14555123909c8d268c782ba8b105c48896e99ab4
+====================================================
+network type: live
+Deploy time: 2021/7/28 下午12:37:22
+Deploy type: MineV3
+DODOMineV3RegistryAddress:  0xf8ab09b3D2d5EfA603f4646E5a8A12588E852195
+Init DODOMineV3Registry Tx: 0x948d5df00c7fd6999bb3c539cec7760cbbd47997e95671d8fb155c9fe533457d
+DODOMineV3ProxyAddress:  0x0d9685D4037580F68D9F77B08971f17E1000bBdc
+Init DODOMineV3Proxy Tx: 0xa24b951703bdda5fd697ce49ddbb491d338cb4c9e35bd93dc6a3c42c60f5ee73
+====================================================
+network type: arb
+Deploy time: 2021/7/28 下午1:04:45
+Deploy type: MineV3
+====================================================
+network type: ok
+Deploy time: 2021/8/6 下午10:19:24
+Deploy type: ERC20V2Factory
+CustomERC20Address:  0xa2CB66EBB947D217f61510882096F6e95c1DE97D
+ERC20V2FactoryAddress:  0xfDDCA6ffCE24dF5bE3e8AaD32081822f86178048
+Init ERC20V2Factory Tx: 0x8ff931926fa8ce62606c3286e0659950693dbb050b18fc0045d7fecd29770054
+====================================================
+network type: ok
+Deploy time: 2021/8/6 下午10:26:46
+Deploy type: MineV3
+ERC20MineV3Address:  0x45894C062E6f4E58B257e0826675355305dfef0d
+DODOMineV3RegistryAddress:  0xb159260989012fA98af560A3Fa6D9cd11a64cf6E
+Init DODOMineV3Registry Tx: 0x2206547a2b59fe48de9e8702159e101f3e7409777ef336fae404bcf9dfdd81c6
+DODOMineV3ProxyAddress:  0x958f79e2998DFe417208b9A07D799265B0298e58
+Init DODOMineV3Proxy Tx: 0xae19341581ab4ece164a980c1e83df416f48d301e58ed6be938fbf27af0b7dbe
+====================================================
+network type: ok
+Deploy time: 2021/8/6 下午10:31:11
+Deploy type: DODORouteProxy
+DODORouteProxy Address:  0xB5397B2210f49e96a5EB2c9747Aa2bD9397d90C0
+====================================================
+network type: ok
+Deploy time: 2021/8/7 下午6:20:16
+Deploy type: DODORouteProxy
+DODORouteProxy Address:  0xd9deC7c3C06e62a4c1BeEB07CadF568f496b14c2
+network type: rinkeby
+Deploy time: 2021/7/5 上午8:15:47
+Deploy type: anothertest - Adapter
+DODOV1Adapter Address:  0xB89CCC740c9E3BE8712a2174b648a95C6978B836
+DODOV2Adapter Address:  0x003B18357460e789e711849749A793c430d14f97
+UniAdapter Address:  0x4553E5CF08E8E5229caB9b092e76cB92cde672BA
+UniV3Adapter Address:  0xc6D718Fa2bb39CCDf29a640361E42656DB1EBBD9
+====================================================
+network type: rinkeby
+Deploy time: 2021/7/5 下午5:34:29
+Deploy type: anothertest - Adapter
+UniV3Adapter Address:  0xC9143e54021f4a6d33b9b89DBB9F458AaEdd56FB

@@ -9,4 +9,8 @@ interface IUniV3 {
         uint160 sqrtPriceLimitX96,
         bytes calldata data
     ) external returns (int256 amount0, int256 amount1);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 740d1a4 (add uniV3Adapter)
 }
