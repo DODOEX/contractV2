@@ -31,6 +31,11 @@ const ERC20V2Factory = artifacts.require("ERC20V2Factory");
 const ERC20 = artifacts.require("InitializableERC20");
 const CustomERC20 = artifacts.require("CustomERC20");
 
+const ERC20MineV3 = artifacts.require("ERC20MineV3");
+const DODOMineV3Registry = artifacts.require("DODOMineV3Registry");
+const DODOMineV3Proxy = artifacts.require("DODOMineV3Proxy");
+
+
 const CurveAdapter = artifacts.require("CurveUnderlyingAdapter");
 
 module.exports = async (deployer, network, accounts) => {
@@ -65,6 +70,57 @@ module.exports = async (deployer, network, accounts) => {
     let multiSigAddress = CONFIG.multiSigAddress;
     let defaultMaintainer = CONFIG.defaultMaintainer;
 
+    let ERC20MineV3Address = CONFIG.ERC20MineV3;
+    let DODOMineV3RegistryAddress = CONFIG.DODOMineV3Registry;
+    let DODOMineV3ProxyAddress = CONFIG.DODOMineV3Proxy;
+
+
+    if (deploySwitch.MineV3) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
+        logger.log("Deploy type: MineV3");
+
+        if (ERC20MineV3Address == "") {
+            await deployer.deploy(ERC20MineV3);
+            ERC20MineV3Address = ERC20MineV3.address;
+            logger.log("ERC20MineV3Address: ", ERC20MineV3Address);
+        }
+
+        if (DODOMineV3RegistryAddress == "") {
+            await deployer.deploy(DODOMineV3Registry);
+            DODOMineV3RegistryAddress = DODOMineV3Registry.address;
+            logger.log("DODOMineV3RegistryAddress: ", DODOMineV3RegistryAddress);
+
+            const dodoMineV3RegistryInstance = await DODOMineV3Registry.at(DODOMineV3RegistryAddress);
+            var tx = await dodoMineV3RegistryInstance.initOwner(multiSigAddress);
+            logger.log("Init DODOMineV3Registry Tx:", tx.tx);
+        }
+
+        if (DODOMineV3ProxyAddress == "") {
+            await deployer.deploy(
+                DODOMineV3Proxy,
+                CloneFactoryAddress,
+                ERC20MineV3Address,
+                DODOApproveProxyAddress,
+                DODOMineV3RegistryAddress
+            );
+            DODOMineV3ProxyAddress = DODOMineV3Proxy.address;
+            logger.log("DODOMineV3ProxyAddress: ", DODOMineV3ProxyAddress);
+
+            const dodoMineV3ProxyInstance = await DODOMineV3Proxy.at(DODOMineV3ProxyAddress);
+            var tx = await dodoMineV3ProxyInstance.initOwner(multiSigAddress);
+            logger.log("Init DODOMineV3Proxy Tx:", tx.tx);
+        }
+
+        if (network == 'kovan' || network == 'rinkeby') {
+            const dodoMineV3RegistryInstance = await DODOMineV3Registry.at(DODOMineV3RegistryAddress);
+            var tx = await dodoMineV3RegistryInstance.addAdminList(DODOMineV3ProxyAddress);
+            logger.log("DODOMineV3RegistryAddress Init tx: ", tx.tx);
+        }
+
+    }
+
     if (deploySwitch.ERC20V2Factory) {
         logger.log("====================================================");
         logger.log("network type: " + network);
@@ -91,7 +147,7 @@ module.exports = async (deployer, network, accounts) => {
             );
             ERC20V2FactoryAddress = ERC20V2Factory.address;
             logger.log("ERC20V2FactoryAddress: ", ERC20V2FactoryAddress);
-            
+
             const erc20V2FactoryInstance = await ERC20V2Factory.at(ERC20V2FactoryAddress);
             var tx = await erc20V2FactoryInstance.initOwner(multiSigAddress);
             logger.log("Init ERC20V2Factory Tx:", tx.tx);
@@ -412,7 +468,7 @@ module.exports = async (deployer, network, accounts) => {
         }
     }
 
-    if(deploySwitch.test_ADAPTER) {
+    if (deploySwitch.test_ADAPTER) {
         logger.log("====================================================");
         logger.log("network type: " + network);
         logger.log("Deploy time: " + new Date().toLocaleString());

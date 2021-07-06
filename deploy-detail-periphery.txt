@@ -515,3 +515,13 @@ Deploy type: ERC20V2Factory
 CustomERC20Address:  0x3a0e0F2EDFC0e96BD700815f953Bcb6d8a6FF0AB
 ERC20V2FactoryAddress:  0xce4Bdc3151bF9F9dcADAED961a65D32f7bAC5460
 Init ERC20V2Factory Tx: 0x5c03786d3e12b5c9532429f83c548a892c2d1ec613a44db81a9595e3bf017490
+====================================================
+network type: rinkeby
+Deploy time: 2021/7/6 上午11:45:50
+Deploy type: MineV3
+ERC20MineV3Address:  0xB1Ba664b39785eD1321Be4f6389c83c7231353aF
+DODOMineV3RegistryAddress:  0x3c2885e0943FDD38503593D911B34C84C814FF24
+Init DODOMineV3Registry Tx: 0x79aa148ba0cc4f21c8525cf14442e3ffed6d702bfde64c3ab8b03928c969f1f8
+DODOMineV3ProxyAddress:  0x0beC8cd51dF39f8d09a1Db5AD3A8e6ed994d889D
+Init DODOMineV3Proxy Tx: 0xd9c200aa85e16f383d0e68efa0ff889c198e017e86d3730ca162f89450d8b015
+DODOMineV3RegistryAddress Init tx:  0x30f6bf822329c02d910c4d65a234f6c9856e328da3019ee08cbf126da1fb80c2

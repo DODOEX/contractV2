@@ -331,7 +331,7 @@ module.exports = async (deployer, network, accounts) => {
         logger.log("Init DODOProxyV2 Tx:", tx.tx);
 
 
-        if (network == 'kovan' || network == 'mbtestnet' || network == 'oktest' || network == 'matic' || network == 'arb') {
+        if (network == 'kovan' || network == 'mbtestnet' || network == 'oktest' || network == 'matic' || network == 'arb' || network == 'rinkeby') {
 
             const DODOApproveProxyInstance = await DODOApproveProxy.at(DODOApproveProxyAddress);
             var tx = await DODOApproveProxyInstance.init(multiSigAddress, [DODOProxyV2.address, DODOCpProxy.address, DODODspProxy.address]);

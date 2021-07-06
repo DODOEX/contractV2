@@ -13,7 +13,7 @@ import {SafeMath} from "../../lib/SafeMath.sol";
 import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 import {BaseMine} from "./BaseMine.sol";
 
-contract ERC20Mine is ReentrancyGuard, BaseMine {
+contract ERC20MineV3 is ReentrancyGuard, BaseMine {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
