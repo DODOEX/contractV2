@@ -117,6 +117,13 @@ module.exports = async (deployer, network, accounts) => {
             const dodoMineV3RegistryInstance = await DODOMineV3Registry.at(DODOMineV3RegistryAddress);
             var tx = await dodoMineV3RegistryInstance.addAdminList(DODOMineV3ProxyAddress);
             logger.log("DODOMineV3RegistryAddress Init tx: ", tx.tx);
+
+            const DODOApproveProxyInstance = await DODOApproveProxy.at(DODOApproveProxyAddress);
+            tx = await DODOApproveProxyInstance.unlockAddProxy(DODOMineV3ProxyAddress);
+            logger.log("DODOApproveProxy Unlock tx: ", tx.tx);
+
+            tx = await DODOApproveProxyInstance.addDODOProxy();
+            logger.log("DODOApproveProxy AddProxy tx: ", tx.tx);
         }
 
     }
