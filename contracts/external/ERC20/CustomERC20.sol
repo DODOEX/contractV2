@@ -123,6 +123,8 @@ contract CustomERC20 is InitializableOwnable {
     //=================== Ownable ======================
     function mint(address user, uint256 value) external onlyOwner {
         require(isMintable, "NOT_MINTABEL_TOKEN");
+        require(user == _OWNER_, "NOT_OWNER");
+        
         balances[user] = balances[user].add(value);
         totalSupply = totalSupply.add(value);
         emit Mint(user, value);
