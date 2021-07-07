@@ -129,12 +129,14 @@ contract CustomERC20 is InitializableOwnable {
         emit Transfer(address(0), user, value);
     }
 
-    function burn(address user, uint256 value) external onlyOwner {
+    function burn(uint256 value) external {
         require(isMintable, "NOT_MINTABEL_TOKEN");
-        balances[user] = balances[user].sub(value);
+        require(balances[msg.sender] >= value, "VALUE_NOT_ENOUGH");
+
+        balances[msg.sender] = balances[msg.sender].sub(value);
         totalSupply = totalSupply.sub(value);
-        emit Burn(user, value);
-        emit Transfer(user, address(0), value);
+        emit Burn(msg.sender, value);
+        emit Transfer(msg.sender, address(0), value);
     }
 
     function changeTeamAccount(address newTeam) external onlyOwner {
