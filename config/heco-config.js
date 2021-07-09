@@ -62,5 +62,7 @@ module.exports = {
         //Account
         multiSigAddress: "0xD93c8D2429a6b0269527f148F3A0e5D187B0b1Ca",
         defaultMaintainer: "0xD93c8D2429a6b0269527f148F3A0e5D187B0b1Ca",
+
+        //DODOTreasury Address: "0x6ed2B1aFB1483b150fF428178F1aE5b8e7367A26"
     }
 }

@@ -25,13 +25,12 @@ interface IDODOMineV3Registry {
 contract DODOMineV3Registry is InitializableOwnable, IDODOMineV3Registry {
 
     mapping (address => bool) public isAdminListed;
-    mapping (address => bool) public singleTokenList;
     
     // ============ Registry ============
     // minePool -> stakeToken
     mapping(address => address) public _MINE_REGISTRY_;
     // lpToken -> minePool
-    mapping(address => address) public _LP_REGISTRY_;
+    mapping(address => address[]) public _LP_REGISTRY_;
     // singleToken -> minePool
     mapping(address => address[]) public _SINGLE_REGISTRY_;
 
@@ -41,8 +40,6 @@ contract DODOMineV3Registry is InitializableOwnable, IDODOMineV3Registry {
     event RemoveMineV3(address mine, address stakeToken);
     event addAdmin(address admin);
     event removeAdmin(address admin);
-    event addSingleToken(address token);
-    event removeSingleToken(address token);
 
 
     function addMineV3(
@@ -53,9 +50,8 @@ contract DODOMineV3Registry is InitializableOwnable, IDODOMineV3Registry {
         require(isAdminListed[msg.sender], "ACCESS_DENIED");
         _MINE_REGISTRY_[mine] = stakeToken;
         if(isLpToken) {
-            _LP_REGISTRY_[stakeToken] = mine;
+            _LP_REGISTRY_[stakeToken].push(mine);
         }else {
-            require(_SINGLE_REGISTRY_[stakeToken].length == 0 || singleTokenList[stakeToken], "ALREADY_EXSIT_POOL");
             _SINGLE_REGISTRY_[stakeToken].push(mine);
         }
 
@@ -71,7 +67,16 @@ contract DODOMineV3Registry is InitializableOwnable, IDODOMineV3Registry {
     ) external onlyOwner {
         _MINE_REGISTRY_[mine] = address(0);
         if(isLpToken) {
-            _LP_REGISTRY_[stakeToken] = address(0);
+            uint256 len = _LP_REGISTRY_[stakeToken].length;
+            for (uint256 i = 0; i < len; i++) {
+                if (mine == _LP_REGISTRY_[stakeToken][i]) {
+                    if(i != len - 1) {
+                        _LP_REGISTRY_[stakeToken][i] = _LP_REGISTRY_[stakeToken][len - 1];
+                    }
+                    _LP_REGISTRY_[stakeToken].pop();
+                    break;
+                }
+            }
         }else {
             uint256 len = _SINGLE_REGISTRY_[stakeToken].length;
             for (uint256 i = 0; i < len; i++) {
@@ -96,15 +101,5 @@ contract DODOMineV3Registry is InitializableOwnable, IDODOMineV3Registry {
     function removeAdminList (address contractAddr) external onlyOwner {
         isAdminListed[contractAddr] = false;
         emit removeAdmin(contractAddr);
-    }
-
-    function addSingleTokenList(address token) external onlyOwner {
-        singleTokenList[token] = true;
-        emit addSingleToken(token);
-    }
-
-    function removeSingleTokenList(address token) external onlyOwner {
-        singleTokenList[token] = false;
-        emit removeSingleToken(token);
     }
 }

@@ -19,6 +19,7 @@ const MultiCall = artifacts.require("Multicall");
 const LockedTokenVault = artifacts.require("LockedTokenVault");
 const DODORouteProxy = artifacts.require("DODORouteProxy");
 const DODOCpProxy = artifacts.require("DODOCpProxy");
+const DODOApproveProxy = artifacts.require("DODOApproveProxy");
 
 const DspTemplate = artifacts.require("DSP");
 const DspFactory = artifacts.require("DSPFactory");

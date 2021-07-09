@@ -525,3 +525,19 @@ Init DODOMineV3Registry Tx: 0x79aa148ba0cc4f21c8525cf14442e3ffed6d702bfde64c3ab8
 DODOMineV3ProxyAddress:  0x0beC8cd51dF39f8d09a1Db5AD3A8e6ed994d889D
 Init DODOMineV3Proxy Tx: 0xd9c200aa85e16f383d0e68efa0ff889c198e017e86d3730ca162f89450d8b015
 DODOMineV3RegistryAddress Init tx:  0x30f6bf822329c02d910c4d65a234f6c9856e328da3019ee08cbf126da1fb80c2
+====================================================
+network type: rinkeby
+Deploy time: 2021/7/8 上午11:16:51
+Deploy type: MineV3
+DODOMineV3RegistryAddress:  0xeA12A4F762B6D8e2a122847aB1ecF60BB690fEd8
+Init DODOMineV3Registry Tx: 0x69015e802dfe452c1358203789bde48c073294c8fab0b47fff5ce90fd078c3a8
+DODOMineV3ProxyAddress:  0xcb15BBb59AC8a4B64A4db9B8d9F66c397d89Bd22
+Init DODOMineV3Proxy Tx: 0x36267d6e0231235d7be2d83546af371cce5fe73bd9e2fc99807fcbfd96e74de4
+DODOMineV3RegistryAddress Init tx:  0x89bcbd0d40d5c4596cb16953b236ee7c013086dbc1bbe2f07fe443c977800ffe
+====================================================
+network type: rinkeby
+Deploy time: 2021/7/8 上午11:26:11
+Deploy type: MineV3
+DODOMineV3RegistryAddress Init tx:  0x907607d1b96595c1ceba9d515a02bea5197c9db86f5e23a5097073d0adcf9a63
+DODOApproveProxy Unlock tx:  0x64b4e96618a6dad94575f3fb162389e8ae10e90903460d7740d45cc0fc8a8dc6
+DODOApproveProxy AddProxy tx:  0x23416aa911f38a3babcb22226765a553c8458f68914906506f3acab675a75661

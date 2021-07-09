@@ -55,5 +55,7 @@ module.exports = {
         //Account
         multiSigAddress: "0x3CD6D7F5fF977bf8069548eA1F9441b061162b42",
         defaultMaintainer: "0x3CD6D7F5fF977bf8069548eA1F9441b061162b42",
+
+        //Treasury Address: "0x65C5e6F299656CB2458DC18f46b3DF7E1e7e2776"
     }
 }
