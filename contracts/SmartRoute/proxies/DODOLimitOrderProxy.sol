@@ -15,7 +15,7 @@ import {SafeMath} from "../../lib/SafeMath.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 import {UniversalERC20} from "../lib/UniversalERC20.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
-import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
+import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 
 /**
  * @title DODOLimitOrderProxy
@@ -23,7 +23,7 @@ import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
  *
  * @notice Proxy of DODO LimitOrder
  */
-contract DODOLimitOrderProxy is ReentrancyGuard {
+contract DODOLimitOrderProxy is InitializableOwnable {
     using SafeMath for uint256;
     using UniversalERC20 for IERC20;
 
@@ -79,7 +79,9 @@ contract DODOLimitOrderProxy is ReentrancyGuard {
         judgeExpired(deadLine)
         returns (uint256 returnAmount)
     {
+        require(fillOrderDatas.length > 0, "DODOLimitOrderProxy: EMPTY_FILL_ORDER");
         require(minReturnAmount > 0, "DODOLimitOrderProxy: RETURN_AMOUNT_ZERO");
+
         
         uint256 toTokenOriginBalance = IERC20(toToken).universalBalanceOf(msg.sender);
         if (fromToken != _ETH_ADDRESS_) {
@@ -132,5 +134,14 @@ contract DODOLimitOrderProxy is ReentrancyGuard {
         } else {
             IDODOApproveProxy(_DODO_APPROVE_PROXY_).claimTokens(token, from, to, amount);
         }
+    }
+
+
+    function addWhiteList (address contractAddr) public onlyOwner {
+        isWhiteListed[contractAddr] = true;
+    }
+
+    function removeWhiteList (address contractAddr) public onlyOwner {
+        isWhiteListed[contractAddr] = false;
     }
 }
