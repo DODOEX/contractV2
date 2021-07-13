@@ -64,19 +64,20 @@ module.exports = {
 
 
         //================== NFT ====================
-        Fragment: "",
-        NFTCollateralVault: "",
-        DODONFTRouteHelper: "",
+        BuyoutModel: "0xfEA1AcAD77F64bf6E933635eD078e63d22484197",
+        Fragment: "0x9542F458B7003e7C8e938c6a87161D410243B419",
+        NFTCollateralVault: "0xd66B8b705D270767Cc9D25400CE61198DA1e3629",
+        DODONFTRouteHelper: "0x2d8349E957A69E4cC7B4ef225A4B6a85Be57FBF3",
 
-        InitializableERC721: "",
-        InitializableERC1155: "",
-        NFTTokenFactory: "",
+        InitializableERC721: "0xbd0Ed394042ae14a1D6b7478386CDFfd9d1ea188",
+        InitializableERC1155: "0x3c5509Cc5212C62f77e36126efec7ADb75c830A5",
+        NFTTokenFactory: "0x6e08eaAfea48c147e8d092a7979d7B266f16b8fA",
 
-        DodoNftErc721: "",
-        DodoNftErc1155: "",
+        DodoNftErc721: "0x5eD972C0a7f8D0C4dEDf6a37848A297B67489888",
+        DodoNftErc1155: "0xdC9224cbc4B1826Bb74fF383FF1CE94DE1F56119",
 
-        DODONFTRegistry: "",
-        DODONFTProxy: "",
+        DODONFTRegistry: "0x2c0Dd764A0bE8A7e747Cb0765E268d576edce31a",
+        DODONFTProxy: "0x4852394EcC099f13bdC44764FA34dEB26D8131fa",
 
         //================= DropsV1 =================
         // MysteryBoxV1: "0xc25286ef3BaE3f6Fe2d6d0A6e2acAd0301AF97b8", //波老师
@@ -89,7 +90,7 @@ module.exports = {
         ],
 
         //================= DropsV2 ==================
-        DropsFeeModel: "",
-        DropsProxy: ""
+        DropsFeeModel: "0x6de96b1a41FF2E8264925B4C5C0564C46DC0C67d",
+        DropsProxy: "0xC05A30468d039381AaBaB6dcaC31078DB2C3323B"
     }
 }

@@ -6,7 +6,6 @@ const { MBTEST_CONFIG } = require("./config/mbtest-config");
 const { MBTESTNET_CONFIG } = require("./config/mbtestnet-config");
 const { MATIC_CONFIG } = require("./config/matic-config");
 const { ARB_CONFIG } = require("./config/arb-config");
-const { ARB_CONFIG } = require("./config/arb-config");
 const { RINKEBY_CONFIG } = require("./config/rinkeby-config");
 
 exports.GetConfig = function (network, accounts) {

@@ -168,6 +168,10 @@ module.exports = async (deployer, network, accounts) => {
             await deployer.deploy(BuyoutModel);
             BuyoutModelAddress = BuyoutModel.address;
             logger.log("BuyoutModelAddress: ", BuyoutModelAddress);
+            const BuyoutModelInstance = await BuyoutModel.at(BuyoutModelAddress);
+            var tx = await BuyoutModelInstance.initOwner(multiSigAddress);
+            logger.log("Init BuyoutModelAddress Tx:", tx.tx);
+
         }
 
         //DODONFTRouteHelper
