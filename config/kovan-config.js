@@ -55,6 +55,7 @@ module.exports = {
         DODOMineV3Proxy: "",
 
 
+
         //vDODO
         DODOCirculationHelper: "",
         Governance: "",
@@ -64,5 +65,36 @@ module.exports = {
         //Account
         multiSigAddress: "",
         defaultMaintainer: "",
+
+
+        //================== NFT ====================
+        BuyoutModel:"",
+        Fragment: "",
+        NFTCollateralVault: "0xD25278cd387e54E77C5490F5220b551fe2feb772",
+        DODONFTRouteHelper: "0xDD1511f2Bcdb0E6F916F9740BF83f31dF0fb63b4",
+
+        InitializableERC721: "0x62dC4615AC755959a82b6D22FA5652A037284c0b",
+        InitializableERC1155: "0xc4d86FFB26EB6EcAe80D3f1e2c8519832Fd478B2",
+        NFTTokenFactory: "0x834D13Ca0322Ccfe67596f09Cc26Ee3584297B94",
+
+        DodoNftErc721: "0x98f2A8d6100635Ecb40ADA1B1FFb1ff4f0b3c5D8",
+        DodoNftErc1155: "0xE9C572287936dB1B0a951ca0768C1b0d26b62A04",
+
+        DODONFTRegistry: "0x579eBcC668b5517F733587091C35D495FE8d6b68",
+        DODONFTProxy: "",
+
+        //================= DropsV1 =================
+        // MysteryBoxV1: "0x47d2b27525b93A9c9E03001E1D19310A08748D55",//波老师
+        MysteryBoxV1: "0xd56Fd300aE2e4C46cd34460776007dCE1C4F2043",
+        RandomGenerator: "0x53F54E4760FA5f839e5624782D032495613DF218",
+        RandomPool: [
+            "0xa2e0ef85618732d80e5ef362773da1c92e8b1c57",
+            "0xaCfc959e0E85726d09A36E6DFdD56FB2e5dB8F77",
+            "0x7A733869CB210393f3c02B740c58498EB1f8815C"
+        ],
+
+        //================= DropsV2 ==================
+        DropsFeeModel: "0xDBe1C360050638C9d0f28f23B51b198C8B70D9eA",
+        DropsProxy: "0xa3a23cee044F995a97D86defeABf769bAd57c7c8",
     }
 }

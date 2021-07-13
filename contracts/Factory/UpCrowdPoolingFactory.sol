@@ -34,7 +34,7 @@ contract UpCrowdPoolingFactory is InitializableOwnable {
 
     // ============ Settings =============
     uint256 public _FREEZE_DURATION_ =  30 days;
-    uint256 public _CALM_DURATION_ = 0;
+    uint256 public _CALM_DURATION_ = 600;
     uint256 public _VEST_DURATION_ = 0;
     uint256 public _CLIFF_RATE_ = 10**18;
 

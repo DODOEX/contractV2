@@ -25,6 +25,7 @@ module.exports = {
         MintableERC20: "",
         CustomERC20: "0x0Cd57DC8367362314C510446FD106B66989Eb81a",
 
+
         //Factory
         DVMFactory: "0x17DddEFA0c82E0c850a4Adac2aFE3F1fe977A242",
         DPPFactory: "0x510b49803E356C750f3a93bA5508C0FFD9f71bDD",
@@ -97,7 +98,6 @@ module.exports = {
         DropsProxy: "0xa968a8B14174395c922347Ab593a0CD7EFf30cf1",
 
         //DODODropsV2: "0x4A2b9f63AE41cF3003A494F2d8Fcd9Ed850b9A6f"
-
         // DropsERC721: "0x3df8d553275781C777f432A74EEE9099226B9d13",
         // DropsERC1155: "0x3a8EcF30428bd4e33Cd7011533DFd596F7705c8F",
     }

@@ -1,5 +1,5 @@
 #!/bin/bash
-truffle compile --all
+# truffle compile --all
 
 if [ "$1"x = "proxy-dpp"x ]
 then
@@ -54,6 +54,21 @@ fi
 if [ "$1"x = "vdodo-mine"x ]
 then
 	truffle test ./test/DODOMineV2/vDODOMine.test.ts
+fi
+
+if [ "$1"x = "nft"x ]
+then
+	truffle test ./test/DODONFT/nftMainFlow.test.ts
+fi
+
+if [ "$1"x = "boxV1"x ]
+then
+	truffle test ./test/DODONFT/mysteryBoxV1.test.ts
+fi
+
+if [ "$1"x = "boxV2"x ]
+then
+	truffle test ./test/DODODrops/dropsV2.test.ts
 fi
 
 # if [ "$1"x = "route-incentive"x ]

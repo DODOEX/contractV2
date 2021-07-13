@@ -46,6 +46,7 @@ module.exports = async (deployer, network, accounts) => {
     let WETHAddress = CONFIG.WETH;
     let DODOTokenAddress = CONFIG.DODO;
     let DODOApproveProxyAddress = CONFIG.DODOApproveProxy;
+    let WETH = CONFIG.WETH;
 
     let DspTemplateAddress = CONFIG.DSP;
     let DspFactoryAddress = CONFIG.DSPFactory;
@@ -448,30 +449,30 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("Init DODOCirculationHelperAddress Tx:", tx.tx);
         }
 
-        if (network == 'kovan') {
+        if (network == 'kovan' || network == 'rinkeby') {
             const vDODOTokenInstance = await vDODOToken.at(vDODOTokenAddress);
             //updateDODOCirculationHelper
             var tx = await vDODOTokenInstance.updateDODOCirculationHelper(DODOCirculationHelperAddress);
             logger.log("vDODOToken setDODOCirculationHelper tx: ", tx.tx);
 
             //ApproveProxy add
-            // const DODOApproveProxyInstance = await DODOApproveProxy.at(DODOApproveProxyAddress);
-            // tx = await DODOApproveProxyInstance.unlockAddProxy(vDODOTokenAddress);
-            // logger.log("DODOApproveProxy Unlock tx: ", tx.tx);
-            // tx = await DODOApproveProxyInstance.addDODOProxy();
-            // logger.log("DODOApproveProxy add tx: ", tx.tx);
+            const DODOApproveProxyInstance = await DODOApproveProxy.at(DODOApproveProxyAddress);
+            tx = await DODOApproveProxyInstance.unlockAddProxy(vDODOTokenAddress);
+            logger.log("DODOApproveProxy Unlock tx: ", tx.tx);
+            tx = await DODOApproveProxyInstance.addDODOProxy();
+            logger.log("DODOApproveProxy add tx: ", tx.tx);
 
             // //Mint DODO first
-            // tx = await vDODOTokenInstance.mint("100000000000000000000000",dodoTeam);
-            // logger.log("vDODOToken first mint tx: ", tx.tx);
+            tx = await vDODOTokenInstance.mint("100000000000000000000000",dodoTeam);
+            logger.log("vDODOToken first mint tx: ", tx.tx);
 
             // //preDepositedBlockReward
-            // tx = await vDODOTokenInstance.preDepositedBlockReward("100000000000000000000000");
-            // logger.log("vDODOToken injected dodo tx: ", tx.tx);
+            tx = await vDODOTokenInstance.preDepositedBlockReward("10000000000000000000000000");
+            logger.log("vDODOToken injected dodo tx: ", tx.tx);
 
             // //changePerReward
-            // tx = await vDODOTokenInstance.changePerReward("100000000000000000");
-            // logger.log("vDODOToken changeReward tx: ", tx.tx);
+            tx = await vDODOTokenInstance.changePerReward("10000000000000000");
+            logger.log("vDODOToken changeReward tx: ", tx.tx);
 
         }
     }

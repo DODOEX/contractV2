@@ -60,7 +60,10 @@ module.exports = {
     MULTIHOP:       false,
     CpProxy:        false,
     ERC20V2Factory: false,
-    MineV3:         false
+    DEPLOY_NFT:     false,
+    COLLECTIONS:    false,
+    MYSTERYBOX_V1:  false,
+    Drops_V2:       false,
   },
 
   networks: {
@@ -120,6 +123,7 @@ module.exports = {
       confirmations: 10,
       gasPrice: 5000000000,
       timeoutBlocks: 200,
+      gasPrice: 6000000000,
       skipDryRun: true
     },
 
@@ -155,15 +159,13 @@ module.exports = {
       skipDryRun: true
     },
 
-    arb: {
-      provider: function () {
-        return wrapProvider(
-          new HDWalletProvider(privKey, "https://arb1.arbitrum.io/rpc")
-        )
+    omgTest: {
+      networkCheckTimeout: 100000,
+      provider: () => {
+        return new HDWalletProvider(privKey, 'https://rinkeby.omgx.network')
       },
-      network_id: 42161,
-      gas: 200000000,
-      gasPrice: 400000000,
+      network_id: 28,
+      gasPrice: 0,
     },
 
     arbtest: {
@@ -175,6 +177,16 @@ module.exports = {
       network_id: '212984383488152',
       gas: 1000000000,
       gasPrice: 0,
+    },
+
+    arb: {
+      provider: function () {
+        return wrapProvider(
+          new HDWalletProvider(privKey, "https://arb1.arbitrum.io/rpc")
+        )
+      },
+      network_id: '42161',
+      gasPrice: 100000000,
     },
 
     matic: {

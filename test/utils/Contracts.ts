@@ -32,7 +32,6 @@ export const DVM_VAULT_NAME = "DVMVault"
 export const DVM_NAME = "DVM"
 export const DVM_FACTORY_NAME = "DVMFactory"
 export const DVM_PROXY_NAME = "DVMProxy"
-export const CONST_FEE_RATE_MODEL_NAME = "ConstFeeRateModel"
 export const PERMISSION_MANAGER_NAME = "PermissionManager"
 export const EXTERNAL_VALUE_NAME = "ExternalValue"
 export const FEE_RATE_MODEL_NAME = "FeeRateModel"
@@ -54,6 +53,27 @@ export const DODO_GOVERNANCE = "Governance"
 export const DODO_PROXY_NAME = "DODOV2Proxy02"
 export const ERC20_MINE = "ERC20Mine"
 export const VDODO_MINE = "vDODOMine"
+
+export const NFT_VAULT = "NFTCollateralVault"
+export const NFT_FEE = "FeeDistributor"
+export const NFT_FRAG = "Fragment"
+export const ERC721 = "InitializableERC721"
+export const ERC1155 = "InitializableERC1155"
+export const CONST_FEE_RATE_MODEL_NAME = "ConstFeeRateModel"
+export const NFT_TOKEN_FACTORY = "NFTTokenFactory"
+export const NFT_REGISTER = "DODONFTRegistry"
+export const NFT_PROXY = "DODONFTProxy"
+export const BUYOUT_MODEL = "BuyoutModel"
+
+export const RANDOM_GENERATOR = "RandomGenerator"
+export const MYSTERY_BOX_V1 = "DODODropsV1"
+
+export const DROPS_V2 = "DODODrops"
+export const DROPS_ERC721 = "DropsERC721"
+export const DROPS_ERC1155 = "DropsERC1155"
+export const DROPS_FEE_MODEL = "DropsFeeModel"
+export const DROPS_PROXY = "DODODropsProxy"
+
 
 interface ContractJson {
   abi: any;
