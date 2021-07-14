@@ -84,14 +84,14 @@ contract DODOLimitOrderProxy is InitializableOwnable {
 
         
         uint256 toTokenOriginBalance = IERC20(toToken).universalBalanceOf(msg.sender);
+
         if (fromToken != _ETH_ADDRESS_) {
-            IDODOApproveProxy(_DODO_APPROVE_PROXY_).claimTokens(
-                fromToken,
-                msg.sender,
-                address(this),
-                fromTokenAmount
-            );
+            // _deposit(msg.sender, address(this), fromToken, fromTokenAmount, false);
+            IERC20(fromToken).transferFrom(msg.sender, address(this), fromTokenAmount);
             IERC20(fromToken).universalApproveMax(approveTarget, fromTokenAmount);
+        } else {
+            _deposit(msg.sender, address(this), fromToken, fromTokenAmount, true);
+            IERC20(_WETH_).universalApproveMax(approveTarget, fromTokenAmount);
         }
 
         require(isWhiteListed[fillOrderTarget], "DODOLimitOrderProxy: Not Whitelist Contract");
@@ -101,12 +101,15 @@ contract DODOLimitOrderProxy is InitializableOwnable {
             require(success, "DODOLimitOrderProxy: Fill LimitOrder execution Failed");
         }
 
-        IERC20(toToken).universalTransfer(
-            msg.sender,
-            IERC20(toToken).universalBalanceOf(address(this))
-        );
+        if(toToken == _ETH_ADDRESS_) {
+            returnAmount = IWETH(_WETH_).balanceOf(address(this));
+            IWETH(_WETH_).withdraw(returnAmount);
+            msg.sender.transfer(returnAmount);
+        }else {
+            SafeERC20.safeTransfer(IERC20(toToken), msg.sender, IERC20(toToken).tokenBalanceOf(address(this)));
+            returnAmount = IERC20(toToken).tokenBalanceOf(msg.sender).sub(toTokenOriginBalance);
+        }
 
-        returnAmount = IERC20(toToken).universalBalanceOf(msg.sender).sub(toTokenOriginBalance);
         require(returnAmount >= minReturnAmount, "DODOLimitOrderProxy: Return amount is not enough");
 
         emit OrderHistory(
