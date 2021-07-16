@@ -39,8 +39,8 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
     address public immutable _DODO_APPROVE_PROXY_;
     address public immutable _CLONE_FACTORY_;
     address public immutable _NFT_REGISTY_;
-    address public immutable _DEFAULT_MAINTAINER_;
-    
+
+    address public _DEFAULT_MAINTAINER_;
     address public _MT_FEE_RATE_MODEL_;
     address public _VAULT_TEMPLATE_;
     address public _FRAG_TEMPLATE_;
@@ -53,6 +53,7 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
     event ChangeDvmTemplate(address newDvmTemplate);
     event ChangeMtFeeRateTemplate(address newMtFeeRateTemplate);
     event ChangeBuyoutModel(address newBuyoutModel);
+    event ChangeMaintainer(address newMaintainer);
     event CreateNFTCollateralVault(address creator, address vault, string name, string baseURI);
     event CreateFragment(address vault, address fragment, address dvm);
     event Buyout(address from, address fragment, uint256 amount);
@@ -194,6 +195,11 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
     function updateBuyoutModel(address newBuyoutModel) external onlyOwner {
         _BUYOUT_MODEL_ = newBuyoutModel;
         emit ChangeBuyoutModel(newBuyoutModel);
+    }
+
+    function updateMaintainer(address newMaintainer) external onlyOwner {
+        _DEFAULT_MAINTAINER_ = newMaintainer;
+        emit ChangeMaintainer(newMaintainer);
     }
 
 

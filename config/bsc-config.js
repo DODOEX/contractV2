@@ -81,7 +81,7 @@ module.exports = {
         DodoNftErc1155: "0xdC9224cbc4B1826Bb74fF383FF1CE94DE1F56119",
 
         DODONFTRegistry: "0x2c0Dd764A0bE8A7e747Cb0765E268d576edce31a",
-        DODONFTProxy: "0x4852394EcC099f13bdC44764FA34dEB26D8131fa",
+        DODONFTProxy: "0xb9c408574393487BFb95c0E7E94f0D76E1e6fCde",
 
         //================= DropsV1 =================
         // MysteryBoxV1: "0xc25286ef3BaE3f6Fe2d6d0A6e2acAd0301AF97b8", //波老师
