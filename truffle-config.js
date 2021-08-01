@@ -64,6 +64,7 @@ module.exports = {
     COLLECTIONS:    false,
     MYSTERYBOX_V1:  false,
     Drops_V2:       false,
+    MineV3:         false
   },
 
   networks: {
@@ -110,7 +111,7 @@ module.exports = {
         return new HDWalletProvider(privKey, "https://mainnet.infura.io/v3/" + infuraId);
       },
       gas: 6000000,
-      gasPrice: 18000000000,
+      gasPrice: 25000000000,
       network_id: 1,
       skipDryRun: true
     },
@@ -186,7 +187,7 @@ module.exports = {
         )
       },
       network_id: '42161',
-      gasPrice: 100000000,
+      gasPrice: 400000000,
     },
 
     matic: {

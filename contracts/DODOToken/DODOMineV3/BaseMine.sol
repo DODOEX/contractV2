@@ -228,6 +228,11 @@ contract BaseMine is InitializableOwnable {
         
         RewardTokenInfo storage rt = rewardTokenInfos[i];
         require(block.number > rt.endBlock, "DODOMineV3: MINING_NOT_FINISHED");
+        
+        uint256 gap = rt.endBlock.sub(rt.lastFlagBlock);
+        uint256 totalReward = rt.workThroughReward.add(gap.mul(rt.rewardPerBlock));
+        uint256 totalDepositReward = IRewardVault(rt.rewardVault)._TOTAL_REWARD_();
+        require(amount <= totalDepositReward.sub(totalReward), "DODOMineV3: NOT_ENOUGH");
 
         IRewardVault(rt.rewardVault).withdrawLeftOver(msg.sender,amount);
 

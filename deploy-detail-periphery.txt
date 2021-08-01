@@ -541,3 +541,40 @@ Deploy type: MineV3
 DODOMineV3RegistryAddress Init tx:  0x907607d1b96595c1ceba9d515a02bea5197c9db86f5e23a5097073d0adcf9a63
 DODOApproveProxy Unlock tx:  0x64b4e96618a6dad94575f3fb162389e8ae10e90903460d7740d45cc0fc8a8dc6
 DODOApproveProxy AddProxy tx:  0x23416aa911f38a3babcb22226765a553c8458f68914906506f3acab675a75661
+====================================================
+network type: bsclive
+Deploy time: 2021/7/28 上午10:41:27
+Deploy type: MineV3
+ERC20MineV3Address:  0x1eB6Cc182184007265E826beEb16103174fdbCee
+DODOMineV3RegistryAddress:  0xf1ED17F78Dad13f3B9caaD90b9aF18b94e0C6d6a
+Init DODOMineV3Registry Tx: 0xd0d88ed2ba4236ac3303d5ab856c68be2201b17214178e701aa0bce32075b495
+DODOMineV3ProxyAddress:  0x3c1336d70972f55C2b78e515CE2730691aD07eE2
+Init DODOMineV3Proxy Tx: 0x92f27d8e713f47fe318e0581055833e23e476633da82ddfc9df49dd4d214136a
+====================================================
+network type: bsclive
+Deploy time: 2021/7/28 上午11:11:27
+Deploy type: MineV3
+DODOMineV3RegistryAddress:  0x2A5aa99095E3724b8955BF7b5E47dbe2730dabD8
+Init DODOMineV3Registry Tx: 0x6ecf2f50f91cebc3930f580bdd1dd7f27699ca1eb98cc830c40a361f57fc5716
+DODOMineV3ProxyAddress:  0x3c39dCb3630D305530a30419b3DEEcea629597AC
+Init DODOMineV3Proxy Tx: 0xe8bf59875830af8a5e006f8c276b0626bf439021a93d916ca31b820d701619dd
+====================================================
+network type: heco
+Deploy time: 2021/7/28 上午11:24:14
+Deploy type: MineV3
+DODOMineV3RegistryAddress:  0xeA73542FbF76b35e46901e0Ca19BcC5A0361F5BF
+Init DODOMineV3Registry Tx: 0x6904819b486b40c7d2a3ad637a5ead9362023f1611f93ec20ea9149b65046cec
+DODOMineV3ProxyAddress:  0x50832DEdCF8b390160D892654530Fb96042d674B
+Init DODOMineV3Proxy Tx: 0x918d1ab979bc05391719005b14555123909c8d268c782ba8b105c48896e99ab4
+====================================================
+network type: live
+Deploy time: 2021/7/28 下午12:37:22
+Deploy type: MineV3
+DODOMineV3RegistryAddress:  0xf8ab09b3D2d5EfA603f4646E5a8A12588E852195
+Init DODOMineV3Registry Tx: 0x948d5df00c7fd6999bb3c539cec7760cbbd47997e95671d8fb155c9fe533457d
+DODOMineV3ProxyAddress:  0x0d9685D4037580F68D9F77B08971f17E1000bBdc
+Init DODOMineV3Proxy Tx: 0xa24b951703bdda5fd697ce49ddbb491d338cb4c9e35bd93dc6a3c42c60f5ee73
+====================================================
+network type: arb
+Deploy time: 2021/7/28 下午1:04:45
+Deploy type: MineV3
