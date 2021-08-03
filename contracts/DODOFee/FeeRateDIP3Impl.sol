@@ -45,6 +45,8 @@ contract FeeRateDIP3Impl is InitializableOwnable {
     }
 
     mapping(address => CPPoolInfo) cpPools;
+    mapping(address => uint256) public specPoolList;
+
 
     // ============ Ownable Functions ============
     
@@ -69,9 +71,18 @@ contract FeeRateDIP3Impl is InitializableOwnable {
         _LP_MT_RATIO_ = newLpMtRatio;
     }
 
+
+    function setSpecPoolList (address poolAddr, uint256 mtFeeRate) public onlyOwner {
+        specPoolList[poolAddr] = mtFeeRate;
+    }
+
     // ============ View Functions ============
 
     function getFeeRate(address pool, address user) external view returns (uint256) {
+        if(specPoolList[pool] != 0) {
+            return specPoolList[pool];
+        }
+
         try IPool(pool).version() returns (string memory poolVersion) {
             bytes32 hashPoolVersion = keccak256(abi.encodePacked(poolVersion));
             if(hashPoolVersion == keccak256(abi.encodePacked("CP 1.0.0"))) {
