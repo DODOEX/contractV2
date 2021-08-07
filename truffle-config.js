@@ -160,6 +160,18 @@ module.exports = {
       skipDryRun: true
     },
 
+    ok: {
+      networkCheckTimeout: 100000,
+      provider: () => {
+        return new HDWalletProvider(privKey, 'https://exchainrpc.okex.org')
+      },
+      gasPrice: 100000000,
+      network_id: 66,
+      confirmations: 5,
+      timeoutBlocks: 200,
+      skipDryRun: true
+    },
+
     omgTest: {
       networkCheckTimeout: 100000,
       provider: () => {

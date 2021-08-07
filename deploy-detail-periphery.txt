@@ -578,3 +578,29 @@ Init DODOMineV3Proxy Tx: 0xa24b951703bdda5fd697ce49ddbb491d338cb4c9e35bd93dc6a3c
 network type: arb
 Deploy time: 2021/7/28 下午1:04:45
 Deploy type: MineV3
+====================================================
+network type: ok
+Deploy time: 2021/8/6 下午10:19:24
+Deploy type: ERC20V2Factory
+CustomERC20Address:  0xa2CB66EBB947D217f61510882096F6e95c1DE97D
+ERC20V2FactoryAddress:  0xfDDCA6ffCE24dF5bE3e8AaD32081822f86178048
+Init ERC20V2Factory Tx: 0x8ff931926fa8ce62606c3286e0659950693dbb050b18fc0045d7fecd29770054
+====================================================
+network type: ok
+Deploy time: 2021/8/6 下午10:26:46
+Deploy type: MineV3
+ERC20MineV3Address:  0x45894C062E6f4E58B257e0826675355305dfef0d
+DODOMineV3RegistryAddress:  0xb159260989012fA98af560A3Fa6D9cd11a64cf6E
+Init DODOMineV3Registry Tx: 0x2206547a2b59fe48de9e8702159e101f3e7409777ef336fae404bcf9dfdd81c6
+DODOMineV3ProxyAddress:  0x958f79e2998DFe417208b9A07D799265B0298e58
+Init DODOMineV3Proxy Tx: 0xae19341581ab4ece164a980c1e83df416f48d301e58ed6be938fbf27af0b7dbe
+====================================================
+network type: ok
+Deploy time: 2021/8/6 下午10:31:11
+Deploy type: DODORouteProxy
+DODORouteProxy Address:  0xB5397B2210f49e96a5EB2c9747Aa2bD9397d90C0
+====================================================
+network type: ok
+Deploy time: 2021/8/7 下午6:20:16
+Deploy type: DODORouteProxy
+DODORouteProxy Address:  0xd9deC7c3C06e62a4c1BeEB07CadF568f496b14c2

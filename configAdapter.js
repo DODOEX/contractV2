@@ -7,6 +7,7 @@ const { MBTESTNET_CONFIG } = require("./config/mbtestnet-config");
 const { MATIC_CONFIG } = require("./config/matic-config");
 const { ARB_CONFIG } = require("./config/arb-config");
 const { RINKEBY_CONFIG } = require("./config/rinkeby-config");
+const { OK_CONFIG } = require("./config/ok-config");
 
 exports.GetConfig = function (network, accounts) {
     var CONFIG = {}
@@ -25,6 +26,9 @@ exports.GetConfig = function (network, accounts) {
             break;
         case "arb":
             CONFIG = ARB_CONFIG
+            break;
+        case "ok":
+            CONFIG = OK_CONFIG
             break;
         //testnet
         case "kovan":
