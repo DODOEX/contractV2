@@ -7,7 +7,7 @@ module.exports = {
 
         //Helper
         DODOSellHelper: "0x533da777aedce766ceae696bf90f8541a4ba80eb",
-        DODOCalleeHelper: "0xef49a6DBa1C8DF859E49c17E9A485B439c7689d3",
+        DODOCalleeHelper: "0x45a7E2E9D780613E047f7e78a9d3902ff854B522",
         DODOV1PmmHelper: "0x6373ceB657C83C91088d328622573FB766064Ac4",
         DODOV2RouteHelper: "0x0672952Fab6BD1336C57AE09E49DB6D3e78B1896",
 
