@@ -43,6 +43,7 @@ const DODOV1Adapter = artifacts.require("DODOV1Adapter");
 const DODOV2Adapter = artifacts.require("DODOV2Adapter");
 const UniAdapter = artifacts.require("UniAdapter");
 const UniV3Adapter = artifacts.require("UniV3Adapter");
+const CurveSample = artifacts.require("CurveSampler");
 
 module.exports = async (deployer, network, accounts) => {
     let CONFIG = GetConfig(network, accounts)
@@ -512,7 +513,18 @@ module.exports = async (deployer, network, accounts) => {
         await deployer.deploy(UniAdapter)
         logger.log("UniAdapter Address: ", UniAdapter.address);
         */
-        await deployer.deploy(UniV3Adapter, WETHAddress)
-        logger.log("UniV3Adapter Address: ", UniV3Adapter.address);
+        await deployer.deploy(CurveAdapter)
+        logger.log("CurveAdapter Address: ", CurveAdapter.address);
+    }
+
+    if(deploySwitch.test_Sample) {
+    
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
+        logger.log("Deploy type: anothertest - Sampler");
+    
+        await deployer.deploy(CurveSample)
+        logger.log("CurveSampler Address: ", CurveSample.address);
     }
 };
