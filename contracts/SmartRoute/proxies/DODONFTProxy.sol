@@ -163,7 +163,7 @@ contract DODONFTProxy is ReentrancyGuard, InitializableOwnable {
         _deposit(msg.sender, fragment, IFragment(fragment)._QUOTE_(), curRequireQuote, flag == 1);
         IFragment(fragment).buyout(msg.sender);
 
-        IDODONFTRegistry(_NFT_REGISTY_).removeRegistry(fragment);
+        // IDODONFTRegistry(_NFT_REGISTY_).removeRegistry(fragment);
 
         // refund dust eth
         if (flag == 1 && msg.value > curRequireQuote) msg.sender.transfer(msg.value - curRequireQuote);

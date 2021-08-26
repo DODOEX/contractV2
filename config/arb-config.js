@@ -10,6 +10,8 @@ module.exports = {
         DODOCalleeHelper: "0xe3B40F8D8346d428EAB28d9Fd672b784d921cfBD",
         DODOV1PmmHelper: "0x4EE6398898F7FC3e648b3f6bA458310ac29cD352",
         DODOV2RouteHelper: "0xd72b354BD39f8F11D0cA07bD5724896Bb1a42707",
+        CurveSample: "",
+
 
         //Template
         CloneFactory: "0x1ddD02f6d31C1eF04cFA0a1AA811406B5B2884E7",
@@ -44,6 +46,8 @@ module.exports = {
         DODOV1Adapter: "0xd5a7E197bacE1F3B26E2760321d6ce06Ad07281a",
         DODOV2Adapter: "0x8aB2D334cE64B50BE9Ab04184f7ccBa2A6bb6391",
         UniAdapter: "0x17eBC315760Bb47384224A5f3BF829222fbD3Aa7",
+        CurveAdapter: "",
+
 
         //Proxy
         DODOV2Proxy: "0xeCEaDe494FD5F913Fd937C5CAc4577236395Dc32",
