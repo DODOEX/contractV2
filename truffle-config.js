@@ -41,7 +41,6 @@ module.exports = {
   deploySwitch: {
     DEPLOY_V1:      false,
     DEPLOY_V2:      false,
-    ADAPTER:        false,
     MOCK_TOKEN:     false,
     MOCK_V2_POOL:   false,
     vDODOToken:     false,
@@ -111,7 +110,7 @@ module.exports = {
         return new HDWalletProvider(privKey, "https://mainnet.infura.io/v3/" + infuraId);
       },
       gas: 6000000,
-      gasPrice: 25000000000,
+      gasPrice: 150000000000,
       network_id: 1,
       skipDryRun: true
     },
@@ -193,13 +192,20 @@ module.exports = {
     },
 
     arb: {
+      networkCheckTimeout: 100000,
+      // provider: function () {
+      //   return wrapProvider(
+      //     new HDWalletProvider(privKey, "https://arb1.arbitrum.io/rpc")
+      //     // new HDWalletProvider(privKey, 'https://arbitrum-mainnet.infura.io/v3/' + infuraId)
+      //   )
+      // },
       provider: function () {
-        return wrapProvider(
-          new HDWalletProvider(privKey, "https://arb1.arbitrum.io/rpc")
-        )
+        return new HDWalletProvider(privKey, "https://arb1.arbitrum.io/rpc")
       },
       network_id: '42161',
-      gasPrice: 400000000,
+      gas: 1200000,
+      gasPrice: 900000000,
+      skipDryRun: true
     },
 
     matic: {

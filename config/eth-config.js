@@ -65,5 +65,9 @@ module.exports = {
         //Account
         multiSigAddress: "0x95C4F5b83aA70810D4f142d58e5F7242Bd891CB0",
         defaultMaintainer: "0x95C4F5b83aA70810D4f142d58e5F7242Bd891CB0",
+
+
+        //============= NFT ================
+        DodoNftErc721: "0x945497d9A3e0C1600478e466E2a38Ff8E1623E55",
     }
 }

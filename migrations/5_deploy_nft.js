@@ -97,7 +97,7 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("DodoNftErc721Address: ", DodoNftErc721Address);
             const DodoNftErc721Instance = await DodoNftErc721.at(DodoNftErc721Address);
             var tx = await DodoNftErc721Instance.init(
-                multiSigAddress,
+                "0x16CC37d06FE5061CD0023fb8d142ABaAbB396A2b",
                 "DODONFT",
                 "DODONFT"
             );
