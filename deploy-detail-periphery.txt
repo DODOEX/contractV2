@@ -664,3 +664,8 @@ network type: heco
 Deploy time: 2021/8/20 下午2:29:34
 Deploy type: anothertest - Adapter
 CurveAdapter Address:  0x9Fc4588D38ebC0E73D8d2BCF2DA34Ae8E4bac61d
+====================================================
+network type: bsclive
+Deploy time: 2021/8/31 下午11:10:22
+Deploy type: anothertest - Adapter
+GambitAdapter Address:  0x67555eE83e92DbDae8FF5782A1E9373faE1E818B

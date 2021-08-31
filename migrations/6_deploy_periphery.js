@@ -44,6 +44,7 @@ const DODOV2Adapter = artifacts.require("DODOV2Adapter");
 const UniAdapter = artifacts.require("UniAdapter");
 const UniV3Adapter = artifacts.require("UniV3Adapter");
 const CurveSample = artifacts.require("CurveSampler");
+const GambitAdapter = artifacts.require("GambitAdapter")
 
 module.exports = async (deployer, network, accounts) => {
     let CONFIG = GetConfig(network, accounts)
@@ -513,8 +514,8 @@ module.exports = async (deployer, network, accounts) => {
         await deployer.deploy(UniAdapter)
         logger.log("UniAdapter Address: ", UniAdapter.address);
         */
-        await deployer.deploy(CurveAdapter)
-        logger.log("CurveAdapter Address: ", CurveAdapter.address);
+        await deployer.deploy(GambitAdapter)
+        logger.log("GambitAdapter Address: ", GambitAdapter.address);
     }
 
     if(deploySwitch.test_Sample) {
