@@ -8,9 +8,8 @@
 pragma solidity 0.6.9;
 
 import {SafeMath} from "../../lib/SafeMath.sol";
-import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 
-contract InitializableInternalMintableERC20 is InitializableOwnable {
+contract InitializableInternalMintableERC20 {
     using SafeMath for uint256;
 
     string public name;
@@ -33,7 +32,6 @@ contract InitializableInternalMintableERC20 is InitializableOwnable {
         string memory _symbol,
         uint8 _decimals
     ) public {
-        initOwner(_creator);
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
