@@ -10,137 +10,238 @@ pragma experimental ABIEncoderV2;
 
 import {InitializableInternalMintableERC20} from "../../external/ERC20/InitializableInternalMintableERC20.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
-import {IFilterERC721Model} from "../intf/IFilterERC721Model.sol";
-import {IFilterERC1155Model} from "../intf/IFilterERC1155Model.sol";
-import {IERC721} from "../../intf/IERC721.sol";
-import {IERC721Receiver} from "../../intf/IERC721Receiver.sol";
-import {IERC1155} from "../../intf/IERC1155.sol";
-import {IERC1155Receiver} from "../../intf/IERC1155Receiver.sol";
+import {IFilterModel} from "../intf/IFilterModel.sol";
+import {IFeeModel} from "../intf/IFeeModel.sol";
+import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
+import {DecimalMath} from "../../lib/DecimalMath.sol";
 
-contract FilterAdmin is InitializableInternalMintableERC20, IERC721Receiver, IERC1155Receiver {
+contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
     using SafeMath for uint256;
 
     // ============ Storage ============
-    address public _ERC721_FILTER_MODEL_;
-    address public _ERC1155_FILTER_MODEL_;
+    address[] public _FILTER_REGISTRY_;
+    uint256 public _FEE_;
+    address public _MT_FEE_MODEL_;
+    address public _DEFAULT_MAINTAINER_;
 
     function init(
         address _owner,
-        uint256 _initSupply,
         string memory _name,
         string memory _symbol,
-        uint8 _decimals,
-        address _erc721FilterModel,
-        address _erc1155FilterModel
+        uint256 fee,
+        address mtFeeModel,
+        address defaultMaintainer,
+        address[] memory filters
     ) external {
-        super.init(_owner, _initSupply, _name, _symbol, _decimals);
-        _ERC721_FILTER_MODEL_ = _erc721FilterModel;
-        _ERC1155_FILTER_MODEL_ = _erc1155FilterModel;
+        super.init(_owner, 0, _name, _symbol, 18);
+        _FILTER_REGISTRY_ = filters;
+        _FEE_ = fee;
+        _MT_FEE_MODEL_ = mtFeeModel;
+        _DEFAULT_MAINTAINER_ = defaultMaintainer;
     }
 
-    // ============ Event ============
-    event RemoveNftToken(address nftContract, uint256 tokenId, uint256 amount);
-    event AddNftToken(address nftContract, uint256 tokenId, uint256 amount);
-
-
-    function depositERC721(address nftContract, uint256[] memory tokenIds) public {
-        require(nftContract != address(0), "ZERO_ADDRESS");
+    function ERC721In(
+        address filter, 
+        address nftContract, 
+        uint256[] memory tokenIds
+    ) 
+        external 
+        preventReentrant
+    {
+        require(isIncludeFilter(filter), "FILTER_NOT_INCLUDE");
+        require(IFilterModel(filter)._NFT_IN_SWITCH_(), "NFT_IN_CLOSED");
+        require(IFilterModel(filter).getAvaliableNFTIn() >= tokenIds.length, "EXCEED_MAX_AMOUNT");
+        uint256 totalPrice = 0;
         for(uint256 i = 0; i < tokenIds.length; i++) {
-            uint256 price = IFilterERC721Model(_ERC721_FILTER_MODEL_).saveNFTPrice(nftContract, tokenIds[i]);
-            _mint(msg.sender, price);
-
-            IERC721(nftContract).safeTransferFrom(msg.sender, address(this), tokenIds[i]);
-            emit AddNftToken(nftContract, tokenIds[i], 1);
+            require(IFilterModel(filter).isFilterERC721Pass(nftContract, tokenIds[i]), "NOT_REGISTERED");
+            totalPrice = totalPrice.add(IFilterModel(filter).getNFTInPrice(nftContract, tokenIds[i]));
+            IFilterModel(filter).transferInERC721(nftContract, msg.sender, tokenIds[i]);
         }
+
+        (uint256 poolFeeAmount, uint256 mtFeeAmount) = _nftInFeeTransfer(totalPrice);
+        if(poolFeeAmount > 0) _mint(_OWNER_, poolFeeAmount);
+        if(mtFeeAmount > 0) _mint(_DEFAULT_MAINTAINER_, mtFeeAmount);
+        
+        _mint(msg.sender, totalPrice.sub(mtFeeAmount).sub(poolFeeAmount));
     }
 
-    function depoistERC1155(address nftContract, uint256[] memory tokenIds, uint256[] memory amounts) public {
-        require(nftContract != address(0), "ZERO_ADDRESS");
+    function ERC1155In(
+        address filter, 
+        address nftContract, 
+        uint256[] memory tokenIds, 
+        uint256[] memory amounts
+    ) 
+        external 
+        preventReentrant
+    {
         require(tokenIds.length == amounts.length, "PARAMS_NOT_MATCH");
+        require(isIncludeFilter(filter), "FILTER_NOT_INCLUDE");
+        require(IFilterModel(filter)._NFT_IN_SWITCH_(), "NFT_IN_CLOSED");
+        require(IFilterModel(filter).getAvaliableNFTIn() >= tokenIds.length, "EXCEED_MAX_AMOUNT");
+        uint256 totalPrice = 0;
         for(uint256 i = 0; i < tokenIds.length; i++) {
-            uint256 price = IFilterERC1155Model(_ERC1155_FILTER_MODEL_).saveNFTPrice(nftContract, tokenIds[i], amounts[i]);
-            _mint(msg.sender, price);
-
-            emit AddNftToken(nftContract, tokenIds[i], amounts[i]);
+            require(IFilterModel(filter).isFilterERC1155Pass(nftContract, tokenIds[i], amounts[i]), "NOT_REGISTERED");
+            totalPrice = totalPrice.add(IFilterModel(filter).getNFTInPrice(nftContract, tokenIds[i]).mul(amounts[i]));
         }
 
-        IERC1155(nftContract).safeBatchTransferFrom(msg.sender, address(this), tokenIds, amounts, "");
-    }
+        (uint256 poolFeeAmount, uint256 mtFeeAmount) = _nftInFeeTransfer(totalPrice);
+        if(poolFeeAmount > 0) _mint(_OWNER_, poolFeeAmount);
+        if(mtFeeAmount > 0) _mint(_DEFAULT_MAINTAINER_, mtFeeAmount);
+        
+        _mint(msg.sender, totalPrice.sub(mtFeeAmount).sub(poolFeeAmount));
 
-    function doLotteryERC721() external {
-        uint256 lotteryPrice = IFilterERC721Model(_ERC721_FILTER_MODEL_).buyLotteryNFTPrice();
-        _burn(msg.sender, lotteryPrice);
-        (address nftContract, uint256 tokenId) = IFilterERC721Model(_ERC721_FILTER_MODEL_).lottery();
-
-        IERC721(nftContract).safeTransferFrom(address(this), msg.sender, tokenId);
-        emit RemoveNftToken(nftContract, tokenId, 1);
-    }
-
-    function doLotteryERC1155() external {
-        uint256 lotteryPrice = IFilterERC1155Model(_ERC1155_FILTER_MODEL_).buyLotteryNFTPrice();
-        _burn(msg.sender, lotteryPrice);
-        (address nftContract, uint256 tokenId) = IFilterERC1155Model(_ERC721_FILTER_MODEL_).lottery();
-
-        //TODO: amount
-        IERC1155(nftContract).safeTransferFrom(address(this), msg.sender, tokenId, 1, "");
-        emit RemoveNftToken(nftContract, tokenId, 1);  
-    }
-
-    function buySpecERC721(address nftContract, uint256 tokenId) external {
-        uint256 price = IFilterERC721Model(_ERC721_FILTER_MODEL_).buySpecNFTPrice(nftContract, tokenId);
-        _burn(msg.sender, price);
-
-        IERC721(nftContract).safeTransferFrom(address(this), msg.sender, tokenId);
-        emit RemoveNftToken(nftContract, tokenId, 1);
-    }
-
-    function buySpecERC1155(address nftContract, uint256 tokenId, uint256 amount) external {
-        uint256 price = IFilterERC1155Model(_ERC1155_FILTER_MODEL_).buySpecNFTPrice(nftContract, tokenId, amount);
-        _burn(msg.sender, price);
-        IERC1155(nftContract).safeTransferFrom(address(this), msg.sender, tokenId, amount, "");
-
-        emit RemoveNftToken(nftContract, tokenId, amount);
+        IFilterModel(filter).transferBatchInERC1155(nftContract, msg.sender, tokenIds, amounts);
     }
 
 
-    function supportsInterface(bytes4 interfaceId) public override view returns (bool) {
-        return interfaceId == type(IERC1155Receiver).interfaceId
-            || interfaceId == type(IERC721Receiver).interfaceId;
-    }
-
-    // ============ Callback ============
-    function onERC721Received(
-        address,
-        address,
-        uint256 tokenId,
-        bytes calldata
-    ) external override returns (bytes4) {
-        emit AddNftToken(msg.sender, tokenId, 1);
-        return IERC721Receiver.onERC721Received.selector;
-    }
-
-    function onERC1155Received(
-        address,
-        address,
-        uint256 id,
-        uint256 value,
-        bytes calldata
-    ) external override returns (bytes4){
-        emit AddNftToken(msg.sender, id, value);
-        return IERC1155Receiver.onERC1155Received.selector;
-    }
-
-    function onERC1155BatchReceived(
-        address,
-        address,
-        uint256[] calldata ids,
-        uint256[] calldata values,
-        bytes calldata
-    ) external override returns (bytes4){
-        require(ids.length == values.length, "PARAMS_NOT_MATCH");
-        for(uint256 i = 0; i < ids.length; i++) {
-            emit AddNftToken(msg.sender, ids[i], values[i]);
+    function ERC721RandomOut(
+        address filter,
+        uint256 times
+    ) 
+        external 
+        preventReentrant 
+    {
+        require(msg.sender == tx.origin, "ONLY_ALLOW_EOA");
+        require(isIncludeFilter(filter), "FILTER_NOT_INCLUDE");
+        require(IFilterModel(filter)._NFT_RANDOM_SWITCH_(), "NFT_RANDOM_CLOSED");
+        require(IFilterModel(filter).getAvaliableNFTOut() >= times, "EXCEED_MAX_AMOUNT");
+        uint256 totalPrice = 0;
+        for(uint256 i = 0; i < times; i++) {
+            totalPrice = totalPrice.add(IFilterModel(filter).getNFTRandomOutPrice());
+            (address nftContract, uint256 tokenId) = IFilterModel(filter).getRandomOutId();
+            IFilterModel(filter).transferOutERC721(nftContract, msg.sender, tokenId);
         }
-        return IERC1155Receiver.onERC1155BatchReceived.selector;
+
+        (uint256 poolFeeAmount, uint256 mtFeeAmount) = _nftRandomOutFeeTransfer(totalPrice);
+        if(poolFeeAmount > 0) _mint(_OWNER_, poolFeeAmount);
+        if(mtFeeAmount > 0) _mint(_DEFAULT_MAINTAINER_, mtFeeAmount);
+        
+        _burn(msg.sender, totalPrice);
+    }
+
+
+    //TODO: amount == 1
+    function ERC1155RandomOut(
+        address filter,
+        uint256 times
+    ) 
+        external 
+        preventReentrant 
+    {
+        require(msg.sender == tx.origin, "ONLY_ALLOW_EOA");
+        require(isIncludeFilter(filter), "FILTER_NOT_INCLUDE");
+        require(IFilterModel(filter)._NFT_RANDOM_SWITCH_(), "NFT_RANDOM_OUT_CLOSED");
+        require(IFilterModel(filter).getAvaliableNFTOut() >= times, "EXCEED_MAX_AMOUNT");
+
+        uint256 totalPrice = 0;
+        uint256[] memory tokenIds;
+        uint256[] memory amounts;
+        for(uint256 i = 0; i < times; i++) {
+            totalPrice = totalPrice.add(IFilterModel(filter).getNFTRandomOutPrice());
+            (address nftContract, uint256 tokenId) = IFilterModel(filter).getRandomOutId();
+            IFilterModel(filter).transferOutERC1155(nftContract, msg.sender, tokenId, 1);
+        }
+
+        (uint256 poolFeeAmount, uint256 mtFeeAmount) = _nftRandomOutFeeTransfer(totalPrice);
+        if(poolFeeAmount > 0) _mint(_OWNER_, poolFeeAmount);
+        if(mtFeeAmount > 0) _mint(_DEFAULT_MAINTAINER_, mtFeeAmount);
+        
+        _burn(msg.sender, totalPrice);
+    }
+
+    function ERC721TargetOut(
+        address filter, 
+        address nftContract, 
+        uint256[] memory tokenIds
+    ) 
+        external 
+        preventReentrant
+    {
+        require(isIncludeFilter(filter), "FILTER_NOT_INCLUDE");
+        require(IFilterModel(filter)._NFT_TARGET_SWITCH_(), "NFT_TARGET_OUT_CLOSED");
+        require(IFilterModel(filter).getAvaliableNFTOut() >= tokenIds.length, "EXCEED_MAX_AMOUNT");
+        uint256 totalPrice = 0;
+        for(uint256 i = 0; i < tokenIds.length; i++) {
+            totalPrice = totalPrice.add(IFilterModel(filter).getNFTTargetOutPrice(nftContract, tokenIds[i]));
+            IFilterModel(filter).transferOutERC721(nftContract, msg.sender, tokenIds[i]);
+        }
+
+        (uint256 poolFeeAmount, uint256 mtFeeAmount) = _nftTargetOutFeeTransfer(totalPrice);
+        if(poolFeeAmount > 0) _mint(_OWNER_, poolFeeAmount);
+        if(mtFeeAmount > 0) _mint(_DEFAULT_MAINTAINER_, mtFeeAmount);
+        
+        _burn(msg.sender, totalPrice);
+    }
+
+    function ERC1155TargetOut(
+        address filter, 
+        address nftContract,
+        uint256[] memory tokenIds, 
+        uint256[] memory amounts
+    ) 
+        external 
+        preventReentrant
+    {
+        require(tokenIds.length == amounts.length, "PARAMS_NOT_MATCH");
+        require(isIncludeFilter(filter), "FILTER_NOT_INCLUDE");
+        require(IFilterModel(filter)._NFT_TARGET_SWITCH_(), "NFT_TARGET_OUT_CLOSED");
+        require(IFilterModel(filter).getAvaliableNFTOut() >= tokenIds.length, "EXCEED_MAX_AMOUNT");
+        uint256 totalPrice = 0;
+        for(uint256 i = 0; i < tokenIds.length; i++) {
+            totalPrice = totalPrice.add(IFilterModel(filter).getNFTTargetOutPrice(nftContract, tokenIds[i]).mul(amounts[i]));
+        }
+        (uint256 poolFeeAmount, uint256 mtFeeAmount) = _nftTargetOutFeeTransfer(totalPrice);
+        if(poolFeeAmount > 0) _mint(_OWNER_, poolFeeAmount);
+        if(mtFeeAmount > 0) _mint(_DEFAULT_MAINTAINER_, mtFeeAmount);
+        
+        _burn(msg.sender, totalPrice);
+
+        IFilterModel(filter).transferBatchOutERC1155(nftContract, msg.sender, tokenIds, amounts);
+    }
+
+
+    //================ View ================
+    function isIncludeFilter(address filter) view public returns (bool) {
+        uint256 i = 0;
+        for(; i < _FILTER_REGISTRY_.length; i++) {
+            if(filter == _FILTER_REGISTRY_[i]) break;
+        }
+        return i == _FILTER_REGISTRY_.length ? false : true;
+    }
+
+    function getFilters() view public returns (address[] memory) {
+        return _FILTER_REGISTRY_;
+    }
+
+    function version() virtual external pure returns (string memory) {
+        return "FADMIN 1.0.0";
+    }
+
+    //=============== Owner ==============
+    function addFilter(address filter) external onlyOwner {
+        require(!isIncludeFilter(filter), "FILTER_NOT_INCLUDE");
+        _FILTER_REGISTRY_.push(filter);
+    }
+
+    //TODO: remove Filter是否有必要？
+    
+
+    //=============== Internal ==============
+    function _nftInFeeTransfer(uint256 totalPrice) internal returns (uint256 poolFeeAmount, uint256 mtFeeAmount) {
+        uint256 mtFeeRate = IFeeModel(_MT_FEE_MODEL_).getNFTInFee(address(this), msg.sender);
+        poolFeeAmount = DecimalMath.mulFloor(totalPrice, _FEE_);
+        mtFeeAmount = DecimalMath.mulFloor(totalPrice, mtFeeRate);
+    }
+
+    function _nftRandomOutFeeTransfer(uint256 totalPrice) internal returns (uint256 poolFeeAmount, uint256 mtFeeAmount) {
+        uint256 mtFeeRate = IFeeModel(_MT_FEE_MODEL_).getNFTRandomOutFee(address(this), msg.sender);
+        poolFeeAmount = DecimalMath.mulFloor(totalPrice, _FEE_);
+        mtFeeAmount = DecimalMath.mulFloor(totalPrice, mtFeeRate);
+    }
+
+    function _nftTargetOutFeeTransfer(uint256 totalPrice) internal returns (uint256 poolFeeAmount, uint256 mtFeeAmount) {
+        uint256 mtFeeRate = IFeeModel(_MT_FEE_MODEL_).getNFTTargetOutFee(address(this), msg.sender);
+        poolFeeAmount = DecimalMath.mulFloor(totalPrice, _FEE_);
+        mtFeeAmount = DecimalMath.mulFloor(totalPrice, mtFeeRate);
     }
 }
