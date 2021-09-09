@@ -122,6 +122,8 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
 
         uint256[] memory tokenIds = new uint256[](1);
         tokenIds[0] = tokenId;
+
+        //TODO:
         uint256 mintAmount = IFilterAdmin(filterAdmin).ERC721In(filter, nftContract, tokenIds, 0);
 
         _generalApproveMax(filterAdmin, dodoApprove, mintAmount);

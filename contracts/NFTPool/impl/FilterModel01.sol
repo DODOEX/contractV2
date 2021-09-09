@@ -265,5 +265,39 @@ contract FilterModel01 is InitializableOwnable, IERC721Receiver {
 
     function version() virtual external pure returns (string memory) {
         return "FILTER_1_ERC721 1.0.0";
+    //TODO:
+    function geometricCalc1(uint256 base, uint256 ratio, uint256 times) internal view returns(uint256 newBase, uint256 sum) {
+        require(times > 0);
+        //q^(n-1)
+        uint256 general_coefficient = ratio.powFloor(times - 1);
+        //an=a1*q^n-1
+        newBase = base.mul(general_coefficient);
+
+        if(ratio == 1e18) {
+            //na1
+            sum = base.mul(times);
+        } else {
+            //a1(1-q^n)/(1-q)
+            uint256 denominator = base.mul(1e18.sub(DecimalMath.mulFloor(general_coefficient, ratio)));
+            sum = denominator.div(1e18.sub(ratio));
+        }
+    }
+
+    function removeTokenId(uint256 id) internal returns(bool){
+        uint256[] memory tokenIds = _TOKEN_IDS_;
+        uint256 i;
+        for (; i < tokenIds.length; i++) {
+            if (tokenIds[i] == id) {
+                tokenIds[i] = tokenIds[tokenIds.length - 1];
+                break;
+            }
+        }
+        if(i < tokenIds.length) {
+            _TOKEN_IDS_ = tokenIds;
+            _TOKEN_IDS_.pop();
+            return true;
+        }else {
+            return false;
+        }
     }
 }
