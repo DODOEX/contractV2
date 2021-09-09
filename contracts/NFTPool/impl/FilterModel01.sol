@@ -169,6 +169,10 @@ contract FilterModel01 is InitializableOwnable, IERC721Receiver {
         (, totalPrice) = geometricCalc(base, _CR_RANDOM_OUT_, amount);
     }
 
+    function version() virtual external pure returns (string memory) {
+        return "FILTER_01 1.0.0";
+    }
+
     // ================= Ownable ================
     function transferOutERC721(address nftContract, address assetTo, uint256 nftId) external onlyOwner {
         require(nftContract == _NFT_COLLECTION_, "WRONG_NFT_COLLECTION");

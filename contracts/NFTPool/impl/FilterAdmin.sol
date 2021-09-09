@@ -134,8 +134,6 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
         require(IFilterModel(filter).getAvaliableNFTOut() >= times, "EXCEED_MAX_AMOUNT");
 
         uint256 totalPrice = 0;
-        uint256[] memory tokenIds;
-        uint256[] memory amounts;
         for(uint256 i = 0; i < times; i++) {
             totalPrice = totalPrice.add(IFilterModel(filter).getNFTRandomOutPrice());
             (address nftContract, uint256 tokenId) = IFilterModel(filter).getRandomOutId();
@@ -222,10 +220,7 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
         require(!isIncludeFilter(filter), "FILTER_NOT_INCLUDE");
         _FILTER_REGISTRY_.push(filter);
     }
-
-    //TODO: remove Filter是否有必要？
     
-
     //=============== Internal ==============
     function _nftInFeeTransfer(uint256 totalPrice) internal returns (uint256 poolFeeAmount, uint256 mtFeeAmount) {
         uint256 mtFeeRate = IFeeModel(_MT_FEE_MODEL_).getNFTInFee(address(this), msg.sender);
