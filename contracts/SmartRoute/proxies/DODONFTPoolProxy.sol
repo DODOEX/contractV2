@@ -10,6 +10,7 @@ import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 import {ICloneFactory} from "../../lib/CloneFactory.sol";
 import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 import {IFilterAdmin} from "../../NFTPool/intf/IFilterAdmin.sol";
+import {IERC721} from "../../intf/IERC721.sol";
 
 interface IFilter01 {
     function init(
@@ -99,6 +100,31 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         IFilter01(newFilter01).init(filterAdmin, nftCollection, switches, tokenRanges, nftAmounts, priceRules, spreadIds);
     }
 
+    function erc721ToErc20(
+        address filterAdmin,
+        address filter,
+        address nftContract,
+        uint256 tokenId,
+        address toToken,
+        address dodoApprove,
+        address dodoProxy,
+        bytes memory dodoSwapData
+    ) 
+        external
+        preventReentrant
+    {
+        IERC721(nftContract).safeTransferFrom(msg.sender, address(this), tokenId);
+        IERC721(nftContract).approve(filter, tokenId);
+
+        uint256[] memory tokenIds = new uint256[1];
+        tokenIds[0] = tokenId;
+        IFilterAdmin(filterAdmin).ERC721In(filter, nftContract, tokenIds, 0);
+
+
+
+    }
+    
+
     //====================== Ownable ========================
     function changeDefaultMaintainer(address newMaintainer) external onlyOwner {
         _DEFAULT_MAINTAINER_ = newMaintainer;
@@ -115,5 +141,21 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
     function setFilterTemplate(uint256 idx, address newFilterTemplate) external onlyOwner {
         _FILTER_TEMPLATES_[idx] = newFilterTemplate;
         emit SetFilterTemplate(idx, newFilterTemplate);
+    }
+
+
+    //======================= Internal =====================
+    function _generalApproveMax(
+        address token,
+        address to,
+        uint256 amount
+    ) internal {
+        uint256 allowance = IERC20(token).allowance(address(this), to);
+        if (allowance < amount) {
+            if (allowance > 0) {
+                IERC20(token).safeApprove(to, 0);
+            }
+            IERC20(token).safeApprove(to, uint256(-1));
+        }
     }
 }

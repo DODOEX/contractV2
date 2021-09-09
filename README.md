@@ -4,7 +4,7 @@
 
 - contracts/NFTPool/impl/FilterModel01.sol
 
-- contracts/NFTPool/impl/NFTPoolFeeModel.sol
+- contracts/NFTPool/impl/ControllerModel.sol
 
 - contracts/external/ERC20/InitializableInternalMintableERC20.sol
 

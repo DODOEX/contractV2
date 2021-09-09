@@ -11,7 +11,7 @@ pragma experimental ABIEncoderV2;
 import {InitializableInternalMintableERC20} from "../../external/ERC20/InitializableInternalMintableERC20.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {IFilterModel} from "../intf/IFilterModel.sol";
-import {IFeeModel} from "../intf/IFeeModel.sol";
+import {IControllerModel} from "../intf/IControllerModel.sol";
 import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
 
@@ -21,7 +21,7 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
     // ============ Storage ============
     address[] public _FILTER_REGISTRY_;
     uint256 public _FEE_;
-    address public _MT_FEE_MODEL_;
+    address public _CONTROLLER_MODEL_;
     address public _DEFAULT_MAINTAINER_;
 
     function init(
@@ -36,14 +36,15 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
         super.init(_owner, 0, _name, _symbol, 18);
         _FILTER_REGISTRY_ = filters;
         _FEE_ = fee;
-        _MT_FEE_MODEL_ = mtFeeModel;
+        _CONTROLLER_MODEL_ = mtFeeModel;
         _DEFAULT_MAINTAINER_ = defaultMaintainer;
     }
 
     function ERC721In(
         address filter, 
         address nftContract, 
-        uint256[] memory tokenIds
+        uint256[] memory tokenIds,
+        uint256 minMintAmount
     ) 
         external 
         preventReentrant
@@ -62,14 +63,17 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
         if(poolFeeAmount > 0) _mint(_OWNER_, poolFeeAmount);
         if(mtFeeAmount > 0) _mint(_DEFAULT_MAINTAINER_, mtFeeAmount);
         
-        _mint(msg.sender, totalPrice.sub(mtFeeAmount).sub(poolFeeAmount));
+        uint256 actualMintAmount = totalPrice.sub(mtFeeAmount).sub(poolFeeAmount);
+        require(actualMintAmount >= minMintAmount, "MINT_AMOUNT_NOT_ENOUGH");
+        _mint(msg.sender, actualMintAmount);
     }
 
     function ERC1155In(
         address filter, 
         address nftContract, 
         uint256[] memory tokenIds, 
-        uint256[] memory amounts
+        uint256[] memory amounts,
+        uint256 minMintAmount
     ) 
         external 
         preventReentrant
@@ -87,16 +91,18 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
         (uint256 poolFeeAmount, uint256 mtFeeAmount) = _nftInFeeTransfer(totalPrice);
         if(poolFeeAmount > 0) _mint(_OWNER_, poolFeeAmount);
         if(mtFeeAmount > 0) _mint(_DEFAULT_MAINTAINER_, mtFeeAmount);
-        
-        _mint(msg.sender, totalPrice.sub(mtFeeAmount).sub(poolFeeAmount));
+
+        uint256 actualMintAmount = totalPrice.sub(mtFeeAmount).sub(poolFeeAmount);
+        require(actualMintAmount >= minMintAmount, "MINT_AMOUNT_NOT_ENOUGH");
+        _mint(msg.sender, actualMintAmount);
 
         IFilterModel(filter).transferBatchInERC1155(nftContract, msg.sender, tokenIds, amounts);
     }
 
-
     function ERC721RandomOut(
         address filter,
-        uint256 times
+        uint256 times,
+        uint256 maxBurnAmount
     ) 
         external 
         preventReentrant 
@@ -116,14 +122,15 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
         if(poolFeeAmount > 0) _mint(_OWNER_, poolFeeAmount);
         if(mtFeeAmount > 0) _mint(_DEFAULT_MAINTAINER_, mtFeeAmount);
         
+        require(totalPrice <= maxBurnAmount, "EXTRA_BURN_AMOUNT");
         _burn(msg.sender, totalPrice);
     }
 
 
-    //TODO: amount == 1
     function ERC1155RandomOut(
         address filter,
-        uint256 times
+        uint256 times,
+        uint256 maxBurnAmount
     ) 
         external 
         preventReentrant 
@@ -144,13 +151,15 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
         if(poolFeeAmount > 0) _mint(_OWNER_, poolFeeAmount);
         if(mtFeeAmount > 0) _mint(_DEFAULT_MAINTAINER_, mtFeeAmount);
         
+        require(totalPrice <= maxBurnAmount, "EXTRA_BURN_AMOUNT");
         _burn(msg.sender, totalPrice);
     }
 
     function ERC721TargetOut(
         address filter, 
         address nftContract, 
-        uint256[] memory tokenIds
+        uint256[] memory tokenIds,
+        uint256 maxBurnAmount
     ) 
         external 
         preventReentrant
@@ -168,6 +177,7 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
         if(poolFeeAmount > 0) _mint(_OWNER_, poolFeeAmount);
         if(mtFeeAmount > 0) _mint(_DEFAULT_MAINTAINER_, mtFeeAmount);
         
+        require(totalPrice <= maxBurnAmount, "EXTRA_BURN_AMOUNT");
         _burn(msg.sender, totalPrice);
     }
 
@@ -175,7 +185,8 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
         address filter, 
         address nftContract,
         uint256[] memory tokenIds, 
-        uint256[] memory amounts
+        uint256[] memory amounts,
+        uint256 maxBurnAmount
     ) 
         external 
         preventReentrant
@@ -192,6 +203,7 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
         if(poolFeeAmount > 0) _mint(_OWNER_, poolFeeAmount);
         if(mtFeeAmount > 0) _mint(_DEFAULT_MAINTAINER_, mtFeeAmount);
         
+        require(totalPrice <= maxBurnAmount, "EXTRA_BURN_AMOUNT");
         _burn(msg.sender, totalPrice);
 
         IFilterModel(filter).transferBatchOutERC1155(nftContract, msg.sender, tokenIds, amounts);
@@ -223,19 +235,19 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
     
     //=============== Internal ==============
     function _nftInFeeTransfer(uint256 totalPrice) internal returns (uint256 poolFeeAmount, uint256 mtFeeAmount) {
-        uint256 mtFeeRate = IFeeModel(_MT_FEE_MODEL_).getNFTInFee(address(this), msg.sender);
+        uint256 mtFeeRate = IControllerModel(_CONTROLLER_MODEL_).getNFTInFee(address(this), msg.sender);
         poolFeeAmount = DecimalMath.mulFloor(totalPrice, _FEE_);
         mtFeeAmount = DecimalMath.mulFloor(totalPrice, mtFeeRate);
     }
 
     function _nftRandomOutFeeTransfer(uint256 totalPrice) internal returns (uint256 poolFeeAmount, uint256 mtFeeAmount) {
-        uint256 mtFeeRate = IFeeModel(_MT_FEE_MODEL_).getNFTRandomOutFee(address(this), msg.sender);
+        uint256 mtFeeRate = IControllerModel(_CONTROLLER_MODEL_).getNFTRandomOutFee(address(this), msg.sender);
         poolFeeAmount = DecimalMath.mulFloor(totalPrice, _FEE_);
         mtFeeAmount = DecimalMath.mulFloor(totalPrice, mtFeeRate);
     }
 
     function _nftTargetOutFeeTransfer(uint256 totalPrice) internal returns (uint256 poolFeeAmount, uint256 mtFeeAmount) {
-        uint256 mtFeeRate = IFeeModel(_MT_FEE_MODEL_).getNFTTargetOutFee(address(this), msg.sender);
+        uint256 mtFeeRate = IControllerModel(_CONTROLLER_MODEL_).getNFTTargetOutFee(address(this), msg.sender);
         poolFeeAmount = DecimalMath.mulFloor(totalPrice, _FEE_);
         mtFeeAmount = DecimalMath.mulFloor(totalPrice, mtFeeRate);
     }

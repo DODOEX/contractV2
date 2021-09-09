@@ -11,6 +11,7 @@ pragma experimental ABIEncoderV2;
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {IFilterAdmin} from "../intf/IFilterAdmin.sol";
+import {IControllerModel} from "../intf/IControllerModel.sol";
 import {IERC721} from "../../intf/IERC721.sol";
 import {IERC721Receiver} from "../../intf/IERC721Receiver.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
@@ -142,7 +143,11 @@ contract FilterModel01 is InitializableOwnable, IERC721Receiver {
     //Pseudorandomness
     function getRandomOutId() external view returns (address nftCollection, uint256 nftId) {
         uint256 nftAmount = _TOKEN_IDS_.length;
-        uint256 idx = uint256(keccak256(abi.encodePacked(blockhash(block.number-1), gasleft(), msg.sender, nftAmount))) % nftAmount;
+        uint256 sumSeed;
+        for(uint256 i = 0; i < gasleft() % 10; i++) {
+            sumSeed = sumSeed.add(uint256(keccak256(abi.encodePacked(blockhash(block.number-1), gasleft(), msg.sender, nftAmount))));
+        }
+        uint256 idx = sumSeed % nftAmount;
         nftCollection = _NFT_COLLECTION_;
         nftId = _TOKEN_IDS_[idx];
     }
@@ -176,19 +181,9 @@ contract FilterModel01 is InitializableOwnable, IERC721Receiver {
     // ================= Ownable ================
     function transferOutERC721(address nftContract, address assetTo, uint256 nftId) external onlyOwner {
         require(nftContract == _NFT_COLLECTION_, "WRONG_NFT_COLLECTION");
-        uint256[] memory tokenIds = _TOKEN_IDS_;
-        uint256 i;
-        for (; i < tokenIds.length; i++) {
-            if (tokenIds[i] == nftId) {
-                tokenIds[i] = tokenIds[tokenIds.length - 1];
-                break;
-            }
-        }
-        require(i < tokenIds.length, "NOT_EXIST_ID");
-        _TOKEN_IDS_ = tokenIds;
-        _TOKEN_IDS_.pop();
-        
-        IERC721(nftContract).safeTransferFrom(address(this), assetTo, nftId);
+        bool isRemove = removeTokenId(nftId);
+        if(isRemove)  
+            IERC721(nftContract).safeTransferFrom(address(this), assetTo, nftId);
     }
 
     function transferInERC721(address nftContract, address assetFrom, uint256 nftId) external onlyOwner {
@@ -259,6 +254,20 @@ contract FilterModel01 is InitializableOwnable, IERC721Receiver {
         }
     }
 
+    function emergencyWithdraw(address[] memory nftContract, uint256[] memory tokenIds, address assetTo) external {
+        require(msg.sender == IFilterAdmin(_OWNER_)._OWNER_(), "ACCESS_RESTRICTED");
+        require(nftContract.length == tokenIds.length, "PARAM_INVALID");
+        address controllerModel = IFilterAdmin(_OWNER_)._CONTROLLER_MODEL_();
+        require(IControllerModel(controllerModel).getEmergencySwitch(address(this)), "NOT_OPEN");
+
+        for(uint256 i = 0; i< nftContract.length; i++) {
+            if(nftContract[i] == _NFT_COLLECTION_) {
+                removeTokenId(tokenIds[i]);
+            }
+            IERC721(nftContract[i]).safeTransferFrom(address(this), assetTo, tokenIds[i]);
+        }
+    }
+
     // ============ Callback ============
     function onERC721Received(
         address,
@@ -277,5 +286,23 @@ contract FilterModel01 is InitializableOwnable, IERC721Receiver {
             sum = sum.add(base);
         }
         newBase = base;
+    }
+
+    function removeTokenId(uint256 id) internal returns(bool){
+        uint256[] memory tokenIds = _TOKEN_IDS_;
+        uint256 i;
+        for (; i < tokenIds.length; i++) {
+            if (tokenIds[i] == id) {
+                tokenIds[i] = tokenIds[tokenIds.length - 1];
+                break;
+            }
+        }
+        if(i < tokenIds.length) {
+            _TOKEN_IDS_ = tokenIds;
+            _TOKEN_IDS_.pop();
+            return true;
+        }else {
+            return false;
+        }
     }
 }
