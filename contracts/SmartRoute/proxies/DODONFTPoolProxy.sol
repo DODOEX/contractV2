@@ -9,7 +9,19 @@ import {SafeMath} from "../../lib/SafeMath.sol";
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 import {ICloneFactory} from "../../lib/CloneFactory.sol";
 import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
+import {IFilterAdmin} from "../../NFTPool/intf/IFilterAdmin.sol";
 
+interface IFilter01 {
+    function init(
+        address filterAdmin,
+        address nftCollection,
+        bool[] memory switches,
+        uint256[] memory tokenRanges,
+        uint256[] memory nftAmounts,
+        uint256[] memory priceRules,
+        uint256[] memory spreadIds
+    ) external;
+}
 
 contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
     using SafeMath for uint256;
@@ -37,16 +49,42 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         _DEFAULT_MAINTAINER_ = defaultMaintainer;
     }
 
-    //TODO:一笔交易
-
-    function createFilterAdmin(
+    function createNewNFTPool01(
         string memory name,
         string memory symbol,
-        uint256 fee
-    ) external returns(address) {
+        uint256 fee,
+        address nftCollection,
+        bool[] memory switches,
+        uint256[] memory tokenRanges,
+        uint256[] memory nftAmounts,
+        uint256[] memory priceRules,
+        uint256[] memory spreadIds
+    ) external returns(address newFilterAdmin) {
+        newFilterAdmin = ICloneFactory(_CLONE_FACTORY_).clone(_FILTER_ADMIN_TEMPLATE_);
 
+        address filter01 = createFilter01(
+            newFilterAdmin,
+            nftCollection,
+            switches,
+            tokenRanges,
+            nftAmounts,
+            priceRules,
+            spreadIds
+        );
+
+        address[] memory filters = new address[](1);
+        filters[0] = filter01;
+        
+        IFilterAdmin(newFilterAdmin).init(
+            msg.sender, 
+            name,
+            symbol,
+            fee,
+            _NFT_POOL_FEE_MODEL_,
+            _DEFAULT_MAINTAINER_,
+            filters
+        );
     }
-
 
     function createFilter01(
         address filterAdmin,
@@ -56,10 +94,10 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         uint256[] memory nftAmounts,
         uint256[] memory priceRules,
         uint256[] memory spreadIds
-    ) external returns(address) {
-
+    ) public returns(address newFilter01) {
+        newFilter01 = ICloneFactory(_CLONE_FACTORY_).clone(_FILTER_TEMPLATES_[1]);
+        IFilter01(newFilter01).init(filterAdmin, nftCollection, switches, tokenRanges, nftAmounts, priceRules, spreadIds);
     }
-
 
     //====================== Ownable ========================
     function changeDefaultMaintainer(address newMaintainer) external onlyOwner {

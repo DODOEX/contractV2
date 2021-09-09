@@ -100,7 +100,7 @@ contract FilterModel01 is InitializableOwnable, IERC721Receiver {
         }
     }
 
-    function getAvaliableNFTIn() external view returns(uint256) {
+    function getAvaliableNFTIn() public view returns(uint256) {
         if(_MAX_NFT_AMOUNT_ < _TOKEN_IDS_.length) {
             return 0;
         }else {
@@ -108,7 +108,7 @@ contract FilterModel01 is InitializableOwnable, IERC721Receiver {
         }
     }
 
-    function getAvaliableNFTOut() external view returns(uint256) {
+    function getAvaliableNFTOut() public view returns(uint256) {
         if(_TOKEN_IDS_.length < _MIN_NFT_AMOUNT_) {
             return 0;
         }else {
@@ -117,36 +117,21 @@ contract FilterModel01 is InitializableOwnable, IERC721Receiver {
     }
 
     function getNFTInPrice(address, uint256) external view returns(uint256) {
-        uint256 nftAmount = _TOKEN_IDS_.length;
-        if(nftAmount == 0) {
-            return _GS_START_IN_;
-        }else {
-            uint256 price = _GS_START_IN_;
-            //TODO:gas
-            for(uint256 i = 0; i < nftAmount; i++) {
-                price = DecimalMath.mulFloor(price, _CR_IN_);
-            }
-            return price;
-        }
+        (uint256 price, ) = geometricCalc(_GS_START_IN_,_CR_IN_, _TOKEN_IDS_.length);
+        return price;
     }
 
     function getNFTRandomOutPrice() external view returns (uint256) {
-        uint256 nftAmount = _TOKEN_IDS_.length;
-        require(nftAmount != 0, "EMPTY");
-        uint256 price = _GS_START_RANDOM_OUT_;
-        for(uint256 i = 0; i < nftAmount; i++) {
-            price = DecimalMath.mulFloor(price, _CR_RANDOM_OUT_);
-        }
+        require(_TOKEN_IDS_.length != 0, "EMPTY");
+
+        (uint256 price, ) = geometricCalc(_GS_START_RANDOM_OUT_,_CR_RANDOM_OUT_, _TOKEN_IDS_.length);
         return price;
     }
 
     function getNFTTargetOutPrice(address, uint256) external view returns (uint256) {
-        uint256 nftAmount = _TOKEN_IDS_.length; 
-        require(nftAmount != 0, "EMPTY");
-        uint256 price = _GS_START_TARGET_OUT_;
-        for(uint256 i = 0; i < nftAmount; i++) {
-            price = DecimalMath.mulFloor(price, _CR_TARGET_OUT_);
-        }
+        require(_TOKEN_IDS_.length != 0, "EMPTY");
+
+        (uint256 price, ) = geometricCalc(_GS_START_TARGET_OUT_,_CR_TARGET_OUT_, _TOKEN_IDS_.length);
         return price;
     }
 
@@ -160,6 +145,28 @@ contract FilterModel01 is InitializableOwnable, IERC721Receiver {
         uint256 idx = uint256(keccak256(abi.encodePacked(blockhash(block.number-1), gasleft(), msg.sender, nftAmount))) % nftAmount;
         nftCollection = _NFT_COLLECTION_;
         nftId = _TOKEN_IDS_[idx];
+    }
+
+
+    function getTotalNFTInPrice(uint256 amount) external view returns (uint256 totalPrice) {
+        require(amount <= getAvaliableNFTIn(), "EXCEDD_IN_AMOUNT");
+
+        (uint256 base, ) = geometricCalc(_GS_START_IN_,_CR_IN_, _TOKEN_IDS_.length);
+        (, totalPrice) = geometricCalc(base, _CR_IN_, amount);
+    }
+
+    function getTotalTargetNFTOutPrice(uint256 amount) external view returns (uint256 totalPrice) {
+        require(amount <= getAvaliableNFTOut(), "EXCEED_OUT_AMOUNT");
+
+        (uint256 base, ) = geometricCalc(_GS_START_TARGET_OUT_,_CR_TARGET_OUT_, _TOKEN_IDS_.length);
+        (, totalPrice) = geometricCalc(base, _CR_TARGET_OUT_, amount);
+    }
+
+    function getTotalRandomNFTOutPrice(uint256 amount) external view returns (uint256 totalPrice) {
+        require(amount <= getAvaliableNFTOut(), "EXCEED_OUT_AMOUNT");
+
+        (uint256 base, ) = geometricCalc(_GS_START_RANDOM_OUT_,_CR_RANDOM_OUT_, _TOKEN_IDS_.length);
+        (, totalPrice) = geometricCalc(base, _CR_RANDOM_OUT_, amount);
     }
 
     // ================= Ownable ================
@@ -256,5 +263,15 @@ contract FilterModel01 is InitializableOwnable, IERC721Receiver {
         bytes calldata
     ) external override returns (bytes4) {
         return IERC721Receiver.onERC721Received.selector;
+    }
+
+    // ============ Internal =============
+    function geometricCalc(uint256 base, uint256 ratio, uint256 times) internal view returns(uint256 newBase, uint256 sum) {
+        sum = 0;
+        for(uint256 i = 0; i < times; i++) {
+            base = DecimalMath.mulFloor(base, ratio);
+            sum = sum.add(base);
+        }
+        newBase = base;
     }
 }
