@@ -4,6 +4,7 @@
 */
 
 pragma solidity 0.6.9;
+pragma experimental ABIEncoderV2;
 
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
@@ -15,13 +16,12 @@ import {IDODONFTApprove} from "../../intf/IDODONFTApprove.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 
-interface IFilterERC721V1 {
+interface IFilterV1 {
     function init(
         address filterAdmin,
         address nftCollection,
         bool[] memory switches,
-        uint256[] memory tokenRanges,
-        uint256[] memory nftAmounts,
+        uint256[] memory numParams,
         uint256[] memory priceRules,
         uint256[] memory spreadIds
     ) external;
@@ -61,8 +61,8 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         _DODO_APPROVE_ = dodoApprove;
     }
 
-    // ================ NFT In and Out ===================
-    function nftIn(
+    // ================ ERC721 In and Out ===================
+    function erc721In(
         address filter,
         address nftCollection,
         uint256[] memory tokenIds,
@@ -77,7 +77,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         require(received >= minMintAmount, "MINT_AMOUNT_NOT_ENOUGH");
     }
 
-    function nftTargetOut(
+    function erc721TargetOut(
         address filter,
         uint256[] memory indexes,
         address to,
@@ -87,7 +87,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
     }
 
-    function nftRandomOut(
+    function erc721RandomOut(
         address filter,
         uint256 amount,
         address to,
@@ -97,67 +97,99 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
     }
 
+    // ================== ERC1155 In and Out ===================
+    function erc1155In(
+        address filter,
+        address nftCollection,
+        uint256[] memory tokenIds,
+        uint256[] memory amounts,
+        address to,
+        uint256 minMintAmount
+    ) external {
+        for(uint256 i = 0; i < tokenIds.length; i++) {
+            require(IFilterModel(filter).isNFTValid(nftCollection,tokenIds[i]), "NOT_REGISTRIED");
+        }
+        IDODONFTApprove(_DODO_NFT_APPROVE_).claimERC1155Batch(nftCollection, msg.sender, filter, tokenIds, amounts);
+        uint256 received = IFilterModel(filter).ERC1155In(tokenIds, to);
+        require(received >= minMintAmount, "MINT_AMOUNT_NOT_ENOUGH");
+    }
+
+    function erc1155TargetOut(
+        address filter,
+        uint256[] memory indexes,
+        uint256[] memory amounts,
+        address to,
+        uint256 maxBurnAmount 
+    ) external {
+        uint256 paid = IFilterModel(filter).ERC1155TargetOut(indexes, amounts, to);
+        require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
+    }
+
+    function erc1155RandomOut(
+        address filter,
+        uint256 amount,
+        address to,
+        uint256 maxBurnAmount 
+    ) external {
+        uint256 paid = IFilterModel(filter).ERC1155RandomOut(amount, to);
+        require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
+    }
+
 
     // ================== Create NFTPool ===================
-
-    function createNewNFTPool01(
-        uint256 initSupply,
-        string memory name,
-        string memory symbol,
-        uint256 fee,
+    function createNewNFTPoolV1(
         address nftCollection,
+        uint256 filterKey, //1 => FilterERC721V1, 2 => FilterERC1155V1
+        string[] memory tokenInfo, 
+        uint256[] memory numParams,//0 - initSupply, 1 - fee
         bool[] memory switches,
-        uint256[] memory tokenRanges,
-        uint256[] memory nftAmounts,
+        uint256[] memory filterNumParams, //0 - startId, 1 - endId, 2 - maxAmount, 3 - minAmount
         uint256[] memory priceRules,
         uint256[] memory spreadIds
     ) external returns(address newFilterAdmin) {
         newFilterAdmin = ICloneFactory(_CLONE_FACTORY_).clone(_FILTER_ADMIN_TEMPLATE_);
 
-        address filter01 = createFilterERC721V1(
+        address filterV1 = createFilterV1(
+            filterKey,
             newFilterAdmin,
             nftCollection,
             switches,
-            tokenRanges,
-            nftAmounts,
+            filterNumParams,
             priceRules,
             spreadIds
         );
 
         address[] memory filters = new address[](1);
-        filters[0] = filter01;
+        filters[0] = filterV1;
         
         IFilterAdmin(newFilterAdmin).init(
             msg.sender, 
-            initSupply,
-            name,
-            symbol,
-            fee,
+            numParams[0],
+            tokenInfo[0],
+            tokenInfo[1],
+            numParams[1],
             _CONTROLLER_MODEL_,
             _DEFAULT_MAINTAINER_,
             filters
         );
     }
 
-
     // ================== Create Filter ===================
-    function createFilterERC721V1(
+    function createFilterV1(
+        uint256 key,
         address filterAdmin,
         address nftCollection,
         bool[] memory switches,
-        uint256[] memory tokenRanges,
-        uint256[] memory nftAmounts,
+        uint256[] memory numParams, //0 - startId, 1 - endId, 2 - maxAmount, 3 - minAmount
         uint256[] memory priceRules,
         uint256[] memory spreadIds
-    ) public returns(address newFilterERC721V1) {
-        //key = 1 => FilterERC721V1
-        newFilterERC721V1 = ICloneFactory(_CLONE_FACTORY_).clone(_FILTER_TEMPLATES_[1]);
-        IFilterERC721V1(newFilterERC721V1).init(
+    ) public returns(address newFilterV1) {
+        newFilterV1 = ICloneFactory(_CLONE_FACTORY_).clone(_FILTER_TEMPLATES_[key]);
+        IFilterV1(newFilterV1).init(
             filterAdmin,
             nftCollection,
             switches,
-            tokenRanges,
-            nftAmounts,
+            numParams,
             priceRules,
             spreadIds
         );
