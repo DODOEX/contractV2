@@ -8,35 +8,21 @@
 pragma solidity 0.6.9;
 
 interface IFilterModel {
-    function isFilterERC721Pass(address nftCollectionAddress, uint256 nftId) external view returns (bool);
+    function isNFTValid(address nftCollectionAddress, uint256 nftId) external view returns (bool);
+
+    function _NFT_COLLECTION_() external view returns(address);
     
-    function isFilterERC1155Pass(address nftCollectionAddress, uint256 nftId, uint256 amount) external view returns (bool);
+    function queryNFTIn(uint256 NFTInAmount) external view returns (uint256 rawReceive, uint256 received);
 
-    function getAvaliableNFTIn() external view returns(uint256);
+    function queryNFTTargetOut(uint256 NFTOutAmount) external view returns (uint256 rawPay, uint256 pay);
 
-    function getAvaliableNFTOut() external view returns(uint256);
+    function queryNFTRandomOut(uint256 NFTOutAmount) external view returns (uint256 rawPay, uint256 pay);
 
-    function _NFT_IN_SWITCH_() external view returns(bool);
+    function ERC721In(uint256[] memory tokenIds, address to) external returns(uint256 received);
 
-    function _NFT_RANDOM_SWITCH_() external view returns(bool);
+    function ERC721TargetOut(uint256[] memory indexes, address to) external returns(uint256 paid);
 
-    function _NFT_TARGET_SWITCH_() external view returns(bool);
+    function ERC721RandomOut(uint256 amount, address to) external returns (uint256 paid);
     
-    function getNFTInPrice(address nftCollectionAddress, uint256 nftId) external view returns (uint256);
-
-    function getNFTRandomOutPrice() external view returns (uint256);
-
-    function getNFTTargetOutPrice(address nftCollectionAddress, uint256 nftId) external view returns (uint256);
-
-    function getRandomOutId() external view returns (address nftCollection, uint256 nftId);
-
-    function transferOutERC721(address nftContract, address assetTo, uint256 nftId) external;
-
-    function transferInERC721(address nftContract, address assetFrom, uint256 nftId) external;
-
-    function transferOutERC1155(address nftContract, address assetTo, uint256 nftId, uint256 amount) external; 
-
-    function transferBatchOutERC1155(address nftContract, address assetTo, uint256[] memory nftIds, uint256[] memory amounts) external; 
-
-    function transferBatchInERC1155(address nftContract, address assetFrom, uint256[] memory nftIds, uint256[] memory amounts) external;
+    
 }

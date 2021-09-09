@@ -9,12 +9,13 @@ import {SafeMath} from "../../lib/SafeMath.sol";
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 import {ICloneFactory} from "../../lib/CloneFactory.sol";
 import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
+import {IFilterModel} from "../../NFTPool/intf/IFilterModel.sol";
 import {IFilterAdmin} from "../../NFTPool/intf/IFilterAdmin.sol";
-import {IERC721} from "../../intf/IERC721.sol";
+import {IDODONFTApprove} from "../../intf/IDODONFTApprove.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 
-interface IFilter01 {
+interface IFilterERC721V1 {
     function init(
         address filterAdmin,
         address nftCollection,
@@ -35,8 +36,10 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
     mapping(uint256 => address) public _FILTER_TEMPLATES_;
     address public _FILTER_ADMIN_TEMPLATE_;
     address public _DEFAULT_MAINTAINER_;
-    address public _NFT_POOL_FEE_MODEL_;
+    address public _CONTROLLER_MODEL_;
     address public immutable _CLONE_FACTORY_;
+    address public immutable _DODO_NFT_APPROVE_;
+    address public immutable _DODO_APPROVE_;
 
 
     // ============ Event ==============
@@ -45,16 +48,60 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
     constructor(
         address cloneFactory,
         address filterAdminTemplate,
-        address nftPoolFeeModel,
-        address defaultMaintainer
+        address controllerModel,
+        address defaultMaintainer,
+        address dodoNftApprove,
+        address dodoApprove
     ) public {
         _CLONE_FACTORY_ = cloneFactory;
         _FILTER_ADMIN_TEMPLATE_ = filterAdminTemplate;
-        _NFT_POOL_FEE_MODEL_ = nftPoolFeeModel;
+        _CONTROLLER_MODEL_ = controllerModel;
         _DEFAULT_MAINTAINER_ = defaultMaintainer;
+        _DODO_NFT_APPROVE_ = dodoNftApprove;
+        _DODO_APPROVE_ = dodoApprove;
     }
 
+    // ================ NFT In and Out ===================
+    function nftIn(
+        address filter,
+        address nftCollection,
+        uint256[] memory tokenIds,
+        address to,
+        uint256 minMintAmount
+    ) external {
+        for(uint256 i = 0; i < tokenIds.length; i++) {
+            require(IFilterModel(filter).isNFTValid(nftCollection,tokenIds[i]), "NOT_REGISTRIED");
+            IDODONFTApprove(_DODO_NFT_APPROVE_).claimERC721(nftCollection, msg.sender, filter, tokenIds[i]);
+        }
+        uint256 received = IFilterModel(filter).ERC721In(tokenIds, to);
+        require(received >= minMintAmount, "MINT_AMOUNT_NOT_ENOUGH");
+    }
+
+    function nftTargetOut(
+        address filter,
+        uint256[] memory indexes,
+        address to,
+        uint256 maxBurnAmount 
+    ) external {
+        uint256 paid = IFilterModel(filter).ERC721TargetOut(indexes, to);
+        require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
+    }
+
+    function nftRandomOut(
+        address filter,
+        uint256 amount,
+        address to,
+        uint256 maxBurnAmount 
+    ) external {
+        uint256 paid = IFilterModel(filter).ERC721RandomOut(amount, to);
+        require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
+    }
+
+
+    // ================== Create NFTPool ===================
+
     function createNewNFTPool01(
+        uint256 initSupply,
         string memory name,
         string memory symbol,
         uint256 fee,
@@ -67,7 +114,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
     ) external returns(address newFilterAdmin) {
         newFilterAdmin = ICloneFactory(_CLONE_FACTORY_).clone(_FILTER_ADMIN_TEMPLATE_);
 
-        address filter01 = createFilter01(
+        address filter01 = createFilterERC721V1(
             newFilterAdmin,
             nftCollection,
             switches,
@@ -82,16 +129,19 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         
         IFilterAdmin(newFilterAdmin).init(
             msg.sender, 
+            initSupply,
             name,
             symbol,
             fee,
-            _NFT_POOL_FEE_MODEL_,
+            _CONTROLLER_MODEL_,
             _DEFAULT_MAINTAINER_,
             filters
         );
     }
 
-    function createFilter01(
+
+    // ================== Create Filter ===================
+    function createFilterERC721V1(
         address filterAdmin,
         address nftCollection,
         bool[] memory switches,
@@ -99,34 +149,42 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         uint256[] memory nftAmounts,
         uint256[] memory priceRules,
         uint256[] memory spreadIds
-    ) public returns(address newFilter01) {
-        newFilter01 = ICloneFactory(_CLONE_FACTORY_).clone(_FILTER_TEMPLATES_[1]);
-        IFilter01(newFilter01).init(filterAdmin, nftCollection, switches, tokenRanges, nftAmounts, priceRules, spreadIds);
+    ) public returns(address newFilterERC721V1) {
+        //key = 1 => FilterERC721V1
+        newFilterERC721V1 = ICloneFactory(_CLONE_FACTORY_).clone(_FILTER_TEMPLATES_[1]);
+        IFilterERC721V1(newFilterERC721V1).init(
+            filterAdmin,
+            nftCollection,
+            switches,
+            tokenRanges,
+            nftAmounts,
+            priceRules,
+            spreadIds
+        );
     }
 
+
+    // ================== NFT ERC20 Swap ======================
     function erc721ToErc20(
         address filterAdmin,
         address filter,
         address nftContract,
         uint256 tokenId,
         address toToken,
-        address dodoApprove,
         address dodoProxy,
         bytes memory dodoSwapData
     ) 
         external
         preventReentrant
     {
-        IERC721(nftContract).safeTransferFrom(msg.sender, address(this), tokenId);
-        IERC721(nftContract).approve(filter, tokenId);
+        IDODONFTApprove(_DODO_NFT_APPROVE_).claimERC721(nftContract, msg.sender, filter, tokenId);
 
         uint256[] memory tokenIds = new uint256[](1);
         tokenIds[0] = tokenId;
 
-        //TODO:
-        uint256 mintAmount = IFilterAdmin(filterAdmin).ERC721In(filter, nftContract, tokenIds, 0);
+        uint256 receivedFragAmount = IFilterModel(filter).ERC721In(tokenIds, address(this));
 
-        _generalApproveMax(filterAdmin, dodoApprove, mintAmount);
+        _generalApproveMax(filterAdmin, _DODO_APPROVE_, receivedFragAmount);
 
         (bool success, ) = dodoProxy.call(dodoSwapData);
         require(success, "API_SWAP_FAILED");
@@ -146,8 +204,8 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         _FILTER_ADMIN_TEMPLATE_ = newFilterAdminTemplate;
     }
 
-    function changeNftPoolFeeModel(address newNftPoolFeeModel) external onlyOwner {
-        _NFT_POOL_FEE_MODEL_ = newNftPoolFeeModel;
+    function changeControllerModel(address newControllerModel) external onlyOwner {
+        _CONTROLLER_MODEL_ = newControllerModel;
     }
 
     function setFilterTemplate(uint256 idx, address newFilterTemplate) external onlyOwner {

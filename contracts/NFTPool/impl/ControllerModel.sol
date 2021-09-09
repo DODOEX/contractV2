@@ -16,13 +16,11 @@ contract ControllerModel is InitializableOwnable {
     using SafeMath for uint256;
 
     uint256 public _GLOBAL_NFT_IN_FEE_ = 0;
-    uint256 public _GLOBAL_NFT_RANDOM_OUT_FEE_ = 0;
-    uint256 public _GLOBAL_NFT_TARGET_OUT_FEE_ = 50000000000000000;//0.05
+    uint256 public _GLOBAL_NFT_OUT_FEE_ = 0;
 
     struct FilterAdminFeeInfo {
         uint256 nftInFee;
-        uint256 nftRandomOutFee;
-        uint256 nftTargetOutFee;
+        uint256 nftOutFee;
         bool isSet;
     }
 
@@ -35,26 +33,23 @@ contract ControllerModel is InitializableOwnable {
 
     //==================== Ownable ====================
 
-    function addFilterAdminFeeInfo(address filterAdminAddr, uint256 nftInFee, uint256 nftRandomOutFee, uint256 nftTargetOutFee) external onlyOwner {
+    function addFilterAdminFeeInfo(address filterAdminAddr, uint256 nftInFee, uint256 nftOutFee) external onlyOwner {
         FilterAdminFeeInfo memory filterAdmin =  FilterAdminFeeInfo({
             nftInFee: nftInFee,
-            nftRandomOutFee: nftRandomOutFee,
-            nftTargetOutFee: nftTargetOutFee,
+            nftOutFee: nftOutFee,
             isSet: true
         });
         filterAdminFees[filterAdminAddr] = filterAdmin;
     }
 
-    function setFilterAdminFeeInfo(address filterAdminAddr, uint256 nftInFee, uint256 nftRandomOutFee, uint256 nftTargetOutFee) external onlyOwner {
+    function setFilterAdminFeeInfo(address filterAdminAddr, uint256 nftInFee, uint256 nftOutFee) external onlyOwner {
         filterAdminFees[filterAdminAddr].nftInFee = nftInFee;
-        filterAdminFees[filterAdminAddr].nftRandomOutFee = nftRandomOutFee;
-        filterAdminFees[filterAdminAddr].nftTargetOutFee = nftTargetOutFee;
+        filterAdminFees[filterAdminAddr].nftOutFee = nftOutFee;
     }
 
-    function setGlobalParam(uint256 nftInFee, uint256 nftRandomOutFee, uint256 nftTargetOutFee) external onlyOwner {
+    function setGlobalParam(uint256 nftInFee, uint256 nftOutFee) external onlyOwner {
         _GLOBAL_NFT_IN_FEE_ = nftInFee;
-        _GLOBAL_NFT_RANDOM_OUT_FEE_ = nftRandomOutFee;
-        _GLOBAL_NFT_TARGET_OUT_FEE_ = nftTargetOutFee;
+        _GLOBAL_NFT_OUT_FEE_ = nftOutFee;
     }
 
     function setEmergencyWithdraw(address filter, bool isOpen) external onlyOwner {
@@ -63,7 +58,7 @@ contract ControllerModel is InitializableOwnable {
     }
  
     //===================== View ========================
-    function getNFTInFee(address filterAdminAddr, address) external view returns(uint256) {
+    function getMintFee(address filterAdminAddr) external view returns(uint256) {
         FilterAdminFeeInfo memory filterAdminFeeInfo = filterAdminFees[filterAdminAddr];
 
         if(filterAdminFeeInfo.isSet) {
@@ -73,25 +68,15 @@ contract ControllerModel is InitializableOwnable {
         }
     }
 
-    function getNFTRandomOutFee(address filterAdminAddr, address) external view returns(uint256) {
+    function getBurnFee(address filterAdminAddr) external view returns(uint256) {
         FilterAdminFeeInfo memory filterAdminFeeInfo = filterAdminFees[filterAdminAddr];
 
         if(filterAdminFeeInfo.isSet) {
-            return filterAdminFeeInfo.nftRandomOutFee;
+            return filterAdminFeeInfo.nftOutFee;
         }else {
-            return _GLOBAL_NFT_RANDOM_OUT_FEE_;
+            return _GLOBAL_NFT_OUT_FEE_;
         }
     }
-
-    function getNFTTargetOutFee(address filterAdminAddr, address) external view returns(uint256) {
-        FilterAdminFeeInfo memory filterAdminFeeInfo = filterAdminFees[filterAdminAddr];
-
-        if(filterAdminFeeInfo.isSet) {
-            return filterAdminFeeInfo.nftTargetOutFee;
-        }else {
-            return _GLOBAL_NFT_TARGET_OUT_FEE_;
-        }
-    }  
 
     function getEmergencySwitch(address filter) external view returns(bool) {
         return isEmergencyWithdraw[filter];

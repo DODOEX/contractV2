@@ -8,11 +8,9 @@
 pragma solidity 0.6.9;
 
 interface IControllerModel {
-    function getNFTInFee(address filterAdminAddr, address user) external view returns(uint256);
+    function getMintFee(address filterAdminAddr) external view returns (uint256);
 
-    function getNFTRandomOutFee(address filterAdminAddr, address user) external view returns(uint256);
+    function getBurnFee(address filterAdminAddr) external view returns (uint256);
 
-    function getNFTTargetOutFee(address filterAdminAddr, address user) external view returns(uint256);
-
-    function getEmergencySwitch(address filter) external view returns(bool);
+    function getEmergencySwitch(address filter) external view returns (bool);
 }

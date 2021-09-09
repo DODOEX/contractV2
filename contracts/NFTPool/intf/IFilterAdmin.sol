@@ -13,27 +13,21 @@ interface IFilterAdmin {
     function _CONTROLLER_MODEL_() external returns (address);
 
     function init(
-        address _owner,
-        string memory _name,
-        string memory _symbol,
+        address owner,
+        uint256 initSupply,
+        string memory name,
+        string memory symbol,
         uint256 fee,
         address mtFeeModel,
         address defaultMaintainer,
         address[] memory filters
     ) external;
 
-    function ERC721In(
-        address filter,
-        address nftContract,
-        uint256[] memory tokenIds,
-        uint256 minMintAmount
-    ) external returns (uint256 actualMintAmount);
+    function mintFragTo(address to, uint256 rawAmount) external returns (uint256 received);
 
-    function mintFragTo(address to, uint256 rawAmount) external;
+    function burnFragFrom(address from, uint256 rawAmount) external returns (uint256 paid);
 
-    function burnFragFrom(address from, uint256 rawAmount) external;
+    function queryChargeMintFee(uint256 rawAmount) external view returns (uint256 poolFee, uint256 mtFee);
 
-    function queryChargeMintFee(uint256 rawAmount) external;
-
-    function queryChargeBurnFee(uint256 rawAmount) external;
+    function queryChargeBurnFee(uint256 rawAmount) external view returns (uint256 poolFee, uint256 mtFee);
 }
