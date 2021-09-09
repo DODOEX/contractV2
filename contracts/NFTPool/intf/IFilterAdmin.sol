@@ -23,9 +23,17 @@ interface IFilterAdmin {
     ) external;
 
     function ERC721In(
-        address filter, 
-        address nftContract, 
+        address filter,
+        address nftContract,
         uint256[] memory tokenIds,
         uint256 minMintAmount
-    ) external returns(uint256 actualMintAmount);
+    ) external returns (uint256 actualMintAmount);
+
+    function mintFragTo(address to, uint256 rawAmount) external;
+
+    function burnFragFrom(address from, uint256 rawAmount) external;
+
+    function queryChargeMintFee(uint256 rawAmount) external;
+
+    function queryChargeBurnFee(uint256 rawAmount) external;
 }

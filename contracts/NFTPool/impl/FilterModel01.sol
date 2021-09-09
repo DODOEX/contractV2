@@ -22,31 +22,34 @@ contract FilterModel01 is InitializableOwnable, IERC721Receiver {
 
     //=================== Storage ===================
     address public _NFT_COLLECTION_;
-    uint256 public _TOKEN_ID_START_;
-    uint256 public _TOKEN_ID_END_;
-
+    uint256 public _NFT_ID_START_;
+    uint256 public _NFT_ID_END_;
+    
     //tokenId => isRegistered
     mapping(uint256 => bool) public _SPREAD_IDS_REGISTRY_;
+    mapping(uint256 => uint256) public _NFT_RESERVE_;
+
+    uint256[] public _NFT_IDS_;
+    uint256 public _MAX_NFT_AMOUNT_;
+    uint256 public _MIN_NFT_AMOUNT_;
+
+    // GS -> Geometric sequence
+    // CR -> Common Ratio
 
     //For NFT IN
     uint256 public _GS_START_IN_;
     uint256 public _CR_IN_;
-    bool public _NFT_IN_SWITCH_ = true;
+    bool public _NFT_IN_SWITCH_ = false;
     
     //For NFT Random OUT
     uint256 public _GS_START_RANDOM_OUT_;
     uint256 public _CR_RANDOM_OUT_;
-    bool public _NFT_RANDOM_SWITCH_ = true;
+    bool public _NFT_RANDOM_SWITCH_ = false;
 
     //For NFT Target OUT
     uint256 public _GS_START_TARGET_OUT_;
     uint256 public _CR_TARGET_OUT_;
-    bool public _NFT_TARGET_SWITCH_ = true;
-
-    mapping(uint256=>uint256) public _INTERNAL_TOKEN_IDS_;
-    uint256 public _NFT_AMOUNT_;
-    uint256 public _MAX_NFT_AMOUNT_;
-    uint256 public _MIN_NFT_AMOUNT_;
+    bool public _NFT_TARGET_SWITCH_ = false;
 
     function init(
         address filterAdmin,
@@ -56,17 +59,17 @@ contract FilterModel01 is InitializableOwnable, IERC721Receiver {
         _NFT_COLLECTION_ = nftCollection;
     }
 
-    //==================== View ==================
+    //==================== Query ==================
 
     function isNFTValid(address nftCollectionAddress, uint256 nftId) external view returns (bool) {
         if(nftCollectionAddress == _NFT_COLLECTION_) {
-            isIDValid(nftId);
+            isNFTIDValid(nftId);
         } else {
             return false;
         }
     }
 
-    function isIDValid(uint256 nftId) public view returns(bool){
+    function isNFTIDValid(uint256 nftId) public view returns(bool){
         if((nftId >= _TOKEN_ID_START_ && nftId <= _TOKEN_ID_END_) || _SPREAD_IDS_REGISTRY_[nftId]) {
                 return true;
             } else {
@@ -90,83 +93,143 @@ contract FilterModel01 is InitializableOwnable, IERC721Receiver {
         }
     }
 
-    function supportsInterface(bytes4 interfaceId) public view returns (bool) {
-        return interfaceId == type(IERC721Receiver).interfaceId;
-    }
-
     function queryNFTIn(uint256 NFTInAmount) external view returns (uint256 rawReceive, uint256 receive) {
         require(NFTInAmount <= getAvaliableNFTIn(), "EXCEDD_IN_AMOUNT");
-        rawReceive = geometricCalc(_GS_START_IN_, _CR_IN_, _TOKEN_IDS_.length, _TOKEN_IDS_.length+amount);
-        receive = IFilterAdmin(_OWNER_).chargeMintFee(rawReceive);
+        rawReceive = geometricCalc(_GS_START_IN_, _CR_IN_, _NFT_AMOUNT_, _NFT_AMOUNT_+NFTInAmount);
+        receive = IFilterAdmin(_OWNER_).queryChargeMintFee(rawReceive);
     }
 
     function queryNFTTargetOut(uint256 NFTOutAmount) external view returns (uint256 rawPay, uint256 pay) {
         require(NFTOutAmount <= getAvaliableNFTOut(), "EXCEED_OUT_AMOUNT");
-        rawPay = geometricCalc(_GS_START_TARGET_OUT_,_CR_TARGET_OUT_, _TOKEN_IDS_.length-NFTOutAmount,_TOKEN_IDS_.length);
-        pay = IFilterAdmin(_OWNER_).chargeBurnFee(rawPay);
+        rawPay = geometricCalc(_GS_START_TARGET_OUT_,_CR_TARGET_OUT_, _NFT_AMOUNT_-NFTOutAmount,_NFT_AMOUNT_);
+        pay = IFilterAdmin(_OWNER_).queryChargeBurnFee(rawPay);
     }
 
     function queryNFTRandomOut(uint256 NFTOutAmount) external view returns (uint256 rawPay, uint256 pay) {
         require(NFTOutAmount <= getAvaliableNFTOut(), "EXCEED_OUT_AMOUNT");
-        rawPay = geometricCalc(_GS_START_RANDOM_OUT_,_CR_RANDOM_OUT_, _TOKEN_IDS_.length-NFTOutAmount,_TOKEN_IDS_.length);
+        rawPay = geometricCalc(_GS_START_RANDOM_OUT_,_CR_RANDOM_OUT_, _NFT_AMOUNT_-NFTOutAmount,_NFT_AMOUNT_);
         pay = IFilterAdmin(_OWNER_).chargeBurnFee(rawPay);
-    }
-
-    function version() virtual external pure returns (string memory) {
-        return "FILTER_1_ERC721 1.0.0";
     }
 
     // ================= Trading ================
 
-    function ERC721In(uint256[] memory tokenIds, address to) external returns(uint256 received) {
-        (uint256 rawReceive,) = queryNFTIn(tokenIds.length);
+    function ERC721In(uint256[] memory tokenIds, address to) external preventReentrant returns(uint256 received) {
         for (uint256 i = 0; i < tokenIds.length; i++) {
-            IFilterAdmin(_OWNER_).transferNFT(msg.sender, _NFT_COLLECTION_, tokenIds[i]);
-            _INTERNAL_TOKEN_IDS_[_NFT_AMOUNT_+i] = tokenIds[i];
+            require(!_NFT_RESERVE_[tokenIds[i]] && IERC721(_NFT_COLLECTION_).ownerOf(tokenIds[i])==address(this), "NFT_NOT_SEND");
+            _NFT_IDS_.push(tokenId);
+            _NFT_RESERVE_[tokenIds[i]] = 1;
         }
-        _NFT_AMOUNT_ += tokenIds.length;
+        (uint256 rawReceive,) = queryNFTIn(tokenIds.length);
         received = IFilterAdmin(_OWNER_).mintFragTo(to, rawReceive);
     }
 
-    function ERC721TargetOut(uint256[] memory internalIDs, address to) external returns(uint256 paid) {
+    function ERC721TargetOut(uint256[] memory indexes, address to) external preventReentrant returns(uint256 paid) {
         (uint256 rawPay, ) = queryNFTOut(tokenIds.length);
-        for (uint256 index = 0; index < array.length; index++) {
-            uint256 tokenId = _INTERNAL_TOKEN_IDS_[internalIDs[i]];
-            require(isIDValid(tokenId), "NFT_NOT_LISTED");
-            _transferOutERC721(to, tokenId, internalIDs[i]);
-        }
         paid = IFilterAdmin(_OWNER_).burnFragFrom(msg.sender, rawPay);
+        for (uint256 i = 0; i < indexes.length; i++) {
+            _transferOutERC721(to, indexes[i]);
+        }
     }
 
-    function ERC721RandomOut(uint256 number, address to) external returns (uint256 paid) {}
+    function ERC721RandomOut(uint256 amount, address to) external preventReentrant returns (uint256 paid) {
+        (uint256 rawPay, ) = queryNFTOut(amount);
+        paid = IFilterAdmin(_OWNER_).burnFragFrom(msg.sender, rawPay);
+        for (uint256 i = 0; i < amount; i++) {
+            _transferOutERC721(to, getRandomOutId());
+        }
+    }
 
-    function _transferOutERC721(address to, uint256 tokenId, uint256 internalId) internal { 
+    // ============ Transfer =============
+
+    function onERC721Received(
+        address,
+        address,
+        uint256 tokenId,
+        bytes calldata
+    ) external override returns (bytes4) {
+        return IERC721Receiver.onERC721Received.selector;
+    }
+
+    function _transferOutERC721(address to, uint256 index) internal { 
+        require(index<_TOKEN_IDS_.length, "INDEX_NOT_EXIST");
+        uint256 tokenId = _TOKEN_IDS_[index];
         IERC721(_NFT_COLLECTION_).safeTransfer(to, tokenId);
-        _INTERNAL_TOKEN_IDS_[internalId] = _INTERNAL_TOKEN_IDS_[_NFT_AMOUNT_-1];
-        _NFT_AMOUNT_-=1;
+        _TOKEN_IDS_[index] = _TOKEN_IDS_[_TOKEN_IDS_.length - 1];
+        _TOKEN_IDS_.pop();
+        _NFT_RESERVE_[tokenId] = 0;
     }
+
+    function emergencyWithdraw(address[] memory nftContract, uint256[] memory tokenIds, address to) external {
+        require(msg.sender == IFilterAdmin(_OWNER_)._OWNER_(), "ACCESS_RESTRICTED");
+        require(nftContract.length == tokenIds.length, "PARAM_INVALID");
+        address controllerModel = IFilterAdmin(_OWNER_)._CONTROLLER_MODEL_();
+        require(IControllerModel(controllerModel).getEmergencySwitch(address(this)), "NOT_OPEN");
+
+        for(uint256 i = 0; i< nftContract.length; i++) {
+            if(_NFT_RESERVE_[tokenIds[i]] && nftContract[i]==_NFT_COLLECTION_){
+                uint256 index = getNFTIndex(tokenIds[i]);
+                _TOKEN_IDS_[index] = _TOKEN_IDS_[_TOKEN_IDS_.length - 1];
+                _TOKEN_IDS_.pop();
+                _NFT_RESERVE_[tokenId] = 0;
+            }
+            IERC721(nftContract[i]).safeTransfer(to, tokenId);
+        }
+    }
+
+
+    // ============ Math =============
+
+    function geometricCalc(uint256 base, uint256 ratio, uint256 times) internal view returns(uint256 newBase, uint256 sum) {
+        sum = 0;
+        for(uint256 i = 0; i < times; i++) {
+            base = DecimalMath.mulFloor(base, ratio);
+            sum = sum.add(base);
+        }
+        newBase = base;
+    }
+    
+    function getRandomOutId() external view returns (uint256 index) {
+        uint256 nftAmount = _TOKEN_IDS_.length;
+        index = uint256(keccak256(abi.encodePacked(tx.origin, blockhash(block.number-1), gasleft()))) % nftAmount;
+    }
+
 
     // ================= Ownable ================
 
-    function changeNFTInPrice(uint256 newGsStart, uint256 newCr) external {
+    function changeNFTInPrice(uint256 newGsStart, uint256 newCr, bool switch) external {
         require(msg.sender == IFilterAdmin(_OWNER_)._OWNER_(), "ACCESS_RESTRICTED");
-        require(newCr != 0, "CR_ZERO");
-        _GS_START_IN_ = newGsStart;
-        _CR_IN_ = newCr;
+        if (!switch) {
+            _NFT_IN_SWITCH_ = false;
+        } else {
+            require(newCr>DecimalMath.ONE, "CR_ZERO");
+            _GS_START_IN_ = newGsStart;
+            _CR_IN_ = newCr;
+            _NFT_IN_SWITCH_ = true;
+        }
     }
 
-    function changeNFTROutPrice(uint256 newGsStart, uint256 newCr) external {
+    function changeNFTRandomInPrice(uint256 newGsStart, uint256 newCr, bool switch) external {
         require(msg.sender == IFilterAdmin(_OWNER_)._OWNER_(), "ACCESS_RESTRICTED");
-        require(newCr != 0, "CR_ZERO");
-        _GS_START_RANDOM_OUT_ = newGsStart;
-        _CR_RANDOM_OUT_ = newCr;
+        if (!switch) {
+            _NFT_RANDOM_OUT_SWITCH_ = false;
+        } else {
+            require(newCr>DecimalMath.ONE, "CR_ZERO");
+            _GS_START_RANDOM_OUT_ = newGsStart;
+            _CR_RANDOM_OUT_ = newCr;
+            _NFT_RANDOM_OUT_SWITCH_ = true;
+        }
     }
 
-    function changeNFTTOutPrice(uint256 newGsStart, uint256 newCr) external {
+    function changeNFTTargetOutPrice(uint256 newGsStart, uint256 newCr, bool switch) external {
         require(msg.sender == IFilterAdmin(_OWNER_)._OWNER_(), "ACCESS_RESTRICTED");
-        require(newCr != 0, "CR_ZERO");
-        _GS_START_TARGET_OUT_ = newGsStart;
-        _CR_TARGET_OUT_ = newCr;
+        if (!switch) {
+            _NFT_TARGET_OUT_SWITCH_ = false;
+        } else {
+            require(newCr>DecimalMath.ONE, "CR_ZERO");
+            _GS_START_TARGET_OUT_ = newGsStart;
+            _CR_TARGET_OUT_ = newCr;
+            _NFT_TARGET_OUT_SWITCH_ = true;
+        }
     }
 
     function changeNFTAmount(uint256 maxNFTAmount, uint256 minNFTAmount) external {
@@ -174,17 +237,6 @@ contract FilterModel01 is InitializableOwnable, IERC721Receiver {
         require(maxNFTAmount >= minNFTAmount, "AMOUNT_INVALID");
         _MAX_NFT_AMOUNT_ = maxNFTAmount;
         _MIN_NFT_AMOUNT_ = minNFTAmount;
-    }
-
-    function changeSwitches(
-        bool newNFTInSwitch,
-        bool newNFTRandomSwitch,
-        bool newNFTTargetSwitch
-    ) external {
-        require(msg.sender == IFilterAdmin(_OWNER_)._OWNER_(), "ACCESS_RESTRICTED");
-        _NFT_IN_SWITCH_ = newNFTInSwitch;
-        _NFT_RANDOM_SWITCH_ = newNFTRandomSwitch;
-        _NFT_TARGET_SWITCH_ = newNFTTargetSwitch;
     }
 
     function changeTokenIdRange(uint256 tokenIdStart, uint256 tokenIdEnd) external {
@@ -204,65 +256,14 @@ contract FilterModel01 is InitializableOwnable, IERC721Receiver {
         }
     }
 
-    function emergencyWithdraw(address[] memory nftContract, uint256[] memory tokenIds, address assetTo) external {
-        require(msg.sender == IFilterAdmin(_OWNER_)._OWNER_(), "ACCESS_RESTRICTED");
-        require(nftContract.length == tokenIds.length, "PARAM_INVALID");
-        address controllerModel = IFilterAdmin(_OWNER_)._CONTROLLER_MODEL_();
-        require(IControllerModel(controllerModel).getEmergencySwitch(address(this)), "NOT_OPEN");
+    // ============ Support ============
 
-        for(uint256 i = 0; i< nftContract.length; i++) {
-            if(nftContract[i] == _NFT_COLLECTION_) {
-                removeTokenId(tokenIds[i]);
-            }
-            IERC721(nftContract[i]).safeTransferFrom(address(this), assetTo, tokenIds[i]);
-        }
+    function supportsInterface(bytes4 interfaceId) public view returns (bool) {
+        return interfaceId == type(IERC721Receiver).interfaceId;
     }
 
-    // ============ Callback ============
-    function onERC721Received(
-        address,
-        address,
-        uint256 tokenId,
-        bytes calldata
-    ) external override returns (bytes4) {
-        return IERC721Receiver.onERC721Received.selector;
-    }
 
-    // ============ Internal =============
-    function geometricCalc(uint256 base, uint256 ratio, uint256 times) internal view returns(uint256 newBase, uint256 sum) {
-        sum = 0;
-        for(uint256 i = 0; i < times; i++) {
-            base = DecimalMath.mulFloor(base, ratio);
-            sum = sum.add(base);
-        }
-        newBase = base;
+    function version() virtual external pure returns (string memory) {
+        return "FILTER_1_ERC721 1.0.0";
     }
-
-    function removeTokenId(uint256 id) internal returns(bool){
-        uint256[] memory tokenIds = _TOKEN_IDS_;
-        uint256 i;
-        for (; i < tokenIds.length; i++) {
-            if (tokenIds[i] == id) {
-                tokenIds[i] = tokenIds[tokenIds.length - 1];
-                break;
-            }
-        }
-        if(i < tokenIds.length) {
-            _TOKEN_IDS_ = tokenIds;
-            _TOKEN_IDS_.pop();
-            return true;
-        }else {
-            return false;
-        }
-    }
-}    //Pseudorandomness
-    function getRandomOutId() external view returns (address nftCollection, uint256 nftId) {
-        uint256 nftAmount = _TOKEN_IDS_.length;
-        uint256 sumSeed;
-        for(uint256 i = 0; i < gasleft() % 10; i++) {
-            sumSeed = sumSeed.add(uint256(keccak256(abi.encodePacked(blockhash(block.number-1), gasleft(), msg.sender, nftAmount))));
-        }
-        uint256 idx = sumSeed % nftAmount;
-        nftCollection = _NFT_COLLECTION_;
-        nftId = _TOKEN_IDS_[idx];
-    }
+}
