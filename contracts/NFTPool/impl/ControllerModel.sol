@@ -64,30 +64,30 @@ contract ControllerModel is InitializableOwnable {
  
     //===================== View ========================
     function getNFTInFee(address filterAdminAddr, address) external view returns(uint256) {
-        FilterAdminFeeInfo memory FilterAdminFeeInfo = filterAdminFees[filterAdminAddr];
+        FilterAdminFeeInfo memory filterAdminFeeInfo = filterAdminFees[filterAdminAddr];
 
-        if(FilterAdminFeeInfo.isSet) {
-            return FilterAdminFeeInfo.nftInFee;
+        if(filterAdminFeeInfo.isSet) {
+            return filterAdminFeeInfo.nftInFee;
         }else {
             return _GLOBAL_NFT_IN_FEE_;
         }
     }
 
     function getNFTRandomOutFee(address filterAdminAddr, address) external view returns(uint256) {
-        FilterAdminFeeInfo memory FilterAdminFeeInfo = filterAdminFees[filterAdminAddr];
+        FilterAdminFeeInfo memory filterAdminFeeInfo = filterAdminFees[filterAdminAddr];
 
-        if(FilterAdminFeeInfo.isSet) {
-            return FilterAdminFeeInfo.nftRandomOutFee;
+        if(filterAdminFeeInfo.isSet) {
+            return filterAdminFeeInfo.nftRandomOutFee;
         }else {
             return _GLOBAL_NFT_RANDOM_OUT_FEE_;
         }
     }
 
     function getNFTTargetOutFee(address filterAdminAddr, address) external view returns(uint256) {
-        FilterAdminFeeInfo memory FilterAdminFeeInfo = filterAdminFees[filterAdminAddr];
+        FilterAdminFeeInfo memory filterAdminFeeInfo = filterAdminFees[filterAdminAddr];
 
-        if(FilterAdminFeeInfo.isSet) {
-            return FilterAdminFeeInfo.nftTargetOutFee;
+        if(filterAdminFeeInfo.isSet) {
+            return filterAdminFeeInfo.nftTargetOutFee;
         }else {
             return _GLOBAL_NFT_TARGET_OUT_FEE_;
         }

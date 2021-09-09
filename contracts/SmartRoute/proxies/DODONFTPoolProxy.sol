@@ -11,6 +11,8 @@ import {ICloneFactory} from "../../lib/CloneFactory.sol";
 import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 import {IFilterAdmin} from "../../NFTPool/intf/IFilterAdmin.sol";
 import {IERC721} from "../../intf/IERC721.sol";
+import {IERC20} from "../../intf/IERC20.sol";
+import {SafeERC20} from "../../lib/SafeERC20.sol";
 
 interface IFilter01 {
     function init(
@@ -26,8 +28,10 @@ interface IFilter01 {
 
 contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
     using SafeMath for uint256;
+    using SafeERC20 for IERC20;
 
     // ============ Storage ============
+    address constant _ETH_ADDRESS_ = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     mapping(uint256 => address) public _FILTER_TEMPLATES_;
     address public _FILTER_ADMIN_TEMPLATE_;
     address public _DEFAULT_MAINTAINER_;
@@ -116,12 +120,18 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         IERC721(nftContract).safeTransferFrom(msg.sender, address(this), tokenId);
         IERC721(nftContract).approve(filter, tokenId);
 
-        uint256[] memory tokenIds = new uint256[1];
+        uint256[] memory tokenIds = new uint256[](1);
         tokenIds[0] = tokenId;
-        IFilterAdmin(filterAdmin).ERC721In(filter, nftContract, tokenIds, 0);
+        uint256 mintAmount = IFilterAdmin(filterAdmin).ERC721In(filter, nftContract, tokenIds, 0);
 
+        _generalApproveMax(filterAdmin, dodoApprove, mintAmount);
 
+        (bool success, ) = dodoProxy.call(dodoSwapData);
+        require(success, "API_SWAP_FAILED");
 
+        uint256 returnAmount = _generalBalanceOf(toToken, address(this));
+
+        _generalTransfer(toToken, msg.sender, returnAmount);
     }
     
 
@@ -156,6 +166,31 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
                 IERC20(token).safeApprove(to, 0);
             }
             IERC20(token).safeApprove(to, uint256(-1));
+        }
+    }
+
+    function _generalBalanceOf(
+        address token, 
+        address who
+    ) internal view returns (uint256) {
+        if (token == _ETH_ADDRESS_) {
+            return who.balance;
+        } else {
+            return IERC20(token).balanceOf(who);
+        }
+    }
+
+    function _generalTransfer(
+        address token,
+        address payable to,
+        uint256 amount
+    ) internal {
+        if (amount > 0) {
+            if (token == _ETH_ADDRESS_) {
+                to.transfer(amount);
+            } else {
+                IERC20(token).safeTransfer(to, amount);
+            }
         }
     }
 }

@@ -27,5 +27,5 @@ interface IFilterAdmin {
         address nftContract, 
         uint256[] memory tokenIds,
         uint256 minMintAmount
-    ) external;
+    ) external returns(uint256 actualMintAmount);
 }

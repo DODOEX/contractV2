@@ -48,6 +48,7 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
     ) 
         external 
         preventReentrant
+        returns (uint256 actualMintAmount)
     {
         require(isIncludeFilter(filter), "FILTER_NOT_INCLUDE");
         require(IFilterModel(filter)._NFT_IN_SWITCH_(), "NFT_IN_CLOSED");
@@ -63,7 +64,7 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
         if(poolFeeAmount > 0) _mint(_OWNER_, poolFeeAmount);
         if(mtFeeAmount > 0) _mint(_DEFAULT_MAINTAINER_, mtFeeAmount);
         
-        uint256 actualMintAmount = totalPrice.sub(mtFeeAmount).sub(poolFeeAmount);
+        actualMintAmount = totalPrice.sub(mtFeeAmount).sub(poolFeeAmount);
         require(actualMintAmount >= minMintAmount, "MINT_AMOUNT_NOT_ENOUGH");
         _mint(msg.sender, actualMintAmount);
     }
@@ -77,6 +78,7 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
     ) 
         external 
         preventReentrant
+        returns (uint256 actualMintAmount)
     {
         require(tokenIds.length == amounts.length, "PARAMS_NOT_MATCH");
         require(isIncludeFilter(filter), "FILTER_NOT_INCLUDE");
@@ -92,7 +94,7 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
         if(poolFeeAmount > 0) _mint(_OWNER_, poolFeeAmount);
         if(mtFeeAmount > 0) _mint(_DEFAULT_MAINTAINER_, mtFeeAmount);
 
-        uint256 actualMintAmount = totalPrice.sub(mtFeeAmount).sub(poolFeeAmount);
+        actualMintAmount = totalPrice.sub(mtFeeAmount).sub(poolFeeAmount);
         require(actualMintAmount >= minMintAmount, "MINT_AMOUNT_NOT_ENOUGH");
         _mint(msg.sender, actualMintAmount);
 
@@ -105,7 +107,8 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
         uint256 maxBurnAmount
     ) 
         external 
-        preventReentrant 
+        preventReentrant
+        returns (uint256 actualBurnAmount)
     {
         require(msg.sender == tx.origin, "ONLY_ALLOW_EOA");
         require(isIncludeFilter(filter), "FILTER_NOT_INCLUDE");
@@ -121,9 +124,9 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
         (uint256 poolFeeAmount, uint256 mtFeeAmount) = _nftRandomOutFeeTransfer(totalPrice);
         if(poolFeeAmount > 0) _mint(_OWNER_, poolFeeAmount);
         if(mtFeeAmount > 0) _mint(_DEFAULT_MAINTAINER_, mtFeeAmount);
-        
-        require(totalPrice <= maxBurnAmount, "EXTRA_BURN_AMOUNT");
-        _burn(msg.sender, totalPrice);
+        actualBurnAmount = totalPrice;
+        require(actualBurnAmount <= maxBurnAmount, "EXTRA_BURN_AMOUNT");
+        _burn(msg.sender, actualBurnAmount);
     }
 
 
@@ -134,6 +137,7 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
     ) 
         external 
         preventReentrant 
+        returns (uint256 actualBurnAmount)
     {
         require(msg.sender == tx.origin, "ONLY_ALLOW_EOA");
         require(isIncludeFilter(filter), "FILTER_NOT_INCLUDE");
@@ -151,8 +155,9 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
         if(poolFeeAmount > 0) _mint(_OWNER_, poolFeeAmount);
         if(mtFeeAmount > 0) _mint(_DEFAULT_MAINTAINER_, mtFeeAmount);
         
-        require(totalPrice <= maxBurnAmount, "EXTRA_BURN_AMOUNT");
-        _burn(msg.sender, totalPrice);
+        actualBurnAmount = totalPrice;
+        require(actualBurnAmount <= maxBurnAmount, "EXTRA_BURN_AMOUNT");
+        _burn(msg.sender, actualBurnAmount);
     }
 
     function ERC721TargetOut(
@@ -163,6 +168,7 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
     ) 
         external 
         preventReentrant
+        returns(uint256 actualBurnAmount)
     {
         require(isIncludeFilter(filter), "FILTER_NOT_INCLUDE");
         require(IFilterModel(filter)._NFT_TARGET_SWITCH_(), "NFT_TARGET_OUT_CLOSED");
@@ -177,8 +183,9 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
         if(poolFeeAmount > 0) _mint(_OWNER_, poolFeeAmount);
         if(mtFeeAmount > 0) _mint(_DEFAULT_MAINTAINER_, mtFeeAmount);
         
-        require(totalPrice <= maxBurnAmount, "EXTRA_BURN_AMOUNT");
-        _burn(msg.sender, totalPrice);
+        actualBurnAmount = totalPrice;
+        require(actualBurnAmount <= maxBurnAmount, "EXTRA_BURN_AMOUNT");
+        _burn(msg.sender, actualBurnAmount);
     }
 
     function ERC1155TargetOut(
@@ -190,6 +197,7 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
     ) 
         external 
         preventReentrant
+        returns(uint256 actualBurnAmount)
     {
         require(tokenIds.length == amounts.length, "PARAMS_NOT_MATCH");
         require(isIncludeFilter(filter), "FILTER_NOT_INCLUDE");
@@ -203,8 +211,9 @@ contract FilterAdmin is InitializableInternalMintableERC20, ReentrancyGuard {
         if(poolFeeAmount > 0) _mint(_OWNER_, poolFeeAmount);
         if(mtFeeAmount > 0) _mint(_DEFAULT_MAINTAINER_, mtFeeAmount);
         
-        require(totalPrice <= maxBurnAmount, "EXTRA_BURN_AMOUNT");
-        _burn(msg.sender, totalPrice);
+        actualBurnAmount = totalPrice;
+        require(actualBurnAmount <= maxBurnAmount, "EXTRA_BURN_AMOUNT");
+        _burn(msg.sender, actualBurnAmount);
 
         IFilterModel(filter).transferBatchOutERC1155(nftContract, msg.sender, tokenIds, amounts);
     }
