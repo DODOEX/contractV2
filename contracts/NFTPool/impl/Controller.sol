@@ -60,20 +60,20 @@ contract Controller is InitializableOwnable {
     function getMintFeeRate(address filterAdminAddr) external view returns (uint256) {
         FilterAdminFeeRateInfo memory filterAdminFeeRateInfo = filterAdminFeeRates[filterAdminAddr];
 
-        if (filterAdminFeeRateInfo.isSet) {
+        if (filterAdminFeeRateInfo.isOpen) {
             return filterAdminFeeRateInfo.nftInFeeRate;
         } else {
-            return _GLOBAL_NFT_IN_FEERate_;
+            return _GLOBAL_NFT_IN_FEE_RATE_;
         }
     }
 
     function getBurnFeeRate(address filterAdminAddr) external view returns (uint256) {
-        FilterAdminFeeInfo memory filterAdminFeeInfo = filterAdminFees[filterAdminAddr];
+        FilterAdminFeeRateInfo memory filterAdminFeeInfo = filterAdminFeeRates[filterAdminAddr];
 
-        if (filterAdminFeeInfo.isSet) {
-            return filterAdminFeeInfo.nftOutFee;
+        if (filterAdminFeeInfo.isOpen) {
+            return filterAdminFeeInfo.nftOutFeeRate;
         } else {
-            return _GLOBAL_NFT_OUT_FEE_;
+            return _GLOBAL_NFT_OUT_FEE_RATE_;
         }
     }
 }

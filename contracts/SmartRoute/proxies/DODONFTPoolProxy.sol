@@ -10,7 +10,7 @@ import {SafeMath} from "../../lib/SafeMath.sol";
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 import {ICloneFactory} from "../../lib/CloneFactory.sol";
 import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
-import {IFilterModel} from "../../NFTPool/intf/IFilterModel.sol";
+import {IFilter} from "../../NFTPool/intf/IFilter.sol";
 import {IFilterAdmin} from "../../NFTPool/intf/IFilterAdmin.sol";
 import {IDODONFTApprove} from "../../intf/IDODONFTApprove.sol";
 import {IERC20} from "../../intf/IERC20.sol";
@@ -20,7 +20,7 @@ interface IFilterV1 {
     function init(
         address filterAdmin,
         address nftCollection,
-        bool[] memory switches,
+        bool[] memory toggles,
         uint256[] memory numParams,
         uint256[] memory priceRules,
         uint256[] memory spreadIds
@@ -35,8 +35,8 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
     address constant _ETH_ADDRESS_ = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     mapping(uint256 => address) public _FILTER_TEMPLATES_;
     address public _FILTER_ADMIN_TEMPLATE_;
-    address public _DEFAULT_MAINTAINER_;
-    address public _CONTROLLER_MODEL_;
+    address public _MAINTAINER_;
+    address public _CONTROLLER_;
     address public immutable _CLONE_FACTORY_;
     address public immutable _DODO_NFT_APPROVE_;
     address public immutable _DODO_APPROVE_;
@@ -55,8 +55,8 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
     ) public {
         _CLONE_FACTORY_ = cloneFactory;
         _FILTER_ADMIN_TEMPLATE_ = filterAdminTemplate;
-        _CONTROLLER_MODEL_ = controllerModel;
-        _DEFAULT_MAINTAINER_ = defaultMaintainer;
+        _CONTROLLER_ = controllerModel;
+        _MAINTAINER_ = defaultMaintainer;
         _DODO_NFT_APPROVE_ = dodoNftApprove;
         _DODO_APPROVE_ = dodoApprove;
     }
@@ -70,10 +70,10 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         uint256 minMintAmount
     ) external {
         for(uint256 i = 0; i < tokenIds.length; i++) {
-            require(IFilterModel(filter).isNFTValid(nftCollection,tokenIds[i]), "NOT_REGISTRIED");
+            require(IFilter(filter).isNFTValid(nftCollection,tokenIds[i]), "NOT_REGISTRIED");
             IDODONFTApprove(_DODO_NFT_APPROVE_).claimERC721(nftCollection, msg.sender, filter, tokenIds[i]);
         }
-        uint256 received = IFilterModel(filter).ERC721In(tokenIds, to);
+        uint256 received = IFilter(filter).ERC721In(tokenIds, to);
         require(received >= minMintAmount, "MINT_AMOUNT_NOT_ENOUGH");
     }
 
@@ -83,7 +83,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         address to,
         uint256 maxBurnAmount 
     ) external {
-        uint256 paid = IFilterModel(filter).ERC721TargetOut(indexes, to);
+        uint256 paid = IFilter(filter).ERC721TargetOut(indexes, to);
         require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
     }
 
@@ -93,7 +93,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         address to,
         uint256 maxBurnAmount 
     ) external {
-        uint256 paid = IFilterModel(filter).ERC721RandomOut(amount, to);
+        uint256 paid = IFilter(filter).ERC721RandomOut(amount, to);
         require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
     }
 
@@ -107,10 +107,10 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         uint256 minMintAmount
     ) external {
         for(uint256 i = 0; i < tokenIds.length; i++) {
-            require(IFilterModel(filter).isNFTValid(nftCollection,tokenIds[i]), "NOT_REGISTRIED");
+            require(IFilter(filter).isNFTValid(nftCollection,tokenIds[i]), "NOT_REGISTRIED");
         }
         IDODONFTApprove(_DODO_NFT_APPROVE_).claimERC1155Batch(nftCollection, msg.sender, filter, tokenIds, amounts);
-        uint256 received = IFilterModel(filter).ERC1155In(tokenIds, to);
+        uint256 received = IFilter(filter).ERC1155In(tokenIds, to);
         require(received >= minMintAmount, "MINT_AMOUNT_NOT_ENOUGH");
     }
 
@@ -121,7 +121,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         address to,
         uint256 maxBurnAmount 
     ) external {
-        uint256 paid = IFilterModel(filter).ERC1155TargetOut(indexes, amounts, to);
+        uint256 paid = IFilter(filter).ERC1155TargetOut(indexes, amounts, to);
         require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
     }
 
@@ -131,7 +131,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         address to,
         uint256 maxBurnAmount 
     ) external {
-        uint256 paid = IFilterModel(filter).ERC1155RandomOut(amount, to);
+        uint256 paid = IFilter(filter).ERC1155RandomOut(amount, to);
         require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
     }
 
@@ -142,7 +142,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         uint256 filterKey, //1 => FilterERC721V1, 2 => FilterERC1155V1
         string[] memory tokenInfo, 
         uint256[] memory numParams,//0 - initSupply, 1 - fee
-        bool[] memory switches,
+        bool[] memory toggles,
         uint256[] memory filterNumParams, //0 - startId, 1 - endId, 2 - maxAmount, 3 - minAmount
         uint256[] memory priceRules,
         uint256[] memory spreadIds
@@ -153,7 +153,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
             filterKey,
             newFilterAdmin,
             nftCollection,
-            switches,
+            toggles,
             filterNumParams,
             priceRules,
             spreadIds
@@ -168,8 +168,8 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
             tokenInfo[0],
             tokenInfo[1],
             numParams[1],
-            _CONTROLLER_MODEL_,
-            _DEFAULT_MAINTAINER_,
+            _CONTROLLER_,
+            _MAINTAINER_,
             filters
         );
     }
@@ -179,7 +179,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         uint256 key,
         address filterAdmin,
         address nftCollection,
-        bool[] memory switches,
+        bool[] memory toggles,
         uint256[] memory numParams, //0 - startId, 1 - endId, 2 - maxAmount, 3 - minAmount
         uint256[] memory priceRules,
         uint256[] memory spreadIds
@@ -188,7 +188,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         IFilterV1(newFilterV1).init(
             filterAdmin,
             nftCollection,
-            switches,
+            toggles,
             numParams,
             priceRules,
             spreadIds
@@ -214,7 +214,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         uint256[] memory tokenIds = new uint256[](1);
         tokenIds[0] = tokenId;
 
-        uint256 receivedFragAmount = IFilterModel(filter).ERC721In(tokenIds, address(this));
+        uint256 receivedFragAmount = IFilter(filter).ERC721In(tokenIds, address(this));
 
         _generalApproveMax(filterAdmin, _DODO_APPROVE_, receivedFragAmount);
 
@@ -228,16 +228,16 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
     
 
     //====================== Ownable ========================
-    function changeDefaultMaintainer(address newMaintainer) external onlyOwner {
-        _DEFAULT_MAINTAINER_ = newMaintainer;
+    function changeMaintainer(address newMaintainer) external onlyOwner {
+        _MAINTAINER_ = newMaintainer;
     }
 
     function changeFilterAdminTemplate(address newFilterAdminTemplate) external onlyOwner {
         _FILTER_ADMIN_TEMPLATE_ = newFilterAdminTemplate;
     }
 
-    function changeControllerModel(address newControllerModel) external onlyOwner {
-        _CONTROLLER_MODEL_ = newControllerModel;
+    function changeController(address newControllerModel) external onlyOwner {
+        _CONTROLLER_ = newControllerModel;
     }
 
     function setFilterTemplate(uint256 idx, address newFilterTemplate) external onlyOwner {

@@ -10,7 +10,7 @@ pragma experimental ABIEncoderV2;
 
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {IFilterAdmin} from "../intf/IFilterAdmin.sol";
-import {IControllerModel} from "../intf/IControllerModel.sol";
+import {IController} from "../intf/IController.sol";
 import {IERC721} from "../../intf/IERC721.sol";
 import {IERC721Receiver} from "../../intf/IERC721Receiver.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
@@ -35,7 +35,7 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
         _changeNFTRandomInPrice(priceRules[2], priceRules[3], toggles[1]);
         _changeNFTTargetOutPrice(priceRules[4], priceRules[5], toggles[2]);
 
-        _changeNFTAmount(numParams[2], numParams[3]);
+        _changeNFTAmountRange(numParams[2], numParams[3]);
 
         _changeTokenIdRange(numParams[0], numParams[1]);
         for (uint256 i = 0; i < spreadIds.length; i++) {

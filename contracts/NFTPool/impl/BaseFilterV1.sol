@@ -99,57 +99,54 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         public
         view
         returns (
-            uint256 received,
-            uint256 poolFee,
-            uint256 mtFee
+            uint256 rawReceive, 
+            uint256 received
         )
     {
-        require(NFTInAmount <= getAvaliableNFTIn(), "EXCEDD_IN_AMOUNT");
+        require(NFTInAmount <= getAvaliableNFTInAmount(), "EXCEDD_IN_AMOUNT");
         rawReceive = _geometricCalc(
             _GS_START_IN_,
             _CR_IN_,
             _TOTAL_NFT_AMOUNT_,
             _TOTAL_NFT_AMOUNT_ + NFTInAmount
         );
-        (poolFee, mtFee, received) = IFilterAdmin(_OWNER_).queryChargeMintFee(rawReceive);
+        (,, received) = IFilterAdmin(_OWNER_).queryMintFee(rawReceive);
     }
 
     function queryNFTTargetOut(uint256 NFTOutAmount)
         public
         view
         returns (
-            uint256 paid,
-            uint256 poolFee,
-            uint256 mtFee
+            uint256 rawPay, 
+            uint256 pay
         )
     {
-        require(NFTOutAmount <= getAvaliableNFTOut(), "EXCEED_OUT_AMOUNT");
+        require(NFTOutAmount <= getAvaliableNFTOutAmount(), "EXCEED_OUT_AMOUNT");
         rawPay = _geometricCalc(
             _GS_START_TARGET_OUT_,
             _CR_TARGET_OUT_,
             _TOTAL_NFT_AMOUNT_ - NFTOutAmount,
             _TOTAL_NFT_AMOUNT_
         );
-        (poolFee, mtFee, paid) = IFilterAdmin(_OWNER_).queryChargeBurnFee(rawPay);
+        (,, pay) = IFilterAdmin(_OWNER_).queryBurnFee(rawPay);
     }
 
     function queryNFTRandomOut(uint256 NFTOutAmount)
         public
         view
         returns (
-            uint256 paid,
-            uint256 poolFee,
-            uint256 mtFee
+            uint256 rawPay, 
+            uint256 pay
         )
     {
-        require(NFTOutAmount <= getAvaliableNFTOut(), "EXCEED_OUT_AMOUNT");
+        require(NFTOutAmount <= getAvaliableNFTOutAmount(), "EXCEED_OUT_AMOUNT");
         rawPay = _geometricCalc(
             _GS_START_RANDOM_OUT_,
             _CR_RANDOM_OUT_,
             _TOTAL_NFT_AMOUNT_ - NFTOutAmount,
             _TOTAL_NFT_AMOUNT_
         );
-        (poolFee, mtFee, paid) = IFilterAdmin(_OWNER_).queryChargeBurnFee(rawPay);
+        (,, pay) = IFilterAdmin(_OWNER_).queryBurnFee(rawPay);
     }
 
     // ============ Math =============
@@ -161,7 +158,7 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         uint256 end
     ) internal view returns (uint256) {
         if (q == DecimalMath.ONE) {
-            return end.sub(start).ml(a1);
+            return end.sub(start).mul(a1);
         }
         //Sn=a1*(q^n-1)/(q-1)
         //Sn-Sm = a1*(q^n-q^m)/(q-1)

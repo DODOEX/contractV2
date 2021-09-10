@@ -8,9 +8,7 @@
 
 - contracts/NFTPool/impl/FilterERC1155V1.sol
 
-- contracts/NFTPool/impl/ControllerModel.sol
-
-- contracts/external/ERC20/InitializableInternalMintableERC20.sol
+- contracts/NFTPool/impl/Controller.sol
 
 - contracts/SmartRoute/proxies/DODONFTPoolProxy.sol
 

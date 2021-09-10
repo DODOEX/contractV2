@@ -56,7 +56,7 @@ contract FilterAdmin is InitializableInternalMintableERC20 {
         if (mtFee > 0) _mint(_MAINTAINER_, mtFee);
 
         _mint(to, received);
-        return received
+        return received;
     }
 
     function burnFragFrom(address from, uint256 rawAmount) external returns (uint256) {
@@ -79,7 +79,7 @@ contract FilterAdmin is InitializableInternalMintableERC20 {
             uint256 afterChargedAmount
         )
     {
-        uint256 mtFeeRate = IController(_CONTROLLER_).getMintFee(address(this));
+        uint256 mtFeeRate = IController(_CONTROLLER_).getMintFeeRate(address(this));
         poolFee = DecimalMath.mulFloor(rawAmount, _FEE_RATE_);
         mtFee = DecimalMath.mulFloor(rawAmount, mtFeeRate);
         afterChargedAmount = rawAmount.sub(poolFee).sub(mtFee);
@@ -93,14 +93,14 @@ contract FilterAdmin is InitializableInternalMintableERC20 {
             uint256 afterChargedAmount
         )
     {
-        uint256 mtFeeRate = IController(_CONTROLLER_).getBurnFee(address(this));
+        uint256 mtFeeRate = IController(_CONTROLLER_).getBurnFeeRate(address(this));
         poolFee = DecimalMath.mulFloor(rawAmount, _FEE_RATE_);
         mtFee = DecimalMath.mulFloor(rawAmount, mtFeeRate);
         afterChargedAmount = rawAmount.add(poolFee).add(mtFee);
     }
 
     function isRegisteredFilter(address filter) public view returns (bool) {
-        return _FILTER_REGISTRY_[i];
+        return _FILTER_REGISTRY_[filter];
     }
 
     function getFilters() public view returns (address[] memory) {

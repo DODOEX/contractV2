@@ -8,7 +8,7 @@ pragma experimental ABIEncoderV2;
 
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {IFilterAdmin} from "../intf/IFilterAdmin.sol";
-import {IControllerModel} from "../intf/IControllerModel.sol";
+import {IController} from "../intf/IController.sol";
 import {IERC1155} from "../../intf/IERC1155.sol";
 import {IERC1155Receiver} from "../../intf/IERC1155Receiver.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
@@ -32,7 +32,7 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
         _changeNFTRandomInPrice(priceRules[2], priceRules[3], toggles[1]);
         _changeNFTTargetOutPrice(priceRules[4], priceRules[5], toggles[2]);
 
-        _changeNFTAmount(numParams[2], numParams[3]);
+        _changeNFTAmountRange(numParams[2], numParams[3]);
 
         _changeTokenIdRange(numParams[0], numParams[1]);
         for (uint256 i = 0; i < spreadIds.length; i++) {
@@ -79,12 +79,12 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
         (uint256 rawPay, ) = queryNFTRandomOut(amount);
         paid = IFilterAdmin(_OWNER_).burnFragFrom(msg.sender, rawPay);
         for (uint256 i = 0; i < amount; i++) {
-            uint256 randomNum = _getRandomOutId() % _TOTAL_NFT_AMOUNT_;
+            uint256 randomNum = _getRandomNum() % _TOTAL_NFT_AMOUNT_;
             uint256 sum;
             for (uint256 j = 0; j < _NFT_IDS_.length; j++) {
                 sum += _NFT_RESERVE_[_NFT_IDS_[j]];
                 if (sum >= randomNum) {
-                    _transferOutERC1155(to, _NFT_IDS_[j], 1);
+                    _transferOutERC1155(to, j, 1);
                     break;
                 }
             }
