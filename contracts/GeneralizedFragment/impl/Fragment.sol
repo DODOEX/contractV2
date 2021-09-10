@@ -76,7 +76,8 @@ contract Fragment is InitializableFragERC20 {
 
         // init FRAG meta data
         name = string(abi.encodePacked("DODO_FRAG_", _symbol));
-        symbol = string(abi.encodePacked("d_", _symbol));
+        // symbol = string(abi.encodePacked("d_", _symbol));
+        symbol = _symbol;
         super.init(address(this), _totalSupply, name, symbol);
 
         // init FRAG distribution
