@@ -8,7 +8,6 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {IFilterAdmin} from "../intf/IFilterAdmin.sol";
 import {IControllerModel} from "../intf/IControllerModel.sol";
@@ -49,7 +48,7 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
     function queryNFTIn(uint256 NFTInAmount) public view returns (uint256 rawReceive, uint256 received) {
         require(NFTInAmount <= getAvaliableNFTIn(), "EXCEDD_IN_AMOUNT");
         uint256 nftAmount = _NFT_IDS_.length;
-        rawReceive = geometricCalc(_GS_START_IN_, _CR_IN_, nftAmount, nftAmount + NFTInAmount);
+        rawReceive = _geometricCalc(_GS_START_IN_, _CR_IN_, nftAmount, nftAmount + NFTInAmount);
         (uint256 poolFee, uint256 mtFee) = IFilterAdmin(_OWNER_).queryChargeMintFee(rawReceive);
         received = rawReceive.sub(poolFee).sub(mtFee);
     }
@@ -57,7 +56,7 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
     function queryNFTTargetOut(uint256 NFTOutAmount) public view returns (uint256 rawPay, uint256 pay) {
         require(NFTOutAmount <= getAvaliableNFTOut(), "EXCEED_OUT_AMOUNT");
         uint256 nftAmount = _NFT_IDS_.length;
-        rawPay = geometricCalc(_GS_START_TARGET_OUT_,_CR_TARGET_OUT_, nftAmount - NFTOutAmount, nftAmount);
+        rawPay = _geometricCalc(_GS_START_TARGET_OUT_,_CR_TARGET_OUT_, nftAmount - NFTOutAmount, nftAmount);
         (uint256 poolFee, uint256 mtFee) = IFilterAdmin(_OWNER_).queryChargeBurnFee(rawPay);
         pay = rawPay.add(poolFee).add(mtFee);
     }
@@ -65,7 +64,7 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
     function queryNFTRandomOut(uint256 NFTOutAmount) public view returns (uint256 rawPay, uint256 pay) {
         require(NFTOutAmount <= getAvaliableNFTOut(), "EXCEED_OUT_AMOUNT");
         uint256 nftAmount = _NFT_IDS_.length;
-        rawPay = geometricCalc(_GS_START_RANDOM_OUT_,_CR_RANDOM_OUT_, nftAmount - NFTOutAmount, nftAmount);
+        rawPay = _geometricCalc(_GS_START_RANDOM_OUT_,_CR_RANDOM_OUT_, nftAmount - NFTOutAmount, nftAmount);
         (uint256 poolFee, uint256 mtFee) = IFilterAdmin(_OWNER_).queryChargeBurnFee(rawPay);
         pay = rawPay.add(poolFee).add(mtFee);
     }
@@ -76,7 +75,7 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
         for (uint256 i = 0; i < tokenIds.length; i++) {
             uint256 tokenId = tokenIds[i];
             require(isNFTIDValid(tokenId), "NFT_ID_NOT_SUPPORT");
-            require(_NFT_RESERVE_[tokenId] == 0 && IERC721(_NFT_COLLECTION_).ownerOf(tokenId)==address(this), "NFT_NOT_SEND");
+            require(_NFT_RESERVE_[tokenId] == 0 && IERC721(_NFT_COLLECTION_).ownerOf(tokenId) == address(this), "NFT_NOT_SEND");
             _NFT_IDS_.push(tokenId);
             _NFT_RESERVE_[tokenId] = 1;
         }
@@ -96,7 +95,7 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
         (uint256 rawPay, ) = queryNFTRandomOut(amount);
         paid = IFilterAdmin(_OWNER_).burnFragFrom(msg.sender, rawPay);
         for (uint256 i = 0; i < amount; i++) {
-            _transferOutERC721(to, getRandomOutId());
+            _transferOutERC721(to, _getRandomOutId());
         }
     }
 

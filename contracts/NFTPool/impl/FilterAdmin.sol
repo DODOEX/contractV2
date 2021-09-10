@@ -101,7 +101,7 @@ contract FilterAdmin is InitializableInternalMintableERC20 {
     }
 
     function changeFee(uint256 newFee) external onlyOwner {
-        require(newFee <= 1e18, "FEE_TOO_LARGE");
+        require(newFee <= DecimalMath.ONE, "FEE_TOO_LARGE");
         _FEE_ = newFee;
         emit ChangeFee(newFee);
     }

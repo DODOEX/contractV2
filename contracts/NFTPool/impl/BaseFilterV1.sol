@@ -53,7 +53,7 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
 
     function isNFTValid(address nftCollectionAddress, uint256 nftId) external view returns (bool) {
         if(nftCollectionAddress == _NFT_COLLECTION_) {
-            isNFTIDValid(nftId);
+            return isNFTIDValid(nftId);
         } else {
             return false;
         }
@@ -68,7 +68,7 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
     }
 
     function getAvaliableNFTIn() public view returns(uint256) {
-        if(_MAX_NFT_AMOUNT_ < _NFT_IDS_.length) {
+        if(_MAX_NFT_AMOUNT_ <= _NFT_IDS_.length) {
             return 0;
         }else {
             return _MAX_NFT_AMOUNT_ - _NFT_IDS_.length;
@@ -76,7 +76,7 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
     }
 
     function getAvaliableNFTOut() public view returns(uint256) {
-        if(_NFT_IDS_.length < _MIN_NFT_AMOUNT_) {
+        if(_NFT_IDS_.length <= _MIN_NFT_AMOUNT_) {
             return 0;
         }else {
             return _NFT_IDS_.length - _MIN_NFT_AMOUNT_;
@@ -94,7 +94,7 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
 
     // ============ Math =============
 
-    function geometricCalc(uint256 a1, uint256 q, uint256 start, uint256 end) internal view returns(uint256) {
+    function _geometricCalc(uint256 a1, uint256 q, uint256 start, uint256 end) internal view returns(uint256) {
         //Sn=a1*(q^n-1)/(q-1)
         //Sn-Sm = a1*(q^n-q^m)/(q-1)
 
@@ -105,14 +105,13 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         return a1.mul(qn.sub(qm)).div(q.sub(DecimalMath.ONE));
     }
     
-    function getRandomOutId() public view returns (uint256 index) {
+    function _getRandomOutId() public view returns (uint256 index) {
         uint256 nftAmount = _NFT_IDS_.length;
         index = uint256(keccak256(abi.encodePacked(tx.origin, blockhash(block.number-1), gasleft()))) % nftAmount;
     }
 
 
     // ================= Ownable ================
-
 
     function changeNFTInPrice(uint256 newGsStart, uint256 newCr, bool switchFlag) external {
         require(msg.sender == IFilterAdmin(_OWNER_)._OWNER_(), "ACCESS_RESTRICTED");

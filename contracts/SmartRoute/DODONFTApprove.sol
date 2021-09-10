@@ -32,7 +32,7 @@ contract DODONFTApprove is InitializableOwnable {
     modifier notLocked() {
         require(
             _TIMELOCK_ <= block.timestamp,
-            "SetProxy is timelocked"
+            "AddProxy is timelocked"
         );
         _;
     }
@@ -43,7 +43,7 @@ contract DODONFTApprove is InitializableOwnable {
             _IS_ALLOWED_PROXY_[proxies[i]] = true;
     }
 
-    function unlockAddProxy(address newDodoProxy) public onlyOwner {
+    function unlockAddProxy(address newDodoProxy) external onlyOwner {
         _TIMELOCK_ = block.timestamp + _TIMELOCK_DURATION_;
         _PENDING_ADD_DODO_PROXY_ = newDodoProxy;
     }
@@ -60,7 +60,7 @@ contract DODONFTApprove is InitializableOwnable {
         emit AddDODOProxy(_PENDING_ADD_DODO_PROXY_);
     }
 
-    function removeDODOProxy (address oldDodoProxy) public onlyOwner {
+    function removeDODOProxy (address oldDodoProxy) external onlyOwner {
         _IS_ALLOWED_PROXY_[oldDodoProxy] = false;
     }
 
