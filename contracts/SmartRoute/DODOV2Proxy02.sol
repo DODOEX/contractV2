@@ -556,60 +556,6 @@ contract DODOV2Proxy02 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         emit OrderHistory(_fromToken, _toToken, msg.sender, fromTokenAmount, returnAmount);
     }
 
-
-    // function mixSwap(
-    //     address fromToken,
-    //     address toToken,
-    //     uint256 fromTokenAmount,
-    //     uint256 minReturnAmount,
-    //     address[] memory mixAdapters,
-    //     address[] memory mixPairs,
-    //     address[] memory assetTo,
-    //     uint256 directions,
-    //     bool,
-    //     uint256 deadLine
-    // ) external override payable judgeExpired(deadLine) returns (uint256 returnAmount) {
-    //     require(mixPairs.length > 0, "DODOV2Proxy02: PAIRS_EMPTY");
-    //     require(mixPairs.length == mixAdapters.length, "DODOV2Proxy02: PAIR_ADAPTER_NOT_MATCH");
-    //     require(mixPairs.length == assetTo.length - 1, "DODOV2Proxy02: PAIR_ASSETTO_NOT_MATCH");
-    //     require(minReturnAmount > 0, "DODOV2Proxy02: RETURN_AMOUNT_ZERO");
-
-    //     address _fromToken = fromToken;
-    //     address _toToken = toToken;
-    //     uint256 _fromTokenAmount = fromTokenAmount;
-        
-    //     uint256 toTokenOriginBalance = IERC20(_toToken).universalBalanceOf(msg.sender);
-        
-    //     _deposit(msg.sender, assetTo[0], _fromToken, _fromTokenAmount, _fromToken == _ETH_ADDRESS_);
-
-    //     for (uint256 i = 0; i < mixPairs.length; i++) {
-    //         if (directions & 1 == 0) {
-    //             IDODOAdapter(mixAdapters[i]).sellBase(assetTo[i + 1],mixPairs[i], "");
-    //         } else {
-    //             IDODOAdapter(mixAdapters[i]).sellQuote(assetTo[i + 1],mixPairs[i], "");
-    //         }
-    //         directions = directions >> 1;
-    //     }
-
-    //     if(_toToken == _ETH_ADDRESS_) {
-    //         returnAmount = IWETH(_WETH_).balanceOf(address(this));
-    //         IWETH(_WETH_).withdraw(returnAmount);
-    //         msg.sender.transfer(returnAmount);
-    //     }else {
-    //         returnAmount = IERC20(_toToken).tokenBalanceOf(msg.sender).sub(toTokenOriginBalance);
-    //     }
-
-    //     require(returnAmount >= minReturnAmount, "DODOV2Proxy02: Return amount is not enough");
-
-    //     emit OrderHistory(
-    //         _fromToken,
-    //         _toToken,
-    //         msg.sender,
-    //         _fromTokenAmount,
-    //         returnAmount
-    //     );
-    // }
-
     //============ CrowdPooling Functions (bid) ============
     function bid(
         address cpAddress,

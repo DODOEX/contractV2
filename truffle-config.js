@@ -180,6 +180,15 @@ module.exports = {
       gasPrice: 0,
     },
 
+    neon_test: {
+      networkCheckTimeout: 100000,
+      provider: () => {
+        return new HDWalletProvider(privKey, 'https://proxy.testnet.neonlabs.org/solana')
+      },
+      network_id: 111,
+      gasPrice: 0,
+    },
+
     arbtest: {
       provider: function () {
         return wrapProvider(
