@@ -10,99 +10,118 @@ pragma experimental ABIEncoderV2;
 
 import {InitializableInternalMintableERC20} from "../../external/ERC20/InitializableInternalMintableERC20.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
-import {IControllerModel} from "../intf/IControllerModel.sol";
+import {IController} from "../intf/IController.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
 
 contract FilterAdmin is InitializableInternalMintableERC20 {
     using SafeMath for uint256;
 
     // ============ Storage ============
-    address[] public _FILTER_REGISTRY_;
-    uint256 public _FEE_;
-    address public _CONTROLLER_MODEL_;
-    address public _DEFAULT_MAINTAINER_;
+    address[] public _FILTERS_;
+    mapping(address => bool) public _FILTER_REGISTRY_;
+    uint256 public _FEE_RATE_;
+    address public _CONTROLLER_;
+    address public _MAINTAINER_;
+    uint256 public _INIT_SUPPLY_;
 
     // ============ Event ============
-    event ChangeFee(uint256 fee);
+    event ChangeFeeRate(uint256 fee);
 
     function init(
         address owner,
         uint256 initSupply,
         string memory name,
         string memory symbol,
-        uint256 fee,
-        address controllerModel,
-        address defaultMaintainer,
+        uint256 feeRate,
+        address controller,
+        address maintainer,
         address[] memory filters
     ) external {
         super.init(owner, initSupply, name, symbol, 18);
-        _FILTER_REGISTRY_ = filters;
-        _FEE_ = fee;
-        _CONTROLLER_MODEL_ = controllerModel;
-        _DEFAULT_MAINTAINER_ = defaultMaintainer;
+        _INIT_SUPPLY_ = initSupply;
+        _FEE_RATE_ = feeRate;
+        _CONTROLLER_ = controller;
+        _MAINTAINER_ = maintainer;
+        _FILTERS_ = filters;
+        for (uint256 i = 0; i < filters.length; i++) {
+            _FILTER_REGISTRY_[filters[i]] = true;
+        }
     }
 
-    function mintFragTo(address to, uint256 rawAmount) external returns (uint256 received){
-        require(isIncludeFilter(msg.sender), "FILTER_NOT_REGISTRIED");
+    function mintFragTo(address to, uint256 rawAmount) external returns (uint256) {
+        require(isRegisteredFilter(msg.sender), "FILTER_NOT_REGISTERED");
 
-        (uint256 poolFee, uint256 mtFee) = queryChargeMintFee(rawAmount);
-        if(poolFee > 0) _mint(_OWNER_, poolFee);
-        if(mtFee > 0) _mint(_DEFAULT_MAINTAINER_, mtFee);
-        
-        received = rawAmount.sub(poolFee).sub(mtFee);
-        _mint(to, received); 
+        (uint256 poolFee, uint256 mtFee, uint256 received) = queryMintFee(rawAmount);
+        if (poolFee > 0) _mint(_OWNER_, poolFee);
+        if (mtFee > 0) _mint(_MAINTAINER_, mtFee);
+
+        _mint(to, received);
+        return received
     }
 
-    function burnFragFrom(address from, uint256 rawAmount) external returns (uint256 paid){
-        require(isIncludeFilter(msg.sender), "FILTER_NOT_REGISTRIED");
+    function burnFragFrom(address from, uint256 rawAmount) external returns (uint256) {
+        require(isRegisteredFilter(msg.sender), "FILTER_NOT_REGISTERED");
 
-        (uint256 poolFee, uint256 mtFee) = queryChargeBurnFee(rawAmount);
-        if(poolFee > 0) _mint(_OWNER_, poolFee);
-        if(mtFee > 0) _mint(_DEFAULT_MAINTAINER_, mtFee);
+        (uint256 poolFee, uint256 mtFee, uint256 paid) = queryBurnFee(rawAmount);
+        if (poolFee > 0) _mint(_OWNER_, poolFee);
+        if (mtFee > 0) _mint(_MAINTAINER_, mtFee);
 
-        paid = rawAmount.add(poolFee).add(mtFee);
         _burn(from, paid);
+        return paid;
     }
 
     //================ View ================
-    function queryChargeMintFee(uint256 rawAmount) public returns (uint256 poolFee, uint256 mtFee) {
-        uint256 mtFeeRate = IControllerModel(_CONTROLLER_MODEL_).getMintFee(address(this));
-        poolFee = DecimalMath.mulFloor(rawAmount, _FEE_);
+    function queryMintFee(uint256 rawAmount)
+        public
+        returns (
+            uint256 poolFee,
+            uint256 mtFee,
+            uint256 afterChargedAmount
+        )
+    {
+        uint256 mtFeeRate = IController(_CONTROLLER_).getMintFee(address(this));
+        poolFee = DecimalMath.mulFloor(rawAmount, _FEE_RATE_);
         mtFee = DecimalMath.mulFloor(rawAmount, mtFeeRate);
+        afterChargedAmount = rawAmount.sub(poolFee).sub(mtFee);
     }
 
-    function queryChargeBurnFee(uint256 rawAmount) public returns (uint256 poolFee, uint256 mtFee) {
-        uint256 mtFeeRate = IControllerModel(_CONTROLLER_MODEL_).getBurnFee(address(this));
-        poolFee = DecimalMath.mulFloor(rawAmount, _FEE_);
+    function queryBurnFee(uint256 rawAmount)
+        public
+        returns (
+            uint256 poolFee,
+            uint256 mtFee,
+            uint256 afterChargedAmount
+        )
+    {
+        uint256 mtFeeRate = IController(_CONTROLLER_).getBurnFee(address(this));
+        poolFee = DecimalMath.mulFloor(rawAmount, _FEE_RATE_);
         mtFee = DecimalMath.mulFloor(rawAmount, mtFeeRate);
+        afterChargedAmount = rawAmount.add(poolFee).add(mtFee);
     }
 
-
-    function isIncludeFilter(address filter) view public returns (bool) {
-        uint256 i = 0;
-        for(; i < _FILTER_REGISTRY_.length; i++) {
-            if(filter == _FILTER_REGISTRY_[i]) break;
-        }
-        return i == _FILTER_REGISTRY_.length ? false : true;
+    function isRegisteredFilter(address filter) public view returns (bool) {
+        return _FILTER_REGISTRY_[i];
     }
 
-    function getFilters() view public returns (address[] memory) {
-        return _FILTER_REGISTRY_;
-    }
-
-    function version() virtual external pure returns (string memory) {
-        return "FADMIN 1.0.0";
+    function getFilters() public view returns (address[] memory) {
+        return _FILTERS_;
     }
 
     //================= Owner ================
     function addFilter(address filter) external onlyOwner {
-        require(!isIncludeFilter(filter), "FILTER_NOT_INCLUDE");
-        _FILTER_REGISTRY_.push(filter);
+        require(!isRegisteredFilter(filter), "FILTER_ALREADY_EXIST");
+        _FILTERS_.push(filter);
+        _FILTER_REGISTRY_[filter] = true;
     }
 
-    function changeFee(uint256 newFee) external onlyOwner {
-        require(newFee <= DecimalMath.ONE, "FEE_TOO_LARGE");
-        _FEE_ = newFee;
-        emit ChangeFee(newFee);
+    function changeFeeRate(uint256 newFeeRate) external onlyOwner {
+        require(newFeeRate <= DecimalMath.ONE, "FEE_RATE_TOO_LARGE");
+        _FEE_RATE_ = newFeeRate;
+        emit ChangeFeeRate(newFeeRate);
+    }
+
+    //================= Support ================
+    function version() external pure virtual returns (string memory) {
+        return "FILTER ADMIN 1.0.0";
     }
 }

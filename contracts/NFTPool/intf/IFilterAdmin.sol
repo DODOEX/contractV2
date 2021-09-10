@@ -10,16 +10,16 @@ pragma solidity 0.6.9;
 interface IFilterAdmin {
     function _OWNER_() external returns (address);
 
-    function _CONTROLLER_MODEL_() external returns (address);
+    function _CONTROLLER_() external returns (address);
 
     function init(
         address owner,
         uint256 initSupply,
         string memory name,
         string memory symbol,
-        uint256 fee,
-        address mtFeeModel,
-        address defaultMaintainer,
+        uint256 feeRate,
+        address controller,
+        address maintainer,
         address[] memory filters
     ) external;
 
@@ -27,7 +27,21 @@ interface IFilterAdmin {
 
     function burnFragFrom(address from, uint256 rawAmount) external returns (uint256 paid);
 
-    function queryChargeMintFee(uint256 rawAmount) external view returns (uint256 poolFee, uint256 mtFee);
+    function queryMintFee(uint256 rawAmount)
+        external
+        view
+        returns (
+            uint256 poolFee,
+            uint256 mtFee,
+            uint256 afterChargedAmount
+        );
 
-    function queryChargeBurnFee(uint256 rawAmount) external view returns (uint256 poolFee, uint256 mtFee);
+    function queryBurnFee(uint256 rawAmount)
+        external
+        view
+        returns (
+            uint256 poolFee,
+            uint256 mtFee,
+            uint256 afterChargedAmount
+        );
 }
