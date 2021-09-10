@@ -79,7 +79,15 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
         (uint256 rawPay, ) = queryNFTRandomOut(amount);
         paid = IFilterAdmin(_OWNER_).burnFragFrom(msg.sender, rawPay);
         for (uint256 i = 0; i < amount; i++) {
-            _transferOutERC1155(to, _getRandomOutId(), 1);
+            uint256 randomNum = _getRandomOutId() % _TOTAL_NFT_AMOUNT_;
+            uint256 sum;
+            for (uint256 j = 0; j < _NFT_IDS_.length; j++) {
+                sum += _NFT_RESERVE_[_NFT_IDS_[j]];
+                if (sum >= randomNum) {
+                    _transferOutERC1155(to, _NFT_IDS_[j], 1);
+                    break;
+                }
+            }
         }
     }
 

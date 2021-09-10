@@ -173,12 +173,10 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         return a1.mul(qn.sub(qm)).div(q.sub(DecimalMath.ONE));
     }
 
-    function _getRandomOutId() public view returns (uint256 index) {
-        index =
-            uint256(
-                keccak256(abi.encodePacked(tx.origin, blockhash(block.number - 1), gasleft()))
-            ) %
-            _TOTAL_NFT_AMOUNT_;
+    function _getRandomNum() public view returns (uint256 randomNum) {
+        randomNum = uint256(
+            keccak256(abi.encodePacked(tx.origin, blockhash(block.number - 1), gasleft()))
+        );
     }
 
     // ================= Ownable ================
