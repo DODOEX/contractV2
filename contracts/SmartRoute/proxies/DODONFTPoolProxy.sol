@@ -16,17 +16,6 @@ import {IDODONFTApprove} from "../../intf/IDODONFTApprove.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 
-interface IFilterV1 {
-    function init(
-        address filterAdmin,
-        address nftCollection,
-        bool[] memory toggles,
-        uint256[] memory numParams,
-        uint256[] memory priceRules,
-        uint256[] memory spreadIds
-    ) external;
-}
-
 contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
@@ -140,7 +129,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
     function createNewNFTPoolV1(
         address nftCollection,
         uint256 filterKey, //1 => FilterERC721V1, 2 => FilterERC1155V1
-        string[] memory tokenInfo, 
+        string[] memory infos, // 0 => filterName, 1 => fragName, 2 => fragSymbol
         uint256[] memory numParams,//0 - initSupply, 1 - fee
         bool[] memory toggles,
         uint256[] memory filterNumParams, //0 - startId, 1 - endId, 2 - maxAmount, 3 - minAmount
@@ -154,6 +143,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
             newFilterAdmin,
             nftCollection,
             toggles,
+            infos[0],
             filterNumParams,
             priceRules,
             spreadIds
@@ -165,8 +155,8 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         IFilterAdmin(newFilterAdmin).init(
             msg.sender, 
             numParams[0],
-            tokenInfo[0],
-            tokenInfo[1],
+            infos[1],
+            infos[2],
             numParams[1],
             _CONTROLLER_,
             _MAINTAINER_,
@@ -180,15 +170,17 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         address filterAdmin,
         address nftCollection,
         bool[] memory toggles,
+        string memory filterName,
         uint256[] memory numParams, //0 - startId, 1 - endId, 2 - maxAmount, 3 - minAmount
         uint256[] memory priceRules,
         uint256[] memory spreadIds
     ) public returns(address newFilterV1) {
         newFilterV1 = ICloneFactory(_CLONE_FACTORY_).clone(_FILTER_TEMPLATES_[key]);
-        IFilterV1(newFilterV1).init(
+        IFilter(newFilterV1).init(
             filterAdmin,
             nftCollection,
             toggles,
+            filterName,
             numParams,
             priceRules,
             spreadIds

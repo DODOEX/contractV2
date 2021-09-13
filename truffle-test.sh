@@ -71,12 +71,7 @@ then
 	truffle test ./test/DODODrops/dropsV2.test.ts
 fi
 
-# if [ "$1"x = "route-incentive"x ]
-# then
-# 	truffle test ./test/Route/Incentive.test.ts
-# fi
-
-# if [ "$1"x = "route"x ]
-# then
-# 	truffle test ./test/Route/route.test.ts
-# fi
+if [ "$1"x = "NFTPool"x ]
+then
+	truffle test ./test/NFTPool/nftPool.test.ts
+fi

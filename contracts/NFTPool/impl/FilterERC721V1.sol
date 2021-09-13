@@ -24,13 +24,15 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
         address filterAdmin,
         address nftCollection,
         bool[] memory toggles,
+        string memory filterName,
         uint256[] memory numParams, //0 - startId, 1 - endId, 2 - maxAmount, 3 - minAmount
         uint256[] memory priceRules,
         uint256[] memory spreadIds
     ) external {
         initOwner(filterAdmin);
-        _NFT_COLLECTION_ = nftCollection;
+        _FILTER_NAME_ = filterName;
 
+        _NFT_COLLECTION_ = nftCollection;
         _changeNFTInPrice(priceRules[0], priceRules[1], toggles[0]);
         _changeNFTRandomInPrice(priceRules[2], priceRules[3], toggles[1]);
         _changeNFTTargetOutPrice(priceRules[4], priceRules[5], toggles[2]);

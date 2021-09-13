@@ -21,11 +21,14 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
         address filterAdmin,
         address nftCollection,
         bool[] memory toggles,
+        string memory filterName,
         uint256[] memory numParams, //0 - startId, 1 - endId, 2 - maxAmount, 3 - minAmount
         uint256[] memory priceRules,
         uint256[] memory spreadIds
     ) external {
         initOwner(filterAdmin);
+
+        _FILTER_NAME_ = filterName;
         _NFT_COLLECTION_ = nftCollection;
 
         _changeNFTInPrice(priceRules[0], priceRules[1], toggles[0]);

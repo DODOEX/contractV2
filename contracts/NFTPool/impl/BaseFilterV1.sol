@@ -16,6 +16,8 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
 
     //=================== Storage ===================
+    string public _FILTER_NAME_;
+
     address public _NFT_COLLECTION_;
     uint256 public _NFT_ID_START_;
     uint256 public _NFT_ID_END_ = uint256(-1);
@@ -272,5 +274,12 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         for (uint256 i = 0; i < tokenIds.length; i++) {
             _SPREAD_IDS_REGISTRY_[tokenIds[i]] = isRegistered[i];
         }
+    }
+
+    function changeFilterName(string memory newFilterName)
+        external
+        onlySuperOwner
+    {
+        _FILTER_NAME_ = newFilterName;
     }
 }

@@ -8,6 +8,16 @@
 pragma solidity 0.6.9;
 
 interface IFilter {
+    function init(
+        address filterAdmin,
+        address nftCollection,
+        bool[] memory toggles,
+        string memory filterName,
+        uint256[] memory numParams,
+        uint256[] memory priceRules,
+        uint256[] memory spreadIds
+    ) external;
+
     function isNFTValid(address nftCollectionAddress, uint256 nftId) external view returns (bool);
 
     function _NFT_COLLECTION_() external view returns (address);
