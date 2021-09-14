@@ -175,6 +175,7 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
             _NFT_IDS_[index] = _NFT_IDS_[_NFT_IDS_.length - 1];
             _NFT_IDS_.pop();
             _TOKENID_IDX_[tokenId] = 0;
+            _TOKENID_IDX_[_NFT_IDS_[index]] = index + 1;
         }
     }
 

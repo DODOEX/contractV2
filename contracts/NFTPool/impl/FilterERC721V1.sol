@@ -131,6 +131,7 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
         _NFT_IDS_.pop();
         _NFT_RESERVE_[tokenId] = 0;
         _TOKENID_IDX_[tokenId] = 0;
+        _TOKENID_IDX_[_NFT_IDS_[index]] = index + 1;
     }
 
     function emergencyWithdraw(
@@ -152,6 +153,8 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
                 _NFT_IDS_[index] = _NFT_IDS_[_NFT_IDS_.length - 1];
                 _NFT_IDS_.pop();
                 _NFT_RESERVE_[tokenId] = 0;
+                _TOKENID_IDX_[tokenId] = 0;
+                _TOKENID_IDX_[_NFT_IDS_[index]] = index + 1;
             }
             IERC721(nftContract[i]).safeTransferFrom(address(this), to, tokenIds[i]);
             emit EmergencyWithdraw(nftContract[i],tokenIds[i],to);
