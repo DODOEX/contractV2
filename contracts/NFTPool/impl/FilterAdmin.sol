@@ -46,6 +46,9 @@ contract FilterAdmin is InitializableInternalMintableERC20 {
         for (uint256 i = 0; i < filters.length; i++) {
             _FILTER_REGISTRY_[filters[i]] = true;
         }
+
+        //event FilterAdminInit(addres owner, uint256 feeRate)
+
     }
 
     function mintFragTo(address to, uint256 rawAmount) external returns (uint256) {
@@ -108,10 +111,12 @@ contract FilterAdmin is InitializableInternalMintableERC20 {
     }
 
     //================= Owner ================
-    function addFilter(address filter) external onlyOwner {
-        require(!isRegisteredFilter(filter), "FILTER_ALREADY_EXIST");
-        _FILTERS_.push(filter);
-        _FILTER_REGISTRY_[filter] = true;
+    function addFilter(address[] memory filters) external onlyOwner {
+        for(uint256 i = 0; i < filters.length; i++) {
+            require(!isRegisteredFilter(filters[i]), "FILTER_ALREADY_EXIST");
+            _FILTERS_.push(filter[i]);
+            _FILTER_REGISTRY_[filter[i]] = true;
+        }
     }
 
     function changeFeeRate(uint256 newFeeRate) external onlyOwner {

@@ -41,6 +41,8 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
         for (uint256 i = 0; i < spreadIds.length; i++) {
             _SPREAD_IDS_REGISTRY_[spreadIds[i]] = true;
         }
+
+        //event FilterInit(address filterAdmin, address nftCollection, string memory name);
     }
 
     // ================= Trading ================

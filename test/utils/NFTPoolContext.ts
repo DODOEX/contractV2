@@ -77,7 +77,7 @@ export class NFTPoolContext {
                 this.Controller.options.address,
                 this.Deployer,
                 this.DODONFTApprove.options.address,
-                "" //TODO:ERC721 => ERC20
+                "" //TODO:ERC721 => ERC20 DODOApprove
             ]
         )
 
@@ -104,7 +104,7 @@ export class NFTPoolContext {
     }
 }
 
-export async function getNFTPoolContext(weth: string): Promise<NFTPoolContext> {
+export async function getNFTPoolContext(): Promise<NFTPoolContext> {
     var context = new NFTPoolContext();
     await context.init();
     return context;

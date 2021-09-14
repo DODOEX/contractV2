@@ -43,6 +43,8 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
         for (uint256 i = 0; i < spreadIds.length; i++) {
             _SPREAD_IDS_REGISTRY_[spreadIds[i]] = true;
         }
+
+        //event FilterInit(address filterAdmin, address nftCollection, string memory name);
     }
 
     // ================= Trading ================
@@ -62,6 +64,8 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
             );
             _NFT_IDS_.push(tokenId);
             _NFT_RESERVE_[tokenId] = 1;
+
+            //event Erc721TokenIn(uint256 index, uint256 tokenId);
         }
         _TOTAL_NFT_AMOUNT_ = _NFT_IDS_.length;
         (uint256 rawReceive, ) = queryNFTIn(tokenIds.length);
@@ -112,6 +116,9 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
         _NFT_IDS_[index] = _NFT_IDS_[_NFT_IDS_.length - 1];
         _NFT_IDS_.pop();
         _NFT_RESERVE_[tokenId] = 0;
+        
+        //idx,oldTokenId,newTokenId
+        //event Erc721Out(uint256 index, uint256 tokenId)
     }
 
     function emergencyWithdraw(

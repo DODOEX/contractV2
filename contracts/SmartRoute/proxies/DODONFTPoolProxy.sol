@@ -64,16 +64,20 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         }
         uint256 received = IFilter(filter).ERC721In(tokenIds, to);
         require(received >= minMintAmount, "MINT_AMOUNT_NOT_ENOUGH");
+
+        //event Erc721In(address filter, address to, uint256 received);
     }
 
     function erc721TargetOut(
         address filter,
-        uint256[] memory indexes,
+        uint256[] memory indexes,//tokenId
         address to,
         uint256 maxBurnAmount 
     ) external {
         uint256 paid = IFilter(filter).ERC721TargetOut(indexes, to);
         require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
+
+        //event Erc721TargetOut(address filter, address to, uint256 paid);
     }
 
     function erc721RandomOut(
@@ -84,6 +88,8 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
     ) external {
         uint256 paid = IFilter(filter).ERC721RandomOut(amount, to);
         require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
+
+        //event Erc721TargetOut(address filter, address to, uint256 paid); 
     }
 
     // ================== ERC1155 In and Out ===================
@@ -162,6 +168,8 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
             _MAINTAINER_,
             filters
         );
+
+        //event CreateNFTPool(address newFilterAdmin, address filterV1);
     }
 
     // ================== Create Filter ===================
@@ -185,6 +193,8 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
             priceRules,
             spreadIds
         );
+
+        //event CreateFilterV1(address newFilterV1, uint256 filterTemplateKey);
     }
 
 
@@ -230,6 +240,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
 
     function changeController(address newControllerModel) external onlyOwner {
         _CONTROLLER_ = newControllerModel;
+        //event ChangeContoller(address newController);
     }
 
     function setFilterTemplate(uint256 idx, address newFilterTemplate) external onlyOwner {
