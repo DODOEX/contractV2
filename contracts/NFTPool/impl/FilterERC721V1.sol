@@ -20,6 +20,13 @@ import {BaseFilterV1} from "./BaseFilterV1.sol";
 contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
     using SafeMath for uint256;
 
+    //============== Event =================
+    event FilterInit(address filterAdmin, address nftCollection, string name);
+    event NftIn(uint256 tokenId);
+    event TargetOut(uint256 tokenId);
+    event RandomOut(uint256 tokenId);
+    event EmergencyWithdraw(address nftContract,uint256 tokenId, address to);
+
     function init(
         address filterAdmin,
         address nftCollection,
@@ -34,7 +41,7 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
 
         _NFT_COLLECTION_ = nftCollection;
         _changeNFTInPrice(priceRules[0], priceRules[1], toggles[0]);
-        _changeNFTRandomInPrice(priceRules[2], priceRules[3], toggles[1]);
+        _changeNFTRandomOutPrice(priceRules[2], priceRules[3], toggles[1]);
         _changeNFTTargetOutPrice(priceRules[4], priceRules[5], toggles[2]);
 
         _changeNFTAmountRange(numParams[2], numParams[3]);
@@ -44,7 +51,7 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
             _SPREAD_IDS_REGISTRY_[spreadIds[i]] = true;
         }
 
-        //event FilterInit(address filterAdmin, address nftCollection, string memory name);
+        emit FilterInit(filterAdmin, nftCollection, filterName);
     }
 
     // ================= Trading ================
@@ -63,24 +70,27 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
                 "NFT_NOT_SEND"
             );
             _NFT_IDS_.push(tokenId);
+            _TOKENID_IDX_[tokenId] = _NFT_IDS_.length;
             _NFT_RESERVE_[tokenId] = 1;
 
-            //event Erc721TokenIn(uint256 index, uint256 tokenId);
+            emit NftIn(tokenId);
         }
         _TOTAL_NFT_AMOUNT_ = _NFT_IDS_.length;
         (uint256 rawReceive, ) = queryNFTIn(tokenIds.length);
         received = IFilterAdmin(_OWNER_).mintFragTo(to, rawReceive);
     }
 
-    function ERC721TargetOut(uint256[] memory indexes, address to)
+    function ERC721TargetOut(uint256[] memory tokenIds, address to)
         external
         preventReentrant
         returns (uint256 paid)
     {
-        (uint256 rawPay, ) = queryNFTTargetOut(indexes.length);
+        (uint256 rawPay, ) = queryNFTTargetOut(tokenIds.length);
         paid = IFilterAdmin(_OWNER_).burnFragFrom(msg.sender, rawPay);
-        for (uint256 i = 0; i < indexes.length; i++) {
-            _transferOutERC721(to, indexes[i]);
+        for (uint256 i = 0; i < tokenIds.length; i++) {
+            _transferOutERC721(to, tokenIds[i]);
+
+            emit TargetOut(tokenIds[i]);
         }
         _TOTAL_NFT_AMOUNT_ = _NFT_IDS_.length;
     }
@@ -93,7 +103,10 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
         (uint256 rawPay, ) = queryNFTRandomOut(amount);
         paid = IFilterAdmin(_OWNER_).burnFragFrom(msg.sender, rawPay);
         for (uint256 i = 0; i < amount; i++) {
-            _transferOutERC721(to, _getRandomNum() % _TOTAL_NFT_AMOUNT_);
+            uint256 index = _getRandomNum() % _TOTAL_NFT_AMOUNT_;
+            _transferOutERC721(to, _NFT_IDS_[index]);
+
+            emit RandomOut(_NFT_IDS_[index]);
         }
         _TOTAL_NFT_AMOUNT_ = _NFT_IDS_.length;
     }
@@ -109,16 +122,15 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
         return IERC721Receiver.onERC721Received.selector;
     }
 
-    function _transferOutERC721(address to, uint256 index) internal {
-        require(index < _NFT_IDS_.length, "INDEX_NOT_EXIST");
-        uint256 tokenId = _NFT_IDS_[index];
+    function _transferOutERC721(address to, uint256 tokenId) internal {
+        require(_TOKENID_IDX_[tokenId] > 0, "TOKENID_NOT_EXIST");
+        uint256 index = _TOKENID_IDX_[tokenId] - 1;
+        require(index < _NFT_IDS_.length, "INDEX_INVALID");
         IERC721(_NFT_COLLECTION_).safeTransferFrom(address(this), to, tokenId);
         _NFT_IDS_[index] = _NFT_IDS_[_NFT_IDS_.length - 1];
         _NFT_IDS_.pop();
         _NFT_RESERVE_[tokenId] = 0;
-        
-        //idx,oldTokenId,newTokenId
-        //event Erc721Out(uint256 index, uint256 tokenId)
+        _TOKENID_IDX_[tokenId] = 0;
     }
 
     function emergencyWithdraw(
@@ -142,6 +154,7 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
                 _NFT_RESERVE_[tokenId] = 0;
             }
             IERC721(nftContract[i]).safeTransferFrom(address(this), to, tokenIds[i]);
+            emit EmergencyWithdraw(nftContract[i],tokenIds[i],to);
         }
         _TOTAL_NFT_AMOUNT_ = _NFT_IDS_.length;
     }

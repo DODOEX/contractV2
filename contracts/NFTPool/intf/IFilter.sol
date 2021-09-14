@@ -39,14 +39,14 @@ interface IFilter {
 
     function ERC721In(uint256[] memory tokenIds, address to) external returns (uint256 received);
 
-    function ERC721TargetOut(uint256[] memory indexes, address to) external returns (uint256 paid);
+    function ERC721TargetOut(uint256[] memory tokenIds, address to) external returns (uint256 paid);
 
     function ERC721RandomOut(uint256 amount, address to) external returns (uint256 paid);
 
     function ERC1155In(uint256[] memory tokenIds, address to) external returns (uint256 received);
 
     function ERC1155TargetOut(
-        uint256[] memory indexes,
+        uint256[] memory tokenIds,
         uint256[] memory amounts,
         address to
     ) external returns (uint256 paid);

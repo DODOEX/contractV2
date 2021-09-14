@@ -15,6 +15,15 @@ import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
 
+    //=================== Event ===================
+    event ChangeNFTInPrice(uint256 newGsStart, uint256 newCr, bool toggleFlag);
+    event ChangeNFTRandomOutPrice(uint256 newGsStart, uint256 newCr, bool toggleFlag);
+    event ChangeNFTTargetOutPrice(uint256 newGsStart, uint256 newCr, bool toggleFlag);
+    event ChangeNFTAmountRange(uint256 maxNFTAmount, uint256 minNFTAmount);
+    event ChangeTokenIdRange(uint256 nftIdStart, uint256 nftIdEnd);
+    event ChangeTokenIdMap(uint256 tokenIds, bool isRegistered);
+    event ChangeFilterName(string newFilterName);
+
     //=================== Storage ===================
     string public _FILTER_NAME_;
 
@@ -29,6 +38,8 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
     mapping(uint256 => uint256) public _NFT_RESERVE_;
 
     uint256[] public _NFT_IDS_;
+    //tokenId => index + 1 of _NFT_IDS_
+    mapping(uint256 => uint256) public _TOKENID_IDX_;
     uint256 public _TOTAL_NFT_AMOUNT_;
     uint256 public _MAX_NFT_AMOUNT_;
     uint256 public _MIN_NFT_AMOUNT_;
@@ -87,12 +98,8 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
     }
 
     function getNFTIndexById(uint256 tokenId) public view returns (uint256) {
-        uint256 i = 0;
-        for (; i < _NFT_IDS_.length; i++) {
-            if (_NFT_IDS_[i] == tokenId) break;
-        }
-        require(i < _NFT_IDS_.length, "TOKEN_ID_NOT_EXSIT");
-        return i;
+        require(_TOKENID_IDX_[tokenId] > 0, "TOKEN_ID_NOT_EXSIT");
+        return _TOKENID_IDX_[tokenId] - 1;
     }
 
     //==================== Query Price ==================
@@ -197,17 +204,19 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         _GS_START_IN_ = newGsStart;
         _CR_IN_ = newCr;
         _NFT_IN_TOGGLE_ = true;
+
+        emit ChangeNFTInPrice(newGsStart, newCr, toggleFlag);
     }
 
-    function changeNFTRandomInPrice(
+    function changeNFTRandomOutPrice(
         uint256 newGsStart,
         uint256 newCr,
         bool toggleFlag
     ) external onlySuperOwner {
-        _changeNFTRandomInPrice(newGsStart, newCr, toggleFlag);
+        _changeNFTRandomOutPrice(newGsStart, newCr, toggleFlag);
     }
 
-    function _changeNFTRandomInPrice(
+    function _changeNFTRandomOutPrice(
         uint256 newGsStart,
         uint256 newCr,
         bool toggleFlag
@@ -216,6 +225,8 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         _GS_START_RANDOM_OUT_ = newGsStart;
         _CR_RANDOM_OUT_ = newCr;
         _NFT_RANDOM_OUT_TOGGLE_ = true;
+
+        emit ChangeNFTRandomOutPrice(newGsStart, newCr, toggleFlag);
     }
 
     function changeNFTTargetOutPrice(
@@ -235,6 +246,8 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         _GS_START_TARGET_OUT_ = newGsStart;
         _CR_TARGET_OUT_ = newCr;
         _NFT_TARGET_OUT_TOGGLE_ = true;
+
+        emit ChangeNFTTargetOutPrice(newGsStart, newCr, toggleFlag);
     }
 
     function changeNFTAmountRange(uint256 maxNFTAmount, uint256 minNFTAmount)
@@ -248,6 +261,8 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         require(maxNFTAmount >= minNFTAmount, "AMOUNT_INVALID");
         _MAX_NFT_AMOUNT_ = maxNFTAmount;
         _MIN_NFT_AMOUNT_ = minNFTAmount;
+
+        emit ChangeNFTAmountRange(maxNFTAmount, minNFTAmount);
     }
 
     function changeTokenIdRange(uint256 nftIdStart, uint256 nftIdEnd) external onlySuperOwner {
@@ -259,6 +274,8 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
 
         _NFT_ID_START_ = nftIdStart;
         _NFT_ID_END_ = nftIdEnd;
+
+        emit ChangeTokenIdRange(nftIdStart, nftIdEnd);
     }
 
     function changeTokenIdMap(uint256[] memory tokenIds, bool[] memory isRegistered)
@@ -273,6 +290,7 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
 
         for (uint256 i = 0; i < tokenIds.length; i++) {
             _SPREAD_IDS_REGISTRY_[tokenIds[i]] = isRegistered[i];
+            emit ChangeTokenIdMap(tokenIds[i], isRegistered[i]);
         }
     }
 
@@ -281,5 +299,6 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         onlySuperOwner
     {
         _FILTER_NAME_ = newFilterName;
+        emit ChangeFilterName(newFilterName);
     }
 }

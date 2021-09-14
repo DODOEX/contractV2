@@ -27,6 +27,7 @@ contract DODONFTApprove is InitializableOwnable {
 
     // ============ Events ============
     event AddDODOProxy(address dodoProxy);
+    event RemoveDODOProxy(address oldProxy);
 
     // ============ Modifiers ============
     modifier notLocked() {
@@ -62,6 +63,7 @@ contract DODONFTApprove is InitializableOwnable {
 
     function removeDODOProxy (address oldDodoProxy) external onlyOwner {
         _IS_ALLOWED_PROXY_[oldDodoProxy] = false;
+        emit RemoveDODOProxy(oldDodoProxy);
     }
 
 

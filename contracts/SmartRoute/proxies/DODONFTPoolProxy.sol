@@ -33,6 +33,20 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
 
     // ============ Event ==============
     event SetFilterTemplate(uint256 idx, address filterTemplate);
+    event Erc721In(address filter, address to, uint256 received);
+    event Erc1155In(address filter, address to, uint256 received);
+    event Erc721TargetOut(address filter, address to, uint256 paid);
+    event Erc1155TargetOut(address filter, address to, uint256 paid);
+    event Erc721RandomOut(address filter, address to, uint256 paid); 
+    event Erc1155RandomOut(address filter, address to, uint256 paid); 
+
+    event CreateNFTPool(address newFilterAdmin, address filter);
+    event CreateFilterV1(address newFilterV1, uint256 filterTemplateKey);
+    event Erc721toErc20(address nftContract, uint256 tokenId, address toToken, uint256 returnAmount);
+
+    event ChangeMaintainer(address newMaintainer);
+    event ChangeContoller(address newController);
+    event ChangeFilterAdminTemplate(address newFilterAdminTemplate);
 
     constructor(
         address cloneFactory,
@@ -65,19 +79,19 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         uint256 received = IFilter(filter).ERC721In(tokenIds, to);
         require(received >= minMintAmount, "MINT_AMOUNT_NOT_ENOUGH");
 
-        //event Erc721In(address filter, address to, uint256 received);
+        emit Erc721In(filter, to, received);
     }
 
     function erc721TargetOut(
         address filter,
-        uint256[] memory indexes,//tokenId
+        uint256[] memory tokenIds,
         address to,
         uint256 maxBurnAmount 
     ) external {
-        uint256 paid = IFilter(filter).ERC721TargetOut(indexes, to);
+        uint256 paid = IFilter(filter).ERC721TargetOut(tokenIds, to);
         require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
 
-        //event Erc721TargetOut(address filter, address to, uint256 paid);
+        emit Erc721TargetOut(filter, to, paid);
     }
 
     function erc721RandomOut(
@@ -89,7 +103,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         uint256 paid = IFilter(filter).ERC721RandomOut(amount, to);
         require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
 
-        //event Erc721TargetOut(address filter, address to, uint256 paid); 
+        emit Erc721RandomOut(filter, to, paid); 
     }
 
     // ================== ERC1155 In and Out ===================
@@ -107,17 +121,21 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         IDODONFTApprove(_DODO_NFT_APPROVE_).claimERC1155Batch(nftCollection, msg.sender, filter, tokenIds, amounts);
         uint256 received = IFilter(filter).ERC1155In(tokenIds, to);
         require(received >= minMintAmount, "MINT_AMOUNT_NOT_ENOUGH");
+
+        emit Erc1155In(filter, to, received);
     }
 
     function erc1155TargetOut(
         address filter,
-        uint256[] memory indexes,
+        uint256[] memory tokenIds,
         uint256[] memory amounts,
         address to,
         uint256 maxBurnAmount 
     ) external {
-        uint256 paid = IFilter(filter).ERC1155TargetOut(indexes, amounts, to);
+        uint256 paid = IFilter(filter).ERC1155TargetOut(tokenIds, amounts, to);
         require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
+        
+        emit Erc1155TargetOut(filter, to, paid);
     }
 
     function erc1155RandomOut(
@@ -128,6 +146,8 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
     ) external {
         uint256 paid = IFilter(filter).ERC1155RandomOut(amount, to);
         require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
+
+        emit Erc1155RandomOut(filter, to, paid);
     }
 
 
@@ -169,7 +189,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
             filters
         );
 
-        //event CreateNFTPool(address newFilterAdmin, address filterV1);
+        emit CreateNFTPool(newFilterAdmin, filterV1);
     }
 
     // ================== Create Filter ===================
@@ -194,7 +214,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
             spreadIds
         );
 
-        //event CreateFilterV1(address newFilterV1, uint256 filterTemplateKey);
+        emit CreateFilterV1(newFilterV1, key);
     }
 
 
@@ -226,21 +246,25 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         uint256 returnAmount = _generalBalanceOf(toToken, address(this));
 
         _generalTransfer(toToken, msg.sender, returnAmount);
+
+        emit Erc721toErc20(nftContract, tokenId, toToken, returnAmount);
     }
     
 
     //====================== Ownable ========================
     function changeMaintainer(address newMaintainer) external onlyOwner {
         _MAINTAINER_ = newMaintainer;
+        emit ChangeMaintainer(newMaintainer);
     }
 
     function changeFilterAdminTemplate(address newFilterAdminTemplate) external onlyOwner {
         _FILTER_ADMIN_TEMPLATE_ = newFilterAdminTemplate;
+        emit ChangeFilterAdminTemplate(newFilterAdminTemplate);
     }
 
-    function changeController(address newControllerModel) external onlyOwner {
-        _CONTROLLER_ = newControllerModel;
-        //event ChangeContoller(address newController);
+    function changeController(address newController) external onlyOwner {
+        _CONTROLLER_ = newController;
+        emit ChangeContoller(newController);
     }
 
     function setFilterTemplate(uint256 idx, address newFilterTemplate) external onlyOwner {
