@@ -184,8 +184,8 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
         inAmount = currentAmount.sub(_NFT_RESERVE_[tokenId]);
         if (_NFT_RESERVE_[tokenId] == 0 && currentAmount > 0) {
             _NFT_IDS_.push(tokenId);
+            _TOKENID_IDX_[tokenId] = _NFT_IDS_.length;
         }
-        _TOKENID_IDX_[tokenId] = _NFT_IDS_.length;
         _NFT_RESERVE_[tokenId] = currentAmount;
         _TOTAL_NFT_AMOUNT_ += inAmount;
     }
