@@ -40,6 +40,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
     event Erc721RandomOut(address filter, address to, uint256 paid); 
     event Erc1155RandomOut(address filter, address to, uint256 paid); 
 
+    event CreateLiteNFTPool(address newFilterAdmin);
     event CreateNFTPool(address newFilterAdmin, address filter);
     event CreateFilterV1(address newFilterV1, uint256 filterTemplateKey);
     event Erc721toErc20(address nftContract, uint256 tokenId, address toToken, uint256 returnAmount);
@@ -152,7 +153,31 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
 
 
     // ================== Create NFTPool ===================
+    function createLiteNFTPool(
+        address filterAdminOwner,
+        string[] memory infos, // 0 => fragName, 1 => fragSymbol
+        uint256[] memory numParams //0 - initSupply, 1 - fee
+    ) external returns(address newFilterAdmin) {
+        address[] memory filters = new address[](0);
+        
+        IFilterAdmin(newFilterAdmin).init(
+            filterAdminOwner, 
+            numParams[0],
+            infos[0],
+            infos[1],
+            numParams[1],
+            _CONTROLLER_,
+            _MAINTAINER_,
+            filters
+        );
+
+        emit CreateLiteNFTPool(newFilterAdmin);
+    }
+
+
+
     function createNewNFTPoolV1(
+        address filterAdminOwner,
         address nftCollection,
         uint256 filterKey, //1 => FilterERC721V1, 2 => FilterERC1155V1
         string[] memory infos, // 0 => filterName, 1 => fragName, 2 => fragSymbol
@@ -179,7 +204,7 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         filters[0] = filterV1;
         
         IFilterAdmin(newFilterAdmin).init(
-            msg.sender, 
+            filterAdminOwner, 
             numParams[0],
             infos[1],
             infos[2],
