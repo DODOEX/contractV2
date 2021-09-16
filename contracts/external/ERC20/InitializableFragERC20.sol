@@ -39,7 +39,7 @@ contract InitializableFragERC20 {
         emit Transfer(address(0), _creator, _totalSupply);
     }
 
-    function decimals() public view returns (uint8) {
+    function decimals() public pure returns (uint8) {
         return 18;
     }
 

@@ -73,20 +73,20 @@ module.exports = {
         //DODOMineV2Factory: "0x3932E00a51d0D3b85C8Eb7C3ED0FcCB0dF98B3FF"
 
         //================== NFT ====================
-        BuyoutModel: "0x98F5aF1E7Fb03A085D2a28713995e4A923860288",
-        Fragment: "0xDF7eccee9f5C92D1Baf036DB9410456f9382E045",
-        NFTCollateralVault: "0x23d72eA97a9E43411Eeb908d128DF337aD334582",
-        DODONFTRouteHelper: "0xb0Ca341b6fbdC607A507D821780e29f9601a58B3",
+        BuyoutModel: "0x1A18Ccf68040f660Ac7f83B4911d17398eDbC79f",
+        Fragment: "0xd0578C69e3455a7836456FfEEcd31934bda088d1",
+        NFTCollateralVault: "0x9d9A560661eD783F99188EFC2cFd5F37bCC30609",
+        DODONFTRouteHelper: "0xf3194Dcbba7dDC1F8Cf1bC97AD502BC25581Ba0d",
 
         InitializableERC721: "0xC0ccfC832BD45Cd3A2d62e47FE92Fc50DD2210ac",
         InitializableERC1155: "0x9DC9086B65cCBec43F92bFa37Db81150Ed1DDDed",
         NFTTokenFactory: "0xd2BffcCBC1F2a7356f8DaBB55B33E47D62de1bB1",
 
-        DodoNftErc721: "0x3Bc20358B31aD498d5a245B36bC993DDBE9A4405",
-        DodoNftErc1155: "0xc498F36eF82Aa5dBE0ecF6DD56DD55398E80E13D",
+        DodoNftErc721: "",
+        DodoNftErc1155: "",
 
-        DODONFTRegistry: "0x69efeCA5070Cb22c1094cffEbacafC09c058c139",
-        DODONFTProxy: "0x0CF019E13C6527BD34eC6c8323F11aB5DF6f0922",
+        DODONFTRegistry: "0x3DEf969E84FEAa9Dd2a29E1008D0426c8d89D5C5",
+        DODONFTProxy: "0xBF243C5626A0766031d57269c01F6eFd57B603fc",
 
         //================= DropsV1 =================
         MysteryBoxV1: "",
@@ -100,5 +100,14 @@ module.exports = {
         //DODODropsV2: "0x4A2b9f63AE41cF3003A494F2d8Fcd9Ed850b9A6f"
         // DropsERC721: "0x3df8d553275781C777f432A74EEE9099226B9d13",
         // DropsERC1155: "0x3a8EcF30428bd4e33Cd7011533DFd596F7705c8F",
+
+        //=================== NFTPool ==================
+        DODONFTApprove: "0xe4915ABF03d56743c7e66B1CFda4C58bAAc0963C",
+        FilterAdmin: "0x3893c38aFa42E492b134888c79CAE52744Eb3ab0",
+        FilterERC721V1: "0x3F87f3d4EeD2C466CCA6E722a3153875C3f2822b",
+        FilterERC1155V1: "0xf71F758e2c4417758588CA6ff803036cA1EeB396",
+        DODONFTPoolProxy: "0x4587F2039bfb47D76000b23743993962518Ee0c2",
+        NFTPoolController: "0xf5d24499dD76C3791ee6D19aa206f55b72270415"
+
     }
 }
