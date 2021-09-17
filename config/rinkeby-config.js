@@ -82,8 +82,8 @@ module.exports = {
         InitializableERC1155: "0x9DC9086B65cCBec43F92bFa37Db81150Ed1DDDed",
         NFTTokenFactory: "0xd2BffcCBC1F2a7356f8DaBB55B33E47D62de1bB1",
 
-        DodoNftErc721: "",
-        DodoNftErc1155: "",
+        DodoNftErc721: "0x78B7AFf2E5fA95B1E7E16679645FB65a850ed6AB",
+        DodoNftErc1155: "0x4C455532af01bc34a0Ec60fDd63c68FE41068c63",
 
         DODONFTRegistry: "0x3DEf969E84FEAa9Dd2a29E1008D0426c8d89D5C5",
         DODONFTProxy: "0xBF243C5626A0766031d57269c01F6eFd57B603fc",
