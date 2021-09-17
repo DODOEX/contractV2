@@ -404,9 +404,6 @@ module.exports = async (deployer, network, accounts) => {
                 DODOApproveProxyAddress,
                 DODOSellHelperAddress
             );
-            await deployer.deploy(
-                DODOProxyV2
-            );
             DODOV2ProxyAddress = DODOProxyV2.address;
             logger.log("DODOV2Proxy02 Address: ", DODOProxyV2.address);
             const DODOProxyV2Instance = await DODOProxyV2.at(DODOProxyV2.address);

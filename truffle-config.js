@@ -135,18 +135,11 @@ module.exports = {
       network_id: 128
     },
 
-    mbtestnet: {
+    moonriver: {
       provider: () => {
-        return new HDWalletProvider(privKey, 'https://moonbeam-rpc.dodoex.io');
+        return new HDWalletProvider(privKey, 'https://rpc.moonriver.moonbeam.network');
       },
-      network_id: 1281,
-    },
-
-    mbtestnet_offical: {
-      provider: () => {
-        return new HDWalletProvider(privKey, 'https://rpc.testnet.moonbeam.network');
-      },
-      network_id: 1287,
+      network_id: 1285,
     },
 
     oktest: {
