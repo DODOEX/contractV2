@@ -27,7 +27,6 @@ contract FilterAdmin is InitializableInternalMintableERC20 {
     // ============ Event ============
     event ChangeFeeRate(uint256 fee);
     event AddFilter(address filter);
-    event FilterAdminInit(address owner, uint256 feeRate);
 
     function init(
         address owner,
@@ -48,8 +47,6 @@ contract FilterAdmin is InitializableInternalMintableERC20 {
         for (uint256 i = 0; i < filters.length; i++) {
             _FILTER_REGISTRY_[filters[i]] = true;
         }
-
-        emit FilterAdminInit(owner, feeRate);
     }
 
     function mintFragTo(address to, uint256 rawAmount) external returns (uint256) {

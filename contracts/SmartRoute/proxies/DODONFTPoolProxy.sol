@@ -158,6 +158,8 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         string[] memory infos, // 0 => fragName, 1 => fragSymbol
         uint256[] memory numParams //0 - initSupply, 1 - fee
     ) external returns(address newFilterAdmin) {
+        newFilterAdmin = ICloneFactory(_CLONE_FACTORY_).clone(_FILTER_ADMIN_TEMPLATE_);
+        
         address[] memory filters = new address[](0);
         
         IFilterAdmin(newFilterAdmin).init(
