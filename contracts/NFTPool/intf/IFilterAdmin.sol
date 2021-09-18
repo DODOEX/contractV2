@@ -8,9 +8,9 @@
 pragma solidity 0.6.9;
 
 interface IFilterAdmin {
-    function _OWNER_() external returns (address);
+    function _OWNER_() external view returns (address);
 
-    function _CONTROLLER_() external returns (address);
+    function _CONTROLLER_() external view returns (address);
 
     function init(
         address owner,

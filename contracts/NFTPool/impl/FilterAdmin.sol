@@ -73,6 +73,7 @@ contract FilterAdmin is InitializableInternalMintableERC20 {
 
     //================ View ================
     function queryMintFee(uint256 rawAmount)
+        view
         public
         returns (
             uint256 poolFee,
@@ -87,6 +88,7 @@ contract FilterAdmin is InitializableInternalMintableERC20 {
     }
 
     function queryBurnFee(uint256 rawAmount)
+        view
         public
         returns (
             uint256 poolFee,
