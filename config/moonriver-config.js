@@ -20,6 +20,7 @@ module.exports = {
         //Template
         CloneFactory: "0xDfaf9584F5d229A9DBE5978523317820A8897C5A", //not verify
         FeeRateModel: "0x2BBD66fC4898242BDBD2583BBe1d76E8b8f71445",
+        //FeeRateDIP3: "0xbef0C8Cd420b76e9d31509abbfd7f8C9f664527c", //not verify
         PermissionManager: "0x729f7f44bf64Ce814716b6261e267DbE6cdf021c", //not verify
         DVM: "0xC3BeD579CaB3EC29B22D9AB99F4E586af42496b9",//not verify
         DPP: "0x989DcAA95801C527C5B73AA65d3962dF9aCe1b0C",//not verify
