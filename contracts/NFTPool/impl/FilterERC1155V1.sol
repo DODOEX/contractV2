@@ -47,6 +47,7 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
         _changeTokenIdRange(numParams[0], numParams[1]);
         for (uint256 i = 0; i < spreadIds.length; i++) {
             _SPREAD_IDS_REGISTRY_[spreadIds[i]] = true;
+            emit ChangeTokenIdMap(spreadIds[i], true);
         }
 
         emit FilterInit(filterAdmin, nftCollection, filterName);
