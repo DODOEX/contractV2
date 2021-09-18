@@ -87,7 +87,7 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
         returns (uint256 paid)
     {
         (uint256 rawPay, ) = queryNFTTargetOut(tokenIds.length);
-        paid = IFilterAdmin(_OWNER_).burnFragFrom(msg.sender, rawPay);
+        paid = IFilterAdmin(_OWNER_).burnFragFrom(to, rawPay);
         for (uint256 i = 0; i < tokenIds.length; i++) {
             _transferOutERC721(to, tokenIds[i]);
 
@@ -102,7 +102,7 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
         returns (uint256 paid)
     {
         (uint256 rawPay, ) = queryNFTRandomOut(amount);
-        paid = IFilterAdmin(_OWNER_).burnFragFrom(msg.sender, rawPay);
+        paid = IFilterAdmin(_OWNER_).burnFragFrom(to, rawPay);
         for (uint256 i = 0; i < amount; i++) {
             uint256 index = _getRandomNum() % _TOTAL_NFT_AMOUNT_;
             _transferOutERC721(to, _NFT_IDS_[index]);

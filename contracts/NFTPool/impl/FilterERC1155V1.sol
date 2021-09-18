@@ -84,7 +84,7 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
             emit TargetOut(tokenIds[i], amounts[i]);
         }
         (uint256 rawPay, ) = queryNFTTargetOut(totalAmount);
-        paid = IFilterAdmin(_OWNER_).burnFragFrom(msg.sender, rawPay);
+        paid = IFilterAdmin(_OWNER_).burnFragFrom(to, rawPay);
     }
 
     function ERC1155RandomOut(uint256 amount, address to)
@@ -93,7 +93,7 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
         returns (uint256 paid)
     {
         (uint256 rawPay, ) = queryNFTRandomOut(amount);
-        paid = IFilterAdmin(_OWNER_).burnFragFrom(msg.sender, rawPay);
+        paid = IFilterAdmin(_OWNER_).burnFragFrom(to, rawPay);
         for (uint256 i = 0; i < amount; i++) {
             uint256 randomNum = _getRandomNum() % _TOTAL_NFT_AMOUNT_;
             uint256 sum;
