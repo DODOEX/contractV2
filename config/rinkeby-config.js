@@ -104,8 +104,8 @@ module.exports = {
         //=================== NFTPool ==================
         DODONFTApprove: "0xb971B0df71fB1778351F25a0e3bfe0C3eF06E1d1",
         FilterAdmin: "0xeD662e5391a3aA6F2FF610a5b33c62815b342B35",
-        FilterERC721V1: "0xB3b12b077Cb57281E361D52bD8b21fC8A4763316",
-        FilterERC1155V1: "0xB26897b8CF61D90230Af0f8d3Ab1b59ECd42CFDf",
+        FilterERC721V1: "0xce5CD3D57d4f9e781e6a6823D64e157B173e91D9",
+        FilterERC1155V1: "0xef4A80041B9b7b85038170F19367B93a24abe38B",
         DODONFTPoolProxy: "0x38c109aF4f3454172BA4eecf5676aA213b589e75",
         NFTPoolController: "0xf5d24499dD76C3791ee6D19aa206f55b72270415"
 

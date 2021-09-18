@@ -79,6 +79,8 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
         _TOTAL_NFT_AMOUNT_ = _NFT_IDS_.length;
         (uint256 rawReceive, ) = queryNFTIn(tokenIds.length);
         received = IFilterAdmin(_OWNER_).mintFragTo(to, rawReceive);
+
+        emit NftInOrder(to, received);
     }
 
     function ERC721TargetOut(uint256[] memory tokenIds, address to)
@@ -94,6 +96,8 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
             emit TargetOut(tokenIds[i]);
         }
         _TOTAL_NFT_AMOUNT_ = _NFT_IDS_.length;
+
+        emit TargetOutOrder(to, paid);
     }
 
     function ERC721RandomOut(uint256 amount, address to)
@@ -110,6 +114,8 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
             emit RandomOut(_NFT_IDS_[index]);
         }
         _TOTAL_NFT_AMOUNT_ = _NFT_IDS_.length;
+
+        emit RandomOutOrder(to, paid);
     }
 
     // ============ Transfer =============

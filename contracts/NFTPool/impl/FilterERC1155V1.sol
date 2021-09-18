@@ -70,6 +70,8 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
         }
         (uint256 rawReceive, ) = queryNFTIn(totalAmount);
         received = IFilterAdmin(_OWNER_).mintFragTo(to, rawReceive);
+
+        emit NftInOrder(to, received);
     }
 
     function ERC1155TargetOut(
@@ -85,6 +87,8 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
         }
         (uint256 rawPay, ) = queryNFTTargetOut(totalAmount);
         paid = IFilterAdmin(_OWNER_).burnFragFrom(to, rawPay);
+
+        emit TargetOutOrder(to, paid);
     }
 
     function ERC1155RandomOut(uint256 amount, address to)
@@ -106,6 +110,8 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
                 }
             }
         }
+
+        emit RandomOutOrder(to, paid);
     }
 
     // ============ Transfer =============

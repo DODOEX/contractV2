@@ -16,6 +16,10 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
 
     //=================== Event ===================
+    event NftInOrder(address user, uint256 receiveAmount);
+    event TargetOutOrder(address user, uint256 paidAmount);
+    event RandomOutOrder(address user, uint256 paidAmount);
+
     event ChangeNFTInPrice(uint256 newGsStart, uint256 newCr, bool toggleFlag);
     event ChangeNFTRandomOutPrice(uint256 newGsStart, uint256 newCr, bool toggleFlag);
     event ChangeNFTTargetOutPrice(uint256 newGsStart, uint256 newCr, bool toggleFlag);
