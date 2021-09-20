@@ -11,23 +11,74 @@ import { decimalStr, MAX_UINT256 } from '../utils/Converter';
 import { logGas } from '../utils/Log';
 import { NFTPoolContext, getNFTPoolContext } from '../utils/NFTPoolContext';
 import { assert } from 'chai';
+import * as contracts from '../utils/Contracts';
 import BigNumber from 'bignumber.js';
+import { StringLiteralLike } from 'typescript';
 const truffleAssert = require('truffle-assertions');
 
+let maker: string;
+let user: string;
 
-//createNFTPool
+async function init(ctx: NFTPoolContext): Promise<void> {
+    maker = ctx.SpareAccounts[0];
+    user = ctx.SpareAccounts[1];
+}
 
-//erc721In
+async function createNFTPool(ctx: NFTPoolContext) {
+    var tx = await logGas(ctx.DODONFTPoolProxy.methods.createNewNFTPoolV1(
+        maker,
+        ctx.DodoNft.options.address,
+        1,
+        ['Filter01', 'FRAG', 'FRAG'],
+        [decimalStr("10000000"), decimalStr("0.005")],
+        [true, true, true],
+        [0, 4, 5, 1],
+        [decimalStr("1"), decimalStr("0.9"), decimalStr("1"), decimalStr("0.9"), decimalStr("2"), decimalStr("0.9")],
+        [7]
+    ), ctx.sendParam(maker), "createNewNFTPoolV1");
 
-//erc721TargetOut
+    var newFilterAdmin = tx.events['CreateNFTPool'].returnValues['newFilterAdmin']
+    var filter = tx.events['CreateNFTPool'].returnValues['filter']
 
-//erc721RandomOut
+    return [newFilterAdmin, filter];
+}
 
-//createFilter
+async function mintNFT(ctx: NFTPoolContext) {
+    var tx = await ctx.DodoNft.methods.mint(
+        "http://projectowen.oss-cn-beijing.aliyuncs.com/2021-09-19-035145.png"
+    ).send(ctx.sendParam(user));
+
+    var tokenId = tx.events['DODONFTMint'].returnValues['tokenId']
+    return tokenId
+}
+
+async function erc721In(ctx: NFTPoolContext) {
+    var [filterAdmin, filter] = await createNFTPool(ctx)
+    var tokenIds = []
+    for (var i = 0; i < 5; i++) {
+        var curTokenId = await mintNFT(ctx);
+        tokenIds.push(curTokenId);
+    }
+
+    await ctx.DodoNft.methods.setApprovalForAll(
+        ctx.DODONFTApprove.options.address,
+        true
+    ).send(ctx.sendParam(user))
+
+    await ctx.DODONFTPoolProxy.methods.erc721In(
+        filter,
+        ctx.DodoNft.options.address,
+        tokenIds,
+        user,
+        1
+    ).send(ctx.sendParam(user));
+
+    return [filterAdmin, filter]
+}
 
 describe("ERC721-NFTPool", () => {
     let snapshotId: string;
-    let ctx: DVMContext;
+    let ctx: NFTPoolContext;
 
     before(async () => {
         ctx = await getNFTPoolContext();
@@ -42,163 +93,147 @@ describe("ERC721-NFTPool", () => {
         await ctx.EVM.reset(snapshotId);
     });
 
-    describe("buy shares", () => {
+    describe("ERC721-NFTPool", () => {
 
-        it("buy shares from init states", async () => {
+        it("createNewNFTPoolV1", async () => {
+            var tx = await logGas(ctx.DODONFTPoolProxy.methods.createNewNFTPoolV1(
+                maker,
+                ctx.DodoNft.options.address,
+                1,
+                ['Filter01', 'FRAG', 'FRAG'],
+                [decimalStr("10000000"), decimalStr("0.005")],
+                [true, true, true],
+                [0, 3, 2, 1],
+                [decimalStr("1"), decimalStr("1.1"), decimalStr("1"), decimalStr("1.1"), decimalStr("2"), decimalStr("1.1")],
+                [5]
+            ), ctx.sendParam(maker), "createNewNFTPoolV1");
 
-            await ctx.transferBaseToDVM(lp, decimalStr("10"))
-            await logGas(ctx.DVM.methods.buyShares(lp), ctx.sendParam(lp), "buy shares");
+            var newFilterAdmin = tx.events['CreateNFTPool'].returnValues['newFilterAdmin']
+            var filter = tx.events['CreateNFTPool'].returnValues['filter']
 
-            // vault balances
+            console.log("newFilterAdmin:", newFilterAdmin)
+            console.log("filterV1:", filter)
+
             assert.equal(
-                await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
-                decimalStr("10")
-            );
-            assert.equal(
-                await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
-                decimalStr("0")
-            );
-            assert.equal(
-                await ctx.DVM.methods._BASE_RESERVE_().call(),
-                decimalStr("10")
+                tx.events['CreateNFTPool'].returnValues['filterAdminOwner'],
+                maker
             )
-            assert.equal(
-                await ctx.DVM.methods._QUOTE_RESERVE_().call(),
-                decimalStr("0")
-            )
-
-            // shares number
-            assert.equal(await ctx.DVM.methods.balanceOf(lp).call(), decimalStr("10"))
         });
 
-        it("buy shares from init states with quote != 0", async () => {
-            await ctx.transferBaseToDVM(lp, decimalStr("10"))
-            await ctx.transferQuoteToDVM(lp, decimalStr("100"))
-            await ctx.DVM.methods.buyShares(lp).send(ctx.sendParam(lp));
-            assert.equal(await ctx.DVM.methods.balanceOf(lp).call(), decimalStr("10"))
-            assert.equal(await ctx.DVM.methods.getMidPrice().call(), "102078438912577213500")
-        })
+        it('erc721In', async () => {
+            var [filterAdmin, filter] = await createNFTPool(ctx)
+            var tokenIds = []
+            for (var i = 0; i < 4; i++) {
+                var curTokenId = await mintNFT(ctx);
+                tokenIds.push(curTokenId);
+            }
 
-        it("buy shares with balanced input", async () => {
-            await ctx.transferBaseToDVM(lp, decimalStr("10"))
-            await ctx.DVM.methods.buyShares(lp).send(ctx.sendParam(lp))
+            await logGas(ctx.DodoNft.methods.setApprovalForAll(
+                ctx.DODONFTApprove.options.address,
+                true
+            ), ctx.sendParam(user), "ApproveNFT");
 
-            await ctx.transferQuoteToDVM(trader, decimalStr("200"))
-            await ctx.DVM.methods.sellQuote(trader).send(ctx.sendParam(trader))
+            var filterAdminInstance = contracts.getContractWithAddress(contracts.FILTER_ADMIN, filterAdmin);
 
-            var vaultBaseBalance = new BigNumber(await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call())
-            var vaultQuoteBalance = new BigNumber(await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call())
-            var increaseRatio = new BigNumber("0.1")
+            var beforeBalance = await filterAdminInstance.methods.balanceOf(user).call();
+            console.log("beforeBalance:", beforeBalance);
 
-            await ctx.transferBaseToDVM(trader, vaultBaseBalance.multipliedBy(increaseRatio).toFixed(0))
-            await ctx.transferQuoteToDVM(trader, vaultQuoteBalance.multipliedBy(increaseRatio).toFixed(0))
-            await ctx.DVM.methods.buyShares(trader).send(ctx.sendParam(trader))
+            var tx = await logGas(ctx.DODONFTPoolProxy.methods.erc721In(
+                filter,
+                ctx.DodoNft.options.address,
+                tokenIds,
+                user,
+                1
+            ), ctx.sendParam(user), "erc721In");
+
+            var afterBalance = await filterAdminInstance.methods.balanceOf(user).call();
+            console.log("afterBalance:", afterBalance);
 
             assert.equal(
-                await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call(),
-                "8852116395368015179"
-            );
-            assert.equal(
-                await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call(),
-                "220000000000000000000"
-            );
-
-            assert.equal(await ctx.DVM.methods.balanceOf(trader).call(), "999999999999999990")
+                tx.events['Erc721In'].returnValues['received'],
+                '3421805000000000000'
+            )
         })
 
-        it("buy shares with unbalanced input (less quote)", async () => {
-            await ctx.transferBaseToDVM(lp, decimalStr("10"))
-            await ctx.DVM.methods.buyShares(lp).send(ctx.sendParam(lp))
+        it('ERC721TargetOut', async () => {
+            var [, filter] = await erc721In(ctx);
 
-            await ctx.transferQuoteToDVM(trader, decimalStr("200"))
-            await ctx.DVM.methods.sellQuote(trader).send(ctx.sendParam(trader))
+            var filterInstance = contracts.getContractWithAddress(contracts.FILTER_ERC721_V1, filter);
 
-            var vaultBaseBalance = new BigNumber(await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call())
-            var vaultQuoteBalance = new BigNumber(await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call())
-            var increaseRatio = new BigNumber("0.1")
+            var beforeOwner = await ctx.DodoNft.methods.ownerOf(0).call();
+            assert.equal(beforeOwner, filter)
 
-            await ctx.transferBaseToDVM(trader, vaultBaseBalance.multipliedBy(increaseRatio).toFixed(0))
-            await ctx.transferQuoteToDVM(trader, vaultQuoteBalance.multipliedBy(increaseRatio).div(2).toFixed(0))
-            await ctx.DVM.methods.buyShares(trader).send(ctx.sendParam(trader))
+            //maker targetout
+            var tx = await logGas(ctx.DODONFTPoolProxy.methods.erc721TargetOut(
+                filter,
+                [0, 1, 3],
+                MAX_UINT256,
+            ), ctx.sendParam(maker), "Erc721TargetOut");
 
-            assert.equal(await ctx.DVM.methods.balanceOf(trader).call(), "500000000000000000")
+            var paid = tx.events['Erc721TargetOut'].returnValues['paid']
+
+            assert.equal(paid, "4412151000000000000");
+
+            var maxNftOutAmount = await filterInstance.methods.getAvaliableNFTOutAmount().call();
+            var totalNftAmount = await filterInstance.methods._TOTAL_NFT_AMOUNT_().call();
+            var tokenId2 = await filterInstance.methods.getNFTIndexById(2).call();
+
+            assert.equal(maxNftOutAmount, 1);
+            assert.equal(totalNftAmount, 2);
+            assert.equal(tokenId2, 1);
+
+            var afterOwner = await ctx.DodoNft.methods.ownerOf(0).call();
+            assert.equal(afterOwner, maker)
         })
 
-        it("buy shares with unbalanced input (less base)", async () => {
-            await ctx.transferBaseToDVM(lp, decimalStr("10"))
-            await ctx.DVM.methods.buyShares(lp).send(ctx.sendParam(lp))
 
-            await ctx.transferQuoteToDVM(trader, decimalStr("200"))
-            await ctx.DVM.methods.sellQuote(trader).send(ctx.sendParam(trader))
+        it('ERC721RandomOut', async () => {
+            var [, filter] = await erc721In(ctx);
 
-            var vaultBaseBalance = new BigNumber(await ctx.BASE.methods.balanceOf(ctx.DVM.options.address).call())
-            var vaultQuoteBalance = new BigNumber(await ctx.QUOTE.methods.balanceOf(ctx.DVM.options.address).call())
-            var increaseRatio = new BigNumber("0.1")
+            var filterInstance = contracts.getContractWithAddress(contracts.FILTER_ERC721_V1, filter);
 
-            await ctx.transferBaseToDVM(trader, vaultBaseBalance.multipliedBy(increaseRatio).div(2).toFixed(0))
-            await ctx.transferQuoteToDVM(trader, vaultQuoteBalance.multipliedBy(increaseRatio).toFixed(0))
-            await ctx.DVM.methods.buyShares(trader).send(ctx.sendParam(trader))
+            //maker randomOut
+            var tx = await logGas(ctx.DODONFTPoolProxy.methods.erc721RandomOut(
+                filter,
+                3,
+                MAX_UINT256,
+            ), ctx.sendParam(maker), "Erc721RandomOut");
 
-            assert.equal(await ctx.DVM.methods.balanceOf(trader).call(), "499999999999999990")
+            var paid = tx.events['Erc721RandomOut'].returnValues['paid']
+            assert.equal(paid, "2206075500000000000");
+
+            var maxNftOutAmount = await filterInstance.methods.getAvaliableNFTOutAmount().call();
+            var totalNftAmount = await filterInstance.methods._TOTAL_NFT_AMOUNT_().call();
+
+            assert.equal(maxNftOutAmount, 1);
+            assert.equal(totalNftAmount, 2);
+        })
+
+        it('emergencyWithdraw', async () => {
+            var [filterAdmin, filter] = await erc721In(ctx);
+            await ctx.Controller.methods.setEmergencyWithdraw(filter, true).send(ctx.sendParam(ctx.Deployer));
+
+            var beforeOwner = await ctx.DodoNft.methods.ownerOf(0).call();
+            assert.equal(beforeOwner, filter)
+
+            var filterInstance = contracts.getContractWithAddress(contracts.FILTER_ERC721_V1, filter);
+
+            await logGas(filterInstance.methods.emergencyWithdraw(
+                [ctx.DodoNft.options.address, ctx.DodoNft.options.address, ctx.DodoNft.options.address],
+                [0, 1, 4],
+                maker
+            ), ctx.sendParam(maker), "EmergencyWithdraw")
+
+
+            var afterOwner = await ctx.DodoNft.methods.ownerOf(0).call();
+            assert.equal(afterOwner, maker)
+
+            var maxNftOutAmount = await filterInstance.methods.getAvaliableNFTOutAmount().call();
+            var totalNftAmount = await filterInstance.methods._TOTAL_NFT_AMOUNT_().call();
+            
+            assert.equal(maxNftOutAmount, 1);
+            assert.equal(totalNftAmount, 2);
         })
     });
-
-    describe("sell shares", () => {
-        it("not the last one sell shares", async () => {
-            await ctx.transferBaseToDVM(lp, decimalStr("10"))
-            await ctx.transferQuoteToDVM(lp, decimalStr("100"))
-            await ctx.DVM.methods.buyShares(lp).send(ctx.sendParam(lp))
-
-            await ctx.transferBaseToDVM(trader, decimalStr("1"))
-            await ctx.transferQuoteToDVM(trader, decimalStr("10"))
-            await ctx.DVM.methods.buyShares(trader).send(ctx.sendParam(trader))
-
-            var vaultShares = new BigNumber(await ctx.DVM.methods.balanceOf(lp).call())
-            var bob = ctx.SpareAccounts[5]
-            await ctx.DVM.methods.sellShares(vaultShares.div(2).toFixed(0), bob, 0, 0, "0x", MAX_UINT256).send(ctx.sendParam(lp))
-            assert.equal(await ctx.BASE.methods.balanceOf(bob).call(), decimalStr("5"))
-            assert.equal(await ctx.QUOTE.methods.balanceOf(bob).call(), decimalStr("50"))
-
-            await ctx.DVM.methods.sellShares(vaultShares.div(2).toFixed(0), bob, 0, 0, "0x", MAX_UINT256).send(ctx.sendParam(lp))
-            assert.equal(await ctx.BASE.methods.balanceOf(bob).call(), decimalStr("10"))
-            assert.equal(await ctx.QUOTE.methods.balanceOf(bob).call(), decimalStr("100"))
-        })
-
-        it("the last one sell shares", async () => {
-            await ctx.transferBaseToDVM(lp, decimalStr("10"))
-            await ctx.transferQuoteToDVM(lp, decimalStr("100"))
-            await ctx.DVM.methods.buyShares(lp).send(ctx.sendParam(lp))
-
-            var vaultShares = await ctx.DVM.methods.balanceOf(lp).call()
-            var bob = ctx.SpareAccounts[5]
-            await ctx.DVM.methods.sellShares(vaultShares, bob, 0, 0, "0x", MAX_UINT256).send(ctx.sendParam(lp))
-            assert.equal(await ctx.BASE.methods.balanceOf(bob).call(), decimalStr("10"))
-            assert.equal(await ctx.QUOTE.methods.balanceOf(bob).call(), decimalStr("100"))
-        })
-
-        it("revert cases", async () => {
-            await ctx.transferBaseToDVM(lp, decimalStr("10"))
-            await ctx.transferQuoteToDVM(lp, decimalStr("100"))
-            await ctx.DVM.methods.buyShares(lp).send(ctx.sendParam(lp))
-
-            var vaultShares = await ctx.DVM.methods.balanceOf(lp).call()
-            var bob = ctx.SpareAccounts[5]
-            await truffleAssert.reverts(
-                ctx.DVM.methods.sellShares(new BigNumber(vaultShares).multipliedBy(2), bob, 0, 0, "0x", MAX_UINT256).send(ctx.sendParam(lp)),
-                "DLP_NOT_ENOUGH"
-            )
-            await truffleAssert.reverts(
-                ctx.DVM.methods.sellShares(vaultShares, bob, decimalStr("100"), 0, "0x", MAX_UINT256).send(ctx.sendParam(lp)),
-                "WITHDRAW_NOT_ENOUGH"
-            )
-            await truffleAssert.reverts(
-                ctx.DVM.methods.sellShares(vaultShares, bob, 0, decimalStr("10000"), "0x", MAX_UINT256).send(ctx.sendParam(lp)),
-                "WITHDRAW_NOT_ENOUGH"
-            )
-            await truffleAssert.reverts(
-                ctx.DVM.methods.sellShares(vaultShares, bob, 0, decimalStr("10000"), "0x", "0").send(ctx.sendParam(lp)),
-                "TIME_EXPIRED"
-            )
-        })
-    })
 });
+

@@ -60,6 +60,9 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
         preventReentrant
         returns (uint256 received)
     {
+        uint256 avaliableNFTInAmount = getAvaliableNFTInAmount();
+        uint256 originTotalNftAmount = _TOTAL_NFT_AMOUNT_;
+
         uint256 totalAmount = 0;
         for (uint256 i = 0; i < tokenIds.length; i++) {
             uint256 tokenId = tokenIds[i];
@@ -68,7 +71,8 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
             totalAmount += inAmount;
             emit NftIn(tokenId, inAmount);
         }
-        (uint256 rawReceive, ) = queryNFTIn(totalAmount);
+        require(totalAmount <= avaliableNFTInAmount, "EXCEDD_IN_AMOUNT");
+        (uint256 rawReceive, ) = _queryNFTIn(originTotalNftAmount, originTotalNftAmount + totalAmount);
         received = IFilterAdmin(_OWNER_).mintFragTo(to, rawReceive);
 
         emit NftInOrder(to, received);
@@ -79,13 +83,17 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
         uint256[] memory amounts,
         address to
     ) external preventReentrant returns (uint256 paid) {
+        uint256 avaliableNFTOutAmount = getAvaliableNFTOutAmount();
+        uint256 originTotalNftAmount = _TOTAL_NFT_AMOUNT_;
+
         uint256 totalAmount = 0;
         for (uint256 i = 0; i < tokenIds.length; i++) {
             totalAmount += amounts[i];
             _transferOutERC1155(to, tokenIds[i], amounts[i]);
             emit TargetOut(tokenIds[i], amounts[i]);
         }
-        (uint256 rawPay, ) = queryNFTTargetOut(totalAmount);
+        require(totalAmount <= avaliableNFTOutAmount, "EXCEED_OUT_AMOUNT");
+        (uint256 rawPay, ) = _queryNFTTargetOut(originTotalNftAmount - totalAmount, originTotalNftAmount);
         paid = IFilterAdmin(_OWNER_).burnFragFrom(to, rawPay);
 
         emit TargetOutOrder(to, paid);
@@ -102,10 +110,11 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
             uint256 randomNum = _getRandomNum() % _TOTAL_NFT_AMOUNT_;
             uint256 sum;
             for (uint256 j = 0; j < _NFT_IDS_.length; j++) {
-                sum += _NFT_RESERVE_[_NFT_IDS_[j]];
+                uint256 tokenId = _NFT_IDS_[j];
+                sum += _NFT_RESERVE_[tokenId];
                 if (sum >= randomNum) {
-                    _transferOutERC1155(to, _NFT_IDS_[j], 1);
-                    emit RandomOut( _NFT_IDS_[j], 1);
+                    _transferOutERC1155(to, tokenId, 1);
+                    emit RandomOut(tokenId, 1);
                     break;
                 }
             }
@@ -179,10 +188,13 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
         _TOTAL_NFT_AMOUNT_ -= outAmount;
         if (currentAmount == 0) {
             uint256 index = _TOKENID_IDX_[tokenId] - 1;
-            _NFT_IDS_[index] = _NFT_IDS_[_NFT_IDS_.length - 1];
+            if(index != _NFT_IDS_.length - 1) {
+                uint256 lastTokenId = _NFT_IDS_[_NFT_IDS_.length - 1];
+                _NFT_IDS_[index] = lastTokenId;
+                _TOKENID_IDX_[lastTokenId] = index + 1;
+            }
             _NFT_IDS_.pop();
             _TOKENID_IDX_[tokenId] = 0;
-            _TOKENID_IDX_[_NFT_IDS_[index]] = index + 1;
         }
     }
 

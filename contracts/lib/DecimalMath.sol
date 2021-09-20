@@ -48,7 +48,7 @@ library DecimalMath {
 
     function powFloor(uint256 target, uint256 e) internal pure returns (uint256) {
         if (e == 0) {
-            return 1;
+            return 10 ** 18;
         } else if (e == 1) {
             return target;
         } else {

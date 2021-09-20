@@ -77,7 +77,7 @@ export class NFTPoolContext {
                 this.Controller.options.address,
                 this.Deployer,
                 this.DODONFTApprove.options.address,
-                "" //TODO:ERC721 => ERC20 DODOApprove
+                "0x0000000000000000000000000000000000000000" //TODO:ERC721 => ERC20 DODOApprove
             ]
         )
 

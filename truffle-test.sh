@@ -1,5 +1,5 @@
 #!/bin/bash
-# truffle compile --all
+truffle compile --all
 
 if [ "$1"x = "proxy-dpp"x ]
 then
@@ -71,7 +71,12 @@ then
 	truffle test ./test/DODODrops/dropsV2.test.ts
 fi
 
-if [ "$1"x = "NFTPool"x ]
+if [ "$1"x = "erc721NFTPool"x ]
 then
-	truffle test ./test/NFTPool/nftPool.test.ts
+	truffle test ./test/NFTPool/erc721NftPool.test.ts
+fi
+
+if [ "$1"x = "erc1155NFTPool"x ]
+then
+	truffle test ./test/NFTPool/erc1155NftPool.test.ts
 fi

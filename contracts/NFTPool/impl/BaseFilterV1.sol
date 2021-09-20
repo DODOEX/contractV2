@@ -117,11 +117,15 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         )
     {
         require(NFTInAmount <= getAvaliableNFTInAmount(), "EXCEDD_IN_AMOUNT");
+        (rawReceive, received) = _queryNFTIn(_TOTAL_NFT_AMOUNT_,_TOTAL_NFT_AMOUNT_ + NFTInAmount);
+    }
+
+    function _queryNFTIn(uint256 start, uint256 end) internal view returns(uint256 rawReceive, uint256 received) {
         rawReceive = _geometricCalc(
             _GS_START_IN_,
             _CR_IN_,
-            _TOTAL_NFT_AMOUNT_,
-            _TOTAL_NFT_AMOUNT_ + NFTInAmount
+            start,
+            end
         );
         (,, received) = IFilterAdmin(_OWNER_).queryMintFee(rawReceive);
     }
@@ -135,11 +139,15 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         )
     {
         require(NFTOutAmount <= getAvaliableNFTOutAmount(), "EXCEED_OUT_AMOUNT");
+        (rawPay, pay) = _queryNFTTargetOut(_TOTAL_NFT_AMOUNT_ - NFTOutAmount, _TOTAL_NFT_AMOUNT_);
+    }
+
+    function _queryNFTTargetOut(uint256 start, uint256 end) internal view returns(uint256 rawPay, uint256 pay) {
         rawPay = _geometricCalc(
             _GS_START_TARGET_OUT_,
             _CR_TARGET_OUT_,
-            _TOTAL_NFT_AMOUNT_ - NFTOutAmount,
-            _TOTAL_NFT_AMOUNT_
+            start,
+            end
         );
         (,, pay) = IFilterAdmin(_OWNER_).queryBurnFee(rawPay);
     }
@@ -153,11 +161,15 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         )
     {
         require(NFTOutAmount <= getAvaliableNFTOutAmount(), "EXCEED_OUT_AMOUNT");
+        (rawPay, pay) = _queryNFTRandomOut(_TOTAL_NFT_AMOUNT_ - NFTOutAmount, _TOTAL_NFT_AMOUNT_);
+    }
+
+    function _queryNFTRandomOut(uint256 start, uint256 end) internal view returns(uint256 rawPay, uint256 pay) {
         rawPay = _geometricCalc(
             _GS_START_RANDOM_OUT_,
             _CR_RANDOM_OUT_,
-            _TOTAL_NFT_AMOUNT_ - NFTOutAmount,
-            _TOTAL_NFT_AMOUNT_
+            start,
+            end
         );
         (,, pay) = IFilterAdmin(_OWNER_).queryBurnFee(rawPay);
     }
@@ -165,22 +177,27 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
     // ============ Math =============
 
     function _geometricCalc(
-        uint256 a1,
+        uint256 a0,
         uint256 q,
         uint256 start,
         uint256 end
     ) internal view returns (uint256) {
         if (q == DecimalMath.ONE) {
-            return end.sub(start).mul(a1);
-        }
-        //Sn=a1*(q^n-1)/(q-1)
-        //Sn-Sm = a1*(q^n-q^m)/(q-1)
-
+            return end.sub(start).mul(a0);
+        } 
         //q^n
         uint256 qn = DecimalMath.powFloor(q, end);
         //q^m
         uint256 qm = DecimalMath.powFloor(q, start);
-        return a1.mul(qn.sub(qm)).div(q.sub(DecimalMath.ONE));
+        if (q < DecimalMath.ONE) {
+            //Sn=a0*(1 - q^n)/(1-q)
+            //Sn-Sm = a0*(q^m - q^n)/(1-q)
+            return a0.mul(qm.sub(qn)).div(DecimalMath.ONE.sub(q));
+        } else {
+            //Sn=a0*(q^n - 1)/(q - 1)
+            //Sn-Sm = a0*(q^n - q^m)/(q-1)  
+            return a0.mul(qn.sub(qm)).div(q.sub(DecimalMath.ONE));
+        }
     }
 
     function _getRandomNum() public view returns (uint256 randomNum) {
@@ -204,7 +221,7 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         uint256 newCr,
         bool toggleFlag
     ) internal {
-        require(newCr > DecimalMath.ONE, "CR_INVALID");
+        require(newCr != 0, "CR_INVALID");
         _GS_START_IN_ = newGsStart;
         _CR_IN_ = newCr;
         _NFT_IN_TOGGLE_ = true;
@@ -225,7 +242,7 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         uint256 newCr,
         bool toggleFlag
     ) internal {
-        require(newCr > DecimalMath.ONE, "CR_INVALID");
+        require(newCr != 0, "CR_INVALID");
         _GS_START_RANDOM_OUT_ = newGsStart;
         _CR_RANDOM_OUT_ = newCr;
         _NFT_RANDOM_OUT_TOGGLE_ = true;
@@ -246,7 +263,7 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         uint256 newCr,
         bool toggleFlag
     ) internal {
-        require(newCr > DecimalMath.ONE, "CR_INVALID");
+        require(newCr != 0, "CR_INVALID");
         _GS_START_TARGET_OUT_ = newGsStart;
         _CR_TARGET_OUT_ = newCr;
         _NFT_TARGET_OUT_TOGGLE_ = true;

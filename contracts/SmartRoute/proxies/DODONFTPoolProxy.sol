@@ -86,25 +86,25 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
     function erc721TargetOut(
         address filter,
         uint256[] memory tokenIds,
-        address to,
+        // address to,
         uint256 maxBurnAmount 
     ) external {
-        uint256 paid = IFilter(filter).ERC721TargetOut(tokenIds, to);
+        uint256 paid = IFilter(filter).ERC721TargetOut(tokenIds, msg.sender);
         require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
 
-        emit Erc721TargetOut(filter, to, paid);
+        emit Erc721TargetOut(filter, msg.sender, paid);
     }
 
     function erc721RandomOut(
         address filter,
         uint256 amount,
-        address to,
+        // address to,
         uint256 maxBurnAmount 
     ) external {
-        uint256 paid = IFilter(filter).ERC721RandomOut(amount, to);
+        uint256 paid = IFilter(filter).ERC721RandomOut(amount, msg.sender);
         require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
 
-        emit Erc721RandomOut(filter, to, paid); 
+        emit Erc721RandomOut(filter, msg.sender, paid); 
     }
 
     // ================== ERC1155 In and Out ===================
@@ -130,25 +130,25 @@ contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
         address filter,
         uint256[] memory tokenIds,
         uint256[] memory amounts,
-        address to,
+        // address to,
         uint256 maxBurnAmount 
     ) external {
-        uint256 paid = IFilter(filter).ERC1155TargetOut(tokenIds, amounts, to);
+        uint256 paid = IFilter(filter).ERC1155TargetOut(tokenIds, amounts, msg.sender);
         require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
         
-        emit Erc1155TargetOut(filter, to, paid);
+        emit Erc1155TargetOut(filter, msg.sender, paid);
     }
 
     function erc1155RandomOut(
         address filter,
         uint256 amount,
-        address to,
+        // address to,
         uint256 maxBurnAmount 
     ) external {
-        uint256 paid = IFilter(filter).ERC1155RandomOut(amount, to);
+        uint256 paid = IFilter(filter).ERC1155RandomOut(amount, msg.sender);
         require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
 
-        emit Erc1155RandomOut(filter, to, paid);
+        emit Erc1155RandomOut(filter, msg.sender, paid);
     }
 
 

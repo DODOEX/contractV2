@@ -62,6 +62,8 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
         preventReentrant
         returns (uint256 received)
     {
+        require(tokenIds.length <= getAvaliableNFTInAmount(), "EXCEDD_IN_AMOUNT");
+        uint256 originTotalNftAmount = _TOTAL_NFT_AMOUNT_;
         for (uint256 i = 0; i < tokenIds.length; i++) {
             uint256 tokenId = tokenIds[i];
             require(isNFTIDValid(tokenId), "NFT_ID_NOT_SUPPORT");
@@ -77,7 +79,7 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
             emit NftIn(tokenId);
         }
         _TOTAL_NFT_AMOUNT_ = _NFT_IDS_.length;
-        (uint256 rawReceive, ) = queryNFTIn(tokenIds.length);
+        (uint256 rawReceive, ) = _queryNFTIn(originTotalNftAmount, originTotalNftAmount + tokenIds.length);
         received = IFilterAdmin(_OWNER_).mintFragTo(to, rawReceive);
 
         emit NftInOrder(to, received);
@@ -108,10 +110,10 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
         (uint256 rawPay, ) = queryNFTRandomOut(amount);
         paid = IFilterAdmin(_OWNER_).burnFragFrom(to, rawPay);
         for (uint256 i = 0; i < amount; i++) {
-            uint256 index = _getRandomNum() % _TOTAL_NFT_AMOUNT_;
-            _transferOutERC721(to, _NFT_IDS_[index]);
-
-            emit RandomOut(_NFT_IDS_[index]);
+            uint256 index = _getRandomNum() % _NFT_IDS_.length;
+            uint256 tokenId = _NFT_IDS_[index];
+            _transferOutERC721(to, tokenId);
+            emit RandomOut(tokenId);
         }
         _TOTAL_NFT_AMOUNT_ = _NFT_IDS_.length;
 
@@ -134,11 +136,14 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
         uint256 index = _TOKENID_IDX_[tokenId] - 1;
         require(index < _NFT_IDS_.length, "INDEX_INVALID");
         IERC721(_NFT_COLLECTION_).safeTransferFrom(address(this), to, tokenId);
-        _NFT_IDS_[index] = _NFT_IDS_[_NFT_IDS_.length - 1];
+        if(index != _NFT_IDS_.length - 1) {
+            uint256 lastTokenId = _NFT_IDS_[_NFT_IDS_.length - 1];
+            _NFT_IDS_[index] = lastTokenId;
+            _TOKENID_IDX_[lastTokenId] = index + 1;
+        }
         _NFT_IDS_.pop();
         _NFT_RESERVE_[tokenId] = 0;
         _TOKENID_IDX_[tokenId] = 0;
-        _TOKENID_IDX_[_NFT_IDS_[index]] = index + 1;
     }
 
     function emergencyWithdraw(
@@ -157,11 +162,14 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
             uint256 tokenId = tokenIds[i];
             if (_NFT_RESERVE_[tokenId] > 0 && nftContract[i] == _NFT_COLLECTION_) {
                 uint256 index = getNFTIndexById(tokenId);
-                _NFT_IDS_[index] = _NFT_IDS_[_NFT_IDS_.length - 1];
+                if(index != _NFT_IDS_.length - 1) {
+                    uint256 lastTokenId = _NFT_IDS_[_NFT_IDS_.length - 1];
+                    _NFT_IDS_[index] = lastTokenId;
+                    _TOKENID_IDX_[lastTokenId] = index + 1;
+                }
                 _NFT_IDS_.pop();
                 _NFT_RESERVE_[tokenId] = 0;
                 _TOKENID_IDX_[tokenId] = 0;
-                _TOKENID_IDX_[_NFT_IDS_[index]] = index + 1;
             }
             IERC721(nftContract[i]).safeTransferFrom(address(this), to, tokenIds[i]);
             emit EmergencyWithdraw(nftContract[i],tokenIds[i],to);
