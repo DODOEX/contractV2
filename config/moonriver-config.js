@@ -1,7 +1,7 @@
 module.exports = {
     MOONRIVER_CONFIG: {
         //TOKEN
-        WETH: "", //0x98878B06940aE243284CA214f92Bb71a2b032B8A   replace
+        WETH: "0xf50225a84382c74CbdeA10b0c176f71fc3DE0C4d",
         CHI: "0x0000000000000000000000000000000000000000",
         DODO: "",
 
@@ -12,7 +12,7 @@ module.exports = {
         //DODO: "0xB5397B2210f49e96a5EB2c9747Aa2bD9397d90C0",//not verify
         //ERC20Helper: "0x6373ceB657C83C91088d328622573FB766064Ac4", //not verify
         DODOSellHelper: "0x5e84190a270333aCe5B9202a3F4ceBf11b81bB01", //not verify
-        DODOCalleeHelper: "", //0x6B208E08dcF6BD51F50C5Da09d15B2D8E5C46Cf2  replace
+        DODOCalleeHelper: "0xc4436fBAE6eBa5d95bf7d53Ae515F8A707Bd402A",
         DODOV1PmmHelper: "0x3CD6D7F5fF977bf8069548eA1F9441b061162b42", //not verify
         DODOV2RouteHelper: "0x6B4Fa0bc61Eddc928e0Df9c7f01e407BfcD3e5EF",
         CurveSample: "",
@@ -27,6 +27,7 @@ module.exports = {
         DSP: "0x550B2e7bD9605b8dcdd20d01bA73f1feB6ce289b",
         DPPAdmin: "0x041ABa00c57Dd47abC37A2931dF569a2A2cc57Be",//not verify
         CP: "0x72d220cE168C4f361dD4deE5D826a01AD8598f6C",
+        //ERC20MineV2: "0xD734a08359296e44b87F4d404135cd0832A7a363",
         ERC20MineV3: "0xf50BDc9E90B7a1c138cb7935071b85c417C4cb8e",//not verify
 
         ERC20: "0x80930Cb1849F7D42531506fF45E66724338A821b",//not verify
@@ -41,6 +42,7 @@ module.exports = {
         UpCpFactory: "0x043957f7554275b90c5178872faE851dcfC1089D",
         CrowdPoolingFactory: "0x0596908263Ef2724fBfBcAfA1c983FCD7a629038",
         ERC20V2Factory: "0xaeB5CF31b97dce6134e416129845e01106fFB177",
+        //DODOMineV2Factory: "0xe71C0660CEC20F74CcB243d6c33AFC12419e8f41",
         DODOMineV3Registry: "0x5515363c0412AdD5c72d3E302fE1bD7dCBCF93Fe",
 
         //not verify
@@ -59,10 +61,10 @@ module.exports = {
 
 
         //Proxy
-        DODOV2Proxy: "",//0xa2CB66EBB947D217f61510882096F6e95c1DE97D replace
-        DSPProxy: "",//0x5480B32c03647ff5E5A653F0465E798DBe558B57 replace
-        CpProxy: "", //0x45894C062E6f4E58B257e0826675355305dfef0d replace
-        RouteProxy: "", //0x958f79e2998DFe417208b9A07D799265B0298e58 replace
+        DODOV2Proxy: "0xd9deC7c3C06e62a4c1BeEB07CadF568f496b14c2",
+        DSPProxy: "0x9f015aa5557ffBb47850c045Df67Bf229B07f2eA",
+        CpProxy: "0x357c5E9cfA8B834EDcef7C7aAbD8F9Db09119d11",
+        RouteProxy: "0x0125Cd41312F72a0774112Ca639D65A2C02e3627",
         DODOMineV3Proxy: "0xb159260989012fA98af560A3Fa6D9cd11a64cf6E", //not verify
 
         //Account
