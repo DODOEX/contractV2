@@ -127,6 +127,11 @@ contract FilterAdmin is InitializableInternalMintableERC20 {
         emit ChangeFeeRate(newFeeRate);
     }
 
+    function directTransferOwnership(address newOwner) external onlyOwner {
+        emit OwnershipTransferred(_OWNER_, newOwner);
+        _OWNER_ = newOwner;
+    }
+
     //================= Support ================
     function version() external pure virtual returns (string memory) {
         return "FILTER ADMIN 1.0.0";

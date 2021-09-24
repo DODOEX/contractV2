@@ -103,7 +103,7 @@ module.exports = {
 
         //=================== NFTPool ==================
         DODONFTApprove: "0x9CA2A5FB3771d824FAc3a307ff6B0fbb992C00Bc",
-        FilterAdmin: "0xeD662e5391a3aA6F2FF610a5b33c62815b342B35",
+        FilterAdmin: "0x729f7f44bf64Ce814716b6261e267DbE6cdf021c",
         FilterERC721V1: "0xdE39C2901e72A883f7446951fB533219F3622b87",
         FilterERC1155V1: "0x0727dEd495E35f4bA4F5D64794145152301Db23f",
         DODONFTPoolProxy: "0x888B9d4C25664F8B1BF744e8F4397d1429314155",
