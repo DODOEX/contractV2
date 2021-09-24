@@ -16,7 +16,7 @@ import {IDODONFTApprove} from "../../intf/IDODONFTApprove.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 
-contract DODONFTPoolProxy is ReentrancyGuard, InitializableOwnable {
+contract DODONFTPoolProxy is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 

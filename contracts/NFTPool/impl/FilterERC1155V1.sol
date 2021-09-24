@@ -83,6 +83,7 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
         uint256[] memory amounts,
         address to
     ) external preventReentrant returns (uint256 paid) {
+        require(tokenIds.length == amounts.length, "PARAM_INVALID");
         uint256 avaliableNFTOutAmount = getAvaliableNFTOutAmount();
         uint256 originTotalNftAmount = _TOTAL_NFT_AMOUNT_;
 

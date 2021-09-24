@@ -38,6 +38,7 @@ contract FilterAdmin is InitializableInternalMintableERC20 {
         address maintainer,
         address[] memory filters
     ) external {
+        require(feeRate <= DecimalMath.ONE, "FEE_RATE_TOO_LARGE");
         super.init(owner, initSupply, name, symbol, 18);
         _INIT_SUPPLY_ = initSupply;
         _FEE_RATE_ = feeRate;

@@ -40,6 +40,7 @@ contract Controller is InitializableOwnable {
         uint256 nftOutFeeRate,
         bool isOpen
     ) external onlyOwner {
+        require(nftInFeeRate <= 1e18 && nftOutFeeRate <= 1e18, "FEE_RATE_TOO_LARGE");
         FilterAdminFeeRateInfo memory feeRateInfo = FilterAdminFeeRateInfo({
             nftInFeeRate: nftInFeeRate,
             nftOutFeeRate: nftOutFeeRate,
@@ -51,6 +52,7 @@ contract Controller is InitializableOwnable {
     }
 
     function setGlobalParam(uint256 nftInFeeRate, uint256 nftOutFeeRate) external onlyOwner {
+        require(nftInFeeRate <= 1e18 && nftOutFeeRate <= 1e18, "FEE_RATE_TOO_LARGE");
         _GLOBAL_NFT_IN_FEE_RATE_ = nftInFeeRate;
         _GLOBAL_NFT_OUT_FEE_RATE_ = nftOutFeeRate;
 

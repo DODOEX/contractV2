@@ -224,7 +224,7 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         require(newCr != 0, "CR_INVALID");
         _GS_START_IN_ = newGsStart;
         _CR_IN_ = newCr;
-        _NFT_IN_TOGGLE_ = true;
+        _NFT_IN_TOGGLE_ = toggleFlag;
 
         emit ChangeNFTInPrice(newGsStart, newCr, toggleFlag);
     }
@@ -245,7 +245,7 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         require(newCr != 0, "CR_INVALID");
         _GS_START_RANDOM_OUT_ = newGsStart;
         _CR_RANDOM_OUT_ = newCr;
-        _NFT_RANDOM_OUT_TOGGLE_ = true;
+        _NFT_RANDOM_OUT_TOGGLE_ = toggleFlag;
 
         emit ChangeNFTRandomOutPrice(newGsStart, newCr, toggleFlag);
     }
@@ -266,7 +266,7 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         require(newCr != 0, "CR_INVALID");
         _GS_START_TARGET_OUT_ = newGsStart;
         _CR_TARGET_OUT_ = newCr;
-        _NFT_TARGET_OUT_TOGGLE_ = true;
+        _NFT_TARGET_OUT_TOGGLE_ = toggleFlag;
 
         emit ChangeNFTTargetOutPrice(newGsStart, newCr, toggleFlag);
     }
