@@ -319,7 +319,31 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
         external
         onlySuperOwner
     {
+        _changeFilterName(newFilterName);
+    }
+
+    function _changeFilterName(string memory newFilterName) internal {
         _FILTER_NAME_ = newFilterName;
         emit ChangeFilterName(newFilterName);
+    }
+
+
+    function resetFilter(
+        string memory filterName,
+        bool[] memory toggles,
+        uint256[] memory numParams, //0 - startId, 1 - endId, 2 - maxAmount, 3 - minAmount
+        uint256[] memory priceRules,
+        uint256[] memory spreadIds,
+        bool[] memory isRegistered
+    ) external onlySuperOwner {
+        _changeFilterName(filterName);
+        _changeNFTInPrice(priceRules[0], priceRules[1], toggles[0]);
+        _changeNFTRandomOutPrice(priceRules[2], priceRules[3], toggles[1]);
+        _changeNFTTargetOutPrice(priceRules[4], priceRules[5], toggles[2]);
+
+        _changeNFTAmountRange(numParams[2], numParams[3]);
+        _changeTokenIdRange(numParams[0], numParams[1]);
+
+        _changeTokenIdMap(spreadIds, isRegistered);
     }
 }
