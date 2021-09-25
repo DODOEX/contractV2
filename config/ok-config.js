@@ -63,20 +63,16 @@ module.exports = {
 
 
         //================== NFT ====================
-        BuyoutModel: "",
-        Fragment: "",
-        NFTCollateralVault: "",
-        DODONFTRouteHelper: "",
+        BuyoutModel: "0x0c4b4F1D5F5c989457cdD6f5102308b33c922281",
+        Fragment: "0x4E312cE243Ce87554Bb0d7257783180a80942D22",
+        NFTCollateralVault: "0x95E887aDF9EAa22cC1c6E3Cb7f07adC95b4b25a8",
+        DODONFTRouteHelper: "0xF4489F010Bfe8955A17c512a106e76FCF7BDE7D4",
 
-        InitializableERC721: "",
-        InitializableERC1155: "",
-        NFTTokenFactory: "",
+        DodoNftErc721: "0x42ddEc68db70F5992eB7AB22dfaD8A57109841C9",
+        DodoNftErc1155: "0x43C49f8DD240e1545F147211Ec9f917376Ac1e87",
 
-        DodoNftErc721: "",
-        DodoNftErc1155: "",
-
-        DODONFTRegistry: "",
-        DODONFTProxy: "",
+        DODONFTRegistry: "0x327344B382EE1b44FB0a72945fCDCC7243200dD7",
+        DODONFTProxy: "0x326c788c4C236f2bceC9476C66F8593Aa31be4Fc",
 
         //================= DropsV1 =================
         MysteryBoxV1: "",

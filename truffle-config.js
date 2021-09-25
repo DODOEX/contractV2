@@ -109,8 +109,8 @@ module.exports = {
       provider: function () {
         return new HDWalletProvider(privKey, "https://mainnet.infura.io/v3/" + infuraId);
       },
-      gas: 6000000,
-      gasPrice: 150000000000,
+      gas: 4000000,
+      gasPrice: 50000000000,
       network_id: 1,
       skipDryRun: true
     },
@@ -128,6 +128,7 @@ module.exports = {
     },
 
     heco: {
+      networkCheckTimeout: 100000,
       provider: function () {
         return new HDWalletProvider(privKey, "https://http-mainnet.hecochain.com");
       },
@@ -157,7 +158,7 @@ module.exports = {
       provider: () => {
         return new HDWalletProvider(privKey, 'https://exchainrpc.okex.org')
       },
-      gasPrice: 100000000,
+      gasPrice: 500000000,
       network_id: 66,
       confirmations: 5,
       timeoutBlocks: 200,
@@ -206,7 +207,7 @@ module.exports = {
       },
       network_id: '42161',
       gas: 1200000,
-      gasPrice: 900000000,
+      gasPrice: 700000000,
       skipDryRun: true
     },
 

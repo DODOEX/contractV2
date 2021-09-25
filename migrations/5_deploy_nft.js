@@ -122,29 +122,29 @@ module.exports = async (deployer, network, accounts) => {
         logger.log("Deploy type: NFT");
         logger.log("multiSigAddress: ", multiSigAddress)
 
-        //ERC721
-        if (ERC721Address == "") {
-            await deployer.deploy(InitializableERC721);
-            ERC721Address = InitializableERC721.address;
-            logger.log("ERC721Address: ", ERC721Address);
-        }
-        //ERC1155
-        if (ERC1155Address == "") {
-            await deployer.deploy(InitializableERC1155);
-            ERC1155Address = InitializableERC1155.address;
-            logger.log("ERC1155Address: ", ERC1155Address);
-        }
-        //NFTTokenFactory
-        if (NFTTokenFactoryAddress == "") {
-            await deployer.deploy(
-                NFTTokenFactory,
-                CloneFactoryAddress,
-                ERC721Address,
-                ERC1155Address
-            );
-            NFTTokenFactoryAddress = NFTTokenFactory.address;
-            logger.log("NFTTokenFactoryAddress: ", NFTTokenFactoryAddress);
-        }
+        // //ERC721
+        // if (ERC721Address == "") {
+        //     await deployer.deploy(InitializableERC721);
+        //     ERC721Address = InitializableERC721.address;
+        //     logger.log("ERC721Address: ", ERC721Address);
+        // }
+        // //ERC1155
+        // if (ERC1155Address == "") {
+        //     await deployer.deploy(InitializableERC1155);
+        //     ERC1155Address = InitializableERC1155.address;
+        //     logger.log("ERC1155Address: ", ERC1155Address);
+        // }
+        // //NFTTokenFactory
+        // if (NFTTokenFactoryAddress == "") {
+        //     await deployer.deploy(
+        //         NFTTokenFactory,
+        //         CloneFactoryAddress,
+        //         ERC721Address,
+        //         ERC1155Address
+        //     );
+        //     NFTTokenFactoryAddress = NFTTokenFactory.address;
+        //     logger.log("NFTTokenFactoryAddress: ", NFTTokenFactoryAddress);
+        // }
 
         //NFTRegister
         if (DODONFTRegistryAddress == "") {

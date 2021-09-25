@@ -68,5 +68,17 @@ module.exports = {
         defaultMaintainer: "0xD93c8D2429a6b0269527f148F3A0e5D187B0b1Ca",
 
         //DODOTreasury Address: "0x6ed2B1aFB1483b150fF428178F1aE5b8e7367A26"
+
+        //================== NFT ====================
+        BuyoutModel: "0xF0A4D44455168896ad0f305Ff6b744Cbd79704b9",
+        Fragment: "0xA566676A9961CD6FF72875257E6962D8FcffCfff",
+        NFTCollateralVault: "0xd03853d45609122A31902D9971F243a9f70Ef2A5",
+        DODONFTRouteHelper: "0x5AE86Ec9d43Fb90729b2d75f99DCD73736885492",
+
+        DodoNftErc721: "0xc5D46183ce36679186517C04EC9b35B8EE944f72",
+        DodoNftErc1155: "0x036C7f862B80Bb2a9D2Bd0597f9f48D72a9B82F6",
+
+        DODONFTRegistry: "0x77777FF74856716fd3FF89aD59fcABcCc1bE0522",
+        DODONFTProxy: "0x181d1F15281E5475c517Fb840A6d31d32BbF65f3",
     }
 }

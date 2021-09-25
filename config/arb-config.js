@@ -65,6 +65,18 @@ module.exports = {
 
         //Account
         multiSigAddress: "0x01d3E7271c278Aa3AA56EeBa6a109b2C200679fA", 
-        defaultMaintainer: "0x01d3E7271c278Aa3AA56EeBa6a109b2C200679fA"
+        defaultMaintainer: "0x01d3E7271c278Aa3AA56EeBa6a109b2C200679fA",
+
+        //================== NFT ====================
+        BuyoutModel: "0x23B06D1557e8cAe3f03f71DCbB3123E071693af7",
+        Fragment: "0x0bDc004b3eC9b746FF3Fc34E7F74240a8a941B06",
+        NFTCollateralVault: "0x50da4C88343406EcE70aDf3f8C3D32911169a96d",
+        DODONFTRouteHelper: "0xFcbd98cc89b2cf60362d3533463C1309f39c539D",
+
+        DodoNftErc721: "0x4ec636C32195DD4E4Be1D37c0838DB1a8E3E4E30",
+        DodoNftErc1155: "0x3Ec5a174DAfF0A91DCD0935866ED9E6514441Ba8",
+
+        DODONFTRegistry: "0x8327b093caf1a32985887CE89BD6c8F80A6B7535",
+        DODONFTProxy: "0x6A51C8A1139B9233C31331D2Cf442E0652329f23",
     }
 }

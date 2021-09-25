@@ -73,7 +73,7 @@ module.exports = {
 
         //================== NFT ====================
         BuyoutModel: "0xfEA1AcAD77F64bf6E933635eD078e63d22484197",
-        Fragment: "0x9542F458B7003e7C8e938c6a87161D410243B419",
+        Fragment: "0xA8f057fDB35d8Ebe1039D77f88c6f8575a839b14",
         NFTCollateralVault: "0xd66B8b705D270767Cc9D25400CE61198DA1e3629",
         DODONFTRouteHelper: "0x2d8349E957A69E4cC7B4ef225A4B6a85Be57FBF3",
 
@@ -85,7 +85,7 @@ module.exports = {
         DodoNftErc1155: "0xdC9224cbc4B1826Bb74fF383FF1CE94DE1F56119",
 
         DODONFTRegistry: "0x2c0Dd764A0bE8A7e747Cb0765E268d576edce31a",
-        DODONFTProxy: "0xb9c408574393487BFb95c0E7E94f0D76E1e6fCde",
+        DODONFTProxy: "0x0D224A4a6Da3Cfb360B9879965b1f78865798C71",
 
         //================= DropsV1 =================
         // MysteryBoxV1: "0xc25286ef3BaE3f6Fe2d6d0A6e2acAd0301AF97b8", //波老师
