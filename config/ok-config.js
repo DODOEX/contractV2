@@ -65,7 +65,7 @@ module.exports = {
         //================== NFT ====================
         BuyoutModel: "0x0c4b4F1D5F5c989457cdD6f5102308b33c922281",
         Fragment: "0x4E312cE243Ce87554Bb0d7257783180a80942D22",
-        NFTCollateralVault: "0x95E887aDF9EAa22cC1c6E3Cb7f07adC95b4b25a8",
+        NFTCollateralVault: "0xA3dfF6ae0F73f0970E31Da63B3736F7D3CEF683e",//0x95E887aDF9EAa22cC1c6E3Cb7f07adC95b4b25a8
         DODONFTRouteHelper: "0xF4489F010Bfe8955A17c512a106e76FCF7BDE7D4",
 
         DodoNftErc721: "0x42ddEc68db70F5992eB7AB22dfaD8A57109841C9",

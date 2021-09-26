@@ -42,7 +42,7 @@ contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Re
         require(nftContract != address(0), "DODONftVault: ZERO_ADDRESS");
         for(uint256 i = 0; i < tokenIds.length; i++) {
             IERC721(nftContract).safeTransferFrom(msg.sender, address(this), tokenIds[i]);
-            emit AddNftToken(nftContract, tokenIds[i], 1);
+            // emit AddNftToken(nftContract, tokenIds[i], 1);
         }
     }
 
@@ -50,9 +50,9 @@ contract NFTCollateralVault is InitializableOwnable, IERC721Receiver, IERC1155Re
         require(nftContract != address(0), "DODONftVault: ZERO_ADDRESS");
         require(tokenIds.length == amounts.length, "PARAMS_NOT_MATCH");
         IERC1155(nftContract).safeBatchTransferFrom(msg.sender, address(this), tokenIds, amounts, "");
-        for(uint256 i = 0; i < tokenIds.length; i++) {
-            emit AddNftToken(nftContract, tokenIds[i], amounts[i]);
-        }
+        // for(uint256 i = 0; i < tokenIds.length; i++) {
+        //     emit AddNftToken(nftContract, tokenIds[i], amounts[i]);
+        // }
     }
 
     // ============ Ownable ============
