@@ -85,13 +85,15 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
         emit NftInOrder(to, received);
     }
 
-    function ERC721TargetOut(uint256[] memory tokenIds, address to)
+    function ERC721TargetOut(uint256[] memory tokenIds, address to, uint256 maxBurnAmount)
         external
         preventReentrant
         returns (uint256 paid)
     {
         (uint256 rawPay, ) = queryNFTTargetOut(tokenIds.length);
-        paid = IFilterAdmin(_OWNER_).burnFragFrom(to, rawPay);
+        paid = IFilterAdmin(_OWNER_).burnFragFrom(msg.sender, rawPay);
+        require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
+
         for (uint256 i = 0; i < tokenIds.length; i++) {
             _transferOutERC721(to, tokenIds[i]);
 
@@ -99,16 +101,17 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
         }
         _TOTAL_NFT_AMOUNT_ = _NFT_IDS_.length;
 
-        emit TargetOutOrder(to, paid);
+        emit TargetOutOrder(msg.sender, paid);
     }
 
-    function ERC721RandomOut(uint256 amount, address to)
+    function ERC721RandomOut(uint256 amount, address to, uint256 maxBurnAmount)
         external
         preventReentrant
         returns (uint256 paid)
     {
         (uint256 rawPay, ) = queryNFTRandomOut(amount);
-        paid = IFilterAdmin(_OWNER_).burnFragFrom(to, rawPay);
+        paid = IFilterAdmin(_OWNER_).burnFragFrom(msg.sender, rawPay);
+        require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
         for (uint256 i = 0; i < amount; i++) {
             uint256 index = _getRandomNum() % _NFT_IDS_.length;
             uint256 tokenId = _NFT_IDS_[index];
@@ -117,7 +120,7 @@ contract FilterERC721V1 is IERC721Receiver, BaseFilterV1 {
         }
         _TOTAL_NFT_AMOUNT_ = _NFT_IDS_.length;
 
-        emit RandomOutOrder(to, paid);
+        emit RandomOutOrder(msg.sender, paid);
     }
 
     // ============ Transfer =============

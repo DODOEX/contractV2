@@ -51,7 +51,7 @@ contract BaseFilterV1 is InitializableOwnable, ReentrancyGuard {
     // GS -> Geometric sequence
     // CR -> Common Ratio
 
-    //For Deposit NFT INto Pool
+    //For Deposit NFT IN to Pool
     uint256 public _GS_START_IN_;
     uint256 public _CR_IN_;
     bool public _NFT_IN_TOGGLE_ = false;

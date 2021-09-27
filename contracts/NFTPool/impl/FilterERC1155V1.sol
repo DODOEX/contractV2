@@ -81,7 +81,8 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
     function ERC1155TargetOut(
         uint256[] memory tokenIds,
         uint256[] memory amounts,
-        address to
+        address to,
+        uint256 maxBurnAmount 
     ) external preventReentrant returns (uint256 paid) {
         require(tokenIds.length == amounts.length, "PARAM_INVALID");
         uint256 avaliableNFTOutAmount = getAvaliableNFTOutAmount();
@@ -95,18 +96,21 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
         }
         require(totalAmount <= avaliableNFTOutAmount, "EXCEED_OUT_AMOUNT");
         (uint256 rawPay, ) = _queryNFTTargetOut(originTotalNftAmount - totalAmount, originTotalNftAmount);
-        paid = IFilterAdmin(_OWNER_).burnFragFrom(to, rawPay);
+        paid = IFilterAdmin(_OWNER_).burnFragFrom(msg.sender, rawPay);
+        require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
 
-        emit TargetOutOrder(to, paid);
+        emit TargetOutOrder(msg.sender, paid);
     }
 
-    function ERC1155RandomOut(uint256 amount, address to)
+    function ERC1155RandomOut(uint256 amount, address to, uint256 maxBurnAmount)
         external
         preventReentrant
         returns (uint256 paid)
     {
         (uint256 rawPay, ) = queryNFTRandomOut(amount);
-        paid = IFilterAdmin(_OWNER_).burnFragFrom(to, rawPay);
+        paid = IFilterAdmin(_OWNER_).burnFragFrom(msg.sender, rawPay);
+        require(paid <= maxBurnAmount, "BURN_AMOUNT_EXCEED");
+
         for (uint256 i = 0; i < amount; i++) {
             uint256 randomNum = _getRandomNum() % _TOTAL_NFT_AMOUNT_;
             uint256 sum;
@@ -121,7 +125,7 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
             }
         }
 
-        emit RandomOutOrder(to, paid);
+        emit RandomOutOrder(msg.sender, paid);
     }
 
     // ============ Transfer =============

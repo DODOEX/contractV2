@@ -149,14 +149,14 @@ describe("ERC1155-NFTPool", () => {
             assert.equal(beforeAmount, 2)
 
             //maker targetout
-            var tx = await logGas(ctx.DODONFTPoolProxy.methods.erc1155TargetOut(
-                filter,
+            var tx = await logGas(filterInstance.methods.ERC1155TargetOut(
                 [0, 1, 3],
                 [2, 1, 1],
+                maker,
                 MAX_UINT256,
             ), ctx.sendParam(maker), "Erc1155TargetOut");
 
-            var paid = tx.events['Erc1155TargetOut'].returnValues['paid']
+            var paid = tx.events['TargetOutOrder'].returnValues['paidAmount']
             assert.equal(paid, "3673527453990000000");
 
             var maxNftOutAmount = await filterInstance.methods.getAvaliableNFTOutAmount().call();
@@ -176,13 +176,13 @@ describe("ERC1155-NFTPool", () => {
             var filterInstance = contracts.getContractWithAddress(contracts.FILTER_ERC1155_V1, filter);
 
             //maker randomOut
-            var tx = await logGas(ctx.DODONFTPoolProxy.methods.erc1155RandomOut(
-                filter,
+            var tx = await logGas(filterInstance.methods.ERC1155RandomOut(
                 3,
+                maker,
                 MAX_UINT256,
             ), ctx.sendParam(maker), "Erc1155RandomOut");
 
-            var paid = tx.events['Erc1155RandomOut'].returnValues['paid']
+            var paid = tx.events['RandomOutOrder'].returnValues['paidAmount']
             assert.equal(paid, "1302665521995000000");
 
             var maxNftOutAmount = await filterInstance.methods.getAvaliableNFTOutAmount().call();
