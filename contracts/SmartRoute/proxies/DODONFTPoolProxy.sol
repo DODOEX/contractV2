@@ -45,7 +45,7 @@ contract DODONFTPoolProxy is InitializableOwnable, ReentrancyGuard {
     event ChangeMaintainer(address newMaintainer);
     event ChangeContoller(address newController);
     event ChangeFilterAdminTemplate(address newFilterAdminTemplate);
-    event ChangeWhiteList(address contractAddr, bool isWhiteListed);
+    event ChangeWhiteList(address contractAddr, bool isAllowed);
 
     constructor(
         address cloneFactory,
@@ -249,9 +249,9 @@ contract DODONFTPoolProxy is InitializableOwnable, ReentrancyGuard {
         emit SetFilterTemplate(idx, newFilterTemplate);
     }
 
-    function changeWhiteList(address contractAddr, bool isWhiteListed) external onlyOwner {
-        isWhiteListed[contractAddr] = isWhiteListed;
-        emit ChangeWhiteList(contractAddr, isWhiteListed);
+    function changeWhiteList(address contractAddr, bool isAllowed) external onlyOwner {
+        isWhiteListed[contractAddr] = isAllowed;
+        emit ChangeWhiteList(contractAddr, isAllowed);
     }
 
     //======================= Internal =====================

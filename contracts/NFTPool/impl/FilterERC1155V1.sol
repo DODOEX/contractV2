@@ -68,7 +68,7 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
             uint256 tokenId = tokenIds[i];
             require(isNFTIDValid(tokenId), "NFT_ID_NOT_SUPPORT");
             uint256 inAmount = _maintainERC1155In(tokenId);
-            totalAmount += inAmount;
+            totalAmount = totalAmount.add(inAmount);
             emit NftIn(tokenId, inAmount);
         }
         require(totalAmount <= avaliableNFTInAmount, "EXCEDD_IN_AMOUNT");
@@ -90,7 +90,7 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
 
         uint256 totalAmount = 0;
         for (uint256 i = 0; i < tokenIds.length; i++) {
-            totalAmount += amounts[i];
+            totalAmount = totalAmount.add(amounts[i]);
             _transferOutERC1155(to, tokenIds[i], amounts[i]);
             emit TargetOut(tokenIds[i], amounts[i]);
         }
@@ -116,7 +116,7 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
             uint256 sum;
             for (uint256 j = 0; j < _NFT_IDS_.length; j++) {
                 uint256 tokenId = _NFT_IDS_[j];
-                sum += _NFT_RESERVE_[tokenId];
+                sum = sum.add(_NFT_RESERVE_[tokenId]);
                 if (sum >= randomNum) {
                     _transferOutERC1155(to, tokenId, 1);
                     emit RandomOut(tokenId, 1);
@@ -190,7 +190,7 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
         uint256 currentAmount = IERC1155(_NFT_COLLECTION_).balanceOf(address(this), tokenId);
         uint256 outAmount = _NFT_RESERVE_[tokenId].sub(currentAmount);
         _NFT_RESERVE_[tokenId] = currentAmount;
-        _TOTAL_NFT_AMOUNT_ -= outAmount;
+        _TOTAL_NFT_AMOUNT_ = _TOTAL_NFT_AMOUNT_.sub(outAmount);
         if (currentAmount == 0) {
             uint256 index = _TOKENID_IDX_[tokenId] - 1;
             if(index != _NFT_IDS_.length - 1) {
@@ -211,7 +211,7 @@ contract FilterERC1155V1 is IERC1155Receiver, BaseFilterV1 {
             _TOKENID_IDX_[tokenId] = _NFT_IDS_.length;
         }
         _NFT_RESERVE_[tokenId] = currentAmount;
-        _TOTAL_NFT_AMOUNT_ += inAmount;
+        _TOTAL_NFT_AMOUNT_ = _TOTAL_NFT_AMOUNT_.add(inAmount);
     }
 
     // ============ Support ============
