@@ -30,6 +30,7 @@ contract DODONFTPoolProxy is InitializableOwnable, ReentrancyGuard {
     address public immutable _DODO_NFT_APPROVE_;
     address public immutable _DODO_APPROVE_;
 
+    mapping (address => bool) public isWhiteListed;
 
     // ============ Event ==============
     event SetFilterTemplate(uint256 idx, address filterTemplate);
@@ -44,6 +45,7 @@ contract DODONFTPoolProxy is InitializableOwnable, ReentrancyGuard {
     event ChangeMaintainer(address newMaintainer);
     event ChangeContoller(address newController);
     event ChangeFilterAdminTemplate(address newFilterAdminTemplate);
+    event ChangeWhiteList(address contractAddr, bool isWhiteListed);
 
     constructor(
         address cloneFactory,
@@ -177,6 +179,9 @@ contract DODONFTPoolProxy is InitializableOwnable, ReentrancyGuard {
         uint256[] memory spreadIds
     ) public returns(address newFilterV1) {
         newFilterV1 = ICloneFactory(_CLONE_FACTORY_).clone(_FILTER_TEMPLATES_[key]);
+
+        emit CreateFilterV1(filterAdmin, newFilterV1, nftCollection, key);
+        
         IFilter(newFilterV1).init(
             filterAdmin,
             nftCollection,
@@ -186,8 +191,6 @@ contract DODONFTPoolProxy is InitializableOwnable, ReentrancyGuard {
             priceRules,
             spreadIds
         );
-
-        emit CreateFilterV1(filterAdmin, newFilterV1, nftCollection, key);
     }
 
 
@@ -213,6 +216,7 @@ contract DODONFTPoolProxy is InitializableOwnable, ReentrancyGuard {
 
         _generalApproveMax(filterAdmin, _DODO_APPROVE_, receivedFragAmount);
 
+        require(isWhiteListed[dodoProxy], "Not Whitelist Proxy Contract");
         (bool success, ) = dodoProxy.call(dodoSwapData);
         require(success, "API_SWAP_FAILED");
 
@@ -245,6 +249,10 @@ contract DODONFTPoolProxy is InitializableOwnable, ReentrancyGuard {
         emit SetFilterTemplate(idx, newFilterTemplate);
     }
 
+    function changeWhiteList(address contractAddr, bool isWhiteListed) external onlyOwner {
+        isWhiteListed[contractAddr] = isWhiteListed;
+        emit ChangeWhiteList(contractAddr, isWhiteListed);
+    }
 
     //======================= Internal =====================
     function _generalApproveMax(
