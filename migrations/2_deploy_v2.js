@@ -492,6 +492,11 @@ module.exports = async (deployer, network, accounts) => {
             const dodoMineV3RegistryInstance = await DODOMineV3Registry.at(DODOMineV3RegistryAddress);
             var tx = await dodoMineV3RegistryInstance.addAdminList(DODOMineV3ProxyAddress);
             logger.log("DODOMineV3RegistryAddress Init tx: ", tx.tx);
+
+            //DPPFactory add DODProxy as admin
+            const dppFactoryInstance = await DPPFactory.at(DppFactoryAddress);
+            var tx = await dppFactoryInstance.addAdminList(DODOV2ProxyAddress);
+            logger.log("DPPFactory Init tx: ", tx.tx);
         }
 
     }

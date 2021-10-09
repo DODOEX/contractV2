@@ -30,6 +30,8 @@ contract DPPFactory is InitializableOwnable {
     address public _DPP_TEMPLATE_;
     address public _DPP_ADMIN_TEMPLATE_;
 
+    mapping (address => bool) public isAdminListed;
+
     // ============ Registry ============
 
     // base -> quote -> DPP address list
@@ -46,8 +48,10 @@ contract DPPFactory is InitializableOwnable {
         address dpp
     );
 
-
     event RemoveDPP(address dpp);
+
+    event addAdmin(address admin);
+    event removeAdmin(address admin);
 
     constructor(
         address cloneFactory,
@@ -81,6 +85,7 @@ contract DPPFactory is InitializableOwnable {
         uint256 i,
         bool isOpenTwap
     ) external {
+        require(isAdminListed[msg.sender], "ACCESS_DENIED");
         {
             address _dppAddress = dppAddress;
             address adminModel = _createDPPAdminModel(
@@ -131,6 +136,16 @@ contract DPPFactory is InitializableOwnable {
         _DPP_TEMPLATE_ = _newDPPTemplate;
     }
 
+    function addAdminList (address contractAddr) external onlyOwner {
+        isAdminListed[contractAddr] = true;
+        emit addAdmin(contractAddr);
+    }
+
+    function removeAdminList (address contractAddr) external onlyOwner {
+        isAdminListed[contractAddr] = false;
+        emit removeAdmin(contractAddr);
+    }
+
     function addPoolByAdmin(
         address creator,
         address baseToken, 
@@ -140,6 +155,27 @@ contract DPPFactory is InitializableOwnable {
         _REGISTRY_[baseToken][quoteToken].push(pool);
         _USER_REGISTRY_[creator].push(pool);
         emit NewDPP(baseToken, quoteToken, creator, pool);
+    }
+
+    function batchAddPoolByAdmin(
+        address[] memory creators,
+        address[] memory baseTokens, 
+        address[] memory quoteTokens,
+        address[] memory pools
+    ) external onlyOwner {
+        require(creators.length == baseTokens.length,"PARAMS_INVALID");
+        require(creators.length == quoteTokens.length,"PARAMS_INVALID");
+        require(creators.length == pools.length,"PARAMS_INVALID");
+        for(uint256 i = 0; i < creators.length; i++) {
+            address creator = creators[i];
+            address baseToken = baseTokens[i];
+            address quoteToken = quoteTokens[i];
+            address pool = pools[i];
+            
+            _REGISTRY_[baseToken][quoteToken].push(pool);
+            _USER_REGISTRY_[creator].push(pool);
+            emit NewDPP(baseToken, quoteToken, creator, pool);
+        }
     }
 
     function removePoolByAdmin(
