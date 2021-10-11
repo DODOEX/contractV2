@@ -6,7 +6,6 @@ const { MATIC_CONFIG } = require("./config/matic-config");
 const { ARB_CONFIG } = require("./config/arb-config");
 const { RINKEBY_CONFIG } = require("./config/rinkeby-config");
 const { OK_CONFIG } = require("./config/ok-config");
-const { NEON_TEST_CONFIG } = require("./config/neon-test-config");
 const { MOONRIVER_CONFIG } = require("./config/moonriver-config");
 const { BOBA_TEST_CONFIG } = require("./config/boba-test-config");
 
@@ -42,11 +41,6 @@ exports.GetConfig = function (network, accounts) {
             break;
         case "rinkeby":
             CONFIG = RINKEBY_CONFIG
-            CONFIG.multiSigAddress = accounts[0]
-            CONFIG.defaultMaintainer = accounts[0]
-            break;
-        case "neon_test":
-            CONFIG = NEON_TEST_CONFIG
             CONFIG.multiSigAddress = accounts[0]
             CONFIG.defaultMaintainer = accounts[0]
             break;

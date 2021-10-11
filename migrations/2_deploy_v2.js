@@ -40,6 +40,7 @@ const DODOApproveProxy = artifacts.require("DODOApproveProxy");
 
 const DODODspProxy = artifacts.require("DODODspProxy");
 const DODOCpProxy = artifacts.require("DODOCpProxy");
+const DODODppProxy = artifacts.require("DODODppProxy");
 const DODORouteProxy = artifacts.require("DODORouteProxy");
 const DODOMineV3Proxy = artifacts.require("DODOMineV3Proxy");
 const DODOProxyV2 = artifacts.require("DODOV2Proxy02");
@@ -102,6 +103,7 @@ module.exports = async (deployer, network, accounts) => {
     let DODOV2ProxyAddress = CONFIG.DODOV2Proxy;
     let DODODspProxyAddress = CONFIG.DSPProxy;
     let DODOCpProxyAddress = CONFIG.CpProxy;
+    let DODODppProxyAddress = CONFIG.DPPProxy;
     let DODOMineV3ProxyAddress = CONFIG.DODOMineV3Proxy;
     let DODORouteProxyAddress = CONFIG.RouteProxy;
 
@@ -399,7 +401,6 @@ module.exports = async (deployer, network, accounts) => {
             await deployer.deploy(
                 DODOProxyV2,
                 DvmFactoryAddress,
-                DppFactoryAddress,
                 WETHAddress,
                 DODOApproveProxyAddress,
                 DODOSellHelperAddress
@@ -434,6 +435,17 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("CpProxy address: ", DODOCpProxy.address);
         }
 
+        if (DODODppProxyAddress == "") {
+            await deployer.deploy(
+                DODODppProxy,
+                WETHAddress,
+                DODOApproveProxyAddress,
+                DppFactoryAddress
+            );
+            DODODppProxyAddress = DODODppProxy.address;
+            logger.log("DPPProxy address: ", DODODppProxy.address);
+        }
+
         if (DODOMineV3ProxyAddress == "") {
             await deployer.deploy(
                 DODOMineV3Proxy,
@@ -465,7 +477,7 @@ module.exports = async (deployer, network, accounts) => {
             var tx;
             //ApproveProxy init以及添加ProxyList
             const DODOApproveProxyInstance = await DODOApproveProxy.at(DODOApproveProxyAddress);
-            tx = await DODOApproveProxyInstance.init(multiSigAddress, [DODOV2ProxyAddress, DODODspProxyAddress, DODOCpProxyAddress, DODOMineV3ProxyAddress, DODORouteProxyAddress]);
+            tx = await DODOApproveProxyInstance.init(multiSigAddress, [DODOV2ProxyAddress, DODODspProxyAddress, DODOCpProxyAddress, DODODppProxyAddress, DODOMineV3ProxyAddress, DODORouteProxyAddress]);
             logger.log("DODOApproveProxy Init tx: ", tx.tx);
 
             //Approve init
@@ -495,8 +507,8 @@ module.exports = async (deployer, network, accounts) => {
 
             //DPPFactory add DODProxy as admin
             const dppFactoryInstance = await DPPFactory.at(DppFactoryAddress);
-            var tx = await dppFactoryInstance.addAdminList(DODOV2ProxyAddress);
-            logger.log("DPPFactory Init tx: ", tx.tx);
+            var tx = await dppFactoryInstance.addAdminList(DODODppProxyAddress);
+            logger.log("DPPFactory Add DPPProxy tx: ", tx.tx);
         }
 
     }

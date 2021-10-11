@@ -47,7 +47,7 @@ contract DODODppProxy is ReentrancyGuard {
     // ============ Modifiers ============
 
     modifier judgeExpired(uint256 deadLine) {
-        require(deadLine >= block.timestamp, "DODOCpProxy: EXPIRED");
+        require(deadLine >= block.timestamp, "DPPProxy: EXPIRED");
         _;
     }
 
