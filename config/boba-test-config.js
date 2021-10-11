@@ -58,6 +58,7 @@ module.exports = {
         DODOV2Proxy: "",
         DSPProxy: "",
         CpProxy: "",
+        DPPProxy: "",
         RouteProxy: "",
         DODOMineV3Proxy: "",
 

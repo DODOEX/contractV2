@@ -14,7 +14,7 @@ module.exports = {
         DODOSellHelper: "0x5e84190a270333aCe5B9202a3F4ceBf11b81bB01", //not verify
         DODOCalleeHelper: "0xc4436fBAE6eBa5d95bf7d53Ae515F8A707Bd402A",
         DODOV1PmmHelper: "0x3CD6D7F5fF977bf8069548eA1F9441b061162b42", //not verify
-        DODOV2RouteHelper: "0x6B4Fa0bc61Eddc928e0Df9c7f01e407BfcD3e5EF",
+        DODOV2RouteHelper: "",//0x6B4Fa0bc61Eddc928e0Df9c7f01e407BfcD3e5EF
         CurveSample: "",
 
         //Template
@@ -37,7 +37,7 @@ module.exports = {
         //not verify
         //Factory
         DVMFactory: "0x738Ebf387A0CE0eb46b0eF8Fa5DEa2EaE6B1Df51",
-        DPPFactory: "0xb57Dd5c265dBb13CA014F2332069E90CD0e22e65",
+        DPPFactory: "",//0xb57Dd5c265dBb13CA014F2332069E90CD0e22e65
         DSPFactory: "0xB76de21f04F677f07D9881174a1D8E624276314C",
         UpCpFactory: "0x043957f7554275b90c5178872faE851dcfC1089D",
         CrowdPoolingFactory: "0x0596908263Ef2724fBfBcAfA1c983FCD7a629038",
@@ -64,6 +64,7 @@ module.exports = {
         DODOV2Proxy: "0xd9deC7c3C06e62a4c1BeEB07CadF568f496b14c2",
         DSPProxy: "0x9f015aa5557ffBb47850c045Df67Bf229B07f2eA",
         CpProxy: "0x357c5E9cfA8B834EDcef7C7aAbD8F9Db09119d11",
+        DPPProxy: "",
         RouteProxy: "0x0125Cd41312F72a0774112Ca639D65A2C02e3627",
         DODOMineV3Proxy: "0xb159260989012fA98af560A3Fa6D9cd11a64cf6E", //not verify
 
