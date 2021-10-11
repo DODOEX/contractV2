@@ -210,90 +210,90 @@ contract DODOV2Proxy02 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
 
     // ============ DPP Functions (create & reset) ============
 
-    function createDODOPrivatePool(
-        address baseToken,
-        address quoteToken,
-        uint256 baseInAmount,
-        uint256 quoteInAmount,
-        uint256 lpFeeRate,
-        uint256 i,
-        uint256 k,
-        bool isOpenTwap,
-        uint256 deadLine
-    )
-        external
-        override
-        payable
-        preventReentrant
-        judgeExpired(deadLine)
-        returns (address newPrivatePool)
-    {
-        newPrivatePool = IDODOV2(_DPP_FACTORY_).createDODOPrivatePool();
+    // function createDODOPrivatePool(
+    //     address baseToken,
+    //     address quoteToken,
+    //     uint256 baseInAmount,
+    //     uint256 quoteInAmount,
+    //     uint256 lpFeeRate,
+    //     uint256 i,
+    //     uint256 k,
+    //     bool isOpenTwap,
+    //     uint256 deadLine
+    // )
+    //     external
+    //     override
+    //     payable
+    //     preventReentrant
+    //     judgeExpired(deadLine)
+    //     returns (address newPrivatePool)
+    // {
+    //     newPrivatePool = IDODOV2(_DPP_FACTORY_).createDODOPrivatePool();
 
-        address _baseToken = baseToken;
-        address _quoteToken = quoteToken;
-        _deposit(msg.sender, newPrivatePool, _baseToken, baseInAmount, _baseToken == _ETH_ADDRESS_);
-        _deposit(
-            msg.sender,
-            newPrivatePool,
-            _quoteToken,
-            quoteInAmount,
-            _quoteToken == _ETH_ADDRESS_
-        );
+    //     address _baseToken = baseToken;
+    //     address _quoteToken = quoteToken;
+    //     _deposit(msg.sender, newPrivatePool, _baseToken, baseInAmount, _baseToken == _ETH_ADDRESS_);
+    //     _deposit(
+    //         msg.sender,
+    //         newPrivatePool,
+    //         _quoteToken,
+    //         quoteInAmount,
+    //         _quoteToken == _ETH_ADDRESS_
+    //     );
 
-        if (_baseToken == _ETH_ADDRESS_) _baseToken = _WETH_;
-        if (_quoteToken == _ETH_ADDRESS_) _quoteToken = _WETH_;
+    //     if (_baseToken == _ETH_ADDRESS_) _baseToken = _WETH_;
+    //     if (_quoteToken == _ETH_ADDRESS_) _quoteToken = _WETH_;
 
-        IDODOV2(_DPP_FACTORY_).initDODOPrivatePool(
-            newPrivatePool,
-            msg.sender,
-            _baseToken,
-            _quoteToken,
-            lpFeeRate,
-            k,
-            i,
-            isOpenTwap
-        );
-    }
+    //     IDODOV2(_DPP_FACTORY_).initDODOPrivatePool(
+    //         newPrivatePool,
+    //         msg.sender,
+    //         _baseToken,
+    //         _quoteToken,
+    //         lpFeeRate,
+    //         k,
+    //         i,
+    //         isOpenTwap
+    //     );
+    // }
 
-    function resetDODOPrivatePool(
-        address dppAddress,
-        uint256[] memory paramList,  //0 - newLpFeeRate, 1 - newI, 2 - newK
-        uint256[] memory amountList, //0 - baseInAmount, 1 - quoteInAmount, 2 - baseOutAmount, 3- quoteOutAmount
-        uint8 flag, // 0 - ERC20, 1 - baseInETH, 2 - quoteInETH, 3 - baseOutETH, 4 - quoteOutETH
-        uint256 minBaseReserve,
-        uint256 minQuoteReserve,
-        uint256 deadLine
-    ) external override payable preventReentrant judgeExpired(deadLine) {
-        _deposit(
-            msg.sender,
-            dppAddress,
-            IDODOV2(dppAddress)._BASE_TOKEN_(),
-            amountList[0],
-            flag == 1
-        );
-        _deposit(
-            msg.sender,
-            dppAddress,
-            IDODOV2(dppAddress)._QUOTE_TOKEN_(),
-            amountList[1],
-            flag == 2
-        );
+    // function resetDODOPrivatePool(
+    //     address dppAddress,
+    //     uint256[] memory paramList,  //0 - newLpFeeRate, 1 - newI, 2 - newK
+    //     uint256[] memory amountList, //0 - baseInAmount, 1 - quoteInAmount, 2 - baseOutAmount, 3- quoteOutAmount
+    //     uint8 flag, // 0 - ERC20, 1 - baseInETH, 2 - quoteInETH, 3 - baseOutETH, 4 - quoteOutETH
+    //     uint256 minBaseReserve,
+    //     uint256 minQuoteReserve,
+    //     uint256 deadLine
+    // ) external override payable preventReentrant judgeExpired(deadLine) {
+    //     _deposit(
+    //         msg.sender,
+    //         dppAddress,
+    //         IDODOV2(dppAddress)._BASE_TOKEN_(),
+    //         amountList[0],
+    //         flag == 1
+    //     );
+    //     _deposit(
+    //         msg.sender,
+    //         dppAddress,
+    //         IDODOV2(dppAddress)._QUOTE_TOKEN_(),
+    //         amountList[1],
+    //         flag == 2
+    //     );
 
-        require(IDODOV2(IDODOV2(dppAddress)._OWNER_()).reset(
-            msg.sender,
-            paramList[0],
-            paramList[1],
-            paramList[2],
-            amountList[2],
-            amountList[3],
-            minBaseReserve,
-            minQuoteReserve
-        ), "Reset Failed");
+    //     require(IDODOV2(IDODOV2(dppAddress)._OWNER_()).reset(
+    //         msg.sender,
+    //         paramList[0],
+    //         paramList[1],
+    //         paramList[2],
+    //         amountList[2],
+    //         amountList[3],
+    //         minBaseReserve,
+    //         minQuoteReserve
+    //     ), "Reset Failed");
 
-        _withdraw(msg.sender, IDODOV2(dppAddress)._BASE_TOKEN_(), amountList[2], flag == 3);
-        _withdraw(msg.sender, IDODOV2(dppAddress)._QUOTE_TOKEN_(), amountList[3], flag == 4);
-    }
+    //     _withdraw(msg.sender, IDODOV2(dppAddress)._BASE_TOKEN_(), amountList[2], flag == 3);
+    //     _withdraw(msg.sender, IDODOV2(dppAddress)._QUOTE_TOKEN_(), amountList[3], flag == 4);
+    // }
 
     // ============ Swap ============
 

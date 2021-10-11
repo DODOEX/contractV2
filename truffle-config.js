@@ -40,7 +40,7 @@ module.exports = {
    */
   deploySwitch: {
     DEPLOY_V1:      false,
-    DEPLOY_V2:      false,
+    DEPLOY_V2:      true,
     MOCK_TOKEN:     false,
     MOCK_V2_POOL:   false,
     vDODOToken:     false,
@@ -165,12 +165,12 @@ module.exports = {
       skipDryRun: true
     },
 
-    omgTest: {
+    boba_test: {
       networkCheckTimeout: 100000,
       provider: () => {
-        return new HDWalletProvider(privKey, 'https://rinkeby.omgx.network')
+        return new HDWalletProvider(privKey, 'https://rinkeby-v2.boba.network')
       },
-      network_id: 28,
+      network_id: 420,
       gasPrice: 0,
     },
 
@@ -180,17 +180,6 @@ module.exports = {
         return new HDWalletProvider(privKey, 'https://proxy.testnet.neonlabs.org/solana')
       },
       network_id: 111,
-      gasPrice: 0,
-    },
-
-    arbtest: {
-      provider: function () {
-        return wrapProvider(
-          new HDWalletProvider(privKey, "https://kovan4.arbitrum.io/rpc")
-        )
-      },
-      network_id: '212984383488152',
-      gas: 1000000000,
       gasPrice: 0,
     },
 
