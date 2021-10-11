@@ -461,7 +461,7 @@ module.exports = async (deployer, network, accounts) => {
         }
 
 
-        if (network == 'kovan' || network == 'rinkeby') {
+        if (network == 'kovan' || network == 'rinkeby' ||network == "boba_test") {
             var tx;
             //ApproveProxy init以及添加ProxyList
             const DODOApproveProxyInstance = await DODOApproveProxy.at(DODOApproveProxyAddress);
