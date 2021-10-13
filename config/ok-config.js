@@ -75,15 +75,12 @@ module.exports = {
         DODONFTRegistry: "0x327344B382EE1b44FB0a72945fCDCC7243200dD7",
         DODONFTProxy: "0x326c788c4C236f2bceC9476C66F8593Aa31be4Fc",
 
-        //================= DropsV1 =================
-        MysteryBoxV1: "",
-        RandomGenerator: "",
-        RandomPool: [
-            "",
-        ],
-
-        //================= DropsV2 ==================
-        DropsFeeModel: "",
-        DropsProxy: ""
+        //=================== NFTPool ==================
+        DODONFTApprove: "0x0E3CA67AdB97E8FD07E516AFd869d1886E932F59",
+        DODONFTPoolProxy: "0x4599ed18F34cFE06820E3684bF0aACB8D75c644d",
+        FilterAdmin: "0x6fdDB76c93299D985f4d3FC7ac468F9A168577A4",
+        FilterERC721V1: "0xd0e1aA51dF0896c126Ce6F8A064E551e0DD3D39b",
+        FilterERC1155V1: "0x0672952Fab6BD1336C57AE09E49DB6D3e78B1896",
+        NFTPoolController: "0x8735AAd3BEae15487a017EE32cb11d8fd593e036"
     }
 }
