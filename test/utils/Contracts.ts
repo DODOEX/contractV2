@@ -74,6 +74,16 @@ export const DROPS_ERC1155 = "DropsERC1155"
 export const DROPS_FEE_MODEL = "DropsFeeModel"
 export const DROPS_PROXY = "DODODropsProxy"
 
+export const DODO_NFT = "DODONFT"
+export const DODO_NFT_1155 = "DODONFT1155"
+
+export const FILTER_ERC721_V1 = "FilterERC721V1"
+export const FILTER_ERC1155_V1 = "FilterERC1155V1"
+export const FILTER_ADMIN = "FilterAdmin"
+export const CONTROLLER = "Controller"
+export const DODO_NFT_APPROVE = "DODONFTApprove"
+export const DODO_NFT_POOL_PROXY = "DODONFTPoolProxy"
+
 
 interface ContractJson {
   abi: any;

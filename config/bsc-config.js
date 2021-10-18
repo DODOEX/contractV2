@@ -100,6 +100,14 @@ module.exports = {
 
         //================= DropsV2 ==================
         DropsFeeModel: "0x6de96b1a41FF2E8264925B4C5C0564C46DC0C67d",
-        DropsProxy: "0xC05A30468d039381AaBaB6dcaC31078DB2C3323B"
+        DropsProxy: "0xC05A30468d039381AaBaB6dcaC31078DB2C3323B",
+
+        //=================== NFTPool ==================
+        DODONFTApprove: "0x8f697865Fb43236683a174feE87fD84dB64C7A6c",
+        DODONFTPoolProxy: "0x509D3775F684fA4d19C9C99B961202e309B5B965",
+        FilterAdmin: "0xDe8A380e84998986A59bE6519FF172d40c0F9d41",
+        FilterERC721V1: "0x33364198d93648D3E976aA8625097567791c301F",
+        FilterERC1155V1: "0x7635694249B1bb39476a6aB28Cc6B17c1E3cAEe1",
+        NFTPoolController: "0x4187aab02f9E3AbdEb9a6cC71397a7A839113634"
     }
 }

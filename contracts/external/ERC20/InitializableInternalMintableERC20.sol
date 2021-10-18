@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2020 DODO ZOO.
+    Copyright 2021 DODO ZOO.
     SPDX-License-Identifier: Apache-2.0
 
 */
@@ -8,43 +8,47 @@
 pragma solidity 0.6.9;
 
 import {SafeMath} from "../../lib/SafeMath.sol";
+import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 
-contract InitializableFragERC20 {
+contract InitializableInternalMintableERC20 is InitializableOwnable {
     using SafeMath for uint256;
 
     string public name;
+    uint8 public decimals;
     string public symbol;
     uint256 public totalSupply;
-
-    bool public initialized;
 
     mapping(address => uint256) internal balances;
     mapping(address => mapping(address => uint256)) internal allowed;
 
     event Transfer(address indexed from, address indexed to, uint256 amount);
     event Approval(address indexed owner, address indexed spender, uint256 amount);
+    event Mint(address indexed user, uint256 value);
+    event Burn(address indexed user, uint256 value);
 
     function init(
         address _creator,
-        uint256 _totalSupply,
+        uint256 _initSupply,
         string memory _name,
-        string memory _symbol
+        string memory _symbol,
+        uint8 _decimals
     ) public {
-        require(!initialized, "TOKEN_INITIALIZED");
-        initialized = true;
-        totalSupply = _totalSupply;
-        balances[_creator] = _totalSupply;
+        initOwner(_creator);
         name = _name;
         symbol = _symbol;
-        emit Transfer(address(0), _creator, _totalSupply);
+        decimals = _decimals;
+        totalSupply = _initSupply;
+        balances[_creator] = _initSupply;
+        emit Transfer(address(0), _creator, _initSupply);
     }
 
-    function decimals() public pure returns (uint8) {
-        return 18;
-    }
+    function transfer(address to, uint256 amount) public virtual returns (bool) {
+        require(to != address(0), "TO_ADDRESS_IS_EMPTY");
+        require(amount <= balances[msg.sender], "BALANCE_NOT_ENOUGH");
 
-    function transfer(address to, uint256 amount) public returns (bool) {
-        _transfer(msg.sender, to, amount);
+        balances[msg.sender] = balances[msg.sender].sub(amount);
+        balances[to] = balances[to].add(amount);
+        emit Transfer(msg.sender, to, amount);
         return true;
     }
 
@@ -56,7 +60,7 @@ contract InitializableFragERC20 {
         address from,
         address to,
         uint256 amount
-    ) public returns (bool) {
+    ) public virtual returns (bool) {
         require(to != address(0), "TO_ADDRESS_IS_EMPTY");
         require(amount <= balances[from], "BALANCE_NOT_ENOUGH");
         require(amount <= allowed[from][msg.sender], "ALLOWANCE_NOT_ENOUGH");
@@ -68,7 +72,7 @@ contract InitializableFragERC20 {
         return true;
     }
 
-    function approve(address spender, uint256 amount) public returns (bool) {
+    function approve(address spender, uint256 amount) public virtual returns (bool) {
         allowed[msg.sender][spender] = amount;
         emit Approval(msg.sender, spender, amount);
         return true;
@@ -78,15 +82,17 @@ contract InitializableFragERC20 {
         return allowed[owner][spender];
     }
 
-    function _transfer(address sender, address recipient, uint256 amount) internal {
-        require(sender != address(0), "FROM_ADDRESS_IS_EMPTY");
-        require(recipient != address(0), "TO_ADDRESS_IS_EMPTY");
-        require(amount <= balances[sender], "BALANCE_NOT_ENOUGH");
-
-        balances[sender] = balances[sender].sub(amount);
-        balances[recipient] = balances[recipient].add(amount);
-
-        emit Transfer(sender, recipient, amount);
+    function _mint(address user, uint256 value) internal {
+        balances[user] = balances[user].add(value);
+        totalSupply = totalSupply.add(value);
+        emit Mint(user, value);
+        emit Transfer(address(0), user, value);
     }
 
+    function _burn(address user, uint256 value) internal {
+        balances[user] = balances[user].sub(value);
+        totalSupply = totalSupply.sub(value);
+        emit Burn(user, value);
+        emit Transfer(user, address(0), value);
+    }
 }

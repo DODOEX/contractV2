@@ -45,4 +45,19 @@ library DecimalMath {
     function reciprocalCeil(uint256 target) internal pure returns (uint256) {
         return uint256(10**36).divCeil(target);
     }
+
+    function powFloor(uint256 target, uint256 e) internal pure returns (uint256) {
+        if (e == 0) {
+            return 10 ** 18;
+        } else if (e == 1) {
+            return target;
+        } else {
+            uint p = powFloor(target, e.div(2));
+            p = p.mul(p) / (10**18);
+            if (e % 2 == 1) {
+                p = p.mul(target) / (10**18);
+            }
+            return p;
+        }
+    }
 }
