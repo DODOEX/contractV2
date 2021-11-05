@@ -6,6 +6,7 @@ const { MATIC_CONFIG } = require("./config/matic-config");
 const { ARB_CONFIG } = require("./config/arb-config");
 const { RINKEBY_CONFIG } = require("./config/rinkeby-config");
 const { OK_CONFIG } = require("./config/ok-config");
+const { AURORA_CONFIG } = require("./config/aurora-config");
 const { MOONRIVER_CONFIG } = require("./config/moonriver-config");
 const { BOBA_TEST_CONFIG } = require("./config/boba-test-config");
 
@@ -32,6 +33,9 @@ exports.GetConfig = function (network, accounts) {
             break;
         case "moonriver":
             CONFIG = MOONRIVER_CONFIG
+            break;
+        case "aurora":
+            CONFIG = AURORA_CONFIG
             break;
         //testnet
         case "kovan":

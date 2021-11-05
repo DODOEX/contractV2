@@ -18,11 +18,11 @@
  *
  */
 
-var HDWalletProvider = require("truffle-hdwallet-provider");
-var wrapProvider = require('arb-ethers-web3-bridge').wrapProvider;
+var HDWalletProvider = require("@truffle/hdwallet-provider");
+const NonceTrackerSubprovider = require('web3-provider-engine/subproviders/nonce-tracker')
 var privKey = process.env.privKey;
 var infuraId = process.env.infuraId;
-//
+
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
 require("ts-node/register"); // eslint-disable-line
@@ -141,7 +141,18 @@ module.exports = {
       provider: () => {
         return new HDWalletProvider(privKey, 'https://rpc.moonriver.moonbeam.network');
       },
-      network_id: 1285,
+      network_id: 1285
+    },
+
+    aurora: {
+      networkCheckTimeout: 100000,
+      provider: () => {
+        let hdWalletProvider = new HDWalletProvider(privKey, 'https://mainnet.aurora.dev');
+        hdWalletProvider.engine.addProvider(new NonceTrackerSubprovider())
+        return hdWalletProvider
+      },
+      network_id: 0x4e454152,
+      gas: 10000000
     },
 
     oktest: {
@@ -169,10 +180,16 @@ module.exports = {
     boba_test: {
       networkCheckTimeout: 100000,
       provider: () => {
-        return new HDWalletProvider(privKey, 'https://rinkeby-v2.boba.network')
+        return new HDWalletProvider({
+          privateKeys: [privKey],
+          providerOrUrl: 'https://rinkeby.boba.network',
+          chainId: 28
+        })
       },
-      network_id: 420,
+      network_id: 28,
       gasPrice: 0,
+      timeoutBlocks: 200,
+      skipDryRun: true
     },
 
     neon_test: {
@@ -181,17 +198,11 @@ module.exports = {
         return new HDWalletProvider(privKey, 'https://proxy.testnet.neonlabs.org/solana')
       },
       network_id: 111,
-      gasPrice: 0,
+      gasPrice: 0
     },
 
     arb: {
       networkCheckTimeout: 100000,
-      // provider: function () {
-      //   return wrapProvider(
-      //     new HDWalletProvider(privKey, "https://arb1.arbitrum.io/rpc")
-      //     // new HDWalletProvider(privKey, 'https://arbitrum-mainnet.infura.io/v3/' + infuraId)
-      //   )
-      // },
       provider: function () {
         return new HDWalletProvider(privKey, "https://arb1.arbitrum.io/rpc")
       },

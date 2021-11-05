@@ -37,7 +37,7 @@ const DODOMineV3Registry = artifacts.require("DODOMineV3Registry");
 const DODOMineV3Proxy = artifacts.require("DODOMineV3Proxy");
 
 
-const CurveAdapter = artifacts.require("CurveUnderlyingAdapter");
+const CurveAdapter = artifacts.require("CurveAdapter");
 
 module.exports = async (deployer, network, accounts) => {
     let CONFIG = GetConfig(network, accounts)
@@ -75,7 +75,6 @@ module.exports = async (deployer, network, accounts) => {
     let ERC20MineV3Address = CONFIG.ERC20MineV3;
     let DODOMineV3RegistryAddress = CONFIG.DODOMineV3Registry;
     let DODOMineV3ProxyAddress = CONFIG.DODOMineV3Proxy;
-
 
     if (deploySwitch.MineV3) {
         logger.log("====================================================");

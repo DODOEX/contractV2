@@ -486,8 +486,8 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("DODOApprove Init tx: ", tx.tx);
 
             //Set FeeRateDIP3
-            const FeeRateModelInstance = await FeeRateModel.at(DefaultMtFeeRateAddress);
-            tx = await FeeRateModelInstance.setProxy(FeeRateDIP3Address);
+            const FeeRateModelInstance = await FeeRateModelTemplate.at(DefaultMtFeeRateAddress);
+            tx = await FeeRateModelInstance.setFeeProxy(FeeRateDIP3Address);
             logger.log("Set FeeRateDIP3 tx: ", tx.tx);
 
             //ERC20V2Factory 设置fee
