@@ -31,6 +31,9 @@ contract CPFunding is CPStorage {
     
     modifier isBidderAllow(address bidder) {
         require(_BIDDER_PERMISSION_.isAllowed(bidder), "BIDDER_NOT_ALLOWED");
+        if(_IS_OVERCAP_STOP) {
+            require(_QUOTE_TOKEN_.balanceOf(address(this)) < _POOL_QUOTE_CAP_, "ALREADY_OVER_CAP");
+        }
         _;
     }
 

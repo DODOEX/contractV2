@@ -41,6 +41,7 @@ contract CrowdPoolingFactory is InitializableOwnable {
     uint256 public _K_ = 0;
     uint256 public _CLIFF_RATE_ = 10**18;
 
+    mapping(address => address) liquidityProtectWhitelist;
 
     // ============ Registry ============
 
@@ -52,6 +53,7 @@ contract CrowdPoolingFactory is InitializableOwnable {
     // ============ modifiers ===========
 
     modifier valueCheck(
+        address creator,
         address cpAddress,
         address baseToken,
         uint256[] memory timeLine,
@@ -64,7 +66,9 @@ contract CrowdPoolingFactory is InitializableOwnable {
 
         uint256 baseTokenBalance = IERC20(baseToken).balanceOf(cpAddress);
         require(valueList[0].mul(100) <= baseTokenBalance.mul(valueList[2]).div(10**18).mul(_CAP_RATIO_),"CP_FACTORY : QUOTE_CAP_INVALID");
-        require(timeLine[3]>= _FREEZE_DURATION_, "CP_FACTORY : FREEZE_DURATION_INVALID");
+        if(liquidityProtectWhitelist[creator] != baseToken) {
+            require(timeLine[3]>= _FREEZE_DURATION_, "CP_FACTORY : FREEZE_DURATION_INVALID");
+        }
         _;
     }
 
@@ -102,18 +106,17 @@ contract CrowdPoolingFactory is InitializableOwnable {
     function initCrowdPooling(
         address cpAddress,
         address creator,
-        address baseToken,
-        address quoteToken,
+        address[] memory tokens,//0 baseToken 1 quoteToken
         uint256[] memory timeLine,
         uint256[] memory valueList,
-        bool isOpenTWAP
-    ) external valueCheck(cpAddress,baseToken,timeLine,valueList) {
+        bool[] memory switches
+    ) external valueCheck(creator,cpAddress,tokens[0],timeLine,valueList) {
         {
         address[] memory addressList = new address[](7);
         addressList[0] = creator;
         addressList[1] = _DEFAULT_MAINTAINER_;
-        addressList[2] = baseToken;
-        addressList[3] = quoteToken;
+        addressList[2] = tokens[0];
+        addressList[3] = tokens[1];
         addressList[4] = _DEFAULT_PERMISSION_MANAGER_;
         addressList[5] = _DEFAULT_MT_FEE_RATE_MODEL_;
         addressList[6] = _DVM_FACTORY_;
@@ -122,14 +125,14 @@ contract CrowdPoolingFactory is InitializableOwnable {
             addressList,
             timeLine,
             valueList,
-            isOpenTWAP
+            switches
         );
         }
 
-        _REGISTRY_[baseToken][quoteToken].push(cpAddress);
+        _REGISTRY_[tokens[0]][tokens[1]].push(cpAddress);
         _USER_REGISTRY_[creator].push(cpAddress);
 
-        emit NewCP(baseToken, quoteToken, creator, cpAddress);
+        emit NewCP(tokens[0], tokens[1], creator, cpAddress);
     }
 
     // ============ View Functions ============
@@ -159,6 +162,10 @@ contract CrowdPoolingFactory is InitializableOwnable {
     }
 
     // ============ Owner Functions ============
+
+    function setLiquidityProtectWhitelist(address creator, address baseToken) external onlyOwner {
+        liquidityProtectWhitelist[creator] = baseToken;
+    }
     
     function updateCPTemplate(address _newCPTemplate) external onlyOwner {
         _CP_TEMPLATE_ = _newCPTemplate;

@@ -29,7 +29,7 @@ contract CP is CPVesting {
         address[] calldata addressList,
         uint256[] calldata timeLine,
         uint256[] calldata valueList,
-        bool isOpenTWAP
+        bool[] calldata switches //0 isOverCapStop 1 isOpenTWAP
     ) external {
         /*
         Address List
@@ -59,9 +59,10 @@ contract CP is CPVesting {
         2. phase calm duration
         3. freeze duration
         4. vesting duration
+        5. claim lock duration
         */
 
-        require(timeLine.length == 5, "LIST_LENGTH_WRONG");
+        require(timeLine.length == 6, "LIST_LENGTH_WRONG");
 
         _PHASE_BID_STARTTIME_ = timeLine[0];
         _PHASE_BID_ENDTIME_ = _PHASE_BID_STARTTIME_.add(timeLine[1]);
@@ -69,7 +70,7 @@ contract CP is CPVesting {
 
         _FREEZE_DURATION_ = timeLine[3];
         _VESTING_DURATION_ = timeLine[4];
-
+        _CLAIM_LOCK_DURATION_ = timeLine[5];
         require(block.timestamp <= _PHASE_BID_STARTTIME_, "TIMELINE_WRONG");
 
         /*
@@ -93,7 +94,8 @@ contract CP is CPVesting {
 
         _TOTAL_BASE_ = _BASE_TOKEN_.balanceOf(address(this));
 
-        _IS_OPEN_TWAP_ = isOpenTWAP;
+        _IS_OVERCAP_STOP = switches[0];
+        _IS_OPEN_TWAP_ = switches[1];
 
         require(address(this).balance == _SETTEL_FUND_, "SETTLE_FUND_NOT_MATCH");
     }
@@ -101,6 +103,6 @@ contract CP is CPVesting {
     // ============ Version Control ============
 
     function version() virtual external pure returns (string memory) {
-        return "CP 1.0.0";
+        return "CP 1.0.1";
     }
 }
