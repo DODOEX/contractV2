@@ -87,11 +87,10 @@ interface IDODOV2 {
     function initCrowdPooling(
         address cpAddress,
         address creator,
-        address baseToken,
-        address quoteToken,
+        address[] memory tokens,
         uint256[] memory timeLine,
         uint256[] memory valueList,
-        bool isOpenTWAP
+        bool[] memory switches
     ) external;
 
     function bid(address to) external;

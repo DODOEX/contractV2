@@ -13,7 +13,7 @@ interface ICP {
         address[] calldata addressList,
         uint256[] calldata timeLine,
         uint256[] calldata valueList,
-        bool isOpenTWAP
+        bool[] calldata switches
     ) external;
 
     function bid(address to) external;
