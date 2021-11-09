@@ -16,6 +16,8 @@ module.exports = {
         //Template
         CloneFactory: "0x03E2427859119E497EB856a166F616a2Ce5f8c88",
         FeeRateModel: "0x18DFdE99F578A0735410797e949E8D3e2AFCB9D2",
+        FeeRateImpl: "",
+        UserQuota: "",
         PermissionManager: "0x729f7f44bf64Ce814716b6261e267DbE6cdf021c",
         DVM: "0x409E377A7AfFB1FD3369cfc24880aD58895D1dD9",
         DPP: "0x85351262f7474Ebe23FfAcD633cf20A491F1325D",

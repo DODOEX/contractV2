@@ -7,13 +7,13 @@
 
 pragma solidity 0.6.9;
 
-import {Ownable} from "../lib/Ownable.sol";
+import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 
 interface IQuota {
     function getUserQuota(address user) external view returns (int);
 }
 
-contract UserQuota is Ownable, IQuota {
+contract UserQuota is InitializableOwnable, IQuota {
 
     mapping(address => uint256) public userQuota;
     

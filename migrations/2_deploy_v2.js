@@ -6,7 +6,8 @@ const { GetConfig } = require("../configAdapter.js")
 
 const CloneFactory = artifacts.require("CloneFactory");
 const FeeRateModelTemplate = artifacts.require("FeeRateModel");
-const FeeRateDIP3 = artifacts.require("FeeRateDIP3Impl");
+const UserQuota = artifacts.require("UserQuota");
+const FeeRateImpl = artifacts.require("FeeRateImpl");
 const PermissionManagerTemplate = artifacts.require("PermissionManager");
 const DODOSellHelper = artifacts.require("DODOSellHelper");
 const DODOV1PmmHelper = artifacts.require("DODOV1PmmHelper");
@@ -68,7 +69,8 @@ module.exports = async (deployer, network, accounts) => {
     //Template
     let CloneFactoryAddress = CONFIG.CloneFactory;
     let DefaultMtFeeRateAddress = CONFIG.FeeRateModel;
-    let FeeRateDIP3Address = CONFIG.FeeRateDIP3;
+    let UserQuotaAddress = CONFIG.UserQuota;
+    let FeeRateImplAddress = CONFIG.FeeRateImpl;
     let DefaultPermissionAddress = CONFIG.PermissionManager;
     let DvmTemplateAddress = CONFIG.DVM;
     let DspTemplateAddress = CONFIG.DSP;
@@ -171,13 +173,19 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("Init DefaultMtFeeRateAddress Tx:", tx.tx);
         }
 
-        if (FeeRateDIP3Address == "") {
-            await deployer.deploy(FeeRateDIP3);
-            FeeRateDIP3Address = FeeRateDIP3.address;
-            logger.log("FeeRateDIP3 Address: ", FeeRateDIP3Address);
-            const feeRateDIP3Instance = await FeeRateDIP3.at(FeeRateDIP3Address);
-            var tx = await feeRateDIP3Instance.initOwner(multiSigAddress);
-            logger.log("Init FeeRateDIP3 Tx:", tx.tx);
+        if (UserQuotaAddress == "") {
+            await deployer.deploy(UserQuota);
+            UserQuotaAddress = UserQuota.address;
+            logger.log("UserQuotaAddress: ", UserQuotaAddress);
+        }
+
+        if (FeeRateImplAddress == "") {
+            await deployer.deploy(FeeRateImpl);
+            FeeRateImplAddress = FeeRateImpl.address;
+            logger.log("FeeRateImpl Address: ", FeeRateImplAddress);
+            const feeRateImplInstance = await FeeRateImpl.at(FeeRateImplAddress);
+            var tx = await feeRateImplInstance.init(multiSigAddress,CloneFactoryAddress,UserQuotaAddress);
+            logger.log("Init FeeRateImpl Tx:", tx.tx);
         }
 
         if (DefaultPermissionAddress == "") {
@@ -485,10 +493,10 @@ module.exports = async (deployer, network, accounts) => {
             tx = await DODOApproveInstance.init(multiSigAddress, DODOApproveProxy.address);
             logger.log("DODOApprove Init tx: ", tx.tx);
 
-            //Set FeeRateDIP3
+            //Set FeeRateImpl
             const FeeRateModelInstance = await FeeRateModelTemplate.at(DefaultMtFeeRateAddress);
-            tx = await FeeRateModelInstance.setFeeProxy(FeeRateDIP3Address);
-            logger.log("Set FeeRateDIP3 tx: ", tx.tx);
+            tx = await FeeRateModelInstance.setFeeProxy(FeeRateImplAddress);
+            logger.log("Set FeeRateImpl tx: ", tx.tx);
 
             //ERC20V2Factory 设置fee
             const ERC20V2FactoryInstance = await ERC20V2Factory.at(ERC20V2FactoryAddress);

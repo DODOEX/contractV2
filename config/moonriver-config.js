@@ -12,15 +12,17 @@ module.exports = {
         //DODO: "0xB5397B2210f49e96a5EB2c9747Aa2bD9397d90C0",
         //ERC20Helper: "0x6373ceB657C83C91088d328622573FB766064Ac4",
         DODOSellHelper: "0x5e84190a270333aCe5B9202a3F4ceBf11b81bB01",
-        DODOCalleeHelper: "", //0xc4436fBAE6eBa5d95bf7d53Ae515F8A707Bd402A replace weth
+        DODOCalleeHelper: "0xc4436fBAE6eBa5d95bf7d53Ae515F8A707Bd402A", // replace weth need to redeploy
         DODOV1PmmHelper: "0x3CD6D7F5fF977bf8069548eA1F9441b061162b42",
-        DODOV2RouteHelper: "",//待升级
+        DODOV2RouteHelper: "0x8a6998b9A4E4f63c8aDB46ceEB01857A956A8122",
         CurveSample: "",
 
         //Template
         CloneFactory: "0xDfaf9584F5d229A9DBE5978523317820A8897C5A",
         FeeRateModel: "0x2BBD66fC4898242BDBD2583BBe1d76E8b8f71445",
         //FeeRateDIP3: "0xbef0C8Cd420b76e9d31509abbfd7f8C9f664527c",
+        FeeRateImpl: "",
+        UserQuota: "",
         PermissionManager: "0x729f7f44bf64Ce814716b6261e267DbE6cdf021c",
         DVM: "0xC3BeD579CaB3EC29B22D9AB99F4E586af42496b9",
         DPP: "0x6fdDB76c93299D985f4d3FC7ac468F9A168577A4",
@@ -37,7 +39,7 @@ module.exports = {
         //Factory
         DVMFactory: "0x738Ebf387A0CE0eb46b0eF8Fa5DEa2EaE6B1Df51",
         DPPFactory: "0xd0e1aA51dF0896c126Ce6F8A064E551e0DD3D39b",
-        DSPFactory: "0xB76de21f04F677f07D9881174a1D8E624276314C", //待修改DSP模板
+        DSPFactory: "0xB76de21f04F677f07D9881174a1D8E624276314C",
         UpCpFactory: "0x043957f7554275b90c5178872faE851dcfC1089D",
         CrowdPoolingFactory: "0x0596908263Ef2724fBfBcAfA1c983FCD7a629038",
         ERC20V2Factory: "0xaeB5CF31b97dce6134e416129845e01106fFB177",
@@ -54,15 +56,13 @@ module.exports = {
         UniAdapter: "0xa356867fDCEa8e71AEaF87805808803806231FdC",
         CurveAdapter: "",
 
-        //not verify
         //Proxy
         DODOV2Proxy: "0xd9deC7c3C06e62a4c1BeEB07CadF568f496b14c2",
         DSPProxy: "0x9f015aa5557ffBb47850c045Df67Bf229B07f2eA",
         CpProxy: "0x357c5E9cfA8B834EDcef7C7aAbD8F9Db09119d11",
-        DPPProxy: "",//待配置
-        RouteProxy: "0x0125Cd41312F72a0774112Ca639D65A2C02e3627",
-        
-        DODOMineV3Proxy: "0xb159260989012fA98af560A3Fa6D9cd11a64cf6E", //替换ERC20MineV3
+        DPPProxy: "0xB8605027F9a29D6a68eC489561c9a7ec9180aECC", //添加至ApproveProxy 等待时间锁
+        RouteProxy: "0x0125Cd41312F72a0774112Ca639D65A2C02e3627",        
+        DODOMineV3Proxy: "0xb159260989012fA98af560A3Fa6D9cd11a64cf6E",
 
         //Account
         multiSigAddress: "0xef49a6DBa1C8DF859E49c17E9A485B439c7689d3",
