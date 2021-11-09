@@ -63,7 +63,7 @@ contract DODOCpProxy is ReentrancyGuard {
         uint256 baseInAmount,
         uint256[] memory timeLine,
         uint256[] memory valueList,
-        bool isOpenTWAP,
+        bool[] memory switches,
         uint256 deadLine
     ) external payable preventReentrant judgeExpired(deadLine) returns (address payable newUpCrowdPooling) {
         address _baseToken = baseToken;
@@ -82,14 +82,17 @@ contract DODOCpProxy is ReentrancyGuard {
         (bool success, ) = newUpCrowdPooling.call{value: msg.value}("");
         require(success, "DODOCpProxy: Transfer failed");
 
+        address[] memory tokens = new address[](2);
+        tokens[0] = _baseToken;
+        tokens[1] = _quoteToken;
+
         IDODOV2(_UPCP_FACTORY_).initCrowdPooling(
             newUpCrowdPooling,
             msg.sender,
-            _baseToken,
-            _quoteToken,
+            tokens,
             timeLine,
             valueList,
-            isOpenTWAP
+            switches
         );
     }
 
@@ -101,7 +104,7 @@ contract DODOCpProxy is ReentrancyGuard {
         uint256 baseInAmount,
         uint256[] memory timeLine,
         uint256[] memory valueList,
-        bool isOpenTWAP,
+        bool[] memory switches,
         uint256 deadLine
     ) external payable preventReentrant judgeExpired(deadLine) returns (address payable newCrowdPooling) {
         address _baseToken = baseToken;
@@ -120,14 +123,17 @@ contract DODOCpProxy is ReentrancyGuard {
         (bool success, ) = newCrowdPooling.call{value: msg.value}("");
         require(success, "DODOCpProxy: Transfer failed");
 
+        address[] memory tokens = new address[](2);
+        tokens[0] = _baseToken;
+        tokens[1] = _quoteToken;
+
         IDODOV2(_CP_FACTORY_).initCrowdPooling(
             newCrowdPooling,
             msg.sender,
-            _baseToken,
-            _quoteToken,
+            tokens,
             timeLine,
             valueList,
-            isOpenTWAP
+            switches
         );
     }
 

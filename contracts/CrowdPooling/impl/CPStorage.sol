@@ -23,6 +23,7 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
     uint256 internal constant _SETTLEMENT_EXPIRE_ = 86400 * 7;
     uint256 internal constant _SETTEL_FUND_ = 200 finney;
     bool public _IS_OPEN_TWAP_ = false;
+    bool public _IS_OVERCAP_STOP = false;
 
     // ============ Timeline ============
 
@@ -68,12 +69,13 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
     uint256 public _K_;
     uint256 public _I_;
 
-    // ============ LP Token Vesting ============
+    // ============ LP Token Vesting && Claim Params ============
 
     uint256 public _TOTAL_LP_AMOUNT_;
     uint256 public _FREEZE_DURATION_;
     uint256 public _VESTING_DURATION_;
     uint256 public _CLIFF_RATE_;
+    uint256 public _CLAIM_LOCK_DURATION_;
 
     // ============ Modifiers ============
 

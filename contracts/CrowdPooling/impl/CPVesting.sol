@@ -40,6 +40,11 @@ contract CPVesting is CPFunding {
         _;
     }
 
+    modifier afterClaimLockDuration() {
+        require(_SETTLED_ && block.timestamp >= _SETTLED_TIME_.add(_CLAIM_LOCK_DURATION_), "CLAIM_LOCKED");
+        _;
+    }
+
     modifier afterFreeze() {
         require(_SETTLED_ && block.timestamp >= _SETTLED_TIME_.add(_FREEZE_DURATION_), "FREEZED");
         _;
@@ -47,7 +52,7 @@ contract CPVesting is CPFunding {
 
     // ============ Bidder Functions ============
 
-    function bidderClaim(address to,bytes calldata data) external afterSettlement {
+    function bidderClaim(address to,bytes calldata data) external afterClaimLockDuration {
         require(!_CLAIMED_[msg.sender], "ALREADY_CLAIMED");
         _CLAIMED_[msg.sender] = true;
 
