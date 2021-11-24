@@ -24,7 +24,7 @@ contract UserQuota is InitializableOwnable, IQuota {
         for(uint256 i = 0; i< users.length; i++) {
             require(users[i] != address(0), "USER_INVALID");
             userQuota[users[i]] = quotas[i];
-            emit SetQuota(users[i],quotas[i]);
+            // emit SetQuota(users[i],quotas[i]);
         }
     }
 

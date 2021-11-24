@@ -22,8 +22,6 @@ module.exports = {
         CloneFactory: "0x6B208E08dcF6BD51F50C5Da09d15B2D8E5C46Cf2",
         FeeRateModel: "0xb57Dd5c265dBb13CA014F2332069E90CD0e22e65",
         //FeeRateDIP3: "0x7737fd30535c69545deeEa54AB8Dd590ccaEBD3c",
-        FeeRateImpl: "",
-        UserQuota: "",
         PermissionManager: "0xE55154D09265b18aC7CDAC6E646672A5460389a1",
         DVM: "0x043957f7554275b90c5178872faE851dcfC1089D",
         DPP: "0x85351262f7474Ebe23FfAcD633cf20A491F1325D",
@@ -52,18 +50,18 @@ module.exports = {
         DODOApproveProxy: "0x6B4Fa0bc61Eddc928e0Df9c7f01e407BfcD3e5EF",
 
         //Adapter
-        DODOV1Adapter: "",
-        DODOV2Adapter: "",
-        UniAdapter: "",
+        DODOV1Adapter: "0x02fCB21dc1cf221939C1d4277fB54016b5d32bC7",
+        DODOV2Adapter: "0xbef0C8Cd420b76e9d31509abbfd7f8C9f664527c",
+        UniAdapter: "0xc4436fBAE6eBa5d95bf7d53Ae515F8A707Bd402A",
         CurveAdapter: "",
 
         //Proxy
-        DODOV2Proxy: "",
-        DSPProxy: "",
-        CpProxy: "",
-        DPPProxy: "",
-        RouteProxy: "",
-        DODOMineV3Proxy: "",
+        DODOV2Proxy: "0xd9deC7c3C06e62a4c1BeEB07CadF568f496b14c2",
+        DSPProxy: "0x53233ABD9108761258a4B6B7822abFD6716B129B",
+        CpProxy: "0x9f015aa5557ffBb47850c045Df67Bf229B07f2eA",
+        DPPProxy: "0x357c5E9cfA8B834EDcef7C7aAbD8F9Db09119d11",
+        RouteProxy: "0x0125Cd41312F72a0774112Ca639D65A2C02e3627",
+        DODOMineV3Proxy: "0x4775b1858f1e417C9609D455C3Ad8751ec01daC4",
 
         //Account
         multiSigAddress: "0x041ABa00c57Dd47abC37A2931dF569a2A2cc57Be",

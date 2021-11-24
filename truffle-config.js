@@ -192,6 +192,21 @@ module.exports = {
       skipDryRun: true
     },
 
+    boba: {
+      networkCheckTimeout: 100000,
+      provider: () => {
+        return new HDWalletProvider({
+          privateKeys: [privKey],
+          providerOrUrl: 'https://mainnet.boba.network',
+          chainId: 288
+        })
+      },
+      network_id: 288,
+      gasPrice: 10000000000,
+      timeoutBlocks: 200,
+      skipDryRun: true
+    },
+
     neon_test: {
       networkCheckTimeout: 100000,
       provider: () => {
