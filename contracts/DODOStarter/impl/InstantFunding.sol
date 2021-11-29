@@ -49,8 +49,8 @@ contract InstantFunding is InitializableOwnable, ReentrancyGuard {
             price = _END_PRICE_;
         } else {
             uint256 timePast = block.timestamp.sub(_START_TIME_);
-            price = _START_PRICE_.mul(timePast).div(_DURATION_).add(
-                _END_PRICE_.mul(_DURATION_.sub(timePast)).div(_DURATION_)
+            price = _START_PRICE_.mul(_DURATION_.sub(timePast)).div(_DURATION_).add(
+                _END_PRICE_.mul(timePast).div(_DURATION_)
             );
         }
     }
@@ -68,7 +68,7 @@ contract InstantFunding is InitializableOwnable, ReentrancyGuard {
     }
 
     // ============ Funding Functions ============
-
+    //TODO:强制转入，适配通缩代币
     function depositToken(uint256 amount) external preventReentrant onlyOwner {
         require(block.timestamp < _START_TIME_, "FUNDING_ALREADY_STARTED");
         IERC20(_TOKEN_ADDRESS_).safeTransferFrom(msg.sender, address(this), amount);
@@ -80,6 +80,7 @@ contract InstantFunding is InitializableOwnable, ReentrancyGuard {
         preventReentrant
         returns (uint256 newTokenAllocation)
     {
+        require(isDepositOpen(), "DEPOSIT_NOT_OPEN");
         // input fund check
         uint256 inputFund = IERC20(_FUNDS_ADDRESS_).balanceOf(address(this)).sub(_FUNDS_RESERVE_);
         _FUNDS_RESERVE_ = _FUNDS_RESERVE_.add(inputFund);
@@ -118,7 +119,20 @@ contract InstantFunding is InitializableOwnable, ReentrancyGuard {
     }
 
     function withdrawUnallocatedToken(address to) external preventReentrant onlyOwner {
+        require(isFundingEnd(), "CAN_NOT_WITHDRAW");
         IERC20(_TOKEN_ADDRESS_).safeTransfer(to, _TOTAL_TOKEN_AMOUNT_.sub(_TOTAL_ALLOCATED_TOKEN_));
         _TOTAL_TOKEN_AMOUNT_ = _TOTAL_ALLOCATED_TOKEN_;
+    }
+
+    // ============ Timeline Control Functions ============
+
+    function isDepositOpen() public view returns (bool) {
+        return
+            block.timestamp >= _START_TIME_ &&
+            block.timestamp < _START_TIME_.add(_DURATION_);
+    }
+
+    function isFundingEnd() public view returns (bool) {
+        return block.timestamp > _START_TIME_.add(_DURATION_);
     }
 }

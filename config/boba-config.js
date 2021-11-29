@@ -1,7 +1,7 @@
 module.exports = {
     BOBA_CONFIG: {
-        // DODOZoo: "",
-        // DODO: "",
+        // DODOZoo: "0x69f52AC40185A2A005D49114F0B77b7bA856F0a0",
+        // DODO: "0x3554a4c51945659E6d6c0F6f786545b56bdF9c39",
 
         //TOKEN
         WETH: "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000",

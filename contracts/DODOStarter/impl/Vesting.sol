@@ -75,10 +75,10 @@ contract Vesting is InstantFunding {
         _INITIAL_POOL_ = IDVMFactory(_POOL_FACTORY_).createDODOVendingMachine(
             _TOKEN_ADDRESS_,
             _FUNDS_ADDRESS_,
-            3e15, // 0.3% lp feeRate
+            3e15, // 0.3% lp feeRate DIP3
             1,
             DecimalMath.ONE,
-            true
+            true //TODO:是否开启
         );
         IERC20(_TOKEN_ADDRESS_).transferFrom(msg.sender, _INITIAL_POOL_, initialTokenAmount);
         IERC20(_FUNDS_ADDRESS_).transfer(_INITIAL_POOL_, _INITIAL_FUND_LIQUIDITY_);

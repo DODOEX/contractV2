@@ -143,17 +143,17 @@ contract FairFunding is InitializableOwnable, ReentrancyGuard {
 
     // ============ Timeline Control Functions ============
 
-    function isDepositOpen() public returns (bool) {
+    function isDepositOpen() public view returns (bool) {
         return
             block.timestamp >= _START_TIME_ &&
             block.timestamp < _START_TIME_.add(_BIDDING_DURATION_);
     }
 
-    function isFundingEnd() public returns (bool) {
+    function isFundingEnd() public view returns (bool) {
         return block.timestamp > _START_TIME_.add(_BIDDING_DURATION_).add(_COOLING_DURATION_);
     }
 
-    function isSettled() public returns (bool) {
+    function isSettled() public view returns (bool) {
         return _FINAL_PRICE_ != 0;
     }
 }
