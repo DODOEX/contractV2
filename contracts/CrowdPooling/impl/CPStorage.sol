@@ -52,7 +52,7 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
 
     uint256 public _TOTAL_SHARES_;
     mapping(address => uint256) internal _SHARES_;
-    mapping(address => bool) public _CLAIMED_;
+    mapping(address => bool) public _CLAIMED_QUOTE_;
 
     address public _POOL_FACTORY_;
     address public _POOL_;
@@ -75,7 +75,11 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
     uint256 public _FREEZE_DURATION_;
     uint256 public _VESTING_DURATION_;
     uint256 public _CLIFF_RATE_;
-    uint256 public _CLAIM_LOCK_DURATION_;
+
+    uint256 public _TOKEN_CLAIM_DURATION_;
+    uint256 public _TOKEN_VESTING_DURATION_;
+    uint256 public _TOKEN_CLIFF_RATE_;
+    mapping(address => uint256) _CLAIMED_BASE_TOKEN_;
 
     // ============ Modifiers ============
 

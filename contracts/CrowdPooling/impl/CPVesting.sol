@@ -29,7 +29,8 @@ contract CPVesting is CPFunding {
 
     // ============ Events ============
     
-    event Claim(address user, uint256 baseAmount, uint256 quoteAmount);
+    event ClaimBaseToken(address user, uint256 baseAmount);
+    event ClaimQuoteToken(address user, uint256 quoteAmount);
     event ClaimLP(uint256 amount);
 
 
@@ -40,33 +41,59 @@ contract CPVesting is CPFunding {
         _;
     }
 
-    modifier afterClaimLockDuration() {
-        require(_SETTLED_ && block.timestamp >= _SETTLED_TIME_.add(_CLAIM_LOCK_DURATION_), "CLAIM_LOCKED");
-        _;
-    }
-
     modifier afterFreeze() {
         require(_SETTLED_ && block.timestamp >= _SETTLED_TIME_.add(_FREEZE_DURATION_), "FREEZED");
         _;
     }
 
+    modifier afterClaimFreeze() {
+        require(_SETTLED_ && block.timestamp >= _SETTLED_TIME_.add(_TOKEN_CLAIM_DURATION_), "CLAIM_FREEZED");
+        _;
+    }
+
     // ============ Bidder Functions ============
 
-    function bidderClaim(address to,bytes calldata data) external afterClaimLockDuration {
-        require(!_CLAIMED_[msg.sender], "ALREADY_CLAIMED");
-        _CLAIMED_[msg.sender] = true;
+    function claimQuoteToken(address to,bytes calldata data) external afterSettlement {
+        require(!_CLAIMED_QUOTE_[msg.sender], "ALREADY_CLAIMED_FUND");
+        _CLAIMED_QUOTE_[msg.sender] = true;
 
-		uint256 baseAmount = _UNUSED_BASE_.mul(_SHARES_[msg.sender]).div(_TOTAL_SHARES_);
 		uint256 quoteAmount = _UNUSED_QUOTE_.mul(_SHARES_[msg.sender]).div(_TOTAL_SHARES_);
 
-        _transferBaseOut(to, baseAmount);
         _transferQuoteOut(to, quoteAmount);
 
 		if(data.length>0){
-			IDODOCallee(to).CPClaimBidCall(msg.sender,baseAmount,quoteAmount,data);
+			IDODOCallee(to).CPClaimBidCall(msg.sender,0,quoteAmount,data);
 		}
 
-        emit Claim(msg.sender, baseAmount, quoteAmount);
+        emit ClaimQuoteToken(msg.sender, quoteAmount);
+    }
+
+
+    function claimBaseToken() external afterClaimFreeze {
+        uint256 claimableBaseAmount = getClaimableBaseToken(msg.sender);
+        _transferBaseOut(msg.sender, claimableBaseAmount);
+        _CLAIMED_BASE_TOKEN_[msg.sender] = _CLAIMED_BASE_TOKEN_[msg.sender].add(claimableBaseAmount);
+        emit ClaimBaseToken(msg.sender, claimableBaseAmount);
+    }
+
+    function getClaimableBaseToken(address user) public view afterClaimFreeze returns (uint256) {
+        uint256 baseTotalAmount = _UNUSED_BASE_.mul(_SHARES_[user]).div(_TOTAL_SHARES_);
+
+        uint256 remainingBaseToken = DecimalMath.mulFloor(
+            getRemainingBaseTokenRatio(block.timestamp),
+            baseTotalAmount
+        );
+        return baseTotalAmount.sub(remainingBaseToken).sub(_CLAIMED_BASE_TOKEN_[user]);
+    }
+
+    function getRemainingBaseTokenRatio(uint256 timestamp) public view afterClaimFreeze returns (uint256) {
+        uint256 timePast = timestamp.sub(_SETTLED_TIME_.add(_TOKEN_CLAIM_DURATION_));
+        if (timePast < _TOKEN_VESTING_DURATION_) {
+            uint256 remainingTime = _TOKEN_VESTING_DURATION_.sub(timePast);
+            return DecimalMath.ONE.sub(_TOKEN_CLIFF_RATE_).mul(remainingTime).div(_TOKEN_VESTING_DURATION_);
+        } else {
+            return 0;
+        }
     }
 
     // ============ Owner Functions ============
