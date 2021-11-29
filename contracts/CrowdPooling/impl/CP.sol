@@ -59,10 +59,11 @@ contract CP is CPVesting {
         2. phase calm duration
         3. freeze duration
         4. vesting duration
-        5. claim lock duration
+        5. claim freeze duration
+        6. claim vesting duration
         */
 
-        require(timeLine.length == 6, "LIST_LENGTH_WRONG");
+        require(timeLine.length == 7, "LIST_LENGTH_WRONG");
 
         _PHASE_BID_STARTTIME_ = timeLine[0];
         _PHASE_BID_ENDTIME_ = _PHASE_BID_STARTTIME_.add(timeLine[1]);
@@ -70,7 +71,8 @@ contract CP is CPVesting {
 
         _FREEZE_DURATION_ = timeLine[3];
         _VESTING_DURATION_ = timeLine[4];
-        _CLAIM_LOCK_DURATION_ = timeLine[5];
+        _TOKEN_CLAIM_DURATION_ = timeLine[5];
+        _TOKEN_VESTING_DURATION_ = timeLine[6];
         require(block.timestamp <= _PHASE_BID_STARTTIME_, "TIMELINE_WRONG");
 
         /*
@@ -78,19 +80,22 @@ contract CP is CPVesting {
         0. pool quote cap
         1. k
         2. i
-        3. cliff rate
+        3. lp cliff rate
+        4. base token cliff rate
         */
 
-        require(valueList.length == 4, "LIST_LENGTH_WRONG");
+        require(valueList.length == 5, "LIST_LENGTH_WRONG");
 
         _POOL_QUOTE_CAP_ = valueList[0];
         _K_ = valueList[1];
         _I_ = valueList[2];
         _CLIFF_RATE_ = valueList[3];
+        _TOKEN_CLIFF_RATE_ = valueList[4];
 
         require(_I_ > 0 && _I_ <= 1e36, "I_VALUE_WRONG");
         require(_K_ <= 1e18, "K_VALUE_WRONG");
         require(_CLIFF_RATE_ <= 1e18, "CLIFF_RATE_WRONG");
+        require(_TOKEN_CLIFF_RATE_ <= 1e18, "TOKEN_CLIFF_RATE_WRONG");
 
         _TOTAL_BASE_ = _BASE_TOKEN_.balanceOf(address(this));
 
