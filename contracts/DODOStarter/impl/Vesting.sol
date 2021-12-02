@@ -20,17 +20,6 @@ contract Vesting is Storage {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-
-    function _claimToken(address to, uint256 totalAllocation) internal {
-        uint256 remainingToken = DecimalMath.mulFloor(
-            getRemainingRatio(block.timestamp,0),
-            totalAllocation
-        );
-        uint256 claimableTokenAmount = totalAllocation.sub(remainingToken).sub(_CLAIMED_TOKEN_[msg.sender]);
-        IERC20(_TOKEN_ADDRESS_).safeTransfer(to,claimableTokenAmount);
-        _CLAIMED_TOKEN_[msg.sender] = _CLAIMED_TOKEN_[msg.sender].add(claimableTokenAmount);
-    }
-
     function claimFunds(address to) external preventReentrant onlyOwner {
         uint256 vestingFunds = _TOTAL_RAISED_FUNDS_.sub(_INITIAL_FUND_LIQUIDITY_);
         uint256 remainingFund = DecimalMath.mulFloor(
@@ -96,5 +85,15 @@ contract Vesting is Storage {
         IERC20(_TOKEN_ADDRESS_).transferFrom(msg.sender, _INITIAL_POOL_, initialTokenAmount);
         IERC20(_FUNDS_ADDRESS_).transfer(_INITIAL_POOL_, _INITIAL_FUND_LIQUIDITY_);
         (_TOTAL_LP_, , ) = IDVM(_INITIAL_POOL_).buyShares(address(this));
+    }
+
+    function _claimToken(address to, uint256 totalAllocation) internal {
+        uint256 remainingToken = DecimalMath.mulFloor(
+            getRemainingRatio(block.timestamp,0),
+            totalAllocation
+        );
+        uint256 claimableTokenAmount = totalAllocation.sub(remainingToken).sub(_CLAIMED_TOKEN_[msg.sender]);
+        IERC20(_TOKEN_ADDRESS_).safeTransfer(to,claimableTokenAmount);
+        _CLAIMED_TOKEN_[msg.sender] = _CLAIMED_TOKEN_[msg.sender].add(claimableTokenAmount);
     }
 }

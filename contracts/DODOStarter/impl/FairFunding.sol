@@ -167,10 +167,10 @@ contract FairFunding is Vesting {
 
     // ============ Funding Functions ============
 
-    function depositFunds(address to) external preventReentrant isForceStop {
+    function depositFunds(address to) external preventReentrant isForceStop returns(uint256 inputFund) {
         require(isDepositOpen(), "DEPOSIT_NOT_OPEN");
         // input fund check
-        uint256 inputFund = IERC20(_FUNDS_ADDRESS_).balanceOf(address(this)).sub(_FUNDS_RESERVE_);
+        inputFund = IERC20(_FUNDS_ADDRESS_).balanceOf(address(this)).sub(_FUNDS_RESERVE_);
         _FUNDS_RESERVE_ = _FUNDS_RESERVE_.add(inputFund);
 
         if (_QUOTA_ != address(0)) {
