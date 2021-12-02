@@ -14,4 +14,8 @@ interface IDODOStarter {
         uint256[] calldata timeLine,
         uint256[] calldata valueList
     ) external;
+
+    function _FUNDS_ADDRESS_() external view returns (address);
+
+    function depositFunds(address to) external returns (uint256);
 }
