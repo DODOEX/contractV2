@@ -8,49 +8,118 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
-import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 import {IQuota} from "../../DODOFee/UserQuota.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
+import {Vesting} from "./Vesting.sol";
 
-contract InstantFunding is InitializableOwnable, ReentrancyGuard {
+contract InstantFunding is Vesting {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    // ============ Token & Balance ============
-
-    uint256 public _FUNDS_RESERVE_;
-    address public _FUNDS_ADDRESS_;
-    address public _TOKEN_ADDRESS_;
-    uint256 public _TOTAL_TOKEN_AMOUNT_;
-
     // ============ Instant Commit Mode ============
-
-    uint256 public _START_TIME_;
-    uint256 public _DURATION_;
     uint256 public _START_PRICE_;
     uint256 public _END_PRICE_;
 
-    address _QUOTA_;
     mapping(address => uint256) _FUNDS_USED_;
     mapping(address => uint256) _FUNDS_UNUSED_;
     mapping(address => uint256) _TOKEN_ALLOCATION_;
     uint256 public _TOTAL_ALLOCATED_TOKEN_;
-    uint256 public _TOTAL_RAISED_FUNDS_;
+
+
+    // ============ Init ============
+    function init(
+        address[] calldata addressList,
+        uint256[] calldata timeLine,
+        uint256[] calldata valueList
+    ) external {
+        /*
+        Address List
+        0. owner
+        1. sellToken
+        2. fundToken
+        3. quotaManager
+        4. poolFactory
+      */
+
+        require(addressList.length == 5, "ADDR_LENGTH_WRONG");
+
+        initOwner(addressList[0]);
+        _TOKEN_ADDRESS_ = addressList[1];
+        _FUNDS_ADDRESS_ = addressList[2];
+        _QUOTA_ = addressList[3];
+        _POOL_FACTORY_ = addressList[4];
+
+        /*
+        Time Line
+        0. starttime
+        1. bid duration
+        2. token vesting starttime
+        3. token vesting duration
+        4. fund vesting starttime
+        5. fund vesting duration
+        6. lp vesting starttime
+        7. lp vesting duration
+        */
+
+        require(timeLine.length == 8, "TIME_LENGTH_WRONG");
+
+        _START_TIME_ = timeLine[0];
+        _BIDDING_DURATION_ = timeLine[1];
+
+        _TOKEN_VESTING_START_ = timeLine[2];
+        _TOKEN_VESTING_DURATION_ = timeLine[3];
+
+        _FUNDS_VESTING_START_ = timeLine[4];
+        _FUNDS_VESTING_DURATION_ = timeLine[5];
+
+        _LP_VESTING_START_ = timeLine[6];
+        _LP_VESTING_DURATION_ = timeLine[7];
+
+        require(block.timestamp <= _START_TIME_, "START_TIME_WRONG");
+        require(_START_TIME_.add(_BIDDING_DURATION_) <= _TOKEN_VESTING_START_, "TOKEN_VESTING_TIME_WRONG");
+        require(_START_TIME_.add(_BIDDING_DURATION_) <= _FUNDS_VESTING_START_, "FUND_VESTING_TIME_WRONG");
+
+        /*
+        Value List
+        0. start price
+        1. end price
+        2. token cliffRate
+        3. fund cliffRate
+        4. lp cliffRate
+        5. initial liquidity
+        */
+
+        require(valueList.length == 6, "VALUE_LENGTH_WRONG");
+
+        _START_PRICE_ = valueList[0];
+        _END_PRICE_ = valueList[1];
+
+        _TOKEN_CLIFF_RATE_ = valueList[2];
+        _FUNDS_CLIFF_RATE_ = valueList[3];
+        _LP_CLIFF_RATE_ = valueList[4];
+
+        _INITIAL_FUND_LIQUIDITY_ = valueList[5];
+
+        require(_TOKEN_CLIFF_RATE_ <= 1e18, "TOKEN_CLIFF_RATE_WRONG");
+        require(_FUNDS_CLIFF_RATE_ <= 1e18, "FUND_CLIFF_RATE_WRONG");
+        require(_LP_CLIFF_RATE_ <= 1e18, "LP_CLIFF_RATE_WRONG");
+
+        _TOTAL_TOKEN_AMOUNT_ = IERC20(_TOKEN_ADDRESS_).balanceOf(address(this));
+    }
 
     // ============ View Functions ============
     function getCurrentPrice() public view returns (uint256 price) {
         if (block.timestamp <= _START_TIME_) {
             price = _START_PRICE_;
-        } else if (block.timestamp >= _START_TIME_.add(_DURATION_)) {
+        } else if (block.timestamp >= _START_TIME_.add(_BIDDING_DURATION_)) {
             price = _END_PRICE_;
         } else {
             uint256 timePast = block.timestamp.sub(_START_TIME_);
-            price = _START_PRICE_.mul(_DURATION_.sub(timePast)).div(_DURATION_).add(
-                _END_PRICE_.mul(timePast).div(_DURATION_)
+            price = _START_PRICE_.mul(_BIDDING_DURATION_.sub(timePast)).div(_BIDDING_DURATION_).add(
+                _END_PRICE_.mul(timePast).div(_BIDDING_DURATION_)
             );
         }
     }
@@ -68,16 +137,11 @@ contract InstantFunding is InitializableOwnable, ReentrancyGuard {
     }
 
     // ============ Funding Functions ============
-    //TODO:强制转入，适配通缩代币
-    function depositToken(uint256 amount) external preventReentrant onlyOwner {
-        require(block.timestamp < _START_TIME_, "FUNDING_ALREADY_STARTED");
-        IERC20(_TOKEN_ADDRESS_).safeTransferFrom(msg.sender, address(this), amount);
-        _TOTAL_TOKEN_AMOUNT_ = _TOTAL_TOKEN_AMOUNT_.add(amount);
-    }
 
     function depositFunds(address to)
         external
         preventReentrant
+        isForceStop
         returns (uint256 newTokenAllocation)
     {
         require(isDepositOpen(), "DEPOSIT_NOT_OPEN");
@@ -124,15 +188,20 @@ contract InstantFunding is InitializableOwnable, ReentrancyGuard {
         _TOTAL_TOKEN_AMOUNT_ = _TOTAL_ALLOCATED_TOKEN_;
     }
 
+    function claimToken(address to) external {
+        uint256 totalAllocation = getUserTokenAllocation(msg.sender);
+        _claimToken(to, totalAllocation);
+    }
+
     // ============ Timeline Control Functions ============
 
     function isDepositOpen() public view returns (bool) {
         return
             block.timestamp >= _START_TIME_ &&
-            block.timestamp < _START_TIME_.add(_DURATION_);
+            block.timestamp < _START_TIME_.add(_BIDDING_DURATION_);
     }
 
     function isFundingEnd() public view returns (bool) {
-        return block.timestamp > _START_TIME_.add(_DURATION_);
+        return block.timestamp > _START_TIME_.add(_BIDDING_DURATION_);
     }
 }

@@ -8,42 +8,111 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
-import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 import {IQuota} from "../../DODOFee/UserQuota.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
+import {Vesting} from "./Vesting.sol";
 
-contract FairFunding is InitializableOwnable, ReentrancyGuard {
+contract FairFunding is Vesting {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    // ============ Token & Balance ============
-
-    uint256 public _FUNDS_RESERVE_;
-    address public _FUNDS_ADDRESS_;
-    address public _TOKEN_ADDRESS_;
-    uint256 public _TOTAL_TOKEN_AMOUNT_;
-
     // ============ Fair Mode ============
-
-    uint256 public _START_TIME_;
-    uint256 public _BIDDING_DURATION_;
     uint256 public _COOLING_DURATION_;
 
-    address _QUOTA_;
     mapping(address => uint256) _FUNDS_DEPOSITED_;
     mapping(address => bool) _FUNDS_CLAIMED_;
-    uint256 public _TOTAL_RAISED_FUNDS_;
     uint256 public _USED_FUND_RATIO_;
     uint256 public _FINAL_PRICE_;
 
-    // ============ Parameters ============
-
     uint256 public _LOWER_LIMIT_PRICE_;
     uint256 public _UPPER_LIMIT_PRICE_;
+
+    // ============ Init ============
+    function init(
+        address[] calldata addressList,
+        uint256[] calldata timeLine,
+        uint256[] calldata valueList
+    ) external {
+        /*
+        Address List
+        0. owner
+        1. sellToken
+        2. fundToken
+        3. quotaManager
+        4. poolFactory
+      */
+
+        require(addressList.length == 5, "ADDR_LENGTH_WRONG");
+
+        initOwner(addressList[0]);
+        _TOKEN_ADDRESS_ = addressList[1];
+        _FUNDS_ADDRESS_ = addressList[2];
+        _QUOTA_ = addressList[3];
+        _POOL_FACTORY_ = addressList[4];
+
+        /*
+        Time Line
+        0. starttime
+        1. bid duration
+        2. calm duration
+        3. token vesting starttime
+        4. token vesting duration
+        5. fund vesting starttime
+        6. fund vesting duration
+        7. lp vesting starttime
+        8. lp vesting duration
+        */
+
+        require(timeLine.length == 9, "TIME_LENGTH_WRONG");
+
+        _START_TIME_ = timeLine[0];
+        _BIDDING_DURATION_ = timeLine[1];
+        _COOLING_DURATION_ = timeLine[2];
+
+        _TOKEN_VESTING_START_ = timeLine[3];
+        _TOKEN_VESTING_DURATION_ = timeLine[4];
+
+        _FUNDS_VESTING_START_ = timeLine[5];
+        _FUNDS_VESTING_DURATION_ = timeLine[6];
+
+        _LP_VESTING_START_ = timeLine[7];
+        _LP_VESTING_DURATION_ = timeLine[8];
+
+        require(block.timestamp <= _START_TIME_, "START_TIME_WRONG");
+        require(_START_TIME_.add(_BIDDING_DURATION_).add(_COOLING_DURATION_) <= _TOKEN_VESTING_START_, "TOKEN_VESTING_TIME_WRONG");
+        require(_START_TIME_.add(_BIDDING_DURATION_).add(_COOLING_DURATION_) <= _FUNDS_VESTING_START_, "FUND_VESTING_TIME_WRONG");
+
+        /*
+        Value List
+        0. lower price
+        1. upper price
+        2. token cliffRate
+        3. fund cliffRate
+        4. lp cliffRate
+        5. initial liquidity
+        */
+
+        require(valueList.length == 6, "VALUE_LENGTH_WRONG");
+
+        _LOWER_LIMIT_PRICE_ = valueList[0];
+        _UPPER_LIMIT_PRICE_ = valueList[1];
+
+        _TOKEN_CLIFF_RATE_ = valueList[2];
+        _FUNDS_CLIFF_RATE_ = valueList[3];
+        _LP_CLIFF_RATE_ = valueList[4];
+
+        _INITIAL_FUND_LIQUIDITY_ = valueList[5];
+
+        require(_LOWER_LIMIT_PRICE_ <= _UPPER_LIMIT_PRICE_, "PRICE_WRONG");
+        require(_TOKEN_CLIFF_RATE_ <= 1e18, "TOKEN_CLIFF_RATE_WRONG");
+        require(_FUNDS_CLIFF_RATE_ <= 1e18, "FUND_CLIFF_RATE_WRONG");
+        require(_LP_CLIFF_RATE_ <= 1e18, "LP_CLIFF_RATE_WRONG");
+
+        _TOTAL_TOKEN_AMOUNT_ = IERC20(_TOKEN_ADDRESS_).balanceOf(address(this));
+    }
 
     // ============ View Functions ============
 
@@ -84,7 +153,7 @@ contract FairFunding is InitializableOwnable, ReentrancyGuard {
 
     // ============ Settle Functions ============
 
-    function settle() public {
+    function settle() public isForceStop {
         require(_FINAL_PRICE_ == 0 && isFundingEnd(), "CAN_NOT_SETTLE");
         _FINAL_PRICE_ = getCurrentPrice();
         _USED_FUND_RATIO_ = DecimalMath.divFloor(
@@ -98,13 +167,7 @@ contract FairFunding is InitializableOwnable, ReentrancyGuard {
 
     // ============ Funding Functions ============
 
-    function depositToken(uint256 amount) external preventReentrant onlyOwner {
-        require(block.timestamp < _START_TIME_, "FUNDING_ALREADY_STARTED");
-        IERC20(_TOKEN_ADDRESS_).safeTransferFrom(msg.sender, address(this), amount);
-        _TOTAL_TOKEN_AMOUNT_ = _TOTAL_TOKEN_AMOUNT_.add(amount);
-    }
-
-    function depositFunds(address to) external preventReentrant {
+    function depositFunds(address to) external preventReentrant isForceStop {
         require(isDepositOpen(), "DEPOSIT_NOT_OPEN");
         // input fund check
         uint256 inputFund = IERC20(_FUNDS_ADDRESS_).balanceOf(address(this)).sub(_FUNDS_RESERVE_);
@@ -139,6 +202,11 @@ contract FairFunding is InitializableOwnable, ReentrancyGuard {
         uint256 allocatedToken = DecimalMath.divCeil(_TOTAL_RAISED_FUNDS_, _FINAL_PRICE_);
         IERC20(_TOKEN_ADDRESS_).safeTransfer(to, _TOTAL_TOKEN_AMOUNT_.sub(allocatedToken));
         _TOTAL_TOKEN_AMOUNT_ = allocatedToken;
+    }
+
+    function claimToken(address to) external {
+        uint256 totalAllocation = getUserTokenAllocation(msg.sender);
+        _claimToken(to, totalAllocation);
     }
 
     // ============ Timeline Control Functions ============

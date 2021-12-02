@@ -25,6 +25,8 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
     bool public _IS_OPEN_TWAP_ = false;
     bool public _IS_OVERCAP_STOP = false;
 
+    bool public _FORCE_STOP_ = false;
+
     // ============ Timeline ============
 
     uint256 public _PHASE_BID_STARTTIME_;
@@ -56,6 +58,7 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
 
     address public _POOL_FACTORY_;
     address public _POOL_;
+    uint256 public _POOL_FEE_RATE_;
     uint256 public _AVG_SETTLED_PRICE_;
 
     // ============ Advanced Control ============
@@ -82,6 +85,10 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
     mapping(address => uint256) _CLAIMED_BASE_TOKEN_;
 
     // ============ Modifiers ============
+    modifier isForceStop() {
+        require(!_FORCE_STOP_, "FORCE_STOP");
+        _;
+    }
 
     modifier phaseBid() {
         require(
@@ -115,5 +122,13 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
     modifier phaseVesting() {
         require(_SETTLED_, "NOT_VESTING");
         _;
+    }
+
+    function forceStop() external onlyOwner {
+        require(block.timestamp < _PHASE_BID_STARTTIME_, "CP_ALREADY_STARTED");
+        _FORCE_STOP_ = true;
+        _TOTAL_BASE_ = 0;
+        uint256 baseAmount = _BASE_TOKEN_.balanceOf(address(this));
+        _BASE_TOKEN_.transfer(_OWNER_, baseAmount);
     }
 }

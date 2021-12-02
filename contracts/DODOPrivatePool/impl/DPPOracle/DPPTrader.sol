@@ -39,9 +39,8 @@ contract DPPTrader is DPPVault {
     event RChange(PMMPricing.RState newRState);
 
     modifier isOraclePriceValid() {
-        (, bool isValid, bool isStale,) = IOracle(_I_).getPrice(address(_BASE_TOKEN_)); 
-        require(isValid, "ORACLE_PRICE_INVALID");
-        require(!isStale, "ORACLE_PRICE_STALE");
+        bool isFeasible = IOracle(_I_).isFeasible(address(_BASE_TOKEN_)); 
+        require(isFeasible, "ORACLE_PRICE_INVALID");
         _;
     }
 

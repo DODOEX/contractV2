@@ -50,7 +50,7 @@ contract DPPStorage is InitializableOwnable, ReentrancyGuard {
     // ============ Helper Functions ============
 
     function getPMMState() public view returns (PMMPricing.PMMState memory state) {
-        (state.i,,,) = IOracle(_I_).getPrice(address(_BASE_TOKEN_));
+        state.i = IOracle(_I_).prices(address(_BASE_TOKEN_));
         state.K = _K_;
         state.B = _BASE_RESERVE_;
         state.Q = _QUOTE_RESERVE_;
