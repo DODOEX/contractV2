@@ -37,7 +37,7 @@ contract CPFunding is CPStorage {
         _;
     }
 
-    function bid(address to) external phaseBid preventReentrant isBidderAllow(to) {
+    function bid(address to) external isForceStop phaseBid preventReentrant isBidderAllow(to) {
         uint256 input = _getQuoteInput();
         uint256 mtFee = DecimalMath.mulFloor(input, _MT_FEE_RATE_MODEL_.getFeeRate(to));
         _transferQuoteOut(_MAINTAINER_, mtFee);
@@ -71,7 +71,7 @@ contract CPFunding is CPStorage {
 
     // ============ SETTLEMENT ============
 
-    function settle() external phaseSettlement preventReentrant {
+    function settle() external isForceStop phaseSettlement preventReentrant {
         _settle();
 
         (uint256 poolBase, uint256 poolQuote, uint256 poolI, uint256 unUsedBase, uint256 unUsedQuote) = getSettleResult();
@@ -92,7 +92,7 @@ contract CPFunding is CPStorage {
         _POOL_ = IDVMFactory(_POOL_FACTORY_).createDODOVendingMachine(
             _poolBaseToken,
             _poolQuoteToken,
-            3e15, // 0.3% lp feeRate
+            _POOL_FEE_RATE_,
             poolI,
             DecimalMath.ONE,
             _IS_OPEN_TWAP_
@@ -112,7 +112,7 @@ contract CPFunding is CPStorage {
     }
 
     // in case something wrong with base token contract
-    function emergencySettle() external phaseSettlement preventReentrant {
+    function emergencySettle() external isForceStop phaseSettlement preventReentrant {
         require(block.timestamp >= _PHASE_CALM_ENDTIME_.add(_SETTLEMENT_EXPIRE_), "NOT_EMERGENCY");
         _settle();
         _UNUSED_QUOTE_ = _QUOTE_TOKEN_.balanceOf(address(this));

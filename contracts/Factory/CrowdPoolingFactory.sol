@@ -41,8 +41,6 @@ contract CrowdPoolingFactory is InitializableOwnable {
     uint256 public _K_ = 0;
     uint256 public _CLIFF_RATE_ = 10**18;
 
-    mapping(address => address) liquidityProtectWhitelist;
-
     // ============ Registry ============
 
     // base -> quote -> CP address list
@@ -66,9 +64,6 @@ contract CrowdPoolingFactory is InitializableOwnable {
 
         uint256 baseTokenBalance = IERC20(baseToken).balanceOf(cpAddress);
         require(valueList[0].mul(100) <= baseTokenBalance.mul(valueList[2]).div(10**18).mul(_CAP_RATIO_),"CP_FACTORY : QUOTE_CAP_INVALID");
-        if(liquidityProtectWhitelist[creator] != baseToken) {
-            require(timeLine[3]>= _FREEZE_DURATION_, "CP_FACTORY : FREEZE_DURATION_INVALID");
-        }
         _;
     }
 
@@ -80,6 +75,8 @@ contract CrowdPoolingFactory is InitializableOwnable {
         address creator,
         address cp
     );
+
+    event RemoveCP(address cp);
 
     constructor(
         address cloneFactory,
@@ -162,10 +159,6 @@ contract CrowdPoolingFactory is InitializableOwnable {
     }
 
     // ============ Owner Functions ============
-
-    function setLiquidityProtectWhitelist(address creator, address baseToken) external onlyOwner {
-        liquidityProtectWhitelist[creator] = baseToken;
-    }
     
     function updateCPTemplate(address _newCPTemplate) external onlyOwner {
         _CP_TEMPLATE_ = _newCPTemplate;
@@ -200,5 +193,32 @@ contract CrowdPoolingFactory is InitializableOwnable {
     function setCliffRate(uint256 _newCliffRate) public onlyOwner {
         require(_newCliffRate <= 10**18, "CP_FACTORY : INVALID");
         _CLIFF_RATE_ = _newCliffRate;
+    }
+
+    function removePoolByAdmin(
+        address creator,
+        address baseToken, 
+        address quoteToken,
+        address pool
+    ) external onlyOwner {
+        address[] memory registryList = _REGISTRY_[baseToken][quoteToken];
+        for (uint256 i = 0; i < registryList.length; i++) {
+            if (registryList[i] == pool) {
+                registryList[i] = registryList[registryList.length - 1];
+                break;
+            }
+        }
+        _REGISTRY_[baseToken][quoteToken] = registryList;
+        _REGISTRY_[baseToken][quoteToken].pop();
+        address[] memory userRegistryList = _USER_REGISTRY_[creator];
+        for (uint256 i = 0; i < userRegistryList.length; i++) {
+            if (userRegistryList[i] == pool) {
+                userRegistryList[i] = userRegistryList[userRegistryList.length - 1];
+                break;
+            }
+        }
+        _USER_REGISTRY_[creator] = userRegistryList;
+        _USER_REGISTRY_[creator].pop();
+        emit RemoveCP(pool);
     }
 }

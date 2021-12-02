@@ -82,15 +82,17 @@ contract CP is CPVesting {
         2. i
         3. lp cliff rate
         4. base token cliff rate
+        5. lp fee rate
         */
 
-        require(valueList.length == 5, "LIST_LENGTH_WRONG");
+        require(valueList.length == 6, "LIST_LENGTH_WRONG");
 
         _POOL_QUOTE_CAP_ = valueList[0];
         _K_ = valueList[1];
         _I_ = valueList[2];
         _CLIFF_RATE_ = valueList[3];
         _TOKEN_CLIFF_RATE_ = valueList[4];
+        _POOL_FEE_RATE_ = valueList[5];
 
         require(_I_ > 0 && _I_ <= 1e36, "I_VALUE_WRONG");
         require(_K_ <= 1e18, "K_VALUE_WRONG");
