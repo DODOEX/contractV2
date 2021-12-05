@@ -467,15 +467,15 @@ contract DODOV2Proxy02 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
     }
 
     //============ CrowdPooling Functions (bid) ============
-    function bid(
-        address cpAddress,
-        uint256 quoteAmount,
-        uint8 flag, // 0 - ERC20, 1 - quoteInETH
-        uint256 deadLine
-    ) external override payable preventReentrant judgeExpired(deadLine) {
-        _deposit(msg.sender, cpAddress, IDODOV2(cpAddress)._QUOTE_TOKEN_(), quoteAmount, flag == 1);
-        IDODOV2(cpAddress).bid(msg.sender);
-    }
+    // function bid(
+    //     address cpAddress,
+    //     uint256 quoteAmount,
+    //     uint8 flag, // 0 - ERC20, 1 - quoteInETH
+    //     uint256 deadLine
+    // ) external override payable preventReentrant judgeExpired(deadLine) {
+    //     _deposit(msg.sender, cpAddress, IDODOV2(cpAddress)._QUOTE_TOKEN_(), quoteAmount, flag == 1);
+    //     IDODOV2(cpAddress).bid(msg.sender);
+    // }
 
 
     function addLiquidityToV1(

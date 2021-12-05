@@ -92,12 +92,12 @@ interface IDODOV2Proxy01 {
     // ) external payable;
 
 
-    function bid(
-        address cpAddress,
-        uint256 quoteAmount,
-        uint8 flag, // 0 - ERC20, 1 - quoteInETH
-        uint256 deadLine
-    ) external payable;
+    // function bid(
+    //     address cpAddress,
+    //     uint256 quoteAmount,
+    //     uint8 flag, // 0 - ERC20, 1 - quoteInETH
+    //     uint256 deadLine
+    // ) external payable;
 
     function addLiquidityToV1(
         address pair,

@@ -23,7 +23,9 @@ import {SafeMath} from "../../lib/SafeMath.sol";
 contract CP is CPVesting {
     using SafeMath for uint256;
 
-    receive() external payable {}
+    receive() external payable {
+        require(_INITIALIZED_ == false, "WE_NOT_SAVE_ETH_AFTER_INIT");
+    }
 
     function init(
         address[] calldata addressList,
@@ -110,6 +112,6 @@ contract CP is CPVesting {
     // ============ Version Control ============
 
     function version() virtual external pure returns (string memory) {
-        return "CP 1.0.1";
+        return "CP 2.0.0";
     }
 }
