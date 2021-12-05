@@ -51,7 +51,6 @@ contract CrowdPoolingFactory is InitializableOwnable {
     // ============ modifiers ===========
 
     modifier valueCheck(
-        address creator,
         address cpAddress,
         address baseToken,
         uint256[] memory timeLine,
@@ -64,6 +63,7 @@ contract CrowdPoolingFactory is InitializableOwnable {
 
         uint256 baseTokenBalance = IERC20(baseToken).balanceOf(cpAddress);
         require(valueList[0].mul(100) <= baseTokenBalance.mul(valueList[2]).div(10**18).mul(_CAP_RATIO_),"CP_FACTORY : QUOTE_CAP_INVALID");
+        require(timeLine[3]>= _FREEZE_DURATION_, "CP_FACTORY : FREEZE_DURATION_INVALID");
         _;
     }
 
@@ -107,7 +107,7 @@ contract CrowdPoolingFactory is InitializableOwnable {
         uint256[] memory timeLine,
         uint256[] memory valueList,
         bool[] memory switches
-    ) external valueCheck(creator,cpAddress,tokens[0],timeLine,valueList) {
+    ) external valueCheck(cpAddress,tokens[0],timeLine,valueList) {
         {
         address[] memory addressList = new address[](7);
         addressList[0] = creator;
