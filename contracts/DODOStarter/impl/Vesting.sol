@@ -9,8 +9,6 @@ pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
 import {Storage} from "./Storage.sol";
-import {IDVM} from "../../DODOVendingMachine/intf/IDVM.sol";
-import {IDVMFactory} from "../../Factory/DVMFactory.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {IERC20} from "../../intf/IERC20.sol";
@@ -71,20 +69,6 @@ contract Vesting is Storage {
         } else {
             return 0;
         }
-    }
-
-    function initializeLiquidity(uint256 initialTokenAmount, uint256 lpFeeRate, bool isOpenTWAP) external preventReentrant onlyOwner {
-        _INITIAL_POOL_ = IDVMFactory(_POOL_FACTORY_).createDODOVendingMachine(
-            _TOKEN_ADDRESS_,
-            _FUNDS_ADDRESS_,
-            lpFeeRate,
-            1,
-            DecimalMath.ONE,
-            isOpenTWAP
-        );
-        IERC20(_TOKEN_ADDRESS_).transferFrom(msg.sender, _INITIAL_POOL_, initialTokenAmount);
-        IERC20(_FUNDS_ADDRESS_).transfer(_INITIAL_POOL_, _INITIAL_FUND_LIQUIDITY_);
-        (_TOTAL_LP_, , ) = IDVM(_INITIAL_POOL_).buyShares(address(this));
     }
 
     function _claimToken(address to, uint256 totalAllocation) internal {
