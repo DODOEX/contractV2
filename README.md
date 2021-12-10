@@ -11,3 +11,9 @@
 
 ## DODO Starter Audit Scope
 
+- contracts/DODOStarter/impl/FairFunding.sol
+- contracts/DODOStarter/impl/InstantFunding.sol
+- contracts/DODOStarter/impl/Storage.sol
+- contracts/DODOStarter/impl/Vesting.sol
+- contracts/Factory/DODOStarterFactory.sol
+- contracts/SmartRoute/proxies/DODOStarterProxy.sol
