@@ -85,7 +85,7 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
     mapping(address => uint256) _CLAIMED_BASE_TOKEN_;
 
     // ============ Modifiers ============
-    modifier isForceStop() {
+    modifier isNotForceStop() {
         require(!_FORCE_STOP_, "FORCE_STOP");
         _;
     }

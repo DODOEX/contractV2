@@ -37,7 +37,7 @@ contract CPFunding is CPStorage {
         _;
     }
 
-    function bid(address to) external isForceStop phaseBid preventReentrant isBidderAllow(to) {
+    function bid(address to) external isNotForceStop phaseBid preventReentrant isBidderAllow(to) {
         uint256 input = _getQuoteInput();
         uint256 mtFee = DecimalMath.mulFloor(input, _MT_FEE_RATE_MODEL_.getFeeRate(to));
         _transferQuoteOut(_MAINTAINER_, mtFee);
@@ -71,7 +71,7 @@ contract CPFunding is CPStorage {
 
     // ============ SETTLEMENT ============
 
-    function settle() external isForceStop phaseSettlement preventReentrant {
+    function settle() external isNotForceStop phaseSettlement preventReentrant {
         _settle();
 
         (uint256 poolBase, uint256 poolQuote, uint256 poolI, uint256 unUsedBase, uint256 unUsedQuote) = getSettleResult();
@@ -112,7 +112,7 @@ contract CPFunding is CPStorage {
     }
 
     // in case something wrong with base token contract
-    function emergencySettle() external isForceStop phaseSettlement preventReentrant {
+    function emergencySettle() external isNotForceStop phaseSettlement preventReentrant {
         require(block.timestamp >= _PHASE_CALM_ENDTIME_.add(_SETTLEMENT_EXPIRE_), "NOT_EMERGENCY");
         _settle();
         _UNUSED_QUOTE_ = _QUOTE_TOKEN_.balanceOf(address(this));

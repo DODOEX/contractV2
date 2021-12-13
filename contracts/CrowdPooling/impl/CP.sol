@@ -103,6 +103,8 @@ contract CP is CPVesting {
 
         _TOTAL_BASE_ = _BASE_TOKEN_.balanceOf(address(this));
 
+        require(switches.length == 2, "SWITCHES_LENGTH_WRONG");
+
         _IS_OVERCAP_STOP = switches[0];
         _IS_OPEN_TWAP_ = switches[1];
 
