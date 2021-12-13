@@ -38,13 +38,14 @@ const DODOMineV3Registry = artifacts.require("DODOMineV3Registry");
 const DODOMineV3Proxy = artifacts.require("DODOMineV3Proxy");
 
 
-const CurveAdapter = artifacts.require("CurveUnderlyingAdapter");
+const CurveAdapter = artifacts.require("CurveAdapter");
 const DODOV1Adapter = artifacts.require("DODOV1Adapter");
 const DODOV2Adapter = artifacts.require("DODOV2Adapter");
 const UniAdapter = artifacts.require("UniAdapter");
 const UniV3Adapter = artifacts.require("UniV3Adapter");
 const CurveSample = artifacts.require("CurveSampler");
 const GambitAdapter = artifacts.require("GambitAdapter")
+const WooAdapter = artifacts.require("WooAdapter");
 
 module.exports = async (deployer, network, accounts) => {
     let CONFIG = GetConfig(network, accounts)
@@ -514,8 +515,9 @@ module.exports = async (deployer, network, accounts) => {
         await deployer.deploy(UniAdapter)
         logger.log("UniAdapter Address: ", UniAdapter.address);
         */
-        await deployer.deploy(GambitAdapter)
-        logger.log("GambitAdapter Address: ", GambitAdapter.address);
+        //await deployer.deploy(UniV3Adapter, WETH)
+        await deployer.deploy(WooAdapter)
+        logger.log("UniV3Adapter Address: ", WooAdapter.address);
     }
 
     if(deploySwitch.test_Sample) {
