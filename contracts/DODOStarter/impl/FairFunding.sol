@@ -226,7 +226,13 @@ contract FairFunding is Vesting {
             isOpenTWAP
         );
         IERC20(_TOKEN_ADDRESS_).transferFrom(msg.sender, _INITIAL_POOL_, initialTokenAmount);
-        IERC20(_FUNDS_ADDRESS_).transfer(_INITIAL_POOL_, _INITIAL_FUND_LIQUIDITY_);
+        
+        if(_TOTAL_RAISED_FUNDS_ > _INITIAL_FUND_LIQUIDITY_) {
+            IERC20(_FUNDS_ADDRESS_).transfer(_INITIAL_POOL_, _INITIAL_FUND_LIQUIDITY_);
+        }else {
+            IERC20(_FUNDS_ADDRESS_).transfer(_INITIAL_POOL_, _TOTAL_RAISED_FUNDS_);
+        }
+        
         (_TOTAL_LP_, , ) = IDVM(_INITIAL_POOL_).buyShares(address(this));
     }
 
