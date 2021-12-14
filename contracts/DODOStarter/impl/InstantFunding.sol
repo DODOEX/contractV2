@@ -26,7 +26,7 @@ contract InstantFunding is Vesting {
     uint256 public _END_PRICE_;
 
     mapping(address => uint256) _FUNDS_USED_;
-    mapping(address => uint256) _FUNDS_UNUSED_;
+    // mapping(address => uint256) _FUNDS_UNUSED_;
     mapping(address => uint256) _TOKEN_ALLOCATION_;
     uint256 public _TOTAL_ALLOCATED_TOKEN_;
 
@@ -135,9 +135,9 @@ contract InstantFunding is Vesting {
         return _TOKEN_ALLOCATION_[user];
     }
 
-    function getUserFundsUnused(address user) public view returns (uint256) {
-        return _FUNDS_UNUSED_[user];
-    }
+    // function getUserFundsUnused(address user) public view returns (uint256) {
+    //     return _FUNDS_UNUSED_[user];
+    // }
 
     function getUserFundsUsed(address user) public view returns (uint256) {
         return _FUNDS_USED_[user];
@@ -154,7 +154,6 @@ contract InstantFunding is Vesting {
         require(isDepositOpen(), "DEPOSIT_NOT_OPEN");
         // input fund check
         uint256 inputFund = IERC20(_FUNDS_ADDRESS_).balanceOf(address(this)).sub(_FUNDS_RESERVE_);
-        _FUNDS_RESERVE_ = _FUNDS_RESERVE_.add(inputFund);
 
         if (_QUOTA_ != address(0)) {
             require(
@@ -172,22 +171,26 @@ contract InstantFunding is Vesting {
             uint256 fundUsed = DecimalMath.mulFloor(newTokenAllocation, currentPrice);
             _FUNDS_USED_[to] = _FUNDS_USED_[to].add(fundUsed);
             _TOTAL_RAISED_FUNDS_ = _TOTAL_RAISED_FUNDS_.add(fundUsed);
-            _FUNDS_UNUSED_[to] = _FUNDS_UNUSED_[to].add(inputFund.sub(fundUsed));
+            _FUNDS_RESERVE_ = _FUNDS_RESERVE_.add(fundUsed);
+
+            IERC20(_FUNDS_ADDRESS_).safeTransfer(to, inputFund.sub(fundUsed));
+            // _FUNDS_UNUSED_[to] = _FUNDS_UNUSED_[to].add(inputFund.sub(fundUsed));
         } else {
             _FUNDS_USED_[to] = _FUNDS_USED_[to].add(inputFund);
             _TOTAL_RAISED_FUNDS_ = _TOTAL_RAISED_FUNDS_.add(inputFund);
+            _FUNDS_RESERVE_ = _FUNDS_RESERVE_.add(inputFund);
         }
 
         _TOKEN_ALLOCATION_[to] = _TOKEN_ALLOCATION_[to].add(newTokenAllocation);
         _TOTAL_ALLOCATED_TOKEN_ = _TOTAL_ALLOCATED_TOKEN_.add(newTokenAllocation);
     }
 
-    function withdrawFunds(address to, uint256 amount) external preventReentrant {
-        require(_FUNDS_UNUSED_[msg.sender] >= amount, "UNUSED_FUND_NOT_ENOUGH");
-        _FUNDS_UNUSED_[msg.sender] = _FUNDS_UNUSED_[msg.sender].sub(amount);
-        _FUNDS_RESERVE_ = _FUNDS_RESERVE_.sub(amount);
-        IERC20(_FUNDS_ADDRESS_).safeTransfer(to, amount);
-    }
+    // function withdrawFunds(address to, uint256 amount) external preventReentrant {
+    //     require(_FUNDS_UNUSED_[msg.sender] >= amount, "UNUSED_FUND_NOT_ENOUGH");
+    //     _FUNDS_UNUSED_[msg.sender] = _FUNDS_UNUSED_[msg.sender].sub(amount);
+    //     _FUNDS_RESERVE_ = _FUNDS_RESERVE_.sub(amount);
+    //     IERC20(_FUNDS_ADDRESS_).safeTransfer(to, amount);
+    // }
 
     function withdrawUnallocatedToken(address to) external preventReentrant onlyOwner {
         require(isFundingEnd(), "CAN_NOT_WITHDRAW");
@@ -207,7 +210,12 @@ contract InstantFunding is Vesting {
             isOpenTWAP
         );
         IERC20(_TOKEN_ADDRESS_).transferFrom(msg.sender, _INITIAL_POOL_, initialTokenAmount);
-        IERC20(_FUNDS_ADDRESS_).transfer(_INITIAL_POOL_, _INITIAL_FUND_LIQUIDITY_);
+        if(_TOTAL_RAISED_FUNDS_ > _INITIAL_FUND_LIQUIDITY_) {
+            IERC20(_FUNDS_ADDRESS_).transfer(_INITIAL_POOL_, _INITIAL_FUND_LIQUIDITY_);
+        }else {
+            IERC20(_FUNDS_ADDRESS_).transfer(_INITIAL_POOL_, _TOTAL_RAISED_FUNDS_);
+        }
+
         (_TOTAL_LP_, , ) = IDVM(_INITIAL_POOL_).buyShares(address(this));
     }
 

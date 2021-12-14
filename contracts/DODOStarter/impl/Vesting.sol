@@ -19,6 +19,7 @@ contract Vesting is Storage {
     using SafeERC20 for IERC20;
 
     function claimFunds(address to) external preventReentrant onlyOwner {
+        require(_TOTAL_RAISED_FUNDS_ > _INITIAL_FUND_LIQUIDITY_, "FUND_NOT_ENOUGH");
         uint256 vestingFunds = _TOTAL_RAISED_FUNDS_.sub(_INITIAL_FUND_LIQUIDITY_);
         uint256 remainingFund = DecimalMath.mulFloor(
             getRemainingRatio(block.timestamp,1),
