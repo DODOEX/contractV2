@@ -14,13 +14,12 @@ import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 import {Vesting} from "./Vesting.sol";
-import {IDVM} from "../../DODOVendingMachine/intf/IDVM.sol";
-import {IDVMFactory} from "../../Factory/DVMFactory.sol";
 
 contract FairFunding is Vesting {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
+    uint256 internal constant _SETTEL_FUND_ = 200 finney;
     // ============ Fair Mode ============
     uint256 public _COOLING_DURATION_;
 
@@ -31,6 +30,10 @@ contract FairFunding is Vesting {
 
     uint256 public _LOWER_LIMIT_PRICE_;
     uint256 public _UPPER_LIMIT_PRICE_;
+
+    receive() external payable {
+        require(_INITIALIZED_ == false, "WE_NOT_SAVE_ETH_AFTER_INIT");
+    }
 
     // ============ Init ============
     function init(
@@ -118,6 +121,7 @@ contract FairFunding is Vesting {
         _TOTAL_TOKEN_AMOUNT_ = IERC20(_TOKEN_ADDRESS_).balanceOf(address(this));
 
         require(_TOTAL_TOKEN_AMOUNT_ > 0, "NO_TOKEN_TRANSFERED");
+        require(address(this).balance == _SETTEL_FUND_, "SETTLE_FUND_NOT_MATCH");
     }
 
     // ============ View Functions ============
@@ -159,7 +163,7 @@ contract FairFunding is Vesting {
 
     // ============ Settle Functions ============
 
-    function settle() public isForceStop {
+    function settle() public isForceStop preventReentrant {
         require(_FINAL_PRICE_ == 0 && isFundingEnd(), "CAN_NOT_SETTLE");
         _FINAL_PRICE_ = getCurrentPrice();
         if(_TOTAL_RAISED_FUNDS_ == 0) {
@@ -172,6 +176,8 @@ contract FairFunding is Vesting {
         if (_USED_FUND_RATIO_ > DecimalMath.ONE) {
             _USED_FUND_RATIO_ = DecimalMath.ONE;
         }
+
+         msg.sender.transfer(_SETTEL_FUND_);
     }
 
     // ============ Funding Functions ============
@@ -208,37 +214,29 @@ contract FairFunding is Vesting {
     }
 
     function withdrawUnallocatedToken(address to) external preventReentrant onlyOwner {
+        require(isSettled(), "NOT_SETTLED");
         require(_FINAL_PRICE_ == _LOWER_LIMIT_PRICE_, "NO_TOKEN_LEFT");
         uint256 allocatedToken = DecimalMath.divCeil(_TOTAL_RAISED_FUNDS_, _FINAL_PRICE_);
         IERC20(_TOKEN_ADDRESS_).safeTransfer(to, _TOTAL_TOKEN_AMOUNT_.sub(allocatedToken));
         _TOTAL_TOKEN_AMOUNT_ = allocatedToken;
     }
 
-
     function initializeLiquidity(uint256 initialTokenAmount, uint256 lpFeeRate, bool isOpenTWAP) external preventReentrant onlyOwner {
         require(isSettled(), "NOT_SETTLED");
-        _INITIAL_POOL_ = IDVMFactory(_POOL_FACTORY_).createDODOVendingMachine(
-            _TOKEN_ADDRESS_,
-            _FUNDS_ADDRESS_,
-            lpFeeRate,
-            1,
-            DecimalMath.ONE,
-            isOpenTWAP
-        );
-        IERC20(_TOKEN_ADDRESS_).transferFrom(msg.sender, _INITIAL_POOL_, initialTokenAmount);
-        
-        if(_TOTAL_RAISED_FUNDS_ > _INITIAL_FUND_LIQUIDITY_) {
-            IERC20(_FUNDS_ADDRESS_).transfer(_INITIAL_POOL_, _INITIAL_FUND_LIQUIDITY_);
-        }else {
-            IERC20(_FUNDS_ADDRESS_).transfer(_INITIAL_POOL_, _TOTAL_RAISED_FUNDS_);
-        }
-        
-        (_TOTAL_LP_, , ) = IDVM(_INITIAL_POOL_).buyShares(address(this));
+        uint256 totalUsedRaiseFunds = DecimalMath.mulFloor(_TOTAL_RAISED_FUNDS_, _USED_FUND_RATIO_);
+        _initializeLiquidity(initialTokenAmount, totalUsedRaiseFunds, lpFeeRate, isOpenTWAP);
     }
 
     function claimToken(address to) external {
+        require(isSettled(), "NOT_SETTLED");
         uint256 totalAllocation = getUserTokenAllocation(msg.sender);
         _claimToken(to, totalAllocation);
+    }
+
+    function claimFund(address to) external preventReentrant onlyOwner {
+        require(isSettled(), "NOT_SETTLED");
+        uint256 totalUsedRaiseFunds = DecimalMath.mulFloor(_TOTAL_RAISED_FUNDS_, _USED_FUND_RATIO_);
+        _claimFunds(to,totalUsedRaiseFunds);
     }
 
     // ============ Timeline Control Functions ============
