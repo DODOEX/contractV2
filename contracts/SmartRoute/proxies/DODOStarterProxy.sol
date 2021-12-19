@@ -71,6 +71,7 @@ contract DODOStarterProxy is ReentrancyGuard {
     ) internal {
         if (isETH) {
             if (amount > 0) {
+                require(msg.value == amount, "ETH_VALUE_WRONG");
                 IWETH(_WETH_).deposit{value: amount}();
                 if (to != address(this)) SafeERC20.safeTransfer(IERC20(_WETH_), to, amount);
             }

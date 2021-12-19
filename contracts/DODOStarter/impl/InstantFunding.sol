@@ -14,8 +14,7 @@ import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 import {Vesting} from "./Vesting.sol";
-import {IDVM} from "../../DODOVendingMachine/intf/IDVM.sol";
-import {IDVMFactory} from "../../Factory/DVMFactory.sol";
+
 
 contract InstantFunding is Vesting {
     using SafeMath for uint256;
@@ -198,30 +197,18 @@ contract InstantFunding is Vesting {
         _TOTAL_TOKEN_AMOUNT_ = _TOTAL_ALLOCATED_TOKEN_;
     }
 
-
     function initializeLiquidity(uint256 initialTokenAmount, uint256 lpFeeRate, bool isOpenTWAP) external preventReentrant onlyOwner {
         require(isFundingEnd(),"FUNDING_NOT_FINISHED");
-        _INITIAL_POOL_ = IDVMFactory(_POOL_FACTORY_).createDODOVendingMachine(
-            _TOKEN_ADDRESS_,
-            _FUNDS_ADDRESS_,
-            lpFeeRate,
-            1,
-            DecimalMath.ONE,
-            isOpenTWAP
-        );
-        IERC20(_TOKEN_ADDRESS_).transferFrom(msg.sender, _INITIAL_POOL_, initialTokenAmount);
-        if(_TOTAL_RAISED_FUNDS_ > _INITIAL_FUND_LIQUIDITY_) {
-            IERC20(_FUNDS_ADDRESS_).transfer(_INITIAL_POOL_, _INITIAL_FUND_LIQUIDITY_);
-        }else {
-            IERC20(_FUNDS_ADDRESS_).transfer(_INITIAL_POOL_, _TOTAL_RAISED_FUNDS_);
-        }
-
-        (_TOTAL_LP_, , ) = IDVM(_INITIAL_POOL_).buyShares(address(this));
+        _initializeLiquidity(initialTokenAmount, _TOTAL_RAISED_FUNDS_, lpFeeRate, isOpenTWAP);
     }
 
     function claimToken(address to) external {
         uint256 totalAllocation = getUserTokenAllocation(msg.sender);
         _claimToken(to, totalAllocation);
+    }
+
+    function claimFund(address to) external preventReentrant onlyOwner {
+        _claimFunds(to,_TOTAL_RAISED_FUNDS_);
     }
 
     // ============ Timeline Control Functions ============

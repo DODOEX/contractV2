@@ -13,22 +13,12 @@ import {SafeMath} from "../../lib/SafeMath.sol";
 import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
+import {IDVM} from "../../DODOVendingMachine/intf/IDVM.sol";
+import {IDVMFactory} from "../../Factory/DVMFactory.sol";
 
 contract Vesting is Storage {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
-
-    function claimFunds(address to) external preventReentrant onlyOwner {
-        require(_TOTAL_RAISED_FUNDS_ > _INITIAL_FUND_LIQUIDITY_, "FUND_NOT_ENOUGH");
-        uint256 vestingFunds = _TOTAL_RAISED_FUNDS_.sub(_INITIAL_FUND_LIQUIDITY_);
-        uint256 remainingFund = DecimalMath.mulFloor(
-            getRemainingRatio(block.timestamp,1),
-            vestingFunds
-        );
-        uint256 claimableFund = vestingFunds.sub(remainingFund).sub(_CLAIMED_FUNDS_);
-        IERC20(_FUNDS_ADDRESS_).safeTransfer(to, claimableFund);
-        _CLAIMED_FUNDS_ = _CLAIMED_FUNDS_.add(claimableFund);
-    }
 
     function claimLp(address to) external preventReentrant onlyOwner {
         require(_INITIAL_POOL_ != address(0), "LIQUIDITY_NOT_ESTABLISHED");
@@ -38,10 +28,9 @@ contract Vesting is Storage {
         );
         uint256 claimableLp = _TOTAL_LP_.sub(remainingLp).sub(_CLAIMED_LP_);
 
-        IERC20(_INITIAL_POOL_).safeTransfer(to, claimableLp);
         _CLAIMED_LP_ = _CLAIMED_LP_.add(claimableLp);
+        IERC20(_INITIAL_POOL_).safeTransfer(to, claimableLp);
     }
-
 
     //tokenType 0: BaseToken, 1: Fund, 2: LpToken
     function getRemainingRatio(uint256 timestamp, uint256 tokenType) public view returns (uint256) {
@@ -78,7 +67,39 @@ contract Vesting is Storage {
             totalAllocation
         );
         uint256 claimableTokenAmount = totalAllocation.sub(remainingToken).sub(_CLAIMED_TOKEN_[msg.sender]);
-        IERC20(_TOKEN_ADDRESS_).safeTransfer(to,claimableTokenAmount);
         _CLAIMED_TOKEN_[msg.sender] = _CLAIMED_TOKEN_[msg.sender].add(claimableTokenAmount);
+        IERC20(_TOKEN_ADDRESS_).safeTransfer(to,claimableTokenAmount);
+    }
+
+    function _claimFunds(address to, uint256 totalUsedRaiseFunds) internal {
+        require(totalUsedRaiseFunds > _INITIAL_FUND_LIQUIDITY_, "FUND_NOT_ENOUGH");
+        uint256 vestingFunds = totalUsedRaiseFunds.sub(_INITIAL_FUND_LIQUIDITY_);
+        uint256 remainingFund = DecimalMath.mulFloor(
+            getRemainingRatio(block.timestamp,1),
+            vestingFunds
+        );
+        uint256 claimableFund = vestingFunds.sub(remainingFund).sub(_CLAIMED_FUNDS_);
+        _CLAIMED_FUNDS_ = _CLAIMED_FUNDS_.add(claimableFund);
+        IERC20(_FUNDS_ADDRESS_).safeTransfer(to, claimableFund);
+    }
+
+    function _initializeLiquidity(uint256 initialTokenAmount, uint256 totalUsedRaiseFunds, uint256 lpFeeRate, bool isOpenTWAP) internal {
+        _INITIAL_POOL_ = IDVMFactory(_POOL_FACTORY_).createDODOVendingMachine(
+            _TOKEN_ADDRESS_,
+            _FUNDS_ADDRESS_,
+            lpFeeRate,
+            1,
+            DecimalMath.ONE,
+            isOpenTWAP
+        );
+        IERC20(_TOKEN_ADDRESS_).transferFrom(msg.sender, _INITIAL_POOL_, initialTokenAmount);
+        
+        if(totalUsedRaiseFunds > _INITIAL_FUND_LIQUIDITY_) {
+            IERC20(_FUNDS_ADDRESS_).transfer(_INITIAL_POOL_, _INITIAL_FUND_LIQUIDITY_);
+        }else {
+            IERC20(_FUNDS_ADDRESS_).transfer(_INITIAL_POOL_, totalUsedRaiseFunds);
+        }
+        
+        (_TOTAL_LP_, , ) = IDVM(_INITIAL_POOL_).buyShares(address(this));
     }
 }

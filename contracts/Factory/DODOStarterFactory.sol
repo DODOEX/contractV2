@@ -75,11 +75,13 @@ contract DODOStarterFactory is InitializableOwnable {
         uint256[] memory timeLine,
         uint256[] memory valueList,
         uint256 sellTokenAmount
-    ) external permissionCheck(addressList[0],addressList[1]) returns(address newFairFundPool){
+    ) external payable permissionCheck(addressList[0],addressList[1]) returns(address newFairFundPool){
         newFairFundPool = ICloneFactory(_CLONE_FACTORY_).clone(_FAIR_FUND_TEMPLATE_);
 
         IERC20(addressList[1]).transferFrom(msg.sender, newFairFundPool,sellTokenAmount);
-        
+        (bool success, ) = newFairFundPool.call{value: msg.value}("");
+        require(success, "Settle fund Transfer failed");
+
         IDODOStarter(newFairFundPool).init(
             addressList,
             timeLine,
