@@ -61,6 +61,8 @@ contract Vesting is Storage {
         }
     }
 
+
+    // ============ Internal Function ============
     function _claimToken(address to, uint256 totalAllocation) internal {
         uint256 remainingToken = DecimalMath.mulFloor(
             getRemainingRatio(block.timestamp,0),

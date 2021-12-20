@@ -25,7 +25,6 @@ contract InstantFunding is Vesting {
     uint256 public _END_PRICE_;
 
     mapping(address => uint256) _FUNDS_USED_;
-    // mapping(address => uint256) _FUNDS_UNUSED_;
     mapping(address => uint256) _TOKEN_ALLOCATION_;
     uint256 public _TOTAL_ALLOCATED_TOKEN_;
 
@@ -134,10 +133,6 @@ contract InstantFunding is Vesting {
         return _TOKEN_ALLOCATION_[user];
     }
 
-    // function getUserFundsUnused(address user) public view returns (uint256) {
-    //     return _FUNDS_UNUSED_[user];
-    // }
-
     function getUserFundsUsed(address user) public view returns (uint256) {
         return _FUNDS_USED_[user];
     }
@@ -173,7 +168,6 @@ contract InstantFunding is Vesting {
             _FUNDS_RESERVE_ = _FUNDS_RESERVE_.add(fundUsed);
 
             IERC20(_FUNDS_ADDRESS_).safeTransfer(to, inputFund.sub(fundUsed));
-            // _FUNDS_UNUSED_[to] = _FUNDS_UNUSED_[to].add(inputFund.sub(fundUsed));
         } else {
             _FUNDS_USED_[to] = _FUNDS_USED_[to].add(inputFund);
             _TOTAL_RAISED_FUNDS_ = _TOTAL_RAISED_FUNDS_.add(inputFund);
@@ -184,12 +178,12 @@ contract InstantFunding is Vesting {
         _TOTAL_ALLOCATED_TOKEN_ = _TOTAL_ALLOCATED_TOKEN_.add(newTokenAllocation);
     }
 
-    // function withdrawFunds(address to, uint256 amount) external preventReentrant {
-    //     require(_FUNDS_UNUSED_[msg.sender] >= amount, "UNUSED_FUND_NOT_ENOUGH");
-    //     _FUNDS_UNUSED_[msg.sender] = _FUNDS_UNUSED_[msg.sender].sub(amount);
-    //     _FUNDS_RESERVE_ = _FUNDS_RESERVE_.sub(amount);
-    //     IERC20(_FUNDS_ADDRESS_).safeTransfer(to, amount);
-    // }
+    function claimToken(address to) external {
+        uint256 totalAllocation = getUserTokenAllocation(msg.sender);
+        _claimToken(to, totalAllocation);
+    }
+
+    // ============ Ownable Functions ============
 
     function withdrawUnallocatedToken(address to) external preventReentrant onlyOwner {
         require(isFundingEnd(), "CAN_NOT_WITHDRAW");
@@ -200,11 +194,6 @@ contract InstantFunding is Vesting {
     function initializeLiquidity(uint256 initialTokenAmount, uint256 lpFeeRate, bool isOpenTWAP) external preventReentrant onlyOwner {
         require(isFundingEnd(),"FUNDING_NOT_FINISHED");
         _initializeLiquidity(initialTokenAmount, _TOTAL_RAISED_FUNDS_, lpFeeRate, isOpenTWAP);
-    }
-
-    function claimToken(address to) external {
-        uint256 totalAllocation = getUserTokenAllocation(msg.sender);
-        _claimToken(to, totalAllocation);
     }
 
     function claimFund(address to) external preventReentrant onlyOwner {
