@@ -213,6 +213,15 @@ contract FairFunding is Vesting {
         }
     }
 
+    function claimToken(address to) external {
+        require(isSettled(), "NOT_SETTLED");
+        uint256 totalAllocation = getUserTokenAllocation(msg.sender);
+        _claimToken(to, totalAllocation);
+    }
+
+
+    // ============ Ownable Functions ============
+
     function withdrawUnallocatedToken(address to) external preventReentrant onlyOwner {
         require(isSettled(), "NOT_SETTLED");
         require(_FINAL_PRICE_ == _LOWER_LIMIT_PRICE_, "NO_TOKEN_LEFT");
@@ -225,12 +234,6 @@ contract FairFunding is Vesting {
         require(isSettled(), "NOT_SETTLED");
         uint256 totalUsedRaiseFunds = DecimalMath.mulFloor(_TOTAL_RAISED_FUNDS_, _USED_FUND_RATIO_);
         _initializeLiquidity(initialTokenAmount, totalUsedRaiseFunds, lpFeeRate, isOpenTWAP);
-    }
-
-    function claimToken(address to) external {
-        require(isSettled(), "NOT_SETTLED");
-        uint256 totalAllocation = getUserTokenAllocation(msg.sender);
-        _claimToken(to, totalAllocation);
     }
 
     function claimFund(address to) external preventReentrant onlyOwner {
