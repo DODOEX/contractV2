@@ -82,7 +82,7 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
     uint256 public _TOKEN_CLAIM_DURATION_;
     uint256 public _TOKEN_VESTING_DURATION_;
     uint256 public _TOKEN_CLIFF_RATE_;
-    mapping(address => uint256) _CLAIMED_BASE_TOKEN_;
+    mapping(address => uint256) public _CLAIMED_BASE_TOKEN_;
 
     // ============ Modifiers ============
     modifier isNotForceStop() {
