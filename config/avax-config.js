@@ -1,7 +1,7 @@
 module.exports = {
     AVAX_CONFIG: {
-        //DODOZoo: "",
-        //DODOV1: "",
+        //DODOZoo: "0x8aB2D334cE64B50BE9Ab04184f7ccBa2A6bb6391",
+        //DODOV1: "0xd5a7E197bacE1F3B26E2760321d6ce06Ad07281a",
 
         //TOKEN
         WETH: "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
@@ -12,7 +12,7 @@ module.exports = {
         DODOSellHelper: "0xF7c5311B618E6dFBBc34210c92D2C9675D7EdDCA",
         DODOCalleeHelper: "0x4EfF1D851366b8cc51d553a87e2d12dA8Da46F2a",
         DODOV1PmmHelper: "0x790B4A80Fb1094589A3c0eFC8740aA9b0C1733fB",
-        DODOV2RouteHelper: "",
+        DODOV2RouteHelper: "0xB895FA93537D1C2C68DA39A73b404F02de246107",
         MultiCall: "0x97f0153E7F5749640aDF3Ff9CFC518b79D6Fe53b",
         DODOSwapCalcHelper: "0xAfe0A75DFFb395eaaBd0a7E1BBbd0b11f8609eeF",
         ERC20Helper: "0xC3528D128CC227fd60793007b5e3FdF7c2945282",
@@ -49,17 +49,17 @@ module.exports = {
         DODOMineV3Registry: "0x0fe261aeE0d1C4DFdDee4102E82Dd425999065F4",
 
         //Adapter
-        DODOV1Adapter: "",
-        DODOV2Adapter: "",
-        UniAdapter: "",
+        DODOV1Adapter: "0x62F67e305850a2597c46cD5957BdFbe9d04F10Bd",
+        DODOV2Adapter: "0xd72b354BD39f8F11D0cA07bD5724896Bb1a42707",
+        UniAdapter: "0x3a343F2e4e142412c5dD130359edb765a6054965",
 
         //Proxy
-        DODOV2Proxy: "",
-        DSPProxy: "",
-        CpProxy: "",
-        DPPProxy: "",
-        RouteProxy: "",
-        DODOMineV3Proxy: "",
+        DODOV2Proxy: "0x2cD18557E14aF72DAA8090BcAA95b231ffC9ea26",
+        DSPProxy: "0xeCEaDe494FD5F913Fd937C5CAc4577236395Dc32",
+        CpProxy: "0x9Aa4d70F941b1a72f1CD3852F8aa88Fba77A98fD",
+        DPPProxy: "0xe44F14BFDe673B7339734a28152cCd6b821753C9",
+        RouteProxy: "0x409E377A7AfFB1FD3369cfc24880aD58895D1dD9",
+        DODOMineV3Proxy: "0x5D6e6A0BFB2176AFCc4FB809822D8e009216b245",
 
         //Account
         multiSigAddress: "0x9FCFD9ff955D36856F8EE480471B05488C0eB5cA",
