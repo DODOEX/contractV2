@@ -146,14 +146,15 @@ module.exports = {
       network_id: 1285
     },
 
-    oktest: {
+    aurora: {
+      networkCheckTimeout: 100000,
       provider: () => {
-        return new HDWalletProvider(privKey, 'https://exchaintest.okexcn.com')
+        let hdWalletProvider = new HDWalletProvider(privKey, 'https://mainnet.aurora.dev');
+        hdWalletProvider.engine.addProvider(new NonceTrackerSubprovider())
+        return hdWalletProvider
       },
-      network_id: 65,
-      confirmations: 10,
-      timeoutBlocks: 200,
-      skipDryRun: true
+      network_id: 0x4e454152,
+      gas: 10000000
     },
 
     ok: {
@@ -164,21 +165,6 @@ module.exports = {
       gasPrice: 500000000,
       network_id: 66,
       confirmations: 5,
-      timeoutBlocks: 200,
-      skipDryRun: true
-    },
-
-    boba_test: {
-      networkCheckTimeout: 100000,
-      provider: () => {
-        return new HDWalletProvider({
-          privateKeys: [privKey],
-          providerOrUrl: 'https://rinkeby.boba.network',
-          chainId: 28
-        })
-      },
-      network_id: 28,
-      gasPrice: 0,
       timeoutBlocks: 200,
       skipDryRun: true
     },
