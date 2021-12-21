@@ -88,10 +88,6 @@ contract DODORouteProxy {
         require(mixPairs.length == assetTo.length - 1, "DODORouteProxy: PAIR_ASSETTO_NOT_MATCH");
         require(minReturnAmount > 0, "DODORouteProxy: RETURN_AMOUNT_ZERO");
 
-        if(fromToken == _ETH_ADDRESS_) {
-            require(msg.value == fromTokenAmount, "DODORouteProxy: MSG_VALUE_NOT_MATCH");
-        }
-
         address _fromToken = fromToken;
         address _toToken = toToken;
         uint256 _fromTokenAmount = fromTokenAmount;
@@ -145,11 +141,8 @@ contract DODORouteProxy {
         address fromToken = midToken[0];
         address toToken = midToken[midToken.length - 1];
 
-        if(fromToken == _ETH_ADDRESS_) {
-            require(msg.value == _fromTokenAmount, "DODORouteProxy: MSG_VALUE_NOT_MATCH");
-        }
-
         uint256 toTokenOriginBalance = IERC20(toToken).universalBalanceOf(msg.sender);
+
         _deposit(msg.sender, assetFrom[0], fromToken, _fromTokenAmount, fromToken == _ETH_ADDRESS_);
 
         _multiSwap(totalWeight, midToken, splitNumber, sequence, assetFrom);
@@ -231,6 +224,7 @@ contract DODORouteProxy {
     ) internal {
         if (isETH) {
             if (amount > 0) {
+                require(msg.value == amount, "ETH_VALUE_WRONG");
                 IWETH(_WETH_).deposit{value: amount}();
                 if (to != address(this)) SafeERC20.safeTransfer(IERC20(_WETH_), to, amount);
             }
