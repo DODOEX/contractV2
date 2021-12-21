@@ -1,0 +1,39 @@
+====================================================
+network type: rinkeby
+Deploy time: 2022/1/18 下午6:21:28
+Deploy type: STARTER
+FairFundingTemplate:  0x5fe4dA545e516442DEB502C4F4f70b8883704533
+====================================================
+network type: rinkeby
+Deploy time: 2022/1/18 下午6:35:02
+Deploy type: STARTER
+====================================================
+network type: rinkeby
+Deploy time: 2022/1/18 下午6:38:02
+Deploy type: STARTER
+InstantFundingTemplate:  0xecDfd4e3966b2e993a65A4F06d93b83C18b818f8
+DODOStarterFactoryAddress:  0xb78A68B71FfEdddFAD36bB587116Ce97cec88Ad5
+Init DODOStarterFactory Tx: 0xc14e492c2004df243cba3bef5953c13de7e7c4369d5e35797af190c1e6990221
+====================================================
+network type: rinkeby
+Deploy time: 2022/1/18 下午6:51:47
+Deploy type: STARTER
+====================================================
+network type: rinkeby
+Deploy time: 2022/1/18 下午7:54:51
+Deploy type: STARTER
+FairFundingTemplate:  0x401B7339668f5b3b6ba2Cf05280F9EA177B4B5Ce
+InstantFundingTemplate:  0x6A33AC1Aa7b75E19A571E6a5B09DEFA2824c05Dd
+DODOStarterFactoryAddress:  0xa28D60c3eCDc52521c8219bd6a4eba0AA8900F88
+Init DODOStarterFactory Tx: 0x489eac4b0fdd7a05820bad776d610ceaf7cadca19a07ca30266351090678a4b2
+DODOStarterProxyAddress:  0x451E07405B79eDEEA87ccFa57e1BaF184Bea6773
+====================================================
+network type: rinkeby
+Deploy time: 2022/1/29 上午9:58:16
+Deploy type: STARTER
+====================================================
+network type: rinkeby
+Deploy time: 2022/1/29 上午10:00:18
+Deploy type: STARTER
+FairFundingTemplate:  0x5D1f0d091B3Fe5F79908F232c50CfC3D9084c59d
+InstantFundingTemplate:  0x9297C04D4F8B47cCf7F2733b0F8f151aE1cb4615
