@@ -52,6 +52,10 @@ contract DODOStarterFactory is InitializableOwnable {
         address instantFundPool
     );
 
+    event SetWhitelist(address creator, address baseToken);
+    event UpdateFairFundTempalte(address newTemplate);
+    event UpdateInstantFundTempalte(address newTemplate);
+
     // ============ modifiers ===========
 
     modifier permissionCheck(address creator, address baseToken) {
@@ -153,14 +157,17 @@ contract DODOStarterFactory is InitializableOwnable {
 
     function setWhitelist(address creator, address baseToken) external onlyOwner {
         fundingWhitelist[creator] = baseToken;
+        emit SetWhitelist(creator, baseToken);
     }
     
     function updateFairFundTemplate(address _newFairFundTemplate) external onlyOwner {
         _FAIR_FUND_TEMPLATE_ = _newFairFundTemplate;
+        emit UpdateFairFundTempalte(_newFairFundTemplate);
     }
 
     function updateInstantFundTemplate(address _newInstantFundTemplate) external onlyOwner {
         _INSTANT_FUND_TEMPLATE_ = _newInstantFundTemplate;
+        emit UpdateInstantFundTempalte(_newInstantFundTemplate);
     }
 
 }
