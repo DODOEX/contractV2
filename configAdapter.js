@@ -8,8 +8,8 @@ const { RINKEBY_CONFIG } = require("./config/rinkeby-config");
 const { OK_CONFIG } = require("./config/ok-config");
 const { AURORA_CONFIG } = require("./config/aurora-config");
 const { MOONRIVER_CONFIG } = require("./config/moonriver-config");
-const { BOBA_TEST_CONFIG } = require("./config/boba-test-config");
 const { BOBA_CONFIG } = require("./config/boba-config");
+const { AVAX_CONFIG } = require("./config/avax-config"); 
 
 exports.GetConfig = function (network, accounts) {
     var CONFIG = {}
@@ -41,6 +41,9 @@ exports.GetConfig = function (network, accounts) {
         case "boba":
             CONFIG = BOBA_CONFIG
             break;
+        case "avax":
+            CONFIG = AVAX_CONFIG
+            break;
         //testnet
         case "kovan":
             CONFIG = KOVAN_CONFIG
@@ -49,11 +52,6 @@ exports.GetConfig = function (network, accounts) {
             break;
         case "rinkeby":
             CONFIG = RINKEBY_CONFIG
-            CONFIG.multiSigAddress = accounts[0]
-            CONFIG.defaultMaintainer = accounts[0]
-            break;
-        case "boba_test":
-            CONFIG = BOBA_TEST_CONFIG
             CONFIG.multiSigAddress = accounts[0]
             CONFIG.defaultMaintainer = accounts[0]
             break;

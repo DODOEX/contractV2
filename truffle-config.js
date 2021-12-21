@@ -155,16 +155,6 @@ module.exports = {
       gas: 10000000
     },
 
-    oktest: {
-      provider: () => {
-        return new HDWalletProvider(privKey, 'https://exchaintest.okexcn.com')
-      },
-      network_id: 65,
-      confirmations: 10,
-      timeoutBlocks: 200,
-      skipDryRun: true
-    },
-
     ok: {
       networkCheckTimeout: 100000,
       provider: () => {
@@ -173,21 +163,6 @@ module.exports = {
       gasPrice: 500000000,
       network_id: 66,
       confirmations: 5,
-      timeoutBlocks: 200,
-      skipDryRun: true
-    },
-
-    boba_test: {
-      networkCheckTimeout: 100000,
-      provider: () => {
-        return new HDWalletProvider({
-          privateKeys: [privKey],
-          providerOrUrl: 'https://rinkeby.boba.network',
-          chainId: 28
-        })
-      },
-      network_id: 28,
-      gasPrice: 0,
       timeoutBlocks: 200,
       skipDryRun: true
     },
