@@ -78,7 +78,8 @@ contract DODOStarterFactory is InitializableOwnable {
         address[] memory addressList,
         uint256[] memory timeLine,
         uint256[] memory valueList,
-        uint256 sellTokenAmount
+        uint256 sellTokenAmount,
+        bool isOverCapStop
     ) external payable permissionCheck(addressList[0],addressList[1]) returns(address newFairFundPool){
         newFairFundPool = ICloneFactory(_CLONE_FACTORY_).clone(_FAIR_FUND_TEMPLATE_);
 
@@ -89,7 +90,8 @@ contract DODOStarterFactory is InitializableOwnable {
         IDODOStarter(newFairFundPool).init(
             addressList,
             timeLine,
-            valueList
+            valueList,
+            isOverCapStop
         );
 
         _FAIR_REGISTRY_[addressList[1]][addressList[2]].push(newFairFundPool);
