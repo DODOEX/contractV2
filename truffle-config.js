@@ -40,7 +40,7 @@ module.exports = {
    */
   deploySwitch: {
     DEPLOY_V1:      false,
-    DEPLOY_V2:      true,
+    DEPLOY_V2:      false,
     MOCK_TOKEN:     false,
     MOCK_V2_POOL:   false,
     vDODOToken:     false,
@@ -64,7 +64,8 @@ module.exports = {
     MYSTERYBOX_V1:  false,
     Drops_V2:       false,
     MineV3:         false,
-    NFT_POOL:       false
+    NFT_POOL:       false,
+    UserQuota:      true
   },
 
   networks: {
@@ -122,7 +123,6 @@ module.exports = {
       },
       network_id: 56,
       confirmations: 10,
-      gasPrice: 5000000000,
       timeoutBlocks: 200,
       gasPrice: 6000000000,
       skipDryRun: true

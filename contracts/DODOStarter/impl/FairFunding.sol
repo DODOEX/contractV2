@@ -31,6 +31,8 @@ contract FairFunding is Vesting {
     uint256 public _LOWER_LIMIT_PRICE_;
     uint256 public _UPPER_LIMIT_PRICE_;
 
+    bool public _IS_OVERCAP_STOP = false;
+
     receive() external payable {
         require(_INITIALIZED_ == false, "WE_NOT_SAVE_ETH_AFTER_INIT");
     }
@@ -39,7 +41,8 @@ contract FairFunding is Vesting {
     function init(
         address[] calldata addressList,
         uint256[] calldata timeLine,
-        uint256[] calldata valueList
+        uint256[] calldata valueList,
+        bool isOverCapStop
     ) external {
         /*
         Address List
@@ -118,6 +121,8 @@ contract FairFunding is Vesting {
         require(_FUNDS_CLIFF_RATE_ <= 1e18, "FUND_CLIFF_RATE_WRONG");
         require(_LP_CLIFF_RATE_ <= 1e18, "LP_CLIFF_RATE_WRONG");
 
+        _IS_OVERCAP_STOP = isOverCapStop;
+
         _TOTAL_TOKEN_AMOUNT_ = IERC20(_TOKEN_ADDRESS_).balanceOf(address(this));
 
         require(_TOTAL_TOKEN_AMOUNT_ > 0, "NO_TOKEN_TRANSFERED");
@@ -184,8 +189,15 @@ contract FairFunding is Vesting {
 
     function depositFunds(address to) external preventReentrant isForceStop returns(uint256 inputFund) {
         require(isDepositOpen(), "DEPOSIT_NOT_OPEN");
+
+        uint256 currentFundBalance = IERC20(_FUNDS_ADDRESS_).balanceOf(address(this));
+
+        if(_IS_OVERCAP_STOP) {
+            require(currentFundBalance <= DecimalMath.mulFloor(_TOTAL_TOKEN_AMOUNT_, _UPPER_LIMIT_PRICE_), "ALREADY_OVER_CAP");
+        }        
+
         // input fund check
-        inputFund = IERC20(_FUNDS_ADDRESS_).balanceOf(address(this)).sub(_FUNDS_RESERVE_);
+        inputFund = currentFundBalance.sub(_FUNDS_RESERVE_);
         _FUNDS_RESERVE_ = _FUNDS_RESERVE_.add(inputFund);
 
         if (_QUOTA_ != address(0)) {
@@ -217,8 +229,12 @@ contract FairFunding is Vesting {
         require(isSettled(), "NOT_SETTLED");
         uint256 totalAllocation = getUserTokenAllocation(msg.sender);
         _claimToken(to, totalAllocation);
-    }
 
+        if(!_FUNDS_CLAIMED_[msg.sender]) {
+            _FUNDS_CLAIMED_[msg.sender] = true;
+            IERC20(_FUNDS_ADDRESS_).safeTransfer(to, getUserFundsUnused(msg.sender));
+        }
+    }    
 
     // ============ Ownable Functions ============
 

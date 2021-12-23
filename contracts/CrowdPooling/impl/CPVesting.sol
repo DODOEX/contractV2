@@ -53,8 +53,20 @@ contract CPVesting is CPFunding {
 
     // ============ Bidder Functions ============
 
-    function claimQuoteToken(address to,bytes calldata data) external afterSettlement {
-        require(!_CLAIMED_QUOTE_[msg.sender], "ALREADY_CLAIMED_FUND");
+    function bidderClaim(address to, bytes calldata data) external {
+        if(_SETTLED_) {
+            _claimQuoteToken(to, data);
+        }
+
+        if(_SETTLED_ && block.timestamp >= _SETTLED_TIME_.add(_TOKEN_CLAIM_DURATION_)) {
+            _claimBaseToken(to);
+        }
+    }
+
+    function _claimQuoteToken(address to,bytes calldata data) internal {
+        // require(!_CLAIMED_QUOTE_[msg.sender], "ALREADY_CLAIMED_FUND");
+        if(_CLAIMED_QUOTE_[msg.sender]) return;
+
         _CLAIMED_QUOTE_[msg.sender] = true;
 
 		uint256 quoteAmount = _UNUSED_QUOTE_.mul(_SHARES_[msg.sender]).div(_TOTAL_SHARES_);
@@ -68,10 +80,9 @@ contract CPVesting is CPFunding {
         emit ClaimQuoteToken(msg.sender, quoteAmount);
     }
 
-
-    function claimBaseToken() external afterClaimFreeze {
+    function _claimBaseToken(address to) internal {
         uint256 claimableBaseAmount = getClaimableBaseToken(msg.sender);
-        _transferBaseOut(msg.sender, claimableBaseAmount);
+        _transferBaseOut(to, claimableBaseAmount);
         _CLAIMED_BASE_TOKEN_[msg.sender] = _CLAIMED_BASE_TOKEN_[msg.sender].add(claimableBaseAmount);
         emit ClaimBaseToken(msg.sender, claimableBaseAmount);
     }
