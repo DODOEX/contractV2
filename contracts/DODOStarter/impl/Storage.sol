@@ -12,9 +12,11 @@ import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {IERC20} from "../../intf/IERC20.sol";
+import {SafeERC20} from "../../lib/SafeERC20.sol";
 
 contract Storage is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
+    using SafeERC20 for IERC20;
 
     bool public _FORCE_STOP_ = false;
     address public _QUOTA_; 
@@ -58,7 +60,7 @@ contract Storage is InitializableOwnable, ReentrancyGuard {
 
 
     // ============ Modifiers ============
-    modifier isForceStop() {
+    modifier isNotForceStop() {
         require(!_FORCE_STOP_, "FORCE_STOP");
         _;
     }
@@ -69,6 +71,6 @@ contract Storage is InitializableOwnable, ReentrancyGuard {
         _FORCE_STOP_ = true;
         _TOTAL_TOKEN_AMOUNT_ = 0;
         uint256 tokenAmount = IERC20(_TOKEN_ADDRESS_).balanceOf(address(this));
-        IERC20(_TOKEN_ADDRESS_).transfer(_OWNER_, tokenAmount);
+        IERC20(_TOKEN_ADDRESS_).safeTransfer(_OWNER_, tokenAmount);
     }
 }

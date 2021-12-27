@@ -19,7 +19,6 @@
  */
 
 var HDWalletProvider = require("@truffle/hdwallet-provider");
-const NonceTrackerSubprovider = require('web3-provider-engine/subproviders/nonce-tracker')
 var privKey = process.env.privKey;
 var infuraId = process.env.infuraId;
 
@@ -104,7 +103,9 @@ module.exports = {
       gas: 10000000,
       gasPrice: 1500000000,
       network_id: 4,
-      skipDryRun: true
+      skipDryRun: true,
+      confirmations: 2,
+      timeoutBlocks: 200,
     },
 
     live: {
@@ -120,8 +121,9 @@ module.exports = {
 
     bsclive: {
       provider: function () {
-        return new HDWalletProvider(privKey, "https://bsc-dataseed1.binance.org");
+        return new HDWalletProvider(privKey, "https://bsc-dataseed3.ninicoin.io");
       },
+      networkCheckTimeout:100000,
       network_id: 56,
       confirmations: 10,
       timeoutBlocks: 200,
