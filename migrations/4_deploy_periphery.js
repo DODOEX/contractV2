@@ -16,6 +16,7 @@ const DODOToken = artifacts.require("DODOToken");
 const UpCrowdPoolingFactory = artifacts.require("UpCrowdPoolingFactory");
 const CpFactory = artifacts.require("CrowdPoolingFactory");
 const MultiCall = artifacts.require("Multicall");
+const UserQuota = artifacts.require("UserQuota");
 const LockedTokenVault = artifacts.require("LockedTokenVault");
 const DODORouteProxy = artifacts.require("DODORouteProxy");
 const DODOCpProxy = artifacts.require("DODOCpProxy");
@@ -301,6 +302,12 @@ module.exports = async (deployer, network, accounts) => {
         await deployer.deploy(MultiCall);
         MultiCallAddress = MultiCall.address;
         logger.log("MultiCallAddress: ", MultiCallAddress);
+    }
+
+    if (deploySwitch.UserQuota) {
+        await deployer.deploy(UserQuota);
+        UserQuotaAddress = UserQuota.address;
+        logger.log("UserQuotaAddress: ", UserQuotaAddress);  
     }
 
     if (deploySwitch.CPFactory) {

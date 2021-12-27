@@ -52,6 +52,8 @@ contract Vesting is Storage {
             cliffRate = _LP_CLIFF_RATE_;
         }
 
+        require(timestamp >= vestingStart, "NOT_START_TO_CLAIM");
+
         uint256 timePast = timestamp.sub(vestingStart);
         if (timePast < vestingDuration) {
             uint256 remainingTime = vestingDuration.sub(timePast);
@@ -94,12 +96,12 @@ contract Vesting is Storage {
             DecimalMath.ONE,
             isOpenTWAP
         );
-        IERC20(_TOKEN_ADDRESS_).transferFrom(msg.sender, _INITIAL_POOL_, initialTokenAmount);
+        IERC20(_TOKEN_ADDRESS_).safeTransferFrom(msg.sender, _INITIAL_POOL_, initialTokenAmount);
         
         if(totalUsedRaiseFunds > _INITIAL_FUND_LIQUIDITY_) {
-            IERC20(_FUNDS_ADDRESS_).transfer(_INITIAL_POOL_, _INITIAL_FUND_LIQUIDITY_);
+            IERC20(_FUNDS_ADDRESS_).safeTransfer(_INITIAL_POOL_, _INITIAL_FUND_LIQUIDITY_);
         }else {
-            IERC20(_FUNDS_ADDRESS_).transfer(_INITIAL_POOL_, totalUsedRaiseFunds);
+            IERC20(_FUNDS_ADDRESS_).safeTransfer(_INITIAL_POOL_, totalUsedRaiseFunds);
         }
         
         (_TOTAL_LP_, , ) = IDVM(_INITIAL_POOL_).buyShares(address(this));

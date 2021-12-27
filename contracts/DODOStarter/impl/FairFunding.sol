@@ -168,7 +168,7 @@ contract FairFunding is Vesting {
 
     // ============ Settle Functions ============
 
-    function settle() public isForceStop preventReentrant {
+    function settle() public isNotForceStop preventReentrant {
         require(_FINAL_PRICE_ == 0 && isFundingEnd(), "CAN_NOT_SETTLE");
         _FINAL_PRICE_ = getCurrentPrice();
         if(_TOTAL_RAISED_FUNDS_ == 0) {
@@ -187,7 +187,7 @@ contract FairFunding is Vesting {
 
     // ============ Funding Functions ============
 
-    function depositFunds(address to) external preventReentrant isForceStop returns(uint256 inputFund) {
+    function depositFunds(address to) external preventReentrant isNotForceStop returns(uint256 inputFund) {
         require(isDepositOpen(), "DEPOSIT_NOT_OPEN");
 
         uint256 currentFundBalance = IERC20(_FUNDS_ADDRESS_).balanceOf(address(this));

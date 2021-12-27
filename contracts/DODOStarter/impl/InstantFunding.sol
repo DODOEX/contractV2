@@ -142,7 +142,7 @@ contract InstantFunding is Vesting {
     function depositFunds(address to)
         external
         preventReentrant
-        isForceStop
+        isNotForceStop
         returns (uint256 newTokenAllocation)
     {
         require(isDepositOpen(), "DEPOSIT_NOT_OPEN");

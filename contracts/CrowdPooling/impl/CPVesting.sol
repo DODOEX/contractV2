@@ -82,8 +82,8 @@ contract CPVesting is CPFunding {
 
     function _claimBaseToken(address to) internal {
         uint256 claimableBaseAmount = getClaimableBaseToken(msg.sender);
-        _transferBaseOut(to, claimableBaseAmount);
         _CLAIMED_BASE_TOKEN_[msg.sender] = _CLAIMED_BASE_TOKEN_[msg.sender].add(claimableBaseAmount);
+        _transferBaseOut(to, claimableBaseAmount);
         emit ClaimBaseToken(msg.sender, claimableBaseAmount);
     }
 

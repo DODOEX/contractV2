@@ -24,9 +24,5 @@ interface ICP {
 
     function emergencySettle() external;
 
-    function claimBaseToken() external;
-
-    function ClaimQuoteToken(address to,bytes calldata data) external;
-
     function claimLPToken() external;
 }

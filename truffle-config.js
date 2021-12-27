@@ -19,7 +19,6 @@
  */
 
 var HDWalletProvider = require("@truffle/hdwallet-provider");
-const NonceTrackerSubprovider = require('web3-provider-engine/subproviders/nonce-tracker')
 var privKey = process.env.privKey;
 var infuraId = process.env.infuraId;
 
@@ -65,7 +64,7 @@ module.exports = {
     Drops_V2:       false,
     MineV3:         false,
     NFT_POOL:       false,
-    UserQuota:      true
+    UserQuota:      false
   },
 
   networks: {
@@ -103,7 +102,9 @@ module.exports = {
       gas: 10000000,
       gasPrice: 1500000000,
       network_id: 4,
-      skipDryRun: true
+      skipDryRun: true,
+      confirmations: 2,
+      timeoutBlocks: 200,
     },
 
     live: {
@@ -119,8 +120,9 @@ module.exports = {
 
     bsclive: {
       provider: function () {
-        return new HDWalletProvider(privKey, "https://bsc-dataseed1.binance.org");
+        return new HDWalletProvider(privKey, "https://bsc-dataseed3.ninicoin.io");
       },
+      networkCheckTimeout:100000,
       network_id: 56,
       confirmations: 10,
       timeoutBlocks: 200,
@@ -142,17 +144,6 @@ module.exports = {
         return new HDWalletProvider(privKey, 'https://rpc.moonriver.moonbeam.network');
       },
       network_id: 1285
-    },
-
-    aurora: {
-      networkCheckTimeout: 100000,
-      provider: () => {
-        let hdWalletProvider = new HDWalletProvider(privKey, 'https://mainnet.aurora.dev');
-        hdWalletProvider.engine.addProvider(new NonceTrackerSubprovider())
-        return hdWalletProvider
-      },
-      network_id: 0x4e454152,
-      gas: 10000000
     },
 
     oktest: {

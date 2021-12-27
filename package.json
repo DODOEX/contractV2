@@ -45,7 +45,7 @@
     "solc": "^0.6.9",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.5",
-    "web3": "^1.2.9",
+    "web3": "^1.2.8",
     "web3-core-helpers": "^1.2.8",
     "web3-eth-contract": "^1.2.8"
   },
@@ -55,7 +55,6 @@
     "prettier": "^2.0.5",
     "prettier-plugin-solidity": "^1.0.0-alpha.52",
     "solidity-coverage": "^0.7.7",
-    "truffle-assertions": "^0.9.2",
-    "web3-provider-engine": "~15.0.12"
+    "truffle-assertions": "^0.9.2"
   }
 }

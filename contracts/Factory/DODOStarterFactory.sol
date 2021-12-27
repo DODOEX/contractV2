@@ -12,6 +12,7 @@ import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 import {ICloneFactory} from "../lib/CloneFactory.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {IERC20} from "../intf/IERC20.sol";
+import {SafeERC20} from "../lib/SafeERC20.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
 import {IDODOStarter} from "../DODOStarter/intf/IDODOStarter.sol";
 
@@ -23,6 +24,8 @@ import {IDODOStarter} from "../DODOStarter/intf/IDODOStarter.sol";
  */
 contract DODOStarterFactory is InitializableOwnable {
     using SafeMath for uint256;
+    using SafeERC20 for IERC20;
+
     // ============ Templates ============
 
     address public immutable _CLONE_FACTORY_;
@@ -83,7 +86,7 @@ contract DODOStarterFactory is InitializableOwnable {
     ) external payable permissionCheck(addressList[0],addressList[1]) returns(address newFairFundPool){
         newFairFundPool = ICloneFactory(_CLONE_FACTORY_).clone(_FAIR_FUND_TEMPLATE_);
 
-        IERC20(addressList[1]).transferFrom(msg.sender, newFairFundPool,sellTokenAmount);
+        IERC20(addressList[1]).safeTransferFrom(msg.sender, newFairFundPool,sellTokenAmount);
         (bool success, ) = newFairFundPool.call{value: msg.value}("");
         require(success, "Settle fund Transfer failed");
 
@@ -107,7 +110,7 @@ contract DODOStarterFactory is InitializableOwnable {
     ) external permissionCheck(addressList[0],addressList[1]) returns(address newInstantFundPool){
         newInstantFundPool = ICloneFactory(_CLONE_FACTORY_).clone(_INSTANT_FUND_TEMPLATE_);
 
-        IERC20(addressList[1]).transferFrom(msg.sender, newInstantFundPool,sellTokenAmount);
+        IERC20(addressList[1]).safeTransferFrom(msg.sender, newInstantFundPool,sellTokenAmount);
         
         IDODOStarter(newInstantFundPool).init(
             addressList,
