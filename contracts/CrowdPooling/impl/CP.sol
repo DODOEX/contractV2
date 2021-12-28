@@ -116,4 +116,58 @@ contract CP is CPVesting {
     function version() virtual external pure returns (string memory) {
         return "CP 2.0.0";
     }
+
+    
+    // ============= View =================
+    function getCpInfoHelper(address user) external view returns (
+        bool isSettled,
+        uint256 settledTime,
+        uint256 claimableBaseToken,
+        uint256 claimedBaseToken,
+        bool isClaimedQuoteToken,
+        uint256 claimableQuoteToken,
+        address pool,
+        uint256 claimableLpToken,
+        uint256 myShares,
+        bool isOverCapStop
+    ) {
+        isSettled = _SETTLED_;
+        settledTime = _SETTLED_TIME_;
+        if(_SETTLED_ && block.timestamp >= _SETTLED_TIME_.add(_TOKEN_CLAIM_DURATION_)) {
+            claimableBaseToken = getClaimableBaseToken(user);
+            claimedBaseToken = _CLAIMED_BASE_TOKEN_[user];
+        }else {
+            claimableBaseToken = 0;
+            claimedBaseToken = 0;
+        }
+
+        if(_SETTLED_) {
+            if(_CLAIMED_QUOTE_[msg.sender]) {
+                isClaimedQuoteToken = true;
+                claimableQuoteToken = 0;
+            } else {
+                isClaimedQuoteToken = false;
+                claimableQuoteToken = _UNUSED_QUOTE_.mul(_SHARES_[user]).div(_TOTAL_SHARES_);
+            }
+        } else {
+            isClaimedQuoteToken = false;
+            claimableQuoteToken = 0;
+        }
+
+        pool = _POOL_;
+
+        if(_SETTLED_ && block.timestamp >= _SETTLED_TIME_.add(_FREEZE_DURATION_)) {
+            if(user == _OWNER_) {
+                claimableLpToken = getClaimableLPToken();
+            }else {
+                claimableLpToken = 0;
+            }
+        }else {
+            claimableLpToken = 0;
+        }
+
+        myShares = _SHARES_[user];
+
+        isOverCapStop = _IS_OVERCAP_STOP;
+    }
 }
