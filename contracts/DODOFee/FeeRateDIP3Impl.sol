@@ -28,6 +28,9 @@ interface IQuota {
 interface IPool {
     function version() external pure returns (string memory);
     function _LP_FEE_RATE_() external view returns (uint256);
+    function _BASE_RESERVE_() external view returns (uint);
+    function _QUOTE_RESERVE_() external view returns (uint);
+    function _K_() external view returns (uint);
 }
 
 contract FeeRateDIP3Impl is InitializableOwnable {
@@ -79,13 +82,20 @@ contract FeeRateDIP3Impl is InitializableOwnable {
     // ============ View Functions ============
 
     function getFeeRate(address pool, address user) external view returns (uint256) {
-        if(specPoolList[pool] != 0) {
-            return specPoolList[pool];
-        }
-
         try IPool(pool).version() returns (string memory poolVersion) {
             bytes32 hashPoolVersion = keccak256(abi.encodePacked(poolVersion));
-            if(hashPoolVersion == keccak256(abi.encodePacked("CP 1.0.0"))) {
+            if(_kjudge(hashPoolVersion)) {
+                uint k = IPool(pool)._K_();
+                uint baseReserve = IPool(pool)._BASE_RESERVE_();
+                uint quoteReserve = IPool(pool)._QUOTE_RESERVE_();
+                require(!(k==0 && (baseReserve ==0 || quoteReserve == 0)), "KJUDGE_ERROR");
+            }
+
+            if(specPoolList[pool] != 0) {
+                return specPoolList[pool];
+            }
+
+            if(_cp(hashPoolVersion)) {
                 CPPoolInfo memory cpPoolInfo = cpPools[pool];
                 address quoteToken = cpPoolInfo.quoteToken;
                 if(quoteToken == address(0)) {
@@ -107,7 +117,7 @@ contract FeeRateDIP3Impl is InitializableOwnable {
                         return IFee(feeAddr).getUserFee(user);
                     }
                 }
-            } else if(hashPoolVersion == keccak256(abi.encodePacked("DVM 1.0.2")) || hashPoolVersion == keccak256(abi.encodePacked("DSP 1.0.1"))) {
+            } else if(_dip3dvm(hashPoolVersion) || _dip3dsp(hashPoolVersion)) {
                 uint256 lpFeeRate = IPool(pool)._LP_FEE_RATE_();
                 uint256 mtFeeRate = lpFeeRate.mul(_LP_MT_RATIO_).div(100);
                 if(lpFeeRate.add(mtFeeRate) >= 10**18) {
@@ -150,5 +160,21 @@ contract FeeRateDIP3Impl is InitializableOwnable {
                 userFee = IFee(feeAddr).getUserFee(user);
             }
         }
+    }
+
+    function _cp(bytes32 _hashPoolVersion) internal pure returns (bool) {
+        return (_hashPoolVersion == keccak256(abi.encodePacked("CP 1.0.0")) || _hashPoolVersion == keccak256(abi.encodePacked("CP 2.0.0")));
+    }
+
+    function _dip3dvm(bytes32 _hashPoolVersion) internal pure returns (bool){
+        return (_hashPoolVersion == keccak256(abi.encodePacked("DVM 1.0.2")) || _hashPoolVersion == keccak256(abi.encodePacked("DVM 1.0.3")));
+    }
+
+    function _dip3dsp(bytes32 _hashPoolVersion) internal pure returns (bool){
+        return (_hashPoolVersion == keccak256(abi.encodePacked("DSP 1.0.1")) || _hashPoolVersion == keccak256(abi.encodePacked("DSP 1.0.2")));
+    }
+
+    function _kjudge(bytes32 _hashPoolVersion) internal pure returns (bool) {
+        return (_hashPoolVersion == keccak256(abi.encodePacked("DVM 1.0.2")) || _hashPoolVersion == keccak256(abi.encodePacked("DSP 1.0.1")) || _hashPoolVersion == keccak256(abi.encodePacked("DPP 1.0.0")));
     }
 }
