@@ -516,8 +516,8 @@ module.exports = async (deployer, network, accounts) => {
         logger.log("UniAdapter Address: ", UniAdapter.address);
         */
         //await deployer.deploy(UniV3Adapter, WETH)
-        await deployer.deploy(WooAdapter)
-        logger.log("UniV3Adapter Address: ", WooAdapter.address);
+        await deployer.deploy(UniAdapter)
+        logger.log("new UniAdapter for wannaSwap Address: ", UniAdapter.address);
     }
 
     if(deploySwitch.test_Sample) {
