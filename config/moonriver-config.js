@@ -1,7 +1,7 @@
 module.exports = {
     MOONRIVER_CONFIG: {
         //TOKEN
-        WETH: "0xf50225a84382c74CbdeA10b0c176f71fc3DE0C4d",
+        WETH: "0x98878b06940ae243284ca214f92bb71a2b032b8a",//0xf50225a84382c74CbdeA10b0c176f71fc3DE0C4d
         CHI: "0x0000000000000000000000000000000000000000",
         DODO: "",
 
@@ -12,7 +12,7 @@ module.exports = {
         //DODO: "0xB5397B2210f49e96a5EB2c9747Aa2bD9397d90C0",
         //ERC20Helper: "0x6373ceB657C83C91088d328622573FB766064Ac4",
         DODOSellHelper: "0x5e84190a270333aCe5B9202a3F4ceBf11b81bB01",
-        DODOCalleeHelper: "0xc4436fBAE6eBa5d95bf7d53Ae515F8A707Bd402A", // replace weth need to redeploy
+        DODOCalleeHelper: "0x533AF8ad419fB3082df9C80BE2ad903912a817FB", // replace weth need to redeploy
         DODOV1PmmHelper: "0x3CD6D7F5fF977bf8069548eA1F9441b061162b42",
         DODOV2RouteHelper: "0x8a6998b9A4E4f63c8aDB46ceEB01857A956A8122",
         CurveSample: "",
