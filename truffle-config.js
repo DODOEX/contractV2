@@ -64,7 +64,8 @@ module.exports = {
     Drops_V2:       false,
     MineV3:         false,
     NFT_POOL:       false,
-    UserQuota:      false
+    UserQuota:      false,
+    STARTER:        true
   },
 
   networks: {
@@ -97,14 +98,13 @@ module.exports = {
       networkCheckTimeout: 100000,
       provider: function () {
         return new HDWalletProvider(privKey, "https://rinkeby.infura.io/v3/" + infuraId);
-        // return new HDWalletProvider(privKey, "https://eth-rinkeby.dodoex.io");
       },
       gas: 10000000,
       gasPrice: 1500000000,
       network_id: 4,
       skipDryRun: true,
-      confirmations: 2,
-      timeoutBlocks: 200,
+      // confirmations: 10,
+      // timeoutBlocks: 200,
     },
 
     live: {
