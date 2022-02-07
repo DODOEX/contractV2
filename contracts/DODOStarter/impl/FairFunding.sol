@@ -273,4 +273,11 @@ contract FairFunding is Vesting {
     function isSettled() public view returns (bool) {
         return _FINAL_PRICE_ != 0;
     }
+
+    // ============ Version Control ============
+
+    function version() virtual external pure returns (string memory) {
+        return "FairFunding 1.0.0";
+    }
+
 }
