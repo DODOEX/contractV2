@@ -211,4 +211,11 @@ contract InstantFunding is Vesting {
     function isFundingEnd() public view returns (bool) {
         return block.timestamp > _START_TIME_.add(_BIDDING_DURATION_);
     }
+
+
+    // ============ Version Control ============
+
+    function version() virtual external pure returns (string memory) {
+        return "InstantFunding 1.0.0";
+    }
 }
