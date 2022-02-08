@@ -20,6 +20,9 @@ contract Vesting is Storage {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
+    // ============ Events ============
+    event ClaimLpToken(address indexed to, uint256 lpAmount);
+    
     function claimLp(address to) external preventReentrant onlyOwner {
         require(_INITIAL_POOL_ != address(0), "LIQUIDITY_NOT_ESTABLISHED");
         uint256 remainingLp = DecimalMath.mulFloor(
@@ -30,6 +33,8 @@ contract Vesting is Storage {
 
         _CLAIMED_LP_ = _CLAIMED_LP_.add(claimableLp);
         IERC20(_INITIAL_POOL_).safeTransfer(to, claimableLp);
+
+        emit ClaimLpToken(to, claimableLp);
     }
 
     //tokenType 0: BaseToken, 1: Fund, 2: LpToken
@@ -65,24 +70,24 @@ contract Vesting is Storage {
 
 
     // ============ Internal Function ============
-    function _claimToken(address to, uint256 totalAllocation) internal {
+    function _claimToken(address to, uint256 totalAllocation) internal returns(uint256 claimableTokenAmount) {
         uint256 remainingToken = DecimalMath.mulFloor(
             getRemainingRatio(block.timestamp,0),
             totalAllocation
         );
-        uint256 claimableTokenAmount = totalAllocation.sub(remainingToken).sub(_CLAIMED_TOKEN_[msg.sender]);
+        claimableTokenAmount = totalAllocation.sub(remainingToken).sub(_CLAIMED_TOKEN_[msg.sender]);
         _CLAIMED_TOKEN_[msg.sender] = _CLAIMED_TOKEN_[msg.sender].add(claimableTokenAmount);
         IERC20(_TOKEN_ADDRESS_).safeTransfer(to,claimableTokenAmount);
     }
 
-    function _claimFunds(address to, uint256 totalUsedRaiseFunds) internal {
+    function _claimFunds(address to, uint256 totalUsedRaiseFunds) internal returns(uint256 claimableFund) {
         require(totalUsedRaiseFunds > _INITIAL_FUND_LIQUIDITY_, "FUND_NOT_ENOUGH");
         uint256 vestingFunds = totalUsedRaiseFunds.sub(_INITIAL_FUND_LIQUIDITY_);
         uint256 remainingFund = DecimalMath.mulFloor(
             getRemainingRatio(block.timestamp,1),
             vestingFunds
         );
-        uint256 claimableFund = vestingFunds.sub(remainingFund).sub(_CLAIMED_FUNDS_);
+        claimableFund = vestingFunds.sub(remainingFund).sub(_CLAIMED_FUNDS_);
         _CLAIMED_FUNDS_ = _CLAIMED_FUNDS_.add(claimableFund);
         IERC20(_FUNDS_ADDRESS_).safeTransfer(to, claimableFund);
     }
