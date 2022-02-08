@@ -37,6 +37,17 @@ contract FairFunding is Vesting {
         require(_INITIALIZED_ == false, "WE_NOT_SAVE_ETH_AFTER_INIT");
     }
 
+
+    // ============ Events ============
+    event Settle(address indexed account);
+    event DepositFund(address indexed account, uint256 fundAmount);
+    event WithdrawFund(address indexed caller, address indexed to, uint256 fundAmount, bool isSettled);
+    event ClaimToken(address indexed caller, address indexed to, uint256 tokenAmount, uint256 fundAmount);
+
+    event WithdrawUnallocatedToken(address indexed to, uint256 tokenAmount);
+    event InitializeLiquidity(address pool, uint256 tokenAmount);
+    event ClaimFund(address indexed to, uint256 fundAmount);
+
     // ============ Init ============
     function init(
         address[] calldata addressList,
@@ -183,6 +194,8 @@ contract FairFunding is Vesting {
         }
 
          msg.sender.transfer(_SETTEL_FUND_);
+
+         emit Settle(msg.sender);
     }
 
     // ============ Funding Functions ============
@@ -209,31 +222,43 @@ contract FairFunding is Vesting {
 
         _FUNDS_DEPOSITED_[to] = _FUNDS_DEPOSITED_[to].add(inputFund);
         _TOTAL_RAISED_FUNDS_ = _TOTAL_RAISED_FUNDS_.add(inputFund);
+
+        emit DepositFund(to, inputFund);
     }
 
     function withdrawFunds(address to, uint256 amount) external preventReentrant {
-        if (!isSettled()) {
+        uint256 fundAmount;
+        bool isSettled = isSettled();
+        if (!isSettled) {
             require(_FUNDS_DEPOSITED_[msg.sender] >= amount, "WITHDRAW_TOO_MUCH");
             _FUNDS_DEPOSITED_[msg.sender] = _FUNDS_DEPOSITED_[msg.sender].sub(amount);
             _TOTAL_RAISED_FUNDS_ = _TOTAL_RAISED_FUNDS_.sub(amount);
             _FUNDS_RESERVE_ = _FUNDS_RESERVE_.sub(amount);
+            fundAmount = amount;
             IERC20(_FUNDS_ADDRESS_).safeTransfer(to, amount);
         } else {
             require(!_FUNDS_CLAIMED_[msg.sender], "ALREADY_CLAIMED");
             _FUNDS_CLAIMED_[msg.sender] = true;
-            IERC20(_FUNDS_ADDRESS_).safeTransfer(to, getUserFundsUnused(msg.sender));
+            fundAmount = getUserFundsUnused(msg.sender);
+            IERC20(_FUNDS_ADDRESS_).safeTransfer(to, fundAmount);
         }
+
+        emit WithdrawFund(msg.sender, to, fundAmount, isSettled);
     }
 
     function claimToken(address to) external {
         require(isSettled(), "NOT_SETTLED");
         uint256 totalAllocation = getUserTokenAllocation(msg.sender);
-        _claimToken(to, totalAllocation);
+        uint256 claimableTokenAmount = _claimToken(to, totalAllocation);
 
+        uint256 fundAmount = 0;
         if(!_FUNDS_CLAIMED_[msg.sender]) {
             _FUNDS_CLAIMED_[msg.sender] = true;
-            IERC20(_FUNDS_ADDRESS_).safeTransfer(to, getUserFundsUnused(msg.sender));
+            fundAmount = getUserFundsUnused(msg.sender);
+            IERC20(_FUNDS_ADDRESS_).safeTransfer(to, fundAmount);
         }
+
+        emit ClaimToken(msg.sender, to, claimableTokenAmount, fundAmount);
     }    
 
     // ============ Ownable Functions ============
@@ -242,20 +267,27 @@ contract FairFunding is Vesting {
         require(isSettled(), "NOT_SETTLED");
         require(_FINAL_PRICE_ == _LOWER_LIMIT_PRICE_, "NO_TOKEN_LEFT");
         uint256 allocatedToken = DecimalMath.divCeil(_TOTAL_RAISED_FUNDS_, _FINAL_PRICE_);
-        IERC20(_TOKEN_ADDRESS_).safeTransfer(to, _TOTAL_TOKEN_AMOUNT_.sub(allocatedToken));
+        uint256 unallocatedAmount = _TOTAL_TOKEN_AMOUNT_.sub(allocatedToken);
+        IERC20(_TOKEN_ADDRESS_).safeTransfer(to, unallocatedAmount);
         _TOTAL_TOKEN_AMOUNT_ = allocatedToken;
+
+        emit WithdrawUnallocatedToken(to, unallocatedAmount);
     }
 
     function initializeLiquidity(uint256 initialTokenAmount, uint256 lpFeeRate, bool isOpenTWAP) external preventReentrant onlyOwner {
         require(isSettled(), "NOT_SETTLED");
         uint256 totalUsedRaiseFunds = DecimalMath.mulFloor(_TOTAL_RAISED_FUNDS_, _USED_FUND_RATIO_);
         _initializeLiquidity(initialTokenAmount, totalUsedRaiseFunds, lpFeeRate, isOpenTWAP);
+
+        emit InitializeLiquidity(_INITIAL_POOL_, initialTokenAmount);
     }
 
     function claimFund(address to) external preventReentrant onlyOwner {
         require(isSettled(), "NOT_SETTLED");
         uint256 totalUsedRaiseFunds = DecimalMath.mulFloor(_TOTAL_RAISED_FUNDS_, _USED_FUND_RATIO_);
-        _claimFunds(to,totalUsedRaiseFunds);
+        uint256 claimableFund = _claimFunds(to,totalUsedRaiseFunds);
+
+        emit ClaimFund(to, claimableFund);
     }
 
     // ============ Timeline Control Functions ============

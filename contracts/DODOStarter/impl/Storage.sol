@@ -21,6 +21,9 @@ contract Storage is InitializableOwnable, ReentrancyGuard {
     bool public _FORCE_STOP_ = false;
     address public _QUOTA_; 
 
+    // ============ Events ============
+    event ForceStop();
+
     // ============ Token & Balance ============
 
     uint256 public _FUNDS_RESERVE_;
@@ -75,6 +78,8 @@ contract Storage is InitializableOwnable, ReentrancyGuard {
         _TOTAL_TOKEN_AMOUNT_ = 0;
         uint256 tokenAmount = IERC20(_TOKEN_ADDRESS_).balanceOf(address(this));
         IERC20(_TOKEN_ADDRESS_).safeTransfer(_OWNER_, tokenAmount);
+
+        emit ForceStop();
     }
 
     function setQuota(address quota) external onlyOwner {

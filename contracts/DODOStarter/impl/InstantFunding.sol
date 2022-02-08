@@ -28,6 +28,13 @@ contract InstantFunding is Vesting {
     mapping(address => uint256) _TOKEN_ALLOCATION_;
     uint256 public _TOTAL_ALLOCATED_TOKEN_;
 
+    // ============ Events ============
+    event DepositFund(address indexed account, uint256 fundAmount, uint256 allocationAmount);
+    event ClaimToken(address indexed caller, address indexed to, uint256 tokenAmount);
+
+    event WithdrawUnallocatedToken(address indexed to, uint256 tokenAmount);
+    event InitializeLiquidity(address pool, uint256 tokenAmount);
+    event ClaimFund(address indexed to, uint256 fundAmount);
 
     // ============ Init ============
     function init(
@@ -160,12 +167,14 @@ contract InstantFunding is Vesting {
         uint256 currentPrice = getCurrentPrice();
         newTokenAllocation = DecimalMath.divFloor(inputFund, currentPrice);
 
+        uint256 depositFundAmount = inputFund;
         if (newTokenAllocation.add(_TOTAL_ALLOCATED_TOKEN_) > _TOTAL_TOKEN_AMOUNT_) {
             newTokenAllocation = _TOTAL_TOKEN_AMOUNT_.sub(_TOTAL_ALLOCATED_TOKEN_);
             uint256 fundUsed = DecimalMath.mulFloor(newTokenAllocation, currentPrice);
             _FUNDS_USED_[to] = _FUNDS_USED_[to].add(fundUsed);
             _TOTAL_RAISED_FUNDS_ = _TOTAL_RAISED_FUNDS_.add(fundUsed);
             _FUNDS_RESERVE_ = _FUNDS_RESERVE_.add(fundUsed);
+            depositFundAmount = fundUsed;
 
             IERC20(_FUNDS_ADDRESS_).safeTransfer(to, inputFund.sub(fundUsed));
         } else {
@@ -176,28 +185,39 @@ contract InstantFunding is Vesting {
 
         _TOKEN_ALLOCATION_[to] = _TOKEN_ALLOCATION_[to].add(newTokenAllocation);
         _TOTAL_ALLOCATED_TOKEN_ = _TOTAL_ALLOCATED_TOKEN_.add(newTokenAllocation);
+
+        emit DepositFund(to, depositFundAmount, newTokenAllocation);
     }
 
     function claimToken(address to) external {
         uint256 totalAllocation = getUserTokenAllocation(msg.sender);
-        _claimToken(to, totalAllocation);
+        uint256 claimableTokenAmount = _claimToken(to, totalAllocation);
+
+        emit ClaimToken(msg.sender, to, claimableTokenAmount);
     }
 
     // ============ Ownable Functions ============
 
     function withdrawUnallocatedToken(address to) external preventReentrant onlyOwner {
         require(isFundingEnd(), "CAN_NOT_WITHDRAW");
-        IERC20(_TOKEN_ADDRESS_).safeTransfer(to, _TOTAL_TOKEN_AMOUNT_.sub(_TOTAL_ALLOCATED_TOKEN_));
+        uint256 unallocatedAmount = _TOTAL_TOKEN_AMOUNT_.sub(_TOTAL_ALLOCATED_TOKEN_);
+        IERC20(_TOKEN_ADDRESS_).safeTransfer(to, unallocatedAmount);
         _TOTAL_TOKEN_AMOUNT_ = _TOTAL_ALLOCATED_TOKEN_;
+
+        emit WithdrawUnallocatedToken(to, unallocatedAmount);
     }
 
     function initializeLiquidity(uint256 initialTokenAmount, uint256 lpFeeRate, bool isOpenTWAP) external preventReentrant onlyOwner {
         require(isFundingEnd(),"FUNDING_NOT_FINISHED");
         _initializeLiquidity(initialTokenAmount, _TOTAL_RAISED_FUNDS_, lpFeeRate, isOpenTWAP);
+
+        emit InitializeLiquidity(_INITIAL_POOL_, initialTokenAmount);
     }
 
     function claimFund(address to) external preventReentrant onlyOwner {
-        _claimFunds(to,_TOTAL_RAISED_FUNDS_);
+        uint256 claimableFund = _claimFunds(to,_TOTAL_RAISED_FUNDS_);
+
+        emit ClaimFund(to, claimableFund);
     }
 
     // ============ Timeline Control Functions ============
