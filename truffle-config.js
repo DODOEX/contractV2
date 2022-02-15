@@ -252,7 +252,7 @@ module.exports = {
           enabled: true,
           runs: 200,
         },
-        evmVersion: "istanbul"
+        // evmVersion: "istanbul"
       },
     },
   },

@@ -189,7 +189,7 @@ contract InstantFunding is Vesting {
         emit DepositFund(to, depositFundAmount, newTokenAllocation);
     }
 
-    function claimToken(address to) external {
+    function claimToken(address to) external preventReentrant {
         uint256 totalAllocation = getUserTokenAllocation(msg.sender);
         uint256 claimableTokenAmount = _claimToken(to, totalAllocation);
 
@@ -235,7 +235,76 @@ contract InstantFunding is Vesting {
 
     // ============ Version Control ============
 
-    function version() virtual external pure returns (string memory) {
+    function version() virtual public pure returns (string memory) {
         return "InstantFunding 1.0.0";
+    }
+
+    // ============ View Helper  ==============
+    function getCurrentFundingInfo(address user) external view returns(
+        uint256 raiseFundAmount,
+        uint256 userFundAmount,
+        uint256 currentPrice,
+        uint256 soldTokenAmount,
+        uint256 claimableTokenAmount,
+        bool isHaveCap,
+        uint256 userQuota,
+        uint256 userCurrentQuota
+    ) {
+        raiseFundAmount =_TOTAL_RAISED_FUNDS_;
+        userFundAmount =  _FUNDS_USED_[user];
+        currentPrice = getCurrentPrice();
+        soldTokenAmount = _TOTAL_ALLOCATED_TOKEN_;
+
+        if(block.timestamp > _TOKEN_VESTING_START_) {
+            uint256 totalAllocation = getUserTokenAllocation(user);
+            uint256 remainingToken = DecimalMath.mulFloor(
+                getRemainingRatio(block.timestamp,0),
+                totalAllocation
+            );
+            claimableTokenAmount = totalAllocation.sub(remainingToken).sub(_CLAIMED_TOKEN_[user]);
+        }else {
+            claimableTokenAmount = 0;
+        }
+
+        if(_QUOTA_ == address(0)) {
+            isHaveCap = false;
+            userQuota = uint256(-1);
+            userCurrentQuota = uint256(-1);
+        } else {
+            isHaveCap = true;
+            userQuota = uint256(IQuota(_QUOTA_).getUserQuota(user));
+            if(userQuota > userFundAmount) {
+                userCurrentQuota = userQuota - userFundAmount;
+            } else {
+                userCurrentQuota = 0;
+            }
+        }
+    }
+
+
+    function getBaseFundInfo() external view returns(
+        address tokenAddress,
+        address fundAddress,
+        uint256 totalTokenAmount,
+        uint256 price0, //_START_PRICE_
+        uint256 price1, //_END_PRICE_
+        string memory versionType,
+        uint256 startTime,
+        uint256 bidDuration,
+        uint256 tokenVestingStart,
+        uint256 tokenVestingDuration
+    ) {
+        tokenAddress = _TOKEN_ADDRESS_;
+        fundAddress = _FUNDS_ADDRESS_;
+        totalTokenAmount = _TOTAL_TOKEN_AMOUNT_;
+        price0 = _START_PRICE_;
+        price1 = _END_PRICE_;
+        
+        versionType = version();
+
+        startTime = _START_TIME_;
+        bidDuration = _BIDDING_DURATION_;
+        tokenVestingStart = _TOKEN_VESTING_START_;
+        tokenVestingDuration = _TOKEN_VESTING_DURATION_;
     }
 }

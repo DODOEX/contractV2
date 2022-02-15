@@ -120,8 +120,8 @@ module.exports = {
         //=================== Starter ===================
         DODOStarterProxy: "0x451E07405B79eDEEA87ccFa57e1BaF184Bea6773",
         DODOStarterFactory: "0xa28D60c3eCDc52521c8219bd6a4eba0AA8900F88",
-        FairFunding: "0x5D1f0d091B3Fe5F79908F232c50CfC3D9084c59d",
-        InstantFunding: "0x9297C04D4F8B47cCf7F2733b0F8f151aE1cb4615"
+        FairFunding: "0x9124B1191DDB6CB1CAF9aA899d5059ea52b5D09B",
+        InstantFunding: "0x80B21A1A832D3b0016A0d287967CD9Dce0Ade688"
         
     }
 }

@@ -19,7 +19,7 @@ contract FairFunding is Vesting {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    uint256 internal constant _SETTEL_FUND_ = 200 finney;
+    uint256 internal constant _SETTEL_FUND_ = 2e17;
     // ============ Fair Mode ============
     uint256 public _COOLING_DURATION_;
 
@@ -147,12 +147,16 @@ contract FairFunding is Vesting {
     }
 
     function getPrice(uint256 fundAmount) public view returns (uint256 price) {
-        price = DecimalMath.divFloor(fundAmount, _TOTAL_TOKEN_AMOUNT_);
-        if (price < _LOWER_LIMIT_PRICE_) {
-            price = _LOWER_LIMIT_PRICE_;
-        }
-        if (price > _UPPER_LIMIT_PRICE_) {
-            price = _UPPER_LIMIT_PRICE_;
+        if(_FINAL_PRICE_ != 0) 
+            price = _FINAL_PRICE_;
+        else {
+            price = DecimalMath.divFloor(fundAmount, _TOTAL_TOKEN_AMOUNT_);
+            if (price < _LOWER_LIMIT_PRICE_) {
+                price = _LOWER_LIMIT_PRICE_;
+            }
+            if (price > _UPPER_LIMIT_PRICE_) {
+                price = _UPPER_LIMIT_PRICE_;
+            }
         }
     }
 
@@ -211,7 +215,6 @@ contract FairFunding is Vesting {
 
         // input fund check
         inputFund = currentFundBalance.sub(_FUNDS_RESERVE_);
-        _FUNDS_RESERVE_ = _FUNDS_RESERVE_.add(inputFund);
 
         if (_QUOTA_ != address(0)) {
             require(
@@ -220,6 +223,7 @@ contract FairFunding is Vesting {
             );
         }
 
+        _FUNDS_RESERVE_ = _FUNDS_RESERVE_.add(inputFund);
         _FUNDS_DEPOSITED_[to] = _FUNDS_DEPOSITED_[to].add(inputFund);
         _TOTAL_RAISED_FUNDS_ = _TOTAL_RAISED_FUNDS_.add(inputFund);
 
@@ -246,7 +250,7 @@ contract FairFunding is Vesting {
         emit WithdrawFund(msg.sender, to, fundAmount, isSettled);
     }
 
-    function claimToken(address to) external {
+    function claimToken(address to) external preventReentrant {
         require(isSettled(), "NOT_SETTLED");
         uint256 totalAllocation = getUserTokenAllocation(msg.sender);
         uint256 claimableTokenAmount = _claimToken(to, totalAllocation);
@@ -308,8 +312,90 @@ contract FairFunding is Vesting {
 
     // ============ Version Control ============
 
-    function version() virtual external pure returns (string memory) {
+    function version() virtual public pure returns (string memory) {
         return "FairFunding 1.0.0";
+    }
+
+    // ============ View Helper  ==============
+    function getCurrentFundingInfo(address user) external view returns(
+        uint256 raiseFundAmount,
+        uint256 userFundAmount,
+        uint256 currentPrice,
+        uint256 soldTokenAmount,
+        uint256 claimableTokenAmount,
+        bool isHaveCap,
+        uint256 userQuota,
+        uint256 userCurrentQuota
+    ) {
+        raiseFundAmount =_TOTAL_RAISED_FUNDS_;
+        userFundAmount =  _FUNDS_DEPOSITED_[user];
+        currentPrice = getCurrentPrice();
+        uint256 tmpSoldTokenAmount = DecimalMath.divCeil(_TOTAL_RAISED_FUNDS_, currentPrice);
+        soldTokenAmount = tmpSoldTokenAmount > _TOTAL_TOKEN_AMOUNT_ ? _TOTAL_TOKEN_AMOUNT_ : tmpSoldTokenAmount;
+
+        if(block.timestamp > _TOKEN_VESTING_START_) {
+            uint256 totalAllocation = getUserTokenAllocation(user);
+            uint256 remainingToken = DecimalMath.mulFloor(
+                getRemainingRatio(block.timestamp,0),
+                totalAllocation
+            );
+            claimableTokenAmount = totalAllocation.sub(remainingToken).sub(_CLAIMED_TOKEN_[user]);
+        }else {
+            claimableTokenAmount = 0;
+        }
+
+        if(_QUOTA_ == address(0)) {
+            isHaveCap = false;
+            userQuota = uint256(-1);
+            userCurrentQuota = uint256(-1);
+        } else {
+            isHaveCap = true;
+            userQuota = uint256(IQuota(_QUOTA_).getUserQuota(user));
+            if(userQuota > userFundAmount) {
+                userCurrentQuota = userQuota - userFundAmount;
+            } else {
+                userCurrentQuota = 0;
+            }
+        }
+    }
+
+    function getBaseFundInfo() external view returns(
+        address tokenAddress,
+        address fundAddress,
+        uint256 totalTokenAmount,
+        uint256 price0, //_LOWER_LIMIT_PRICE_
+        uint256 price1, //_UPPER_LIMIT_PRICE_
+        string memory versionType,
+        uint256 startTime,
+        uint256 bidDuration,
+        uint256 tokenVestingStart,
+        uint256 tokenVestingDuration
+    ) {
+        tokenAddress = _TOKEN_ADDRESS_;
+        fundAddress = _FUNDS_ADDRESS_;
+        totalTokenAmount = _TOTAL_TOKEN_AMOUNT_;
+        price0 = _LOWER_LIMIT_PRICE_;
+        price1 = _UPPER_LIMIT_PRICE_;
+        
+        versionType = version();
+
+        startTime = _START_TIME_;
+        bidDuration = _BIDDING_DURATION_;
+        tokenVestingStart = _TOKEN_VESTING_START_;
+        tokenVestingDuration = _TOKEN_VESTING_DURATION_;
+    }
+
+
+    function getFairFundInfo(address user) external view returns(
+        bool isOverCapStop,
+        uint256 finalPrice,
+        uint256 userUnusedFundAmount,
+        uint256 coolDuration
+    ) {
+        isOverCapStop = _IS_OVERCAP_STOP;
+        finalPrice = _FINAL_PRICE_;
+        userUnusedFundAmount = getUserFundsUnused(user);
+        coolDuration = _COOLING_DURATION_;
     }
 
 }
