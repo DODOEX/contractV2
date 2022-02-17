@@ -10,7 +10,7 @@ pragma solidity 0.6.9;
 import {SafeMath} from "../../lib/SafeMath.sol";
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 
-contract CustomERC20 is InitializableOwnable {
+contract CustomMintableERC20 is InitializableOwnable {
     using SafeMath for uint256;
 
     string public name;
@@ -27,13 +27,15 @@ contract CustomERC20 is InitializableOwnable {
 
     event Transfer(address indexed from, address indexed to, uint256 amount);
     event Approval(address indexed owner, address indexed spender, uint256 amount);
+    event Mint(address indexed user, uint256 value);
+    event Burn(address indexed user, uint256 value);
 
     event ChangeTeam(address oldTeam, address newTeam);
 
 
     function init(
         address _creator,
-        uint256 _totalSupply,
+        uint256 _initSupply,
         string memory _name,
         string memory _symbol,
         uint8 _decimals,
@@ -45,14 +47,14 @@ contract CustomERC20 is InitializableOwnable {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
-        totalSupply = _totalSupply;
-        balances[_creator] = _totalSupply;
+        totalSupply = _initSupply;
+        balances[_creator] = _initSupply;
         require(_tradeBurnRatio >= 0 && _tradeBurnRatio <= 5000, "TRADE_BURN_RATIO_INVALID");
         require(_tradeFeeRatio >= 0 && _tradeFeeRatio <= 5000, "TRADE_FEE_RATIO_INVALID");
         tradeBurnRatio = _tradeBurnRatio;
         tradeFeeRatio = _tradeFeeRatio;
         team = _team;
-        emit Transfer(address(0), _creator, _totalSupply);
+        emit Transfer(address(0), _creator, _initSupply);
     }
 
     function transfer(address to, uint256 amount) public returns (bool) {
@@ -114,8 +116,25 @@ contract CustomERC20 is InitializableOwnable {
         emit Transfer(sender, recipient, amount);
     }
 
+    function burn(uint256 value) external {
+        require(balances[msg.sender] >= value, "VALUE_NOT_ENOUGH");
+
+        balances[msg.sender] = balances[msg.sender].sub(value);
+        totalSupply = totalSupply.sub(value);
+        emit Burn(msg.sender, value);
+        emit Transfer(msg.sender, address(0), value);
+    }
 
     //=================== Ownable ======================
+    function mint(address user, uint256 value) external onlyOwner {
+        require(user == _OWNER_, "NOT_OWNER");
+        
+        balances[user] = balances[user].add(value);
+        totalSupply = totalSupply.add(value);
+        emit Mint(user, value);
+        emit Transfer(address(0), user, value);
+    }
+
     function changeTeamAccount(address newTeam) external onlyOwner {
         require(tradeFeeRatio > 0, "NOT_TRADE_FEE_TOKEN");
         emit ChangeTeam(team,newTeam);

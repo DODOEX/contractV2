@@ -40,7 +40,8 @@ module.exports = {
    */
   deploySwitch: {
     DEPLOY_V1:      false,
-    DEPLOY_V2:      true,
+    DEPLOY_V2:      false,
+    ERC20V3Factory: true,
     MOCK_TOKEN:     false,
     MOCK_V2_POOL:   false,
     vDODOToken:     false,

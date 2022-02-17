@@ -17,6 +17,7 @@ deploy-detail-periphery.txt
 deploy-drops.txt
 deploy-nft.txt
 kovan-mock-v2.0.txt
+deploy-detail-erc20V3.txt
 
 # VIM
 *.swo

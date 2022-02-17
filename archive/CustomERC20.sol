@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2022 DODO ZOO.
+    Copyright 2021 DODO ZOO.
     SPDX-License-Identifier: Apache-2.0
 
 */
@@ -21,38 +21,43 @@ contract CustomERC20 is InitializableOwnable {
     uint256 public tradeBurnRatio;
     uint256 public tradeFeeRatio;
     address public team;
+    bool public isMintable;
 
     mapping(address => uint256) balances;
     mapping(address => mapping(address => uint256)) internal allowed;
 
     event Transfer(address indexed from, address indexed to, uint256 amount);
     event Approval(address indexed owner, address indexed spender, uint256 amount);
+    event Mint(address indexed user, uint256 value);
+    event Burn(address indexed user, uint256 value);
 
     event ChangeTeam(address oldTeam, address newTeam);
 
 
     function init(
         address _creator,
-        uint256 _totalSupply,
+        uint256 _initSupply,
         string memory _name,
         string memory _symbol,
         uint8 _decimals,
         uint256 _tradeBurnRatio,
         uint256 _tradeFeeRatio,
-        address _team
+        address _team,
+        bool _isMintable
     ) public {
         initOwner(_creator);
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
-        totalSupply = _totalSupply;
-        balances[_creator] = _totalSupply;
+        totalSupply = _initSupply;
+        balances[_creator] = _initSupply;
         require(_tradeBurnRatio >= 0 && _tradeBurnRatio <= 5000, "TRADE_BURN_RATIO_INVALID");
         require(_tradeFeeRatio >= 0 && _tradeFeeRatio <= 5000, "TRADE_FEE_RATIO_INVALID");
         tradeBurnRatio = _tradeBurnRatio;
         tradeFeeRatio = _tradeFeeRatio;
         team = _team;
-        emit Transfer(address(0), _creator, _totalSupply);
+        isMintable = _isMintable;
+        emit Transfer(address(0), _creator, _initSupply);
     }
 
     function transfer(address to, uint256 amount) public returns (bool) {
@@ -114,17 +119,30 @@ contract CustomERC20 is InitializableOwnable {
         emit Transfer(sender, recipient, amount);
     }
 
+    function burn(uint256 value) external {
+        require(isMintable, "NOT_MINTABEL_TOKEN");
+        require(balances[msg.sender] >= value, "VALUE_NOT_ENOUGH");
+
+        balances[msg.sender] = balances[msg.sender].sub(value);
+        totalSupply = totalSupply.sub(value);
+        emit Burn(msg.sender, value);
+        emit Transfer(msg.sender, address(0), value);
+    }
 
     //=================== Ownable ======================
+    function mint(address user, uint256 value) external onlyOwner {
+        require(isMintable, "NOT_MINTABEL_TOKEN");
+        require(user == _OWNER_, "NOT_OWNER");
+        
+        balances[user] = balances[user].add(value);
+        totalSupply = totalSupply.add(value);
+        emit Mint(user, value);
+        emit Transfer(address(0), user, value);
+    }
+
     function changeTeamAccount(address newTeam) external onlyOwner {
         require(tradeFeeRatio > 0, "NOT_TRADE_FEE_TOKEN");
         emit ChangeTeam(team,newTeam);
         team = newTeam;
-    }
-
-    function abandonOwnership(address zeroAddress) external onlyOwner {
-        require(zeroAddress == address(0), "NOT_ZERO_ADDRESS");
-        emit OwnershipTransferred(_OWNER_, address(0));
-        _OWNER_ = address(0);
     }
 }
