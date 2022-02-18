@@ -322,7 +322,9 @@ contract FairFunding is Vesting {
         uint256 userFundAmount,
         uint256 currentPrice,
         uint256 soldTokenAmount,
+        uint256 totalClaimAmount,
         uint256 claimableTokenAmount,
+        uint256 claimedTokenAmount,
         bool isHaveCap,
         uint256 userQuota,
         uint256 userCurrentQuota
@@ -339,9 +341,29 @@ contract FairFunding is Vesting {
                 getRemainingRatio(block.timestamp,0),
                 totalAllocation
             );
-            claimableTokenAmount = totalAllocation.sub(remainingToken).sub(_CLAIMED_TOKEN_[user]);
+            claimedTokenAmount = _CLAIMED_TOKEN_[user];
+            claimableTokenAmount = totalAllocation.sub(remainingToken).sub(claimedTokenAmount);
         }else {
             claimableTokenAmount = 0;
+            claimedTokenAmount =0;
+        }
+
+        if(raiseFundAmount == 0) {
+            totalClaimAmount = 0;
+        } else {
+            uint256 usedFundRatio = DecimalMath.divFloor(
+                DecimalMath.mulFloor(_TOTAL_TOKEN_AMOUNT_, currentPrice),
+                raiseFundAmount
+            );
+
+            if (usedFundRatio > DecimalMath.ONE) {
+                usedFundRatio = DecimalMath.ONE;
+            }
+
+            totalClaimAmount =  DecimalMath.divFloor(
+                DecimalMath.mulFloor(userFundAmount, usedFundRatio),
+                currentPrice
+            );
         }
 
         if(_QUOTA_ == address(0)) {

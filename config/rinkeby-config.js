@@ -121,8 +121,11 @@ module.exports = {
         //=================== Starter ===================
         DODOStarterProxy: "0x451E07405B79eDEEA87ccFa57e1BaF184Bea6773",
         DODOStarterFactory: "0xa28D60c3eCDc52521c8219bd6a4eba0AA8900F88",
-        FairFunding: "0x9124B1191DDB6CB1CAF9aA899d5059ea52b5D09B",
-        InstantFunding: "0x80B21A1A832D3b0016A0d287967CD9Dce0Ade688"
+        FairFunding: "0x6eB0b12F31Bfe983a099DcBe9D2CC86768Dd2a3a", //0x9124B1191DDB6CB1CAF9aA899d5059ea52b5D09B
+        InstantFunding: "0xC2ff4432F111723DD28c52C0f7B1Fe9c6201F3ce", //0x80B21A1A832D3b0016A0d287967CD9Dce0Ade688
+
+        UserQuota: "0xEC548eB229f6C5E1E4d3701F9dD258486E127811",
+        UserQuotaFactory: "0x44640D5a85653279Bf22A45112d3db1BDf14aEF2"
         
     }
 }

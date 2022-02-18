@@ -52,3 +52,25 @@ network type: rinkeby
 Deploy time: 2022/2/15 上午9:12:58
 Deploy type: STARTER
 InstantFundingTemplate:  0x80B21A1A832D3b0016A0d287967CD9Dce0Ade688
+====================================================
+network type: rinkeby
+Deploy time: 2022/2/17 上午11:25:15
+Deploy type: QuotaFactory
+====================================================
+network type: rinkeby
+Deploy time: 2022/2/17 上午11:30:18
+Deploy type: QuotaFactory
+UserQuotaAddress:  0xEC548eB229f6C5E1E4d3701F9dD258486E127811
+UserQuotaFactoryAddress:  0x44640D5a85653279Bf22A45112d3db1BDf14aEF2
+Init UserQuotaFactory Tx: 0x8224ab09182dfb31ecfd03bea3fdba5b5aa620c42a3e33c545b3e40975538981
+====================================================
+network type: rinkeby
+Deploy time: 2022/2/18 下午1:36:36
+Deploy type: STARTER
+FairFundingTemplate:  0x6eB0b12F31Bfe983a099DcBe9D2CC86768Dd2a3a
+InstantFundingTemplate:  0x95D6c48375E7A59438EDc37183676A6706c9bB2a
+====================================================
+network type: rinkeby
+Deploy time: 2022/2/18 下午1:47:09
+Deploy type: STARTER
+InstantFundingTemplate:  0xC2ff4432F111723DD28c52C0f7B1Fe9c6201F3ce
