@@ -112,7 +112,7 @@ module.exports = {
         return new HDWalletProvider(privKey, "https://mainnet.infura.io/v3/" + infuraId);
       },
       gas: 4000000,
-      gasPrice: 65000000000,
+      gasPrice: 60000000000,
       network_id: 1,
       skipDryRun: true
     },
@@ -142,7 +142,16 @@ module.exports = {
       provider: () => {
         return new HDWalletProvider(privKey, 'https://rpc.moonriver.moonbeam.network');
       },
+      gasPrice: 2000000000,
       network_id: 1285
+    },
+
+    avax: {
+      provider: () => {
+        return new HDWalletProvider(privKey, 'https://api.avax.network/ext/bc/C/rpc');
+      },
+      gasPrice: 30000000000,
+      network_id: 43114
     },
 
     aurora: {
@@ -153,7 +162,8 @@ module.exports = {
         return hdWalletProvider
       },
       network_id: 0x4e454152,
-      gas: 10000000
+      gas: 10000000,
+      gasPrice: 30000000,
     },
 
     ok: {
@@ -178,7 +188,7 @@ module.exports = {
         })
       },
       network_id: 288,
-      gasPrice: 10000000000,
+      gasPrice: 1000000000,
       timeoutBlocks: 200,
       skipDryRun: true
     },
@@ -198,8 +208,8 @@ module.exports = {
         return new HDWalletProvider(privKey, "https://arb1.arbitrum.io/rpc")
       },
       network_id: '42161',
-      gas: 1200000,
-      gasPrice: 700000000,
+      gas: 2000000,
+      gasPrice: 1000000000,
       skipDryRun: true
     },
 
@@ -210,7 +220,7 @@ module.exports = {
       },
       network_id: 137,
       gas: 6000000,
-      gasPrice: 3000000000,
+      gasPrice: 35000000000,
       // confirmations: 2,
       // timeoutBlocks: 200,
       skipDryRun: true

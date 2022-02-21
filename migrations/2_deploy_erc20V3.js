@@ -48,7 +48,7 @@ module.exports = async (deployer, network, accounts) => {
                 ERC20Address,
                 CustomERC20Address,
                 CustomMintableERC20Address,
-                "100000000000000000" //0.1
+                "2000000000000000" //0.002
             );
             ERC20V3FactoryAddress = ERC20V3Factory.address;
             logger.log("ERC20V3FactoryAddress: ", ERC20V3FactoryAddress);

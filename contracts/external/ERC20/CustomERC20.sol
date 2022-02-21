@@ -102,16 +102,19 @@ contract CustomERC20 is InitializableOwnable {
         if(tradeBurnRatio > 0) {
             burnAmount = amount.mul(tradeBurnRatio).div(10000);
             balances[address(0)] = balances[address(0)].add(burnAmount);
+            emit Transfer(sender, address(0), burnAmount);
         }
 
         if(tradeFeeRatio > 0) {
             feeAmount = amount.mul(tradeFeeRatio).div(10000);
             balances[team] = balances[team].add(feeAmount);
+            emit Transfer(sender, team, feeAmount);
         }
+        
+        uint256 receiveAmount = amount.sub(burnAmount).sub(feeAmount);
+        balances[recipient] = balances[recipient].add(receiveAmount);
 
-        balances[recipient] = balances[recipient].add(amount.sub(burnAmount).sub(feeAmount));
-
-        emit Transfer(sender, recipient, amount);
+        emit Transfer(sender, recipient, receiveAmount);
     }
 
 
