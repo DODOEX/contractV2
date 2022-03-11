@@ -49,7 +49,7 @@ contract DODOMineV3Proxy is InitializableOwnable {
     // ============ Events ============
     event DepositRewardToVault(address mine, address rewardToken, uint256 amount);
     event DepositRewardToMine(address mine, address rewardToken, uint256 amount);
-    event CreateMineV3(address account, address mineV3);
+    event CreateMineV3(address account, address mineV3, uint256 platform);
     event ChangeMineV3Template(address mineV3);
 
     constructor(
@@ -69,6 +69,7 @@ contract DODOMineV3Proxy is InitializableOwnable {
     function createDODOMineV3(
         address stakeToken,
         bool isLpToken,
+        uint256 platform,
         address[] memory rewardTokens,
         uint256[] memory rewardPerBlock,
         uint256[] memory startBlock,
@@ -98,7 +99,7 @@ contract DODOMineV3Proxy is InitializableOwnable {
 
         IDODOMineV3Registry(_DODO_MINEV3_REGISTRY_).addMineV3(newMineV3, isLpToken, stakeToken);
 
-        emit CreateMineV3(msg.sender, newMineV3);
+        emit CreateMineV3(msg.sender, newMineV3, platform);
     }
 
     function depositRewardToVault(

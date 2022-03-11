@@ -165,7 +165,11 @@ contract FeeRateDIP3Impl is InitializableOwnable {
             }else {
                 isHaveCap = true;
                 uint256 userStake = ICrowdPooling(pool).getShares(user);
-                curQuota = int(uint256(curQuota).sub(userStake));
+                if(uint256(curQuota) >= userStake) {
+                    curQuota = int(uint256(curQuota).sub(userStake));
+                }else {
+                    curQuota = 0;
+                }
             }
 
             address feeAddr = cpPoolInfo.feeAddr;
