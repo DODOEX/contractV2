@@ -50,6 +50,36 @@ contract FeeRateDIP3Impl is InitializableOwnable {
     mapping(address => CPPoolInfo) cpPools;
     mapping(address => uint256) public specPoolList;
 
+    struct heartBeat {
+        uint256 lastHeartBeat;
+        uint256 maxInterval;
+    }
+    mapping(address => heartBeat) public beats; // heartbeat manager => heartbeat
+    mapping(address => address) public poolHeartBeatManager; // pool => heartbeat manager
+
+    function isPoolHeartBeatLive(address pool) public returns(bool) {
+        if(poolHeartBeatManager[pool]==address(0)) {
+            return true;
+        }
+        heartBeat memory beat = beats[poolHeartBeatManager[pool]];
+        return block.timestamp - beat.lastHeartBeat < beat.maxInterval;
+    }
+
+    function triggerBeat() external {
+        heartBeat storage beat = beats[msg.sender];
+        beat.lastHeartBeat = block.timestamp;
+    }
+
+    function setBeatInterval(uint256 interval) external {
+        heartBeat storage beat = beats[msg.sender];
+        beat.maxInterval = interval;
+    }
+
+    function bindPoolHeartBeat(address[] pools, address manager) external onlyOwner {
+        for(uint256 i=0; i<pools.length; i++){
+            poolHeartBeatManager[pools[i]] = manager;
+        }
+    }
 
     // ============ Ownable Functions ============
     
@@ -93,6 +123,10 @@ contract FeeRateDIP3Impl is InitializableOwnable {
 
             if(specPoolList[pool] != 0) {
                 return specPoolList[pool];
+            }
+
+            if (!isPoolHeartBeatLive(pool)) {
+                return 10**18 - IPool(pool)._LP_FEE_RATE_() - 1;
             }
 
             if(_cp(hashPoolVersion)) {
