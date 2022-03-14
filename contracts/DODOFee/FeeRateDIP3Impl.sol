@@ -25,6 +25,10 @@ interface IQuota {
     function getUserQuota(address user) external view returns (int);
 }
 
+interface IPoolHeartBeat {
+    function isPoolHeartBeatLive(address pool) external view returns(bool);
+}
+
 interface IPool {
     function version() external pure returns (string memory);
     function _LP_FEE_RATE_() external view returns (uint256);
@@ -47,9 +51,10 @@ contract FeeRateDIP3Impl is InitializableOwnable {
         address quotaAddr;
     }
 
-    mapping(address => CPPoolInfo) cpPools;
+    mapping(address => CPPoolInfo) public cpPools;
     mapping(address => uint256) public specPoolList;
     mapping (address => bool) public isAdminListed;
+    address public poolHeartBeat;
 
     // ============ Events =============
     event AddAdmin(address admin);
@@ -92,6 +97,9 @@ contract FeeRateDIP3Impl is InitializableOwnable {
     function removeAdminList (address userAddr) external onlyOwner {
         isAdminListed[userAddr] = false;
         emit RemoveAdmin(userAddr);
+
+    function setPoolHeartBeat (address newPoolHeartBeat) public onlyOwner {
+        poolHeartBeat = newPoolHeartBeat;
     }
 
     // ============ View Functions ============
@@ -104,6 +112,10 @@ contract FeeRateDIP3Impl is InitializableOwnable {
                 uint baseReserve = IPool(pool)._BASE_RESERVE_();
                 uint quoteReserve = IPool(pool)._QUOTE_RESERVE_();
                 require(!(k==0 && (baseReserve ==0 || quoteReserve == 0)), "KJUDGE_ERROR");
+            }
+
+            if (poolHeartBeat != address(0) && !IPoolHeartBeat(poolHeartBeat).isPoolHeartBeatLive(pool)) {
+                return 10**18 - IPool(pool)._LP_FEE_RATE_() - 1;
             }
 
             if(specPoolList[pool] != 0) {
