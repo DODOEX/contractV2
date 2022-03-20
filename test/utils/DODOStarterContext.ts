@@ -19,6 +19,21 @@ BigNumber.config({
     DECIMAL_PLACES: 80,
 });
 
+export interface DODOStarterContextInitConfig {
+    // time config
+    bidDuration: BigNumber;
+    calmDuration: BigNumber;
+    tokenVestingDuration: BigNumber;
+    fundVestingDuration: BigNumber;
+    lpVestingDuration: BigNumber;
+    // value config
+    lowerPrice: string;
+    upperPrice: string;
+    tokenCliffRate: string;
+    fundCliffRate: string;
+    lpCliffRate: string;
+    initialLiquidity: string;
+}
 
 export class DODOStarterContext {
     EVM: EVM;
@@ -26,6 +41,8 @@ export class DODOStarterContext {
 
     //contract
     DODOStarterFactory: Contract;
+    FairFunding: Contract;
+    InstantFunding: Contract;
 
     //account
     Deployer: string;
@@ -36,8 +53,7 @@ export class DODOStarterContext {
     SellToken: Contract;
     FundToken: Contract;
 
-
-    async init() {
+    async init(config: DODOStarterContextInitConfig) {
         this.EVM = new EVM();
         this.Web3 = getDefaultWeb3();
 
@@ -77,6 +93,99 @@ export class DODOStarterContext {
         )
 
         await this.DODOStarterFactory.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
+        
+        await this.SellToken.methods.mint(this.Deployer, decimalStr("10000")).send(this.sendParam(this.Deployer));
+        await this.SellToken.methods.approve(this.DODOStarterFactory.options.address, decimalStr("10000")).send(this.sendParam(this.Deployer));
+        
+        let starttime = (await this.Web3.eth.getBlock(await this.Web3.eth.getBlockNumber())).timestamp;
+
+        await this.DODOStarterFactory.methods.createFairFund(
+            [
+                this.Deployer,
+                this.SellToken.options.address,
+                this.FundToken.options.address,
+                "0x0000000000000000000000000000000000000000",
+                "0x0000000000000000000000000000000000000000",
+            ],
+            [
+                starttime,
+                config.bidDuration,
+                config.calmDuration,
+                new BigNumber(starttime).plus(config.bidDuration).plus(config.calmDuration).plus(1),
+                config.tokenVestingDuration,
+                new BigNumber(starttime).plus(config.bidDuration).plus(config.calmDuration).plus(1),
+                config.fundVestingDuration,
+                new BigNumber(starttime).plus(config.bidDuration).plus(config.calmDuration).plus(1),
+                config.lpVestingDuration,
+            ],
+            [
+                config.lowerPrice,
+                config.upperPrice,
+                config.tokenCliffRate,
+                config.fundCliffRate,
+                config.lpCliffRate,
+                config.initialLiquidity,
+            ],
+            decimalStr("10000"),
+            true,
+        ).send(this.sendParam(this.Deployer, "0.2"))
+
+        let fairPools = await this.DODOStarterFactory.methods.getFairFundPools(
+            this.SellToken.options.address,
+            this.FundToken.options.address
+        ).call();
+
+        console.log(`fair fund pools: ${JSON.stringify(fairPools)}`)
+
+        let fairPool = fairPools.slice(-1)[0];
+    
+        this.FairFunding = await contracts.getContractWithAddress(contracts.FAIR_FUNDING, fairPool);
+        
+        console.log('start createing instant fund......')
+        await this.SellToken.methods.mint(this.Deployer, decimalStr("10000")).send(this.sendParam(this.Deployer));
+        await this.SellToken.methods.approve(this.DODOStarterFactory.options.address, decimalStr("10000")).send(this.sendParam(this.Deployer));
+        let starttime2 = (await this.Web3.eth.getBlock(await this.Web3.eth.getBlockNumber())).timestamp;
+        await this.DODOStarterFactory.methods.createInstantFund(
+            [
+                this.Deployer,
+                this.SellToken.options.address,
+                this.FundToken.options.address,
+                "0x0000000000000000000000000000000000000000",
+                "0x0000000000000000000000000000000000000000",
+            ],
+            [
+                starttime2,
+                config.bidDuration,
+                new BigNumber(starttime2).plus(config.bidDuration).plus(config.calmDuration).plus(1),
+                config.tokenVestingDuration,
+                new BigNumber(starttime2).plus(config.bidDuration).plus(config.calmDuration).plus(1),
+                config.fundVestingDuration,
+                new BigNumber(starttime2).plus(config.bidDuration).plus(config.calmDuration).plus(1),
+                config.lpVestingDuration,
+            ],
+            [
+                decimalStr("10"),
+                decimalStr("1"),
+                config.tokenCliffRate,
+                config.fundCliffRate,
+                config.lpCliffRate,
+                config.initialLiquidity,
+            ],
+            decimalStr("10000"), 
+        ).send(this.sendParam(this.Deployer))
+
+        console.log(`finish creating instant pools`)
+
+        let instantPools = await this.DODOStarterFactory.methods.getInstantFundPools(
+            this.SellToken.options.address,
+            this.FundToken.options.address
+        ).call();
+
+        console.log(`instant fund pools: ${JSON.stringify(instantPools)}`)
+
+        let instantPool = instantPools.slice(-1)[0];
+    
+        this.InstantFunding = await contracts.getContractWithAddress(contracts.INSTANT_FUNDING, instantPool);
 
         console.log(log.blueText("[Init DODOStarter context]"));
     }
@@ -99,10 +208,4 @@ export class DODOStarterContext {
             .approve(target, MAX_UINT256)
             .send(this.sendParam(account));
     }
-}
-
-export async function getDODOStarterContext(): Promise<DODOStarterContext> {
-    var context = new DODOStarterContext();
-    await context.init();
-    return context;
 }
