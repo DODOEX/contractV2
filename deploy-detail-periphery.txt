@@ -698,3 +698,4 @@ network type: bsclive
 Deploy time: 2021/11/24 下午3:56:42
 Deploy type: anothertest - Adapter
 UniV3Adapter Address:  0xbce44767af0a53A108b3B7ba4F740E03D228Ec0A
+balV2Adapter for wannaSwap Address:  0x26A0225e27227FA6b5eAd5B029532EC599C0a02e

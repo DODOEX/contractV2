@@ -232,7 +232,7 @@ module.exports = {
     matic: {
       networkCheckTimeout: 1000000,
       provider: () => {
-        return new HDWalletProvider(privKey, 'https://polygon-mainnet.infura.io/v3/' + infuraId)
+        return new HDWalletProvider(privKey, 'https://rpc-mainnet.matic.quiknode.pro')//'https://polygon-mainnet.infura.io/v3/' + infuraId)
       },
       network_id: 137,
       gas: 6000000,

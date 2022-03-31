@@ -46,6 +46,7 @@ const UniV3Adapter = artifacts.require("UniV3Adapter");
 const CurveSample = artifacts.require("CurveSampler");
 const GambitAdapter = artifacts.require("GambitAdapter")
 const WooAdapter = artifacts.require("WooAdapter");
+const balV2Adapter = artifacts.require("BalancerV2Adapter")
 
 module.exports = async (deployer, network, accounts) => {
     let CONFIG = GetConfig(network, accounts)
@@ -516,8 +517,8 @@ module.exports = async (deployer, network, accounts) => {
         logger.log("UniAdapter Address: ", UniAdapter.address);
         */
         //await deployer.deploy(UniV3Adapter, WETH)
-        await deployer.deploy(UniAdapter)
-        logger.log("new UniAdapter for wannaSwap Address: ", UniAdapter.address);
+        await deployer.deploy(balV2Adapter)
+        logger.log("balV2Adapter for wannaSwap Address: ", balV2Adapter.address);
     }
 
     if(deploySwitch.test_Sample) {
