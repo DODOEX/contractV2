@@ -131,4 +131,8 @@ contract DODOMineV3Proxy is InitializableOwnable {
         _MINEV3_TEMPLATE_ = _newMineV3Template;
         emit ChangeMineV3Template(_newMineV3Template);
     }
+
+    function version() virtual external pure returns (string memory) {
+        return "MineV3Proxy 0.0.1";
+    }
 }

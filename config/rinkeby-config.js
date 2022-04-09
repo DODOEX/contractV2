@@ -61,7 +61,7 @@ module.exports = {
         CpProxyV2: "0x89D1C1ec29549470f033Cda5854b507ab488eb9F",
         DPPProxy: "0x45136c2455Dd2631E31ab884cf167eC618CCf39a",
         RouteProxy: "0xe2b538a781eB5a115a1359B8f363B9703Fd19dE6",
-        DODOMineV3Proxy: "0xcb15BBb59AC8a4B64A4db9B8d9F66c397d89Bd22",
+        DODOMineV3Proxy: "0x5776C34652Ba1Bb2E0fb678923452285A24C9Be6",
 
         //vDODO
         DODOCirculationHelper: "0xe4Aec985debDDbbCB2358e8C8F9384DD6421d163",
