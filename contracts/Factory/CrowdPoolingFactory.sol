@@ -14,9 +14,9 @@ import {ICP} from "../CrowdPooling/intf/ICP.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {IERC20} from "../intf/IERC20.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
+import {FeeRateModel} from "../lib/FeeRateModel.sol";
 
-interface IFeeRateModel {
-    function getFeeRate(address trader) external view returns (uint256);
+interface IFeeRateImpl {
     function addCpPoolInfo(address cpPool, address quoteToken, int globalQuota, address feeAddr, address quotaAddr) external;
 }
 
@@ -131,7 +131,8 @@ contract CrowdPoolingFactory is InitializableOwnable {
             switches
         );
 
-        IFeeRateModel(_DEFAULT_MT_FEE_RATE_MODEL_).addCpPoolInfo(cpAddress, tokens[1], globalQuota, address(0), address(0));
+        address feeRateImplAddr = FeeRateModel(_DEFAULT_MT_FEE_RATE_MODEL_).feeRateImpl();
+        IFeeRateImpl(feeRateImplAddr).addCpPoolInfo(cpAddress, tokens[1], globalQuota, address(0), address(0));
         }
 
         _REGISTRY_[tokens[0]][tokens[1]].push(cpAddress);
