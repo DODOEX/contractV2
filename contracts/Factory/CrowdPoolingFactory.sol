@@ -15,6 +15,11 @@ import {SafeMath} from "../lib/SafeMath.sol";
 import {IERC20} from "../intf/IERC20.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
 
+interface IFeeRateModel {
+    function getFeeRate(address trader) external view returns (uint256);
+    function addCpPoolInfo(address cpPool, address quoteToken, int globalQuota, address feeAddr, address quotaAddr) external;
+}
+
 /**
  * @title CrowdPoolingFacotry
  * @author DODO Breeder
@@ -106,7 +111,8 @@ contract CrowdPoolingFactory is InitializableOwnable {
         address[] memory tokens,//0 baseToken 1 quoteToken
         uint256[] memory timeLine,
         uint256[] memory valueList,
-        bool[] memory switches
+        bool[] memory switches,
+        int globalQuota
     ) external valueCheck(cpAddress,tokens[0],timeLine,valueList) {
         {
         address[] memory addressList = new address[](7);
@@ -124,6 +130,8 @@ contract CrowdPoolingFactory is InitializableOwnable {
             valueList,
             switches
         );
+
+        IFeeRateModel(_DEFAULT_MT_FEE_RATE_MODEL_).addCpPoolInfo(cpAddress, tokens[1], globalQuota, address(0), address(0));
         }
 
         _REGISTRY_[tokens[0]][tokens[1]].push(cpAddress);

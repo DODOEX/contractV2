@@ -49,11 +49,16 @@ contract FeeRateDIP3Impl is InitializableOwnable {
 
     mapping(address => CPPoolInfo) cpPools;
     mapping(address => uint256) public specPoolList;
+    mapping (address => bool) public isAdminListed;
 
+    // ============ Events =============
+    event AddAdmin(address admin);
+    event RemoveAdmin(address admin);
 
     // ============ Ownable Functions ============
     
-    function addCpPoolInfo(address cpPool, address quoteToken, int globalQuota, address feeAddr, address quotaAddr) external onlyOwner {
+    function addCpPoolInfo(address cpPool, address quoteToken, int globalQuota, address feeAddr, address quotaAddr) external {
+        require(isAdminListed[msg.sender], "ACCESS_DENIED");
         CPPoolInfo memory cpPoolInfo =  CPPoolInfo({
             quoteToken: quoteToken,
             feeAddr: feeAddr,
@@ -77,6 +82,16 @@ contract FeeRateDIP3Impl is InitializableOwnable {
 
     function setSpecPoolList (address poolAddr, uint256 mtFeeRate) public onlyOwner {
         specPoolList[poolAddr] = mtFeeRate;
+    }
+
+    function addAdminList (address userAddr) external onlyOwner {
+        isAdminListed[userAddr] = true;
+        emit AddAdmin(userAddr);
+    }
+
+    function removeAdminList (address userAddr) external onlyOwner {
+        isAdminListed[userAddr] = false;
+        emit RemoveAdmin(userAddr);
     }
 
     // ============ View Functions ============
