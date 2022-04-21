@@ -90,7 +90,8 @@ interface IDODOV2 {
         address[] memory tokens,
         uint256[] memory timeLine,
         uint256[] memory valueList,
-        bool[] memory switches
+        bool[] memory switches,
+        int globalQuota
     ) external;
 
     function bid(address to) external;
