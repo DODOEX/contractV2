@@ -61,7 +61,8 @@ contract DODOCpProxy is ReentrancyGuard {
         uint256[] memory timeLine,
         uint256[] memory valueList,
         bool[] memory switches,
-        uint256 deadLine
+        uint256 deadLine,
+        int globalQuota
     ) external payable preventReentrant judgeExpired(deadLine) returns (address payable newCrowdPooling) {
         address _baseToken = baseToken;
         address _quoteToken = quoteToken == _ETH_ADDRESS_ ? _WETH_ : quoteToken;
@@ -89,7 +90,8 @@ contract DODOCpProxy is ReentrancyGuard {
             tokens,
             timeLine,
             valueList,
-            switches
+            switches,
+            globalQuota
         );
     }
 
