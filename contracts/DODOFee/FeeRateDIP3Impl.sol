@@ -190,6 +190,6 @@ contract FeeRateDIP3Impl is InitializableOwnable {
     }
 
     function _kjudge(bytes32 _hashPoolVersion) internal pure returns (bool) {
-        return (_hashPoolVersion == keccak256(abi.encodePacked("DVM 1.0.2")) || _hashPoolVersion == keccak256(abi.encodePacked("DSP 1.0.1")) || _hashPoolVersion == keccak256(abi.encodePacked("DPP 1.0.0")));
+        return (_hashPoolVersion == keccak256(abi.encodePacked("DVM 1.0.2")) || _hashPoolVersion == keccak256(abi.encodePacked("DSP 1.0.1")) || _hashPoolVersion == keccak256(abi.encodePacked("DPP 1.0.0")) || _hashPoolVersion == keccak256(abi.encodePacked("DPP Advanced 1.0.0")));
     }
 }

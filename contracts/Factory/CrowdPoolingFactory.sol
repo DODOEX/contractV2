@@ -17,6 +17,7 @@ import {DecimalMath} from "../lib/DecimalMath.sol";
 import {FeeRateModel} from "../lib/FeeRateModel.sol";
 
 interface IFeeRateImpl {
+    function getFeeRate(address pool, address trader) external view returns (uint256);
     function addCpPoolInfo(address cpPool, address quoteToken, int globalQuota, address feeAddr, address quotaAddr) external;
 }
 
