@@ -66,7 +66,11 @@ module.exports = {
     MineV3:         false,
     NFT_POOL:       false,
     UserQuota:      false,
-    STARTER:        true
+    STARTER:        false,
+  },
+
+  dashboard: {
+    port: 24012,
   },
 
   networks: {
@@ -226,6 +230,13 @@ module.exports = {
       // confirmations: 2,
       // timeoutBlocks: 200,
       skipDryRun: true
+    },
+
+    optimism: {
+      provider: () => {
+        return new HDWalletProvider(privKey, 'https://mainnet.optimism.io')
+      },
+      network_id: "10"
     },
 
     coverage: {

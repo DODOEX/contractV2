@@ -10,6 +10,7 @@ const { AURORA_CONFIG } = require("./config/aurora-config");
 const { MOONRIVER_CONFIG } = require("./config/moonriver-config");
 const { BOBA_CONFIG } = require("./config/boba-config");
 const { AVAX_CONFIG } = require("./config/avax-config"); 
+const { DASHBOARD_CONFIG } = require("./config/dashboard-config"); 
 
 exports.GetConfig = function (network, accounts) {
     var CONFIG = {}
@@ -43,6 +44,9 @@ exports.GetConfig = function (network, accounts) {
             break;
         case "avax":
             CONFIG = AVAX_CONFIG
+            break;
+        case "dashboard":     
+            CONFIG = DASHBOARD_CONFIG
             break;
         //testnet
         case "kovan":
