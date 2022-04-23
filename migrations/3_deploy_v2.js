@@ -76,8 +76,8 @@ module.exports = async (deployer, network, accounts) => {
     let DefaultPermissionAddress = CONFIG.PermissionManager;
     let DvmTemplateAddress = CONFIG.DVM;
     let DspTemplateAddress = CONFIG.DSP;
-    let DppTemplateAddress = CONFIG.DPP;
-    let DppAdminTemplateAddress = CONFIG.DPPAdmin;
+    let DppTemplateAddress = CONFIG.DPPAdvanced;
+    let DppAdminTemplateAddress = CONFIG.DPPAdvancedAdmin;
     let CpTemplateAddress = CONFIG.CP;
     let CpV2TemplateAddress = CONFIG.CPV2;
     let ERC20TemplateAddress = CONFIG.ERC20;
@@ -464,7 +464,7 @@ module.exports = async (deployer, network, accounts) => {
                 DODOCpProxy,
                 WETHAddress,
                 CpFactoryAddress,
-                UpCpFactoryAddress,
+                // UpCpFactoryAddress, V2 doesn't need this parameter
                 DODOApproveProxyAddress
             );
             DODOCpProxyAddress = DODOCpProxy.address;
