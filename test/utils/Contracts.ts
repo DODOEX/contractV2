@@ -85,6 +85,12 @@ export const DODO_NFT_APPROVE = "DODONFTApprove"
 export const DODO_NFT_POOL_PROXY = "DODONFTPoolProxy"
 
 
+export const DODO_STARTER_PROXY = "DODOStarterProxy"
+export const DODO_STARTER_FACTORY = "DODOStarterFactory"
+export const FAIR_FUNDING = "FairFunding"
+export const INSTANT_FUNDING = "InstantFunding"
+
+
 interface ContractJson {
   abi: any;
   networks: { [network: number]: any };

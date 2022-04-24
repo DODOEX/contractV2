@@ -8,6 +8,7 @@ const CloneFactory = artifacts.require("CloneFactory");
 const FeeRateModelTemplate = artifacts.require("FeeRateModel");
 const UserQuota = artifacts.require("UserQuota");
 const FeeRateImpl = artifacts.require("FeeRateImpl");
+const FeeRateDIP3 = artifacts.require("FeeRateDIP3Impl")
 const PermissionManagerTemplate = artifacts.require("PermissionManager");
 const DODOSellHelper = artifacts.require("DODOSellHelper");
 const DODOV1PmmHelper = artifacts.require("DODOV1PmmHelper");
@@ -71,12 +72,14 @@ module.exports = async (deployer, network, accounts) => {
     let DefaultMtFeeRateAddress = CONFIG.FeeRateModel;
     let UserQuotaAddress = CONFIG.UserQuota;
     let FeeRateImplAddress = CONFIG.FeeRateImpl;
+    let FeeRateDIP3ImplAddress = CONFIG.FeeRateDIP3;
     let DefaultPermissionAddress = CONFIG.PermissionManager;
     let DvmTemplateAddress = CONFIG.DVM;
     let DspTemplateAddress = CONFIG.DSP;
-    let DppTemplateAddress = CONFIG.DPP;
-    let DppAdminTemplateAddress = CONFIG.DPPAdmin;
+    let DppTemplateAddress = CONFIG.DPPAdvanced;
+    let DppAdminTemplateAddress = CONFIG.DPPAdvancedAdmin;
     let CpTemplateAddress = CONFIG.CP;
+    let CpV2TemplateAddress = CONFIG.CPV2;
     let ERC20TemplateAddress = CONFIG.ERC20;
     let CustomERC20TemplateAddress = CONFIG.CustomERC20;
     let MineV2TemplateAddress = CONFIG.ERC20MineV2;
@@ -87,6 +90,7 @@ module.exports = async (deployer, network, accounts) => {
     let DspFactoryAddress = CONFIG.DSPFactory;
     let DppFactoryAddress = CONFIG.DPPFactory;
     let CpFactoryAddress = CONFIG.CrowdPoolingFactory;
+    let CpV2FactoryAddress = CONFIG.CrowdPoolingFactoryV2;
     let UpCpFactoryAddress = CONFIG.UpCpFactory;
     let ERC20V2FactoryAddress = CONFIG.ERC20V2Factory;
     let DODOMineV3RegistryAddress = CONFIG.DODOMineV3Registry;
@@ -105,6 +109,7 @@ module.exports = async (deployer, network, accounts) => {
     let DODOV2ProxyAddress = CONFIG.DODOV2Proxy;
     let DODODspProxyAddress = CONFIG.DSPProxy;
     let DODOCpProxyAddress = CONFIG.CpProxy;
+    let DODOCpV2ProxyAddress = CONFIG.CpProxyV2;
     let DODODppProxyAddress = CONFIG.DPPProxy;
     let DODOMineV3ProxyAddress = CONFIG.DODOMineV3Proxy;
     let DODORouteProxyAddress = CONFIG.RouteProxy;
@@ -187,6 +192,12 @@ module.exports = async (deployer, network, accounts) => {
             var tx = await feeRateImplInstance.init(multiSigAddress,CloneFactoryAddress,UserQuotaAddress);
             logger.log("Init FeeRateImpl Tx:", tx.tx);
         }
+
+        if (FeeRateDIP3ImplAddress == "") {
+            await deployer.deploy(FeeRateDIP3);
+            FeeRateDIP3ImplAddress = FeeRateDIP3.address;
+            logger.log("FeeRateDIP3Impl Address: ", FeeRateDIP3ImplAddress);
+        } 
 
         if (DefaultPermissionAddress == "") {
             await deployer.deploy(PermissionManagerTemplate);
@@ -347,6 +358,23 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("Init CpFactory Tx:", tx.tx);
         }
 
+        if (CpV2FactoryAddress == "") {
+            await deployer.deploy(
+                CpFactory,
+                CloneFactoryAddress,
+                CpTemplateAddress,
+                DvmFactoryAddress,
+                defaultMaintainer,
+                DefaultMtFeeRateAddress,
+                DefaultPermissionAddress
+            );
+            CpV2FactoryAddress = CpFactory.address;
+            logger.log("CpV2FactoryAddress: ", CpV2FactoryAddress);
+            const CpFactoryInstance = await CpFactory.at(CpV2FactoryAddress);
+            var tx = await CpFactoryInstance.initOwner(multiSigAddress);
+            logger.log("Init CpFactory Tx:", tx.tx);
+        }
+
         if (DspFactoryAddress == "") {
             await deployer.deploy(
                 DspFactory,
@@ -436,11 +464,23 @@ module.exports = async (deployer, network, accounts) => {
                 DODOCpProxy,
                 WETHAddress,
                 CpFactoryAddress,
-                UpCpFactoryAddress,
+                // UpCpFactoryAddress, V2 doesn't need this parameter
                 DODOApproveProxyAddress
             );
             DODOCpProxyAddress = DODOCpProxy.address;
             logger.log("CpProxy address: ", DODOCpProxy.address);
+        }
+
+        if (DODOCpV2ProxyAddress == "") {
+            await deployer.deploy(
+                DODOCpProxy,
+                WETHAddress,
+                CpV2FactoryAddress,
+                UpCpFactoryAddress,
+                DODOApproveProxyAddress
+            );
+            DODOCpV2ProxyAddress = DODOCpProxy.address;
+            logger.log("CpV2Proxy address: ", DODOCpProxy.address);
         }
 
         if (DODODppProxyAddress == "") {

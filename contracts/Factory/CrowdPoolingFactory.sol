@@ -14,6 +14,12 @@ import {ICP} from "../CrowdPooling/intf/ICP.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {IERC20} from "../intf/IERC20.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
+import {FeeRateModel} from "../lib/FeeRateModel.sol";
+
+interface IFeeRateImpl {
+    function getFeeRate(address pool, address trader) external view returns (uint256);
+    function addCpPoolInfo(address cpPool, address quoteToken, int globalQuota, address feeAddr, address quotaAddr) external;
+}
 
 /**
  * @title CrowdPoolingFacotry
@@ -40,7 +46,6 @@ contract CrowdPoolingFactory is InitializableOwnable {
     uint256 public _VEST_DURATION_ = 0;
     uint256 public _K_ = 0;
     uint256 public _CLIFF_RATE_ = 10**18;
-
 
     // ============ Registry ============
 
@@ -77,6 +82,8 @@ contract CrowdPoolingFactory is InitializableOwnable {
         address cp
     );
 
+    event RemoveCP(address cp);
+
     constructor(
         address cloneFactory,
         address cpTemplate,
@@ -102,18 +109,18 @@ contract CrowdPoolingFactory is InitializableOwnable {
     function initCrowdPooling(
         address cpAddress,
         address creator,
-        address baseToken,
-        address quoteToken,
+        address[] memory tokens,//0 baseToken 1 quoteToken
         uint256[] memory timeLine,
         uint256[] memory valueList,
-        bool isOpenTWAP
-    ) external valueCheck(cpAddress,baseToken,timeLine,valueList) {
+        bool[] memory switches,
+        int globalQuota
+    ) external valueCheck(cpAddress,tokens[0],timeLine,valueList) {
         {
         address[] memory addressList = new address[](7);
         addressList[0] = creator;
         addressList[1] = _DEFAULT_MAINTAINER_;
-        addressList[2] = baseToken;
-        addressList[3] = quoteToken;
+        addressList[2] = tokens[0];
+        addressList[3] = tokens[1];
         addressList[4] = _DEFAULT_PERMISSION_MANAGER_;
         addressList[5] = _DEFAULT_MT_FEE_RATE_MODEL_;
         addressList[6] = _DVM_FACTORY_;
@@ -122,14 +129,17 @@ contract CrowdPoolingFactory is InitializableOwnable {
             addressList,
             timeLine,
             valueList,
-            isOpenTWAP
+            switches
         );
+
+        address feeRateImplAddr = FeeRateModel(_DEFAULT_MT_FEE_RATE_MODEL_).feeRateImpl();
+        IFeeRateImpl(feeRateImplAddr).addCpPoolInfo(cpAddress, tokens[1], globalQuota, address(0), address(0));
         }
 
-        _REGISTRY_[baseToken][quoteToken].push(cpAddress);
+        _REGISTRY_[tokens[0]][tokens[1]].push(cpAddress);
         _USER_REGISTRY_[creator].push(cpAddress);
 
-        emit NewCP(baseToken, quoteToken, creator, cpAddress);
+        emit NewCP(tokens[0], tokens[1], creator, cpAddress);
     }
 
     // ============ View Functions ============
@@ -193,5 +203,32 @@ contract CrowdPoolingFactory is InitializableOwnable {
     function setCliffRate(uint256 _newCliffRate) public onlyOwner {
         require(_newCliffRate <= 10**18, "CP_FACTORY : INVALID");
         _CLIFF_RATE_ = _newCliffRate;
+    }
+
+    function removePoolByAdmin(
+        address creator,
+        address baseToken, 
+        address quoteToken,
+        address pool
+    ) external onlyOwner {
+        address[] memory registryList = _REGISTRY_[baseToken][quoteToken];
+        for (uint256 i = 0; i < registryList.length; i++) {
+            if (registryList[i] == pool) {
+                registryList[i] = registryList[registryList.length - 1];
+                break;
+            }
+        }
+        _REGISTRY_[baseToken][quoteToken] = registryList;
+        _REGISTRY_[baseToken][quoteToken].pop();
+        address[] memory userRegistryList = _USER_REGISTRY_[creator];
+        for (uint256 i = 0; i < userRegistryList.length; i++) {
+            if (userRegistryList[i] == pool) {
+                userRegistryList[i] = userRegistryList[userRegistryList.length - 1];
+                break;
+            }
+        }
+        _USER_REGISTRY_[creator] = userRegistryList;
+        _USER_REGISTRY_[creator].pop();
+        emit RemoveCP(pool);
     }
 }

@@ -1,7 +1,7 @@
 module.exports = {
     BOBA_CONFIG: {
-        // DODOZoo: "",
-        // DODO: "",
+        // DODOZoo: "0x69f52AC40185A2A005D49114F0B77b7bA856F0a0",
+        // DODO: "0x3554a4c51945659E6d6c0F6f786545b56bdF9c39",
 
         //TOKEN
         WETH: "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000",
@@ -60,7 +60,7 @@ module.exports = {
         //Proxy
         DODOV2Proxy: "0x55793C2c8A796cCE00EF2D1a86CCA2E0399BF285",
         DSPProxy: "0x25B2f945Fec30F34b05d416C7c0b5c6c51A3ADdC",
-        CpProxy: "0x141b4497a298340E8B451ac4eeE947B00aDbe07A",
+        CpProxy: "0x7C062B9C584fA6eC2504270790D38240A2c5fE72",
         DPPProxy: "0xCDFD45f965De9932367833Ca7187e4c9C43A2380",
         RouteProxy: "0x0fe261aeE0d1C4DFdDee4102E82Dd425999065F4",
         DODOMineV3Proxy: "0xb0C7cB15b52b0093130487209e96CFeC0Ba4Ff66",

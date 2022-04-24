@@ -111,6 +111,15 @@ module.exports = {
         FilterAdmin: "0xDe8A380e84998986A59bE6519FF172d40c0F9d41",
         FilterERC721V1: "0x33364198d93648D3E976aA8625097567791c301F",
         FilterERC1155V1: "0x7635694249B1bb39476a6aB28Cc6B17c1E3cAEe1",
-        NFTPoolController: "0x4187aab02f9E3AbdEb9a6cC71397a7A839113634"
+        NFTPoolController: "0x4187aab02f9E3AbdEb9a6cC71397a7A839113634",
+
+        //=================== Starter ===================
+        DODOStarterProxy: "0x81521b0E899112B36fE7218954A81b7Fe8FfE8D1",
+        DODOStarterFactory: "0x79624977C8065650f03C38d5bC0f03a6F929EcB9",
+        FairFunding: "0x18B60f1d852636B8eD24DA2b682c0bC60dD6Bc31", 
+        InstantFunding: "0xfCc60a464C0be32A96706078Ad886947488dCED8", 
+
+        UserQuota: "",
+        UserQuotaFactory: ""
     }
 }

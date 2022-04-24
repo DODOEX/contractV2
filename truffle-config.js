@@ -19,7 +19,6 @@
  */
 
 var HDWalletProvider = require("@truffle/hdwallet-provider");
-const NonceTrackerSubprovider = require('web3-provider-engine/subproviders/nonce-tracker')
 var privKey = process.env.privKey;
 var infuraId = process.env.infuraId;
 
@@ -41,7 +40,7 @@ module.exports = {
   deploySwitch: {
     DEPLOY_V1:      false,
     DEPLOY_V2:      false,
-    ERC20V3Factory: true,
+    ERC20V3Factory: false,
     MOCK_TOKEN:     false,
     MOCK_V2_POOL:   false,
     vDODOToken:     false,
@@ -65,7 +64,13 @@ module.exports = {
     MYSTERYBOX_V1:  false,
     Drops_V2:       false,
     MineV3:         false,
-    NFT_POOL:       false
+    NFT_POOL:       false,
+    UserQuota:      false,
+    STARTER:        false,
+  },
+
+  dashboard: {
+    port: 24012,
   },
 
   networks: {
@@ -98,12 +103,13 @@ module.exports = {
       networkCheckTimeout: 100000,
       provider: function () {
         return new HDWalletProvider(privKey, "https://rinkeby.infura.io/v3/" + infuraId);
-        // return new HDWalletProvider(privKey, "https://eth-rinkeby.dodoex.io");
       },
       gas: 10000000,
       gasPrice: 1500000000,
       network_id: 4,
-      skipDryRun: true
+      skipDryRun: true,
+      // confirmations: 10,
+      // timeoutBlocks: 200,
     },
 
     live: {
@@ -119,11 +125,11 @@ module.exports = {
 
     bsclive: {
       provider: function () {
-        return new HDWalletProvider(privKey, "https://bsc-dataseed1.binance.org");
+        return new HDWalletProvider(privKey, "https://bsc-dataseed3.ninicoin.io");
       },
+      networkCheckTimeout:100000,
       network_id: 56,
       confirmations: 10,
-      gasPrice: 5000000000,
       timeoutBlocks: 200,
       gasPrice: 6000000000,
       skipDryRun: true
@@ -226,6 +232,13 @@ module.exports = {
       skipDryRun: true
     },
 
+    optimism: {
+      provider: () => {
+        return new HDWalletProvider(privKey, 'https://mainnet.optimism.io')
+      },
+      network_id: "10"
+    },
+
     coverage: {
       host: "127.0.0.1",
       port: 6545,
@@ -250,7 +263,7 @@ module.exports = {
           enabled: true,
           runs: 200,
         },
-        evmVersion: "istanbul"
+        // evmVersion: "istanbul"
       },
     },
   },

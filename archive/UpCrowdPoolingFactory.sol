@@ -38,7 +38,6 @@ contract UpCrowdPoolingFactory is InitializableOwnable {
     uint256 public _VEST_DURATION_ = 0;
     uint256 public _CLIFF_RATE_ = 10**18;
 
-
     // ============ Registry ============
 
     // base -> quote -> CP address list
@@ -49,15 +48,12 @@ contract UpCrowdPoolingFactory is InitializableOwnable {
     // ============ modifiers ===========
 
     modifier valueCheck(
-        address cpAddress,
-        address baseToken,
         uint256[] memory timeLine,
         uint256[] memory valueList)
     {
         require(timeLine[2] <= _CALM_DURATION_, "CP_FACTORY : PHASE_CALM_DURATION_INVALID");
         require(timeLine[4] == _VEST_DURATION_, "CP_FACTORY : VEST_DURATION_INVALID");
         require(valueList[3] == _CLIFF_RATE_, "CP_FACTORY : CLIFF_RATE_INVALID");
-        require(timeLine[3] >= _FREEZE_DURATION_, "CP_FACTORY : FREEZE_DURATION_INVALID");
         _;
     }
 
@@ -69,6 +65,8 @@ contract UpCrowdPoolingFactory is InitializableOwnable {
         address creator,
         address cp
     );
+
+    event RemoveCP(address cp);
 
     constructor(
         address cloneFactory,
@@ -95,18 +93,17 @@ contract UpCrowdPoolingFactory is InitializableOwnable {
     function initCrowdPooling(
         address cpAddress,
         address creator,
-        address baseToken,
-        address quoteToken,
+        address[] memory tokens,//0 baseToken 1 quoteToken
         uint256[] memory timeLine,
         uint256[] memory valueList,
-        bool isOpenTWAP
-    ) external valueCheck(cpAddress,baseToken,timeLine,valueList) {
+        bool[] memory switches
+    ) external valueCheck(timeLine,valueList) {
         {
         address[] memory addressList = new address[](7);
         addressList[0] = creator;
         addressList[1] = _DEFAULT_MAINTAINER_;
-        addressList[2] = baseToken;
-        addressList[3] = quoteToken;
+        addressList[2] = tokens[0];
+        addressList[3] = tokens[1];
         addressList[4] = _DEFAULT_PERMISSION_MANAGER_;
         addressList[5] = _DEFAULT_MT_FEE_RATE_MODEL_;
         addressList[6] = _DVM_FACTORY_;
@@ -117,14 +114,14 @@ contract UpCrowdPoolingFactory is InitializableOwnable {
             addressList,
             timeLine,
             valueList,
-            isOpenTWAP
+            switches
         );
         }
 
-        _REGISTRY_[baseToken][quoteToken].push(cpAddress);
+        _REGISTRY_[tokens[0]][tokens[1]].push(cpAddress);
         _USER_REGISTRY_[creator].push(cpAddress);
 
-        emit NewCP(baseToken, quoteToken, creator, cpAddress);
+        emit NewCP(tokens[0], tokens[1], creator, cpAddress);
     }
 
     // ============ View Functions ============
@@ -178,5 +175,32 @@ contract UpCrowdPoolingFactory is InitializableOwnable {
     function setCliffRate(uint256 _newCliffRate) public onlyOwner {
         require(_newCliffRate <= 10**18, "CP_FACTORY : INVALID");
         _CLIFF_RATE_ = _newCliffRate;
+    }
+
+    function removePoolByAdmin(
+        address creator,
+        address baseToken, 
+        address quoteToken,
+        address pool
+    ) external onlyOwner {
+        address[] memory registryList = _REGISTRY_[baseToken][quoteToken];
+        for (uint256 i = 0; i < registryList.length; i++) {
+            if (registryList[i] == pool) {
+                registryList[i] = registryList[registryList.length - 1];
+                break;
+            }
+        }
+        _REGISTRY_[baseToken][quoteToken] = registryList;
+        _REGISTRY_[baseToken][quoteToken].pop();
+        address[] memory userRegistryList = _USER_REGISTRY_[creator];
+        for (uint256 i = 0; i < userRegistryList.length; i++) {
+            if (userRegistryList[i] == pool) {
+                userRegistryList[i] = userRegistryList[userRegistryList.length - 1];
+                break;
+            }
+        }
+        _USER_REGISTRY_[creator] = userRegistryList;
+        _USER_REGISTRY_[creator].pop();
+        emit RemoveCP(pool);
     }
 }

@@ -49,11 +49,16 @@ contract FeeRateDIP3Impl is InitializableOwnable {
 
     mapping(address => CPPoolInfo) cpPools;
     mapping(address => uint256) public specPoolList;
+    mapping (address => bool) public isAdminListed;
 
+    // ============ Events =============
+    event AddAdmin(address admin);
+    event RemoveAdmin(address admin);
 
     // ============ Ownable Functions ============
     
-    function addCpPoolInfo(address cpPool, address quoteToken, int globalQuota, address feeAddr, address quotaAddr) external onlyOwner {
+    function addCpPoolInfo(address cpPool, address quoteToken, int globalQuota, address feeAddr, address quotaAddr) external {
+        require(isAdminListed[msg.sender], "ACCESS_DENIED");
         CPPoolInfo memory cpPoolInfo =  CPPoolInfo({
             quoteToken: quoteToken,
             feeAddr: feeAddr,
@@ -77,6 +82,16 @@ contract FeeRateDIP3Impl is InitializableOwnable {
 
     function setSpecPoolList (address poolAddr, uint256 mtFeeRate) public onlyOwner {
         specPoolList[poolAddr] = mtFeeRate;
+    }
+
+    function addAdminList (address userAddr) external onlyOwner {
+        isAdminListed[userAddr] = true;
+        emit AddAdmin(userAddr);
+    }
+
+    function removeAdminList (address userAddr) external onlyOwner {
+        isAdminListed[userAddr] = false;
+        emit RemoveAdmin(userAddr);
     }
 
     // ============ View Functions ============
@@ -150,7 +165,11 @@ contract FeeRateDIP3Impl is InitializableOwnable {
             }else {
                 isHaveCap = true;
                 uint256 userStake = ICrowdPooling(pool).getShares(user);
-                curQuota = int(uint256(curQuota).sub(userStake));
+                if(uint256(curQuota) >= userStake) {
+                    curQuota = int(uint256(curQuota).sub(userStake));
+                }else {
+                    curQuota = 0;
+                }
             }
 
             address feeAddr = cpPoolInfo.feeAddr;
@@ -175,6 +194,6 @@ contract FeeRateDIP3Impl is InitializableOwnable {
     }
 
     function _kjudge(bytes32 _hashPoolVersion) internal pure returns (bool) {
-        return (_hashPoolVersion == keccak256(abi.encodePacked("DVM 1.0.2")) || _hashPoolVersion == keccak256(abi.encodePacked("DSP 1.0.1")) || _hashPoolVersion == keccak256(abi.encodePacked("DPP 1.0.0")));
+        return (_hashPoolVersion == keccak256(abi.encodePacked("DVM 1.0.2")) || _hashPoolVersion == keccak256(abi.encodePacked("DSP 1.0.1")) || _hashPoolVersion == keccak256(abi.encodePacked("DPP 1.0.0")) || _hashPoolVersion == keccak256(abi.encodePacked("DPP Advanced 1.0.0")));
     }
 }

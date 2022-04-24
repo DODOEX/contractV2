@@ -23,6 +23,9 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
     uint256 internal constant _SETTLEMENT_EXPIRE_ = 86400 * 7;
     uint256 internal constant _SETTEL_FUND_ = 200 finney;
     bool public _IS_OPEN_TWAP_ = false;
+    bool public _IS_OVERCAP_STOP = false;
+
+    bool public _FORCE_STOP_ = false;
 
     // ============ Timeline ============
 
@@ -51,10 +54,11 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
 
     uint256 public _TOTAL_SHARES_;
     mapping(address => uint256) internal _SHARES_;
-    mapping(address => bool) public _CLAIMED_;
+    mapping(address => bool) public _CLAIMED_QUOTE_;
 
     address public _POOL_FACTORY_;
     address public _POOL_;
+    uint256 public _POOL_FEE_RATE_;
     uint256 public _AVG_SETTLED_PRICE_;
 
     // ============ Advanced Control ============
@@ -68,14 +72,23 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
     uint256 public _K_;
     uint256 public _I_;
 
-    // ============ LP Token Vesting ============
+    // ============ LP Token Vesting && Claim Params ============
 
     uint256 public _TOTAL_LP_AMOUNT_;
     uint256 public _FREEZE_DURATION_;
     uint256 public _VESTING_DURATION_;
     uint256 public _CLIFF_RATE_;
 
+    uint256 public _TOKEN_CLAIM_DURATION_;
+    uint256 public _TOKEN_VESTING_DURATION_;
+    uint256 public _TOKEN_CLIFF_RATE_;
+    mapping(address => uint256) public _CLAIMED_BASE_TOKEN_;
+
     // ============ Modifiers ============
+    modifier isNotForceStop() {
+        require(!_FORCE_STOP_, "FORCE_STOP");
+        _;
+    }
 
     modifier phaseBid() {
         require(
@@ -109,5 +122,13 @@ contract CPStorage is InitializableOwnable, ReentrancyGuard {
     modifier phaseVesting() {
         require(_SETTLED_, "NOT_VESTING");
         _;
+    }
+
+    function forceStop() external onlyOwner {
+        require(block.timestamp < _PHASE_BID_STARTTIME_, "CP_ALREADY_STARTED");
+        _FORCE_STOP_ = true;
+        _TOTAL_BASE_ = 0;
+        uint256 baseAmount = _BASE_TOKEN_.balanceOf(address(this));
+        _BASE_TOKEN_.transfer(_OWNER_, baseAmount);
     }
 }

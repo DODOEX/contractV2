@@ -3,7 +3,7 @@ module.exports = {
         //TOKEN
         WETH: "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
         CHI: "0x0000000000000000000000000000000000000000",
-        DODO: "0x6B208E08dcF6BD51F50C5Da09d15B2D8E5C46Cf2",
+        DODO: "0xe4bf2864ebec7b7fdf6eeca9bacae7cdfdaffe78",
 
         //Helper
         DODOSellHelper: "0xDfaf9584F5d229A9DBE5978523317820A8897C5A",
