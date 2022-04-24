@@ -68,9 +68,6 @@ library DODOMath {
         uint256 i,
         uint256 k
     ) internal pure returns (uint256) {
-        // if (V1 == 0) {
-        //     return 0;
-        // }
         if (k == 0) {
             return V1.add(DecimalMath.mulFloor(i, delta));
         }
@@ -78,6 +75,10 @@ library DODOMath {
         // sqrt = √(1+4kidelta/V1)
         // premium = 1+(sqrt-1)/2k
         // uint256 sqrt = (4 * k).mul(i).mul(delta).div(V1).add(DecimalMath.ONE2).sqrt();
+
+        if (V1 == 0) {
+            return 0;
+        }
         uint256 sqrt;
         uint256 ki = (4 * k).mul(i);
         if (ki == 0) {
