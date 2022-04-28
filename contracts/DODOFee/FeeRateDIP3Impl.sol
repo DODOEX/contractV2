@@ -97,6 +97,7 @@ contract FeeRateDIP3Impl is InitializableOwnable {
     function removeAdminList (address userAddr) external onlyOwner {
         isAdminListed[userAddr] = false;
         emit RemoveAdmin(userAddr);
+    }
 
     function setPoolHeartBeat (address newPoolHeartBeat) public onlyOwner {
         poolHeartBeat = newPoolHeartBeat;
