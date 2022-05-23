@@ -22,13 +22,17 @@ const DvmTemplate = artifacts.require("DVM");
 const DspTemplate = artifacts.require("DSP");
 const DppTemplate = artifacts.require("DPP");
 const DppAdminTemplate = artifacts.require("DPPAdmin");
+const DppAdvancedTemplate = artifacts.require("DPPAdvanced");
+const DppAdvancedAdminTemplate = artifacts.require("DPPAdvancedAdmin");
 const CpTemplate = artifacts.require("CP");
 const ERC20Template = artifacts.require("InitializableERC20");
 const CustomERC20Template = artifacts.require("CustomERC20");
+const CustomMintableERC20Template = artifacts.require("CustomMintableERC20");
 const ERC20MineV2 = artifacts.require("ERC20Mine");
 const ERC20MineV3 = artifacts.require("ERC20MineV3");
 
 const ERC20V2Factory = artifacts.require("ERC20V2Factory");
+const ERC20V3Factory = artifacts.require("ERC20V3Factory");
 const DvmFactory = artifacts.require("DVMFactory");
 const DppFactory = artifacts.require("DPPFactory");
 const DspFactory = artifacts.require("DSPFactory");
@@ -72,16 +76,19 @@ module.exports = async (deployer, network, accounts) => {
     let DefaultMtFeeRateAddress = CONFIG.FeeRateModel;
     let UserQuotaAddress = CONFIG.UserQuota;
     let FeeRateImplAddress = CONFIG.FeeRateImpl;
-    let FeeRateDIP3ImplAddress = CONFIG.FeeRateDIP3;
+    let FeeRateDIP3ImplAddress = CONFIG.FeeRateDIP3Impl;
     let DefaultPermissionAddress = CONFIG.PermissionManager;
     let DvmTemplateAddress = CONFIG.DVM;
     let DspTemplateAddress = CONFIG.DSP;
-    let DppTemplateAddress = CONFIG.DPPAdvanced;
-    let DppAdminTemplateAddress = CONFIG.DPPAdvancedAdmin;
+    let DppTemplateAddress = CONFIG.DPP;
+    let DppAdminTemplateAddress = CONFIG.DPPAdmin;
+    let DppAdvancedTemplateAddress = CONFIG.DPPAdvanced;
+    let DppAdvancedAdminTemplateAddress = CONFIG.DPPAdvancedAdmin;
     let CpTemplateAddress = CONFIG.CP;
     let CpV2TemplateAddress = CONFIG.CPV2;
     let ERC20TemplateAddress = CONFIG.ERC20;
     let CustomERC20TemplateAddress = CONFIG.CustomERC20;
+    let CustomMintableERC20TemplateAddress = CONFIG.CustomMintableERC20;
     let MineV2TemplateAddress = CONFIG.ERC20MineV2;
     let MineV3TemplateAddress = CONFIG.ERC20MineV3;
 
@@ -93,6 +100,7 @@ module.exports = async (deployer, network, accounts) => {
     let CpV2FactoryAddress = CONFIG.CrowdPoolingFactoryV2;
     let UpCpFactoryAddress = CONFIG.UpCpFactory;
     let ERC20V2FactoryAddress = CONFIG.ERC20V2Factory;
+    let ERC20V3FactoryAddress = CONFIG.ERC20V3Factory;
     let DODOMineV3RegistryAddress = CONFIG.DODOMineV3Registry;
     let DODOMineV2FactoryAddress = CONFIG.DODOMineV2Factory;
 
@@ -109,7 +117,6 @@ module.exports = async (deployer, network, accounts) => {
     let DODOV2ProxyAddress = CONFIG.DODOV2Proxy;
     let DODODspProxyAddress = CONFIG.DSPProxy;
     let DODOCpProxyAddress = CONFIG.CpProxy;
-    let DODOCpV2ProxyAddress = CONFIG.CpProxyV2;
     let DODODppProxyAddress = CONFIG.DPPProxy;
     let DODOMineV3ProxyAddress = CONFIG.DODOMineV3Proxy;
     let DODORouteProxyAddress = CONFIG.RouteProxy;
@@ -232,6 +239,18 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("DppAdminTemplateAddress: ", DppAdminTemplateAddress);
         }
 
+        if (DppAdvancedTemplateAddress == "") {
+            await deployer.deploy(DppAdvanedTemplate);
+            DppAdvancedTemplateAddress = DppAdvancedTemplate.address;
+            logger.log("DppAdvancedTemplateAddress: ", DppAdvancedTemplateAddress);
+        }
+
+        if (DppAdvancedAdminTemplateAddress == "") {
+            await deployer.deploy(DppAdvancedAdminTemplate);
+            DppAdvancedAdminTemplateAddress = DppAdvancedAdminTemplate.address;
+            logger.log("DppAdvancedAdminTemplateAddress: ", DppAdvancedAdminTemplateAddress);
+        }
+
         if (CpTemplateAddress == "") {
             await deployer.deploy(CpTemplate);
             CpTemplateAddress = CpTemplate.address;
@@ -248,6 +267,12 @@ module.exports = async (deployer, network, accounts) => {
             await deployer.deploy(CustomERC20Template);
             CustomERC20TemplateAddress = CustomERC20Template.address;
             logger.log("CustomERC20TemplateAddress: ", CustomERC20TemplateAddress);
+        }
+
+        if (CustomMintableERC20TemplateAddress == "") {
+            await deployer.deploy(CustomMintableERC20Template);
+            CustomMintableERC20TemplateAddress = CustomMintableERC20Template.address;
+            logger.log("CustomMintableERC20TemplateAddress: ", CustomMintableERC20TemplateAddress);
         }
 
         if (MineV2TemplateAddress == "") {
@@ -292,6 +317,22 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("Init ERC20V2Factory Tx:", tx.tx);
         }
 
+        if (ERC20V3FactoryAddress == "") {
+            await deployer.deploy(
+                ERC20V3Factory,
+                CloneFactoryAddress,
+                ERC20TemplateAddress,
+                CustomERC20TemplateAddress,
+                CustomMintableERC20TemplateAddress,
+                2000000000000000
+            );
+            ERC20V3FactoryAddress = ERC20V3Factory.address;
+            logger.log("ERC20V3FactoryAddress: ", ERC20V3FactoryAddress);
+            const ERC20V3FactoryInstance = await ERC20V3Factory.at(ERC20V3FactoryAddress);
+            var tx = await ERC20V3FactoryInstance.initOwner(multiSigAddress);
+            logger.log("Init ERC20V2Factory Tx:", tx.tx);
+        }
+
         if (DvmFactoryAddress == "") {
             await deployer.deploy(
                 DvmFactory,
@@ -311,8 +352,8 @@ module.exports = async (deployer, network, accounts) => {
             await deployer.deploy(
                 DppFactory,
                 CloneFactoryAddress,
-                DppTemplateAddress,
-                DppAdminTemplateAddress,
+                DppAdvancedTemplateAddress,
+                DppAdvancedAdminTemplateAddress,
                 defaultMaintainer,
                 DefaultMtFeeRateAddress,
                 DODOApproveProxyAddress
@@ -469,18 +510,6 @@ module.exports = async (deployer, network, accounts) => {
             );
             DODOCpProxyAddress = DODOCpProxy.address;
             logger.log("CpProxy address: ", DODOCpProxy.address);
-        }
-
-        if (DODOCpV2ProxyAddress == "") {
-            await deployer.deploy(
-                DODOCpProxy,
-                WETHAddress,
-                CpV2FactoryAddress,
-                UpCpFactoryAddress,
-                DODOApproveProxyAddress
-            );
-            DODOCpV2ProxyAddress = DODOCpProxy.address;
-            logger.log("CpV2Proxy address: ", DODOCpProxy.address);
         }
 
         if (DODODppProxyAddress == "") {
