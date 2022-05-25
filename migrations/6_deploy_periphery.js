@@ -47,6 +47,8 @@ const CurveSample = artifacts.require("CurveSampler");
 const GambitAdapter = artifacts.require("GambitAdapter")
 const WooAdapter = artifacts.require("WooAdapter");
 const balV2Adapter = artifacts.require("BalancerV2Adapter")
+const WooChecker = artifacts.require("WOOChecker")
+const UniV3TickHelper = artifacts.require("UniV3TickHelper")
 
 module.exports = async (deployer, network, accounts) => {
     let CONFIG = GetConfig(network, accounts)
@@ -530,5 +532,25 @@ module.exports = async (deployer, network, accounts) => {
     
         await deployer.deploy(CurveSample)
         logger.log("CurveSampler Address: ", CurveSample.address);
+    }
+
+    if(deploySwitch.test_checker) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
+        logger.log("Deploy type: anothertest - Sampler");
+    
+        await deployer.deploy(WooChecker, "0x55d398326f99059fF775485246999027B3197955", "0x6b6fBEc7934b104e81b2046D24A990e03e17afDC", "0x910723E3C6A68276687B50613A1A9e42Cc6589B4")
+        logger.log("wooChecker Address: ", WooChecker.address);
+    }
+
+    if(deploySwitch.test_ticker) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
+        logger.log("Deploy type: anothertest - Sampler");
+    
+        await deployer.deploy(UniV3TickHelper)
+        logger.log("uniV3TickHelper Address: ", UniV3TickHelper.address);
     }
 };

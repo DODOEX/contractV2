@@ -699,3 +699,19 @@ Deploy time: 2021/11/24 下午3:56:42
 Deploy type: anothertest - Adapter
 UniV3Adapter Address:  0xbce44767af0a53A108b3B7ba4F740E03D228Ec0A
 balV2Adapter for wannaSwap Address:  0x26A0225e27227FA6b5eAd5B029532EC599C0a02e
+====================================================
+network type: bsclive
+Deploy time: 2022/5/16 下午9:49:47
+Deploy type: anothertest - Sampler
+====================================================
+network type: bsclive
+Deploy time: 2022/5/16 下午9:53:03
+Deploy type: anothertest - Sampler
+====================================================
+network type: bsclive
+Deploy time: 2022/5/16 下午9:54:08
+Deploy type: anothertest - Sampler
+====================================================
+network type: matic
+Deploy time: 2022/5/24 下午10:20:35
+Deploy type: anothertest - Sampler
