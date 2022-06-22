@@ -35,6 +35,7 @@ interface IDPPOracle {
     function reset(
         address assetTo,
         uint256 newLpFeeRate,
+        uint256 newI,
         uint256 newK,
         uint256 baseOutAmount,
         uint256 quoteOutAmount,
@@ -45,8 +46,19 @@ interface IDPPOracle {
 
     function tuneParameters(
         uint256 newLpFeeRate,
+        uint256 newI,
         uint256 newK,
         uint256 minBaseReserve,
         uint256 minQuoteReserve
     ) external returns (bool);
+
+    function tunePrice(
+        uint256 newI,
+        uint256 minBaseReserve,
+        uint256 minQuoteReserve
+    ) external returns (bool);
+
+    function changeOracle(address newOracle) external;
+
+    function toggleOracleStatus(bool enabled) external;
 }

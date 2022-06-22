@@ -123,6 +123,7 @@ contract DPPVault is DPPStorage {
     function reset(
         address assetTo,
         uint256 newLpFeeRate,
+        uint256 newI,
         uint256 newK,
         uint256 baseOutAmount,
         uint256 quoteOutAmount,
@@ -135,9 +136,11 @@ contract DPPVault is DPPStorage {
         );
         require(newLpFeeRate <= 1e18, "LP_FEE_RATE_OUT_OF_RANGE");
         require(newK <= 1e18, "K_OUT_OF_RANGE");
+        require(newI > 0 && newI <= 1e36, "I_OUT_OF_RANGE");
 
         _LP_FEE_RATE_ = uint64(newLpFeeRate);
         _K_ = uint64(newK);
+        _I_ = uint128(newI);
 
         _transferBaseOut(assetTo, baseOutAmount);
         _transferQuoteOut(assetTo, quoteOutAmount);

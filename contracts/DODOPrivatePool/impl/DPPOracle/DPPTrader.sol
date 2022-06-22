@@ -38,9 +38,11 @@ contract DPPTrader is DPPVault {
 
     event RChange(PMMPricing.RState newRState);
 
-    modifier isOraclePriceValid() {
-        bool isFeasible = IOracle(_I_).isFeasible(address(_BASE_TOKEN_)); 
-        require(isFeasible, "ORACLE_PRICE_INVALID");
+    modifier isPriceValid() {
+        if (_IS_ORACLE_ENABLED) {
+            bool isFeasible = IOracle(_I_).isFeasible(address(_BASE_TOKEN_)); 
+            require(isFeasible, "ORACLE_PRICE_INVALID");
+        }
         _;
     }
 
@@ -49,7 +51,7 @@ contract DPPTrader is DPPVault {
     function sellBase(address to)
         external
         preventReentrant
-        isOraclePriceValid
+        isPriceValid
         returns (uint256 receiveQuoteAmount)
     {
         uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
@@ -85,7 +87,7 @@ contract DPPTrader is DPPVault {
     function sellQuote(address to)
         external
         preventReentrant
-        isOraclePriceValid
+        isPriceValid
         returns (uint256 receiveBaseAmount)
     {
         uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
@@ -126,7 +128,7 @@ contract DPPTrader is DPPVault {
         uint256 quoteAmount,
         address _assetTo,
         bytes calldata data
-    ) external isOraclePriceValid preventReentrant {
+    ) external isPriceValid preventReentrant {
         address assetTo = _assetTo;
         _transferBaseOut(assetTo, baseAmount);
         _transferQuoteOut(assetTo, quoteAmount);

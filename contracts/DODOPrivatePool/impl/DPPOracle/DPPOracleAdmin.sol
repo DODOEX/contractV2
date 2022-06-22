@@ -62,9 +62,28 @@ contract DPPOracleAdmin is InitializableOwnable {
         IDPPOracle(_DPP_).retrieve(to, token, amount);
     }
 
+    function changeOracle(address newOracle) external notFreezed {
+        require(
+            msg.sender == _OWNER_ ||
+                (IDODOApproveProxy(_DODO_APPROVE_PROXY_).isAllowedProxy(msg.sender)),
+            "CHANGEORACLE FORBIDDEN!"
+        );
+        IDPPOracle(_DPP_).changeOracle(newOracle);
+    }
+
+    function toggleOracleStatus(bool enabled) external notFreezed {
+        require(
+            msg.sender == _OWNER_ ||
+                (IDODOApproveProxy(_DODO_APPROVE_PROXY_).isAllowedProxy(msg.sender)),
+            "CHANGEORACLE FORBIDDEN!"
+        );
+        IDPPOracle(_DPP_).toggleOracleStatus(enabled);
+    }
+
     function tuneParameters(
         address operator,
         uint256 newLpFeeRate,
+        uint256 newI,
         uint256 newK,
         uint256 minBaseReserve,
         uint256 minQuoteReserve
@@ -78,7 +97,28 @@ contract DPPOracleAdmin is InitializableOwnable {
         return
             IDPPOracle(_DPP_).tuneParameters(
                 newLpFeeRate,
+                newI,
                 newK,
+                minBaseReserve,
+                minQuoteReserve
+            );
+    }
+
+    function tunePrice(
+        address operator,
+        uint256 newI,
+        uint256 minBaseReserve,
+        uint256 minQuoteReserve
+    ) external notFreezed returns (bool) {
+        require(
+            msg.sender == _OWNER_ ||
+                (IDODOApproveProxy(_DODO_APPROVE_PROXY_).isAllowedProxy(msg.sender) &&
+                    operator == _OPERATOR_),
+            "TUNEPRICE FORBIDDEN！"
+        );
+        return
+            IDPPOracle(_DPP_).tunePrice(
+                newI,
                 minBaseReserve,
                 minQuoteReserve
             );
@@ -88,6 +128,7 @@ contract DPPOracleAdmin is InitializableOwnable {
     function reset(
         address operator,
         uint256 newLpFeeRate,
+        uint256 newI,
         uint256 newK,
         uint256 baseOutAmount,
         uint256 quoteOutAmount,
@@ -104,6 +145,7 @@ contract DPPOracleAdmin is InitializableOwnable {
             IDPPOracle(_DPP_).reset(
                 _OWNER_, //only support asset transfer out to owner
                 newLpFeeRate,
+                newI,
                 newK,
                 baseOutAmount,
                 quoteOutAmount,
@@ -115,6 +157,6 @@ contract DPPOracleAdmin is InitializableOwnable {
     // ============ Admin Version Control ============
 
     function version() external pure returns (string memory) {
-        return "DPPOracle Admin 1.0.0"; // 1.0.0
+        return "DPPOracle Admin 1.1.0";
     }
 }
