@@ -60,5 +60,7 @@ interface IDPPOracle {
 
     function changeOracle(address newOracle) external;
 
-    function toggleOracleStatus(bool enabled) external;
+    function enableOracle() external;
+
+    function disableOracle(uint256 newI) external;
 }

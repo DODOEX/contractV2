@@ -71,13 +71,22 @@ contract DPPOracleAdmin is InitializableOwnable {
         IDPPOracle(_DPP_).changeOracle(newOracle);
     }
 
-    function toggleOracleStatus(bool enabled) external notFreezed {
-        require(
+    function enableOracle() external notFreezed {
+       require(
             msg.sender == _OWNER_ ||
                 (IDODOApproveProxy(_DODO_APPROVE_PROXY_).isAllowedProxy(msg.sender)),
             "CHANGEORACLE FORBIDDEN!"
         );
-        IDPPOracle(_DPP_).toggleOracleStatus(enabled);
+        IDPPOracle(_DPP_).enableOracle(); 
+    }
+
+    function disableOracle(uint256 newI) external notFreezed {
+       require(
+            msg.sender == _OWNER_ ||
+                (IDODOApproveProxy(_DODO_APPROVE_PROXY_).isAllowedProxy(msg.sender)),
+            "CHANGEORACLE FORBIDDEN!"
+        );
+        IDPPOracle(_DPP_).disableOracle(newI); 
     }
 
     function tuneParameters(

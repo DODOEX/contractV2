@@ -17,7 +17,7 @@ interface IWooracle {
     function price(address base) external view returns (uint256 priceNow, bool feasible);
 }
 
-contract OracleAdapter is IOracle {
+contract WooOracleAdapter is IOracle {
     IWooracle oracle;
 
     constructor(address oracleAddress) public {
@@ -33,6 +33,7 @@ contract OracleAdapter is IOracle {
     }    
 
     function prices(address base) external override view returns (uint256) {
+        require(oracle.isFeasible(base), "ORACLE NOT FEASIBLE");
         return oracle.getPrice(base);
     }
     

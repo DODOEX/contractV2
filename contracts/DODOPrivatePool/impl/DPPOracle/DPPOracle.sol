@@ -20,7 +20,8 @@ import {DPPTrader} from "./DPPTrader.sol";
  */
 contract DPPOracle is DPPTrader {
 
-    event ToggleOracleStatus(bool isEnabled);
+    event EnableOracle();
+    event DisableOracle(uint256 newI);
     event ChangeOracle(address indexed oracle);
 
     function init(
@@ -68,10 +69,16 @@ contract DPPOracle is DPPTrader {
         emit ChangeOracle(newOracle);
     }
 
-    function toggleOracleStatus(bool enabled) public preventReentrant onlyOwner returns (bool) {
-        _IS_ORACLE_ENABLED = enabled;
-        emit ToggleOracleStatus(enabled);
-        return enabled;
+    function enableOracle() public preventReentrant onlyOwner {
+        _IS_ORACLE_ENABLED = true;
+        emit EnableOracle();
+    }
+
+    function disableOracle(uint256 newI) public preventReentrant onlyOwner {
+        require(newI > 0 && newI <= 1e36, "I_OUT_OF_RANGE");
+        _I_ = uint128(newI);
+        _IS_ORACLE_ENABLED = false;
+        emit DisableOracle(newI);
     }
 
     function tuneParameters(
