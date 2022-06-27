@@ -21,6 +21,7 @@ contract DPPStorage is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;
 
     bool public _IS_OPEN_TWAP_ = false;
+    bool public _IS_ORACLE_ENABLED = true;
 
     // ============ Core Address ============
 
@@ -45,12 +46,17 @@ contract DPPStorage is InitializableOwnable, ReentrancyGuard {
     
     uint64 public _LP_FEE_RATE_;
     uint64 public _K_;
-    address public _I_;
+    uint128 public _I_;
+    address public _O_;
 
     // ============ Helper Functions ============
 
     function getPMMState() public view returns (PMMPricing.PMMState memory state) {
-        state.i = IOracle(_I_).prices(address(_BASE_TOKEN_));
+        if (_IS_ORACLE_ENABLED) {
+            state.i = IOracle(_O_).prices(address(_BASE_TOKEN_));
+        } else {
+            state.i = _I_;
+        }
         state.K = _K_;
         state.B = _BASE_RESERVE_;
         state.Q = _QUOTE_RESERVE_;
