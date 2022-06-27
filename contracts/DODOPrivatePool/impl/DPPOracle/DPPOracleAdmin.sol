@@ -62,47 +62,25 @@ contract DPPOracleAdmin is InitializableOwnable {
         IDPPOracle(_DPP_).retrieve(to, token, amount);
     }
 
-    function changeOracle(address newOracle) external notFreezed {
-        require(
-            msg.sender == _OWNER_ ||
-                (IDODOApproveProxy(_DODO_APPROVE_PROXY_).isAllowedProxy(msg.sender)),
-            "CHANGEORACLE FORBIDDEN!"
-        );
+    function changeOracle(address newOracle) external onlyOwner notFreezed {
         IDPPOracle(_DPP_).changeOracle(newOracle);
     }
 
-    function enableOracle() external notFreezed {
-       require(
-            msg.sender == _OWNER_ ||
-                (IDODOApproveProxy(_DODO_APPROVE_PROXY_).isAllowedProxy(msg.sender)),
-            "CHANGEORACLE FORBIDDEN!"
-        );
+    function enableOracle() external onlyOwner notFreezed {
         IDPPOracle(_DPP_).enableOracle(); 
     }
 
-    function disableOracle(uint256 newI) external notFreezed {
-       require(
-            msg.sender == _OWNER_ ||
-                (IDODOApproveProxy(_DODO_APPROVE_PROXY_).isAllowedProxy(msg.sender)),
-            "CHANGEORACLE FORBIDDEN!"
-        );
+    function disableOracle(uint256 newI) external onlyOwner notFreezed {
         IDPPOracle(_DPP_).disableOracle(newI); 
     }
 
     function tuneParameters(
-        address operator,
         uint256 newLpFeeRate,
         uint256 newI,
         uint256 newK,
         uint256 minBaseReserve,
         uint256 minQuoteReserve
-    ) external notFreezed returns (bool) {
-        require(
-            msg.sender == _OWNER_ ||
-                (IDODOApproveProxy(_DODO_APPROVE_PROXY_).isAllowedProxy(msg.sender) &&
-                    operator == _OPERATOR_),
-            "TUNEPARAMS FORBIDDEN!"
-        );
+    ) external onlyOwner notFreezed returns (bool) {
         return
             IDPPOracle(_DPP_).tuneParameters(
                 newLpFeeRate,
@@ -114,17 +92,10 @@ contract DPPOracleAdmin is InitializableOwnable {
     }
 
     function tunePrice(
-        address operator,
         uint256 newI,
         uint256 minBaseReserve,
         uint256 minQuoteReserve
-    ) external notFreezed returns (bool) {
-        require(
-            msg.sender == _OWNER_ ||
-                (IDODOApproveProxy(_DODO_APPROVE_PROXY_).isAllowedProxy(msg.sender) &&
-                    operator == _OPERATOR_),
-            "TUNEPRICE FORBIDDEN！"
-        );
+    ) external onlyOwner notFreezed returns (bool) {
         return
             IDPPOracle(_DPP_).tunePrice(
                 newI,
@@ -135,7 +106,6 @@ contract DPPOracleAdmin is InitializableOwnable {
 
 
     function reset(
-        address operator,
         uint256 newLpFeeRate,
         uint256 newI,
         uint256 newK,
@@ -143,13 +113,7 @@ contract DPPOracleAdmin is InitializableOwnable {
         uint256 quoteOutAmount,
         uint256 minBaseReserve,
         uint256 minQuoteReserve
-    ) external notFreezed returns (bool) {
-        require(
-            msg.sender == _OWNER_ ||
-                (IDODOApproveProxy(_DODO_APPROVE_PROXY_).isAllowedProxy(msg.sender) &&
-                    operator == _OPERATOR_),
-            "RESET FORBIDDEN！"
-        );
+    ) external onlyOwner notFreezed returns (bool) {
         return
             IDPPOracle(_DPP_).reset(
                 _OWNER_, //only support asset transfer out to owner
