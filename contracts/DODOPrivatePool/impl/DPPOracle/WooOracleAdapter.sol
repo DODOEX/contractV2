@@ -18,7 +18,7 @@ interface IWooracle {
 }
 
 contract WooOracleAdapter is IOracle {
-    IWooracle oracle;
+    IWooracle public oracle;
 
     constructor(address oracleAddress) public {
         oracle = IWooracle(oracleAddress);
