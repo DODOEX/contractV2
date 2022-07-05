@@ -8,14 +8,14 @@
 pragma solidity 0.6.9;
 
 import {IDODOApproveProxy} from "../DODOApproveProxy.sol";
-import {IERC20} from "../../intf/IERC20.sol";
-import {IWETH} from "../../intf/IWETH.sol";
-import {SafeMath} from "../../lib/SafeMath.sol";
-import {SafeERC20} from "../../lib/SafeERC20.sol";
-import {DecimalMath} from "../../lib/DecimalMath.sol";
-import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
-import {IDSP} from "../../DODOStablePool/intf/IDSP.sol";
-import {IDSPFactory} from "../../Factory/DSPFactory.sol";
+import {IERC20} from "../intf/IERC20.sol";
+import {IWETH} from "../intf/IWETH.sol";
+import {SafeMath} from "../lib/SafeMath.sol";
+import {SafeERC20} from "../lib/SafeERC20.sol";
+import {DecimalMath} from "../lib/DecimalMath.sol";
+import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
+import {IDSP} from "../DODOStablePool/intf/IDSP.sol";
+import {IDSPFactory} from "../Factory/DSPFactory.sol";
 
 /**
  * @title DODODspProxy

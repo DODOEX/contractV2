@@ -7,9 +7,9 @@
 
 pragma solidity 0.6.9;
 
-import {IERC721} from "../intf/IERC721.sol";
-import {IERC1155} from "../intf/IERC1155.sol";
-import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
+import {IERC721} from "./intf/IERC721.sol";
+import {IERC1155} from "./intf/IERC1155.sol";
+import {InitializableOwnable} from "./lib/InitializableOwnable.sol";
 
 /**
  * @title DODONFTApprove

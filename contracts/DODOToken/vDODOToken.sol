@@ -10,7 +10,7 @@ import {SafeMath} from "../lib/SafeMath.sol";
 import {DecimalMath} from "../lib/DecimalMath.sol";
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 import {SafeERC20} from "../lib/SafeERC20.sol";
-import {IDODOApproveProxy} from "../SmartRoute/DODOApproveProxy.sol";
+import {IDODOApproveProxy} from "../DODOApproveProxy.sol";
 
 interface IGovernance {
     function getLockedvDODO(address account) external view returns (uint256);

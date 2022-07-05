@@ -6,13 +6,13 @@
 pragma solidity 0.6.9;
 
 import {IDODOApproveProxy} from "../DODOApproveProxy.sol";
-import {IDODOV2} from "./../intf/IDODOV2.sol";
-import {IERC20} from "../../intf/IERC20.sol";
-import {SafeERC20} from "../../lib/SafeERC20.sol";
-import {IWETH} from "../../intf/IWETH.sol";
-import {SafeMath} from "../../lib/SafeMath.sol";
-import {SafeERC20} from "../../lib/SafeERC20.sol";
-import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
+import {IDODOV2} from "../SmartRoute/intf/IDODOV2.sol";
+import {IERC20} from "../intf/IERC20.sol";
+import {SafeERC20} from "../lib/SafeERC20.sol";
+import {IWETH} from "../intf/IWETH.sol";
+import {SafeMath} from "../lib/SafeMath.sol";
+import {SafeERC20} from "../lib/SafeERC20.sol";
+import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
 
 /**
  * @title DODOCpProxy

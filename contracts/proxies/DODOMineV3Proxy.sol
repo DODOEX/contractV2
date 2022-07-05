@@ -8,12 +8,12 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
+import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 import {IDODOApproveProxy} from "../DODOApproveProxy.sol";
-import {IRewardVault} from "../../DODOToken/DODOMineV3/RewardVault.sol";
-import {IDODOMineV3Registry} from "../../Factory/Registries/DODOMineV3Registry.sol";
-import {ICloneFactory} from "../../lib/CloneFactory.sol";
-import {SafeMath} from "../../lib/SafeMath.sol";
+import {IRewardVault} from "../DODOToken/DODOMineV3/RewardVault.sol";
+import {IDODOMineV3Registry} from "../Factory/Registries/DODOMineV3Registry.sol";
+import {ICloneFactory} from "../lib/CloneFactory.sol";
+import {SafeMath} from "../lib/SafeMath.sol";
 
 interface IMineV3 {
     function init(address owner, address token) external;

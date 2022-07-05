@@ -6,15 +6,15 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {SafeMath} from "../../lib/SafeMath.sol";
-import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
-import {ICloneFactory} from "../../lib/CloneFactory.sol";
-import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
-import {IFilter} from "../../NFTPool/intf/IFilter.sol";
-import {IFilterAdmin} from "../../NFTPool/intf/IFilterAdmin.sol";
-import {IDODONFTApprove} from "../../intf/IDODONFTApprove.sol";
-import {IERC20} from "../../intf/IERC20.sol";
-import {SafeERC20} from "../../lib/SafeERC20.sol";
+import {SafeMath} from "../lib/SafeMath.sol";
+import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
+import {ICloneFactory} from "../lib/CloneFactory.sol";
+import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
+import {IFilter} from "../NFTPool/intf/IFilter.sol";
+import {IFilterAdmin} from "../NFTPool/intf/IFilterAdmin.sol";
+import {IDODONFTApprove} from "../intf/IDODONFTApprove.sol";
+import {IERC20} from "../intf/IERC20.sol";
+import {SafeERC20} from "../lib/SafeERC20.sol";
 
 contract DODONFTPoolProxy is InitializableOwnable, ReentrancyGuard {
     using SafeMath for uint256;

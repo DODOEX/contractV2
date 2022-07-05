@@ -7,10 +7,10 @@
 pragma solidity 0.6.9;
 
 import {IDODOApproveProxy} from "../DODOApproveProxy.sol";
-import {IERC20} from "../../intf/IERC20.sol";
-import {SafeMath} from "../../lib/SafeMath.sol";
-import {SafeERC20} from "../../lib/SafeERC20.sol";
-import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
+import {IERC20} from "../intf/IERC20.sol";
+import {SafeMath} from "../lib/SafeMath.sol";
+import {SafeERC20} from "../lib/SafeERC20.sol";
+import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
 
 interface IDODODrops {
     function _BUY_TOKEN_() external view returns (address);

@@ -8,8 +8,8 @@
 pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
-import {IDODOApprove} from "../intf/IDODOApprove.sol";
-import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
+import {IDODOApprove} from "./intf/IDODOApprove.sol";
+import {InitializableOwnable} from "./lib/InitializableOwnable.sol";
 
 interface IDODOApproveProxy {
     function isAllowedProxy(address _proxy) external view returns (bool);

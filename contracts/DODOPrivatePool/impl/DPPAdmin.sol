@@ -9,7 +9,7 @@ pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
 import {IDPP} from "../intf/IDPP.sol";
-import {IDODOApproveProxy} from "../../SmartRoute/DODOApproveProxy.sol";
+import {IDODOApproveProxy} from "../../DODOApproveProxy.sol";
 import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 
 /**

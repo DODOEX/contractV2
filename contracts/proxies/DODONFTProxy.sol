@@ -8,18 +8,18 @@
 pragma solidity 0.6.9;
 
 import {IDODOApproveProxy} from "../DODOApproveProxy.sol";
-import {ICloneFactory} from "../../lib/CloneFactory.sol";
-import {IERC20} from "../../intf/IERC20.sol";
-import {IWETH} from "../../intf/IWETH.sol";
-import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
-import {ICollateralVault} from "../../CollateralVault/intf/ICollateralVault.sol";
-import {IDVM} from "../../DODOVendingMachine/intf/IDVM.sol";
-import {IFragment} from "../../GeneralizedFragment/intf/IFragment.sol";
-import {IDODONFTRegistry} from "../../Factory/Registries/DODONFTRegistry.sol";
-import {SafeMath} from "../../lib/SafeMath.sol";
-import {SafeERC20} from "../../lib/SafeERC20.sol";
-import {DecimalMath} from "../../lib/DecimalMath.sol";
-import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
+import {ICloneFactory} from "../lib/CloneFactory.sol";
+import {IERC20} from "../intf/IERC20.sol";
+import {IWETH} from "../intf/IWETH.sol";
+import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
+import {ICollateralVault} from "../CollateralVault/intf/ICollateralVault.sol";
+import {IDVM} from "../DODOVendingMachine/intf/IDVM.sol";
+import {IFragment} from "../GeneralizedFragment/intf/IFragment.sol";
+import {IDODONFTRegistry} from "../Factory/Registries/DODONFTRegistry.sol";
+import {SafeMath} from "../lib/SafeMath.sol";
+import {SafeERC20} from "../lib/SafeERC20.sol";
+import {DecimalMath} from "../lib/DecimalMath.sol";
+import {ReentrancyGuard} from "../lib/ReentrancyGuard.sol";
 
 
 /**

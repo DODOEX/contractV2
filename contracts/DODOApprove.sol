@@ -7,9 +7,9 @@
 
 pragma solidity 0.6.9;
 
-import {IERC20} from "../intf/IERC20.sol";
-import {SafeERC20} from "../lib/SafeERC20.sol";
-import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
+import {IERC20} from "./intf/IERC20.sol";
+import {SafeERC20} from "./lib/SafeERC20.sol";
+import {InitializableOwnable} from "./lib/InitializableOwnable.sol";
 
 
 /**

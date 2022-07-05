@@ -9,14 +9,14 @@ pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
 import {IDODOApproveProxy} from "../DODOApproveProxy.sol";
-import {IERC20} from "../../intf/IERC20.sol";
-import {IWETH} from "../../intf/IWETH.sol";
-import {SafeMath} from "../../lib/SafeMath.sol";
-import {UniversalERC20} from "../lib/UniversalERC20.sol";
-import {SafeERC20} from "../../lib/SafeERC20.sol";
-import {IDODOAdapter} from "../intf/IDODOAdapter.sol";
-import {IFeeManager} from "../intf/IFeeManager.sol";
-import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
+import {IERC20} from "../intf/IERC20.sol";
+import {IWETH} from "../intf/IWETH.sol";
+import {SafeMath} from "../lib/SafeMath.sol";
+import {UniversalERC20} from "../SmartRoute/lib/UniversalERC20.sol";
+import {SafeERC20} from "../lib/SafeERC20.sol";
+import {IDODOAdapter} from "../SmartRoute/intf/IDODOAdapter.sol";
+import {IFeeManager} from "../SmartRoute/intf/IFeeManager.sol";
+import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
 
 
 /**

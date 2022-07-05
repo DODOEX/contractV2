@@ -10,7 +10,7 @@ pragma experimental ABIEncoderV2;
 import {IERC20} from "../intf/IERC20.sol";
 import {SafeMath} from "../lib/SafeMath.sol";
 import {InitializableOwnable} from "../lib/InitializableOwnable.sol";
-import {IDODOApproveProxy} from "../SmartRoute/DODOApproveProxy.sol";
+import {IDODOApproveProxy} from "../DODOApproveProxy.sol";
 
 /**
  * @title DODOMigration between Ethereum and BSC

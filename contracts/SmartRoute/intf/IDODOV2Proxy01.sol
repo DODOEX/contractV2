@@ -10,6 +10,7 @@ pragma experimental ABIEncoderV2;
 
 
 interface IDODOV2Proxy01 {
+    /*
     function dodoSwapV2ETHToToken(
         address toToken,
         uint256 minReturnAmount,
@@ -39,6 +40,7 @@ interface IDODOV2Proxy01 {
         bool isIncentive,
         uint256 deadLine
     ) external returns (uint256 returnAmount);
+    */
 
     function createDODOVendingMachine(
         address baseToken,
@@ -109,6 +111,7 @@ interface IDODOV2Proxy01 {
         uint256 deadLine
     ) external payable returns(uint256, uint256);
 
+    /*
     function dodoSwapV1(
         address fromToken,
         address toToken,
@@ -131,6 +134,7 @@ interface IDODOV2Proxy01 {
         bool isIncentive,
         uint256 deadLine
     ) external payable returns (uint256 returnAmount);
+    */
 
     // function mixSwap(
     //     address fromToken,
