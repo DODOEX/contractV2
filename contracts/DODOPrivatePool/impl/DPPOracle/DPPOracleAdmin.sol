@@ -123,7 +123,7 @@ contract DPPOracleAdmin is InitializableOwnable {
         ); // only allow owner directly call or operator call via DODODppProxy
         return
             IDPPOracle(_DPP_).reset(
-                _OWNER_, //only support asset transfer out to owner
+                msg.sender, //only support asset transfer to msg.sender (_OWNER_ or allowed proxy)
                 newLpFeeRate,
                 newI,
                 newK,
@@ -137,6 +137,6 @@ contract DPPOracleAdmin is InitializableOwnable {
     // ============ Admin Version Control ============
 
     function version() external pure returns (string memory) {
-        return "DPPOracle Admin 1.1.0";
+        return "DPPOracle Admin 1.1.1";
     }
 }

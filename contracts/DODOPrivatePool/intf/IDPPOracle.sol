@@ -17,8 +17,10 @@ interface IDPPOracle {
         uint256 lpFeeRate,
         address mtFeeRateModel,
         uint256 k,
-        address i, //oracle address
-        bool isOpenTWAP
+        uint256 i,
+        address o,
+        bool isOpenTWAP,
+        bool isOracleEnabled
     ) external;
 
     function _MT_FEE_RATE_MODEL_() external returns (address);
