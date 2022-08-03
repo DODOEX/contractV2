@@ -15,6 +15,7 @@ import {UniversalERC20} from "../lib/UniversalERC20.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 import {TickMath} from '../../external/uniswap/TickMath.sol';
 import {IWETH} from "../../intf/IWETH.sol";
+import {PoolAddress} from '../../external/uniswap/PoolAddress.sol';
 
 // to adapter like dodo V1
 contract UniV3Adapter is IDODOAdapter, IUniswapV3SwapCallback {
@@ -24,11 +25,14 @@ contract UniV3Adapter is IDODOAdapter, IUniswapV3SwapCallback {
 
     address constant _ETH_ADDRESS_ = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     address public immutable _WETH_;
+    address public immutable _V3_FACTORY_;
 
     constructor (
-        address payable weth
+        address payable weth,
+        address factory
     ) public {
         _WETH_ = weth;
+        _V3_FACTORY_ = factory;
     }
 
     function _uniV3Swap(address to, address pool, uint160 sqrtX96, bytes memory data) internal {
@@ -37,8 +41,6 @@ contract UniV3Adapter is IDODOAdapter, IUniswapV3SwapCallback {
         uint256 sellAmount = IERC20(fromToken).balanceOf(address(this));
         bool zeroForOne = fromToken < toToken;
 
-        // transfer
-        //IERC20(fromToken).transfer(pool, sellAmount);
         // swap
         IUniV3(pool).swap(
             to, 
@@ -49,6 +51,12 @@ contract UniV3Adapter is IDODOAdapter, IUniswapV3SwapCallback {
                 : sqrtX96,
             data
         );
+
+        // check if use all from tokem
+        uint256 leftSellAmount = IERC20(fromToken).balanceOf(address(this));
+        if(leftSellAmount > 0) {
+            SafeERC20.safeTransfer(IERC20(fromToken), tx.origin, leftSellAmount);
+        }
     }
 
     function sellBase(address to, address pool, bytes memory moreInfo) external override {
@@ -70,6 +78,9 @@ contract UniV3Adapter is IDODOAdapter, IUniswapV3SwapCallback {
     ) external override {
         require(amount0Delta > 0 || amount1Delta > 0); // swaps entirely within 0-liquidity regions are not supported
         (address tokenIn, address tokenOut, uint24 fee) = abi.decode(_data, (address, address, uint24));
+        // verifyCallback
+        address poolAddress = PoolAddress.computeAddress(_V3_FACTORY_, PoolAddress.getPoolKey(tokenIn, tokenOut, fee));
+        require(msg.sender == poolAddress, "not available v3 pool");
 
         (bool isExactInput, uint256 amountToPay) =
             amount0Delta > 0

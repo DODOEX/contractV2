@@ -90,6 +90,11 @@ export const DODO_STARTER_FACTORY = "DODOStarterFactory"
 export const FAIR_FUNDING = "FairFunding"
 export const INSTANT_FUNDING = "InstantFunding"
 
+// route
+export const FEEMANGER = "FeeManager"
+export const DODO_ROUTE_PROXY = "DODORouteProxy" 
+export const DODO_ADAPTER = "DODOV2Adapter"
+export const EXTERNAL_MOCK = "ExternalSwapMock"
 
 interface ContractJson {
   abi: any;
@@ -127,7 +132,7 @@ export async function newContract(contractName: string, args: any[] = []): Promi
   var adminAccount = (await web3.eth.getAccounts())[0]
   let parameter = {
     from: adminAccount,
-    gas: process.env["COVERAGE"] ? 10000000000 : 7000000,
+    gas: process.env["COVERAGE"] ? 10000000000 : 6000000,
     gasPrice: web3.utils.toHex(web3.utils.toWei('1', 'wei'))
   }
   return await contract.deploy({ data: Json.byteCode, arguments: args }).send(parameter)

@@ -58,7 +58,7 @@ module.exports = {
     MultiCall:      false,
     DSP:            false,
     LockedVault:    false,
-    MULTIHOP:       true,
+    MULTIHOP:       false,
     CpProxy:        false,
     ERC20V2Factory: false,
     DEPLOY_NFT:     false,
@@ -70,7 +70,8 @@ module.exports = {
     UserQuota:      false,
     STARTER:        false,
     test_ticker:    false,
-    test_Sample:    true,
+    test_Sample:    false,
+    test_Adapter:   true,
   },
 
   dashboard: {
@@ -95,7 +96,7 @@ module.exports = {
       host: "127.0.0.1",
       port: 8545,
       network_id: 5777,
-      gas: 1000000000,
+      gas: 1000*1000*10,
       gasPrice: 1,
     },
 
@@ -238,7 +239,7 @@ module.exports = {
       },
       network_id: 137,
       gas: 6000000,
-      gasPrice: 35000000000,
+      gasPrice: 80000000000,
       // confirmations: 2,
       // timeoutBlocks: 200,
       skipDryRun: true

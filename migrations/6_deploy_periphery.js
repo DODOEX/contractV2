@@ -496,12 +496,13 @@ module.exports = async (deployer, network, accounts) => {
     }
 
     if(deploySwitch.test_Adapter) {
-        /*
+        
         logger.log("====================================================");
         logger.log("network type: " + network);
         logger.log("Deploy time: " + new Date().toLocaleString());
         logger.log("Deploy type: test - Adapter");
 
+        /*
         await deployer.deploy(CurveAdapter);
 
         logger.log("test_Adapter Address: ", CurveAdapter.address);
@@ -518,9 +519,8 @@ module.exports = async (deployer, network, accounts) => {
         await deployer.deploy(UniAdapter)
         logger.log("UniAdapter Address: ", UniAdapter.address);
         */
-        //await deployer.deploy(UniV3Adapter, WETH)
-        await deployer.deploy(balV2Adapter)
-        logger.log("balV2Adapter for wannaSwap Address: ", balV2Adapter.address);
+        await deployer.deploy(UniV3Adapter, WETH, "0x1F98431c8aD98523631AE4a59f267346ea31F984")
+        logger.log("uniV3Adapter for wannaSwap Address: ", uniV3Adapter.address);
     }
 
     if(deploySwitch.test_Sample) {

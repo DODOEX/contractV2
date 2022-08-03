@@ -620,7 +620,8 @@ module.exports = async (deployer, network, accounts) => {
 
         await deployer.deploy(
             FeeManager,
-            "0x1Dc662D3D7De14a57CD369e3a9E774f8F80d4214"
+            "0x1Dc662D3D7De14a57CD369e3a9E774f8F80d4214",
+            WETHAddress
         )
         FeeManagerAddress = FeeManager.address;
         logger.log("RouteFeeManager Address:", FeeManager.address)

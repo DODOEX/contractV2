@@ -31,6 +31,8 @@ export class ProxyContext {
   DODOApproveProxy: Contract;
   DODOCalleeHelper: Contract;
   DODOSellHelper: Contract;
+  FeeManager:Contract;
+  DODORouteProxy:Contract;
 
   //token
   DODO: Contract;
@@ -134,28 +136,42 @@ export class ProxyContext {
     );
 
     //ETH proxy
+    
     this.DODOProxyV2 = await contracts.newContract(contracts.DODO_PROXY_NAME,
       [
         this.DVMFactory.options.address,
-        this.DPPFactory.options.address,
-        this.CPFactory.options.address,
         this.WETH.options.address,
         this.DODOApproveProxy.options.address,
         this.DODOSellHelper.options.address,
-        "0x0000000000000000000000000000000000000000",
-        this.DODOIncentive.options.address
       ]
     );
-
     await this.DODOProxyV2.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
+     
+    //fee route proxy
+    this.FeeManager = await contracts.newContract(contracts.FEEMANGER,
+      [
+        this.Deployer,
+        this.WETH.options.address,
+      ]
+    )
+    await this.FeeManager.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
+
+    this.DODORouteProxy = await contracts.newContract(contracts.DODO_ROUTE_PROXY,
+      [
+        this.WETH.options.address,
+        this.DODOApproveProxy.options.address,
+        this.FeeManager.options.address
+      ]
+    )
+    await this.DODORouteProxy.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
 
 
     await this.DODOApprove.methods.init(this.Deployer, this.DODOApproveProxy.options.address).send(this.sendParam(this.Deployer));
-    await this.DODOApproveProxy.methods.init(this.Deployer, [this.DODOProxyV2.options.address]).send(this.sendParam(this.Deployer));
+    await this.DODOApproveProxy.methods.init(this.Deployer, [this.DODORouteProxy.options.address, this.DODOProxyV2.options.address]).send(this.sendParam(this.Deployer));
 
     //DODOIncentive ETH
     await this.DODOIncentive.methods.initOwner(this.Deployer).send(this.sendParam(this.Deployer));
-    await this.DODOIncentive.methods.changeDODOProxy(this.DODOProxyV2.options.address).send(this.sendParam(this.Deployer));
+    //await this.DODOIncentive.methods.changeDODOProxy(this.DODOProxyV2.options.address).send(this.sendParam(this.Deployer));
 
     this.DODOCalleeHelper = await contracts.newContract(
       contracts.DODO_CALLEE_HELPER_NAME,
@@ -168,7 +184,7 @@ export class ProxyContext {
   sendParam(sender, value = "0") {
     return {
       from: sender,
-      gas: process.env["COVERAGE"] ? 10000000000 : 7000000,
+      gas: process.env["COVERAGE"] ? 10000000000 : 6000000,
       gasPrice: mweiStr("1000"),
       value: decimalStr(value),
     };
