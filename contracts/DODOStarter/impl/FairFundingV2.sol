@@ -24,7 +24,7 @@ contract FairFundingV2 is Vesting {
     uint256 public _COOLING_DURATION_;
 
     mapping(address => uint256) _FUNDS_DEPOSITED_;
-    mapping(address => bool) _FUNDS_CLAIMED_;
+    mapping(address => bool) public _FUNDS_CLAIMED_;
     uint256 public _USED_FUND_RATIO_;
     uint256 public _FINAL_PRICE_;
 
@@ -316,7 +316,7 @@ contract FairFundingV2 is Vesting {
     // ============ Version Control ============
 
     function version() virtual public pure returns (string memory) {
-        return "FairFunding 2.0.0";
+        return "FairFunding 2.1.0";
     }
 
     // ============ View Helper  ==============
