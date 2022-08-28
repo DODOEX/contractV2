@@ -54,6 +54,6 @@ contract RewardVault is Ownable {
         _TOTAL_REWARD_ = _TOTAL_REWARD_.add(rewardInput);
         _REWARD_RESERVE_ = rewardBalance;
 
-        emit DepositReward(_TOTAL_REWARD_, rewardInput, _REWARD_RESERVE_);
+        emit DepositReward(_TOTAL_REWARD_, rewardInput, rewardBalance);
     }
 }
