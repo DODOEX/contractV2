@@ -248,7 +248,7 @@ contract InstantFundingV2 is Vesting {
     // ============ Version Control ============
 
     function version() virtual public pure returns (string memory) {
-        return "InstantFunding 2.0.0";
+        return "InstantFunding 2.1.0";
     }
 
     // ============ View Helper  ==============
@@ -311,7 +311,8 @@ contract InstantFundingV2 is Vesting {
         uint256 startTime,
         uint256 bidDuration,
         uint256 tokenVestingStart,
-        uint256 tokenVestingDuration
+        uint256 tokenVestingDuration,
+        uint256 tokenCliffRate
     ) {
         tokenAddress = _TOKEN_ADDRESS_;
         fundAddress = _FUNDS_ADDRESS_;
@@ -325,5 +326,6 @@ contract InstantFundingV2 is Vesting {
         bidDuration = _BIDDING_DURATION_;
         tokenVestingStart = _TOKEN_VESTING_START_;
         tokenVestingDuration = _TOKEN_VESTING_DURATION_;
+        tokenCliffRate = _TOKEN_CLIFF_RATE_;
     }
 }
