@@ -24,7 +24,7 @@ contract FairFundingV2 is Vesting {
     uint256 public _COOLING_DURATION_;
 
     mapping(address => uint256) _FUNDS_DEPOSITED_;
-    mapping(address => bool) public _FUNDS_CLAIMED_;
+    mapping(address => bool) _FUNDS_CLAIMED_;
     uint256 public _USED_FUND_RATIO_;
     uint256 public _FINAL_PRICE_;
 
@@ -316,7 +316,7 @@ contract FairFundingV2 is Vesting {
     // ============ Version Control ============
 
     function version() virtual public pure returns (string memory) {
-        return "FairFunding 2.1.0";
+        return "FairFunding 2.1.1";
     }
 
     // ============ View Helper  ==============
@@ -394,7 +394,8 @@ contract FairFundingV2 is Vesting {
         uint256 startTime,
         uint256 bidDuration,
         uint256 tokenVestingStart,
-        uint256 tokenVestingDuration
+        uint256 tokenVestingDuration,
+        uint256 tokenCliffRate
     ) {
         tokenAddress = _TOKEN_ADDRESS_;
         fundAddress = _FUNDS_ADDRESS_;
@@ -408,6 +409,7 @@ contract FairFundingV2 is Vesting {
         bidDuration = _BIDDING_DURATION_;
         tokenVestingStart = _TOKEN_VESTING_START_;
         tokenVestingDuration = _TOKEN_VESTING_DURATION_;
+        tokenCliffRate = _TOKEN_CLIFF_RATE_;
     }
 
 
@@ -415,12 +417,14 @@ contract FairFundingV2 is Vesting {
         bool isOverCapStop,
         uint256 finalPrice,
         uint256 userUnusedFundAmount,
-        uint256 coolDuration
+        uint256 coolDuration,
+        bool fundsClaimed
     ) {
         isOverCapStop = _IS_OVERCAP_STOP;
         finalPrice = _FINAL_PRICE_;
         userUnusedFundAmount = getUserFundsUnused(user);
         coolDuration = _COOLING_DURATION_;
+        fundsClaimed = _FUNDS_CLAIMED_[user];
     }
 
 }
