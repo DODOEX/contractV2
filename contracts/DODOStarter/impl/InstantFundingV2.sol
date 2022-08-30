@@ -118,10 +118,6 @@ contract InstantFundingV2 is Vesting {
         require(_TOKEN_CLIFF_RATE_ <= 1e18, "TOKEN_CLIFF_RATE_WRONG");
         require(_FUNDS_CLIFF_RATE_ <= 1e18, "FUND_CLIFF_RATE_WRONG");
         require(_LP_CLIFF_RATE_ <= 1e18, "LP_CLIFF_RATE_WRONG");
-
-        _TOTAL_TOKEN_AMOUNT_ = IERC20(_TOKEN_ADDRESS_).balanceOf(address(this));
-
-        require(_TOTAL_TOKEN_AMOUNT_ > 0, "NO_TOKEN_TRANSFERED");
     }
 
     function ownerDepositSellToken(uint256 sellTokenAmount) external onlyOwner {
@@ -248,7 +244,7 @@ contract InstantFundingV2 is Vesting {
     // ============ Version Control ============
 
     function version() virtual public pure returns (string memory) {
-        return "InstantFunding 2.1.0";
+        return "InstantFunding 2.1.1";
     }
 
     // ============ View Helper  ==============
