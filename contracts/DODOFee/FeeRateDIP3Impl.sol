@@ -15,6 +15,7 @@ import {SafeMath} from "../lib/SafeMath.sol";
 interface ICrowdPooling {
     function _QUOTE_RESERVE_() external view returns (uint256);
     function getShares(address user) external view returns (uint256);
+    function _OWNER_() external returns (address);
 }
 
 interface IFee {
@@ -101,6 +102,13 @@ contract FeeRateDIP3Impl is InitializableOwnable {
 
     function setPoolHeartBeat (address newPoolHeartBeat) public onlyOwner {
         poolHeartBeat = newPoolHeartBeat;
+    }
+
+    // ============ Pool Owner Functions ============
+
+    function setCpPoolQuotaAddr(address cpPool, address quotaAddr) external {
+        require(msg.sender == ICrowdPooling(cpPool)._OWNER_(), "NOT OWNER OF POOL");
+        cpPools[cpPool].quotaAddr = quotaAddr;
     }
 
     // ============ View Functions ============
@@ -208,5 +216,9 @@ contract FeeRateDIP3Impl is InitializableOwnable {
 
     function _kjudge(bytes32 _hashPoolVersion) internal pure returns (bool) {
         return (_hashPoolVersion == keccak256(abi.encodePacked("DVM 1.0.2")) || _hashPoolVersion == keccak256(abi.encodePacked("DSP 1.0.1")) || _hashPoolVersion == keccak256(abi.encodePacked("DPP 1.0.0")) || _hashPoolVersion == keccak256(abi.encodePacked("DPP Advanced 1.0.0")));
+    }
+
+    function version() virtual external pure returns (string memory) {
+        return "1.2.0";
     }
 }
