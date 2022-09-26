@@ -65,17 +65,17 @@ contract DODOIncentive is InitializableOwnable {
     function changePerReward(uint256 _dodoPerBlock) public onlyOwner {
         _updateTotalReward();
         dodoPerBlock = _dodoPerBlock;
-        emit SetPerReward(dodoPerBlock);
+        emit SetPerReward(_dodoPerBlock);
     }
 
     function changeDefaultRate(uint256 _defaultRate) public onlyOwner {
         defaultRate = _defaultRate;
-        emit SetDefaultRate(defaultRate);
+        emit SetDefaultRate(_defaultRate);
     }
 
     function changeDODOProxy(address _dodoProxy) public onlyOwner {
         _DODO_PROXY_ = _dodoProxy;
-        emit SetNewProxy(_DODO_PROXY_);
+        emit SetNewProxy(_dodoProxy);
     }
 
     function emptyReward(address assetTo) public onlyOwner {

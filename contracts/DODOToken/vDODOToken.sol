@@ -120,7 +120,7 @@ contract vDODOToken is InitializableOwnable {
 
     function updateDODOFeeBurnRatio(uint256 dodoFeeBurnRatio) public onlyOwner {
         _DODO_FEE_BURN_RATIO_ = dodoFeeBurnRatio;
-        emit UpdateDODOFeeBurnRatio(_DODO_FEE_BURN_RATIO_);
+        emit UpdateDODOFeeBurnRatio(dodoFeeBurnRatio);
     }
 
     function updateDODOCirculationHelper(address helper) public onlyOwner {
