@@ -11,6 +11,7 @@ const { MOONRIVER_CONFIG } = require("./config/moonriver-config");
 const { BOBA_CONFIG } = require("./config/boba-config");
 const { AVAX_CONFIG } = require("./config/avax-config"); 
 const { DASHBOARD_CONFIG } = require("./config/dashboard-config"); 
+const {CFX_CONFIG} = require("./config/cfx-config.js");
 
 exports.GetConfig = function (network, accounts) {
     var CONFIG = {}
@@ -46,7 +47,7 @@ exports.GetConfig = function (network, accounts) {
             CONFIG = AVAX_CONFIG
             break;
         case "dashboard":     
-            CONFIG = DASHBOARD_CONFIG
+            CONFIG = CFX_CONFIG
             break;
         //testnet
         case "kovan":
@@ -58,6 +59,9 @@ exports.GetConfig = function (network, accounts) {
             CONFIG = RINKEBY_CONFIG
             CONFIG.multiSigAddress = accounts[0]
             CONFIG.defaultMaintainer = accounts[0]
+            break;
+        case "cfx":
+            CONFIG = CFX_CONFIG
             break;
     }
     return CONFIG
