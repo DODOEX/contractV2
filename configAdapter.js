@@ -11,6 +11,7 @@ const { MOONRIVER_CONFIG } = require("./config/moonriver-config");
 const { BOBA_CONFIG } = require("./config/boba-config");
 const { AVAX_CONFIG } = require("./config/avax-config"); 
 const { DASHBOARD_CONFIG } = require("./config/dashboard-config"); 
+const { BASE_GOERLI_CONFIG } = require("./config/base-goerli-config"); 
 
 exports.GetConfig = function (network, accounts) {
     var CONFIG = {}
@@ -59,6 +60,9 @@ exports.GetConfig = function (network, accounts) {
             CONFIG.multiSigAddress = accounts[0]
             CONFIG.defaultMaintainer = accounts[0]
             break;
+        case "baseGoerli":     
+            CONFIG = BASE_GOERLI_CONFIG
+            break;    
     }
     return CONFIG
 }

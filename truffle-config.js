@@ -39,7 +39,7 @@ module.exports = {
    */
   deploySwitch: {
     DEPLOY_V1:      false,
-    DEPLOY_V2:      false,
+    DEPLOY_V2:      true,
     ERC20V3Factory: false,
     MOCK_TOKEN:     false,
     MOCK_V2_POOL:   false,
@@ -74,7 +74,7 @@ module.exports = {
   },
 
   networks: {
-    // Useful for testing. The `development` name is special - truffle uses it by default
+    // Useful for testing. The `development` name is special - truffle uses it by default truffle dashboard
     // if it's defined here and no other network is specified at the command line.
     // You should run a client (like ganache-cli, geth or parity) in a separate terminal
     // tab if you use this network and you must also set the `host`, `port` and `network_id`
@@ -86,6 +86,19 @@ module.exports = {
       network_id: 5777,
       gas: 1000000000,
       gasPrice: 1,
+    },
+
+    baseGoerli: {
+      networkCheckTimeout: 100000,
+      provider: function () {
+        return new HDWalletProvider(privKey, "https://goerli.base.org");
+      },
+      networkCheckTimeout:100000,
+      network_id: 84531,
+      confirmations: 10,
+      timeoutBlocks: 200,
+      gasPrice: 3000000000,
+      skipDryRun: true
     },
 
     kovan: {
