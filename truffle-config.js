@@ -27,6 +27,8 @@ var infuraId = process.env.infuraId;
 require("ts-node/register"); // eslint-disable-line
 require("dotenv-flow").config(); // eslint-disable-line
 
+const { LINEASCAN_API_KEY, BASESCAN_API_KEY } = process.env;
+
 module.exports = {
   /**
    * Networks define how you connect to your ethereum client and let you set the
@@ -72,6 +74,12 @@ module.exports = {
   dashboard: {
     //host: "localhost",
     port: 24012,
+  },
+
+  api_keys: {
+    lineascan: LINEASCAN_API_KEY,
+    basescan: BASESCAN_API_KEY,
+    scroll: "fakekey",
   },
 
   networks: {
@@ -265,7 +273,7 @@ module.exports = {
   mocha: {
     timeout: false,
   },
-  plugins: ["solidity-coverage"],
+  plugins: ["solidity-coverage", "truffle-plugin-verify"],
   // Configure your compilers
   compilers: {
     solc: {

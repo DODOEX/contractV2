@@ -7,7 +7,7 @@ const { GetConfig } = require("../configAdapter.js")
 const CloneFactory = artifacts.require("CloneFactory");
 const FeeRateModelTemplate = artifacts.require("FeeRateModel");
 const UserQuota = artifacts.require("UserQuota");
-const FeeRateImpl = artifacts.require("FeeRateImpl");
+// const FeeRateImpl = artifacts.require("FeeRateImpl");
 const FeeRateDIP3 = artifacts.require("FeeRateDIP3Impl")
 const PermissionManagerTemplate = artifacts.require("PermissionManager");
 const DODOSellHelper = artifacts.require("DODOSellHelper");
@@ -20,8 +20,8 @@ const DODOCalleeHelper = artifacts.require("DODOCalleeHelper");
 
 const DvmTemplate = artifacts.require("DVM");
 const DspTemplate = artifacts.require("DSP");
-const DppTemplate = artifacts.require("DPP");
-const DppAdminTemplate = artifacts.require("DPPAdmin");
+// const DppTemplate = artifacts.require("DPP");
+// const DppAdminTemplate = artifacts.require("DPPAdmin");
 const DppAdvancedTemplate = artifacts.require("DPPAdvanced");
 const DppAdvancedAdminTemplate = artifacts.require("DPPAdvancedAdmin");
 const CpTemplate = artifacts.require("CP");
@@ -31,13 +31,13 @@ const CustomMintableERC20Template = artifacts.require("CustomMintableERC20");
 const ERC20MineV2 = artifacts.require("ERC20Mine");
 const ERC20MineV3 = artifacts.require("ERC20MineV3");
 
-const ERC20V2Factory = artifacts.require("ERC20V2Factory");
+// const ERC20V2Factory = artifacts.require("ERC20V2Factory");
 const ERC20V3Factory = artifacts.require("ERC20V3Factory");
 const DvmFactory = artifacts.require("DVMFactory");
 const DppFactory = artifacts.require("DPPFactory");
 const DspFactory = artifacts.require("DSPFactory");
 const CpFactory = artifacts.require("CrowdPoolingFactory");
-const UpCpFactory = artifacts.require("UpCrowdPoolingFactory");
+// const UpCpFactory = artifacts.require("UpCrowdPoolingFactory");
 const MineV3Registry = artifacts.require("DODOMineV3Registry");
 const MineV2Factory = artifacts.require("DODOMineV2Factory");
 
@@ -47,7 +47,7 @@ const DODOApproveProxy = artifacts.require("DODOApproveProxy");
 const DODODspProxy = artifacts.require("DODODspProxy");
 const DODOCpProxy = artifacts.require("DODOCpProxy");
 const DODODppProxy = artifacts.require("DODODppProxy");
-const DODORouteProxy = artifacts.require("DODORouteProxy");
+// const DODORouteProxy = artifacts.require("DODORouteProxy");
 const DODOMineV3Proxy = artifacts.require("DODOMineV3Proxy");
 const DODOProxyV2 = artifacts.require("DODOV2Proxy02");
 
@@ -97,7 +97,7 @@ module.exports = async (deployer, network, accounts) => {
     let DspFactoryAddress = CONFIG.DSPFactory;
     let DppFactoryAddress = CONFIG.DPPFactory;
     let CpFactoryAddress = CONFIG.CrowdPoolingFactory;
-    let CpV2FactoryAddress = CONFIG.CrowdPoolingFactoryV2;
+    let CpV2FactoryAddress = CONFIG.CrowdPoolingFactory;
     let UpCpFactoryAddress = CONFIG.UpCpFactory;
     let ERC20V2FactoryAddress = CONFIG.ERC20V2Factory;
     let ERC20V3FactoryAddress = CONFIG.ERC20V3Factory;
@@ -120,6 +120,8 @@ module.exports = async (deployer, network, accounts) => {
     let DODODppProxyAddress = CONFIG.DPPProxy;
     let DODOMineV3ProxyAddress = CONFIG.DODOMineV3Proxy;
     let DODORouteProxyAddress = CONFIG.RouteProxy;
+    let DODOFeeRouteProxy1Address = CONFIG.FeeRouteProxy1;
+    let DODOFeeRouteProxy2Address = CONFIG.FeeRouteProxy2;
 
 
     //Account
@@ -185,11 +187,13 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("Init DefaultMtFeeRateAddress Tx:", tx.tx);
         }
 
-        if (UserQuotaAddress == "") {
-            await deployer.deploy(UserQuota);
-            UserQuotaAddress = UserQuota.address;
-            logger.log("UserQuotaAddress: ", UserQuotaAddress);
-        }
+
+        // todo: 这个需不需要验证
+        // if (UserQuotaAddress == "") {
+        //     await deployer.deploy(UserQuota);
+        //     UserQuotaAddress = UserQuota.address;
+        //     logger.log("UserQuotaAddress: ", UserQuotaAddress);
+        // }
 
 
         /*
@@ -570,13 +574,14 @@ module.exports = async (deployer, network, accounts) => {
             var tx;
             
             //ApproveProxy init以及添加ProxyList
+            console.log("DODOApproveProxy init")
             const DODOApproveProxyInstance = await DODOApproveProxy.at(DODOApproveProxyAddress);
-            tx = await DODOApproveProxyInstance.init(multiSigAddress, [DODOV2ProxyAddress, DODODspProxyAddress, DODOCpProxyAddress, DODODppProxyAddress, DODOMineV3ProxyAddress, DODORouteProxyAddress]);
+            tx = await DODOApproveProxyInstance.init(multiSigAddress, [DODOV2ProxyAddress, DODODspProxyAddress, DODOCpProxyAddress, DODODppProxyAddress, DODOMineV3ProxyAddress, DODOFeeRouteProxy1Address, DODOFeeRouteProxy2Address]);
             logger.log("DODOApproveProxy Init tx: ", tx.tx);
 
             //Approve init
             const DODOApproveInstance = await DODOApprove.at(DODOApproveAddress);
-            tx = await DODOApproveInstance.init(multiSigAddress, DODOApproveProxy.address);
+            tx = await DODOApproveInstance.init(multiSigAddress, DODOApproveProxyAddress);
             logger.log("DODOApprove Init tx: ", tx.tx);
             
 
@@ -586,9 +591,9 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("Set FeeRateImpl tx: ", tx.tx);
 
             //ERC20V3Factory 设置fee
-            const ERC20V3FactoryInstance = await ERC20V3Factory.at(ERC20V3FactoryAddress);
-            tx = await ERC20V3FactoryInstance.changeCreateFee("100000000000000000");
-            logger.log("Set ERC20V3 fee tx: ", tx.tx);
+            // const ERC20V3FactoryInstance = await ERC20V3Factory.at(ERC20V3FactoryAddress);
+            // tx = await ERC20V3FactoryInstance.changeCreateFee("100000000000000000");
+            // logger.log("Set ERC20V3 fee tx: ", tx.tx);
 
             //DODOMineV2Factory 设置个人账户为owner
             const dodoMineV2FactoryInstance = await DODOMineV2Factory.at(DODOMineV2FactoryAddress);
