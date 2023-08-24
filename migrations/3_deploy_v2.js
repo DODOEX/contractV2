@@ -185,7 +185,6 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("Init DefaultMtFeeRateAddress Tx:", tx.tx);
         }
 
-        // todo: 这个需不需要验证
         if (UserQuotaAddress == "") {
             await deployer.deploy(UserQuota);
             UserQuotaAddress = UserQuota.address;
@@ -554,6 +553,7 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("Init DODOMineV3Proxy Tx:", tx.tx);
         }
 
+        // need deploy dodoRouteProxy in dodo-route-contract repo
         /*
         if (DODORouteProxyAddress == "") {
             await deployer.deploy(

@@ -94,17 +94,23 @@ contract DODOV2CuttingRouteHelper is InitializableOwnable {
                 curRes.quoteToken = token0;
             }
 
-            (            
-                curRes.i,
-                curRes.K,
-                curRes.B,
-                curRes.Q,
-                curRes.B0,
-                curRes.Q0,
-                curRes.R
-            ) = IDODOV2(cur).getPMMStateForCall();
-
-            (curRes.lpFeeRate, curRes.mtFeeRate) = IDODOV2(cur).getUserFeeRate(userAddr);
+            try IDODOV2(cur).getPMMStateForCall() returns (uint256 _i, uint256 _K, uint256 _B, uint256 _Q, uint256 _B0, uint256 _Q0, uint256 _R){                  
+                curRes.i = _i;
+                curRes.K = _K;
+                curRes.B = _B;
+                curRes.Q = _Q;
+                curRes.B0 = _B0;
+                curRes.Q0 = _Q0;
+                curRes.R = _R;
+            } catch {
+                continue;
+            }
+            
+            try IDODOV2(cur).getUserFeeRate(userAddr) returns  (uint256 lpFeeRate, uint256 mtFeeRate) {
+                (curRes.lpFeeRate, curRes.mtFeeRate) = (lpFeeRate, mtFeeRate);
+            } catch {
+                (curRes.lpFeeRate, curRes.mtFeeRate) = (0, 1e18);
+            }  
             curRes.curPair = cur;
             res[i] = curRes;
         }
