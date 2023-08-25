@@ -12,6 +12,9 @@ const { BOBA_CONFIG } = require("./config/boba-config");
 const { AVAX_CONFIG } = require("./config/avax-config"); 
 const { DASHBOARD_CONFIG } = require("./config/dashboard-config"); 
 const {CFX_CONFIG} = require("./config/cfx-config.js");
+const { LINEA_CONFIG } = require("./config/linea-config");
+const { BASE_CONFIG } = require("./config/base-config");
+const { SCROLL_SEPOLIA_CONFIG } = require("./config/scroll-sepolia-config");
 
 exports.GetConfig = function (network, accounts) {
     var CONFIG = {}
@@ -46,8 +49,17 @@ exports.GetConfig = function (network, accounts) {
         case "avax":
             CONFIG = AVAX_CONFIG
             break;
-        case "dashboard":     
+        case "cfx":
             CONFIG = CFX_CONFIG
+            break;
+        case "linea":
+            CONFIG = LINEA_CONFIG
+            break;
+        case "base":
+            CONFIG = BASE_CONFIG
+            break;
+        case "dashboard":     
+            CONFIG = SCROLL_SEPOLIA_CONFIG
             break;
         //testnet
         case "kovan":
@@ -60,8 +72,8 @@ exports.GetConfig = function (network, accounts) {
             CONFIG.multiSigAddress = accounts[0]
             CONFIG.defaultMaintainer = accounts[0]
             break;
-        case "cfx":
-            CONFIG = CFX_CONFIG
+        case "scroll-sepolia":
+            CONFIG = SCROLL_SEPOLIA_CONFIG
             break;
     }
     return CONFIG

@@ -55,6 +55,7 @@
     "prettier": "^2.0.5",
     "prettier-plugin-solidity": "^1.0.0-alpha.52",
     "solidity-coverage": "^0.7.7",
-    "truffle-assertions": "^0.9.2"
+    "truffle-assertions": "^0.9.2",
+    "truffle-plugin-verify": "^0.6.4"
   }
 }
