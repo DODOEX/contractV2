@@ -70,6 +70,7 @@ module.exports = {
   },
 
   dashboard: {
+    //host: "localhost",
     port: 24012,
   },
 
@@ -225,6 +226,18 @@ module.exports = {
         return new HDWalletProvider(privKey, 'https://polygon-mainnet.infura.io/v3/' + infuraId)
       },
       network_id: 137,
+      gas: 6000000,
+      gasPrice: 35000000000,
+      // confirmations: 2,
+      // timeoutBlocks: 200,
+      skipDryRun: true
+    },
+    base: {
+      networkCheckTimeout: 1000000,
+      provider: () => {
+        return new HDWalletProvider(privKey, 'https://goerli.base.org')
+      },
+      network_id: 84531,
       gas: 6000000,
       gasPrice: 35000000000,
       // confirmations: 2,

@@ -191,6 +191,8 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("UserQuotaAddress: ", UserQuotaAddress);
         }
 
+
+        /*
         if (FeeRateImplAddress == "") {
             await deployer.deploy(FeeRateImpl);
             FeeRateImplAddress = FeeRateImpl.address;
@@ -199,11 +201,15 @@ module.exports = async (deployer, network, accounts) => {
             var tx = await feeRateImplInstance.init(multiSigAddress,CloneFactoryAddress,UserQuotaAddress);
             logger.log("Init FeeRateImpl Tx:", tx.tx);
         }
+        */
 
         if (FeeRateDIP3ImplAddress == "") {
             await deployer.deploy(FeeRateDIP3);
             FeeRateDIP3ImplAddress = FeeRateDIP3.address;
             logger.log("FeeRateDIP3Impl Address: ", FeeRateDIP3ImplAddress);
+            const feeRateImplInstance = await FeeRateDIP3.at(FeeRateDIP3ImplAddress);
+            var tx = await feeRateImplInstance.initOwner(multiSigAddress);
+            logger.log("Init FeeRateDIP3Impl Tx:", tx.tx);
         } 
 
         if (DefaultPermissionAddress == "") {
@@ -227,6 +233,7 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("DspTemplateAddress: ", DspTemplateAddress);
         }
 
+        /*
         if (DppTemplateAddress == "") {
             await deployer.deploy(DppTemplate);
             DppTemplateAddress = DppTemplate.address;
@@ -238,9 +245,10 @@ module.exports = async (deployer, network, accounts) => {
             DppAdminTemplateAddress = DppAdminTemplate.address;
             logger.log("DppAdminTemplateAddress: ", DppAdminTemplateAddress);
         }
+        */
 
         if (DppAdvancedTemplateAddress == "") {
-            await deployer.deploy(DppAdvanedTemplate);
+            await deployer.deploy(DppAdvancedTemplate);
             DppAdvancedTemplateAddress = DppAdvancedTemplate.address;
             logger.log("DppAdvancedTemplateAddress: ", DppAdvancedTemplateAddress);
         }
@@ -303,6 +311,8 @@ module.exports = async (deployer, network, accounts) => {
 
 
         //Factory
+        /*
+        疑似废弃
         if (ERC20V2FactoryAddress == "") {
             await deployer.deploy(
                 ERC20V2Factory,
@@ -316,6 +326,7 @@ module.exports = async (deployer, network, accounts) => {
             var tx = await ERC20V2FactoryInstance.initOwner(multiSigAddress);
             logger.log("Init ERC20V2Factory Tx:", tx.tx);
         }
+        */
 
         if (ERC20V3FactoryAddress == "") {
             await deployer.deploy(
@@ -365,6 +376,7 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("Init DppFactory Tx:", tx.tx);
         }
 
+        /*
         if (UpCpFactoryAddress == "") {
             await deployer.deploy(
                 UpCpFactory,
@@ -381,6 +393,7 @@ module.exports = async (deployer, network, accounts) => {
             var tx = await UpCpFactoryInstance.initOwner(multiSigAddress);
             logger.log("Init UpCpFactory Tx:", tx.tx);
         }
+        
 
         if (CpFactoryAddress == "") {
             await deployer.deploy(
@@ -398,6 +411,7 @@ module.exports = async (deployer, network, accounts) => {
             var tx = await CpFactoryInstance.initOwner(multiSigAddress);
             logger.log("Init CpFactory Tx:", tx.tx);
         }
+        */
 
         if (CpV2FactoryAddress == "") {
             await deployer.deploy(
@@ -539,6 +553,8 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("Init DODOMineV3Proxy Tx:", tx.tx);
         }
 
+        // need deploy dodoRouteProxy in dodo-route-contract repo
+        /*
         if (DODORouteProxyAddress == "") {
             await deployer.deploy(
                 DODORouteProxy,
@@ -548,10 +564,11 @@ module.exports = async (deployer, network, accounts) => {
             DODOApproveProxyAddress = DODORouteProxy.address;
             logger.log("DODORouteProxy Address: ", DODORouteProxy.address);
         }
+        */
 
-
-        if (network == 'kovan' || network == 'rinkeby' ||network == "boba_test") {
+        if (network == 'kovan' || network == 'rinkeby' ||network == "boba_test" || network == "dashboard") {
             var tx;
+            
             //ApproveProxy init以及添加ProxyList
             const DODOApproveProxyInstance = await DODOApproveProxy.at(DODOApproveProxyAddress);
             tx = await DODOApproveProxyInstance.init(multiSigAddress, [DODOV2ProxyAddress, DODODspProxyAddress, DODOCpProxyAddress, DODODppProxyAddress, DODOMineV3ProxyAddress, DODORouteProxyAddress]);
@@ -561,16 +578,17 @@ module.exports = async (deployer, network, accounts) => {
             const DODOApproveInstance = await DODOApprove.at(DODOApproveAddress);
             tx = await DODOApproveInstance.init(multiSigAddress, DODOApproveProxy.address);
             logger.log("DODOApprove Init tx: ", tx.tx);
+            
 
             //Set FeeRateImpl
             const FeeRateModelInstance = await FeeRateModelTemplate.at(DefaultMtFeeRateAddress);
-            tx = await FeeRateModelInstance.setFeeProxy(FeeRateImplAddress);
+            tx = await FeeRateModelInstance.setFeeProxy(FeeRateDIP3ImplAddress);
             logger.log("Set FeeRateImpl tx: ", tx.tx);
 
-            //ERC20V2Factory 设置fee
-            const ERC20V2FactoryInstance = await ERC20V2Factory.at(ERC20V2FactoryAddress);
-            tx = await ERC20V2FactoryInstance.changeCreateFee("100000000000000000");
-            logger.log("Set ERC20V2 fee tx: ", tx.tx);
+            //ERC20V3Factory 设置fee
+            const ERC20V3FactoryInstance = await ERC20V3Factory.at(ERC20V3FactoryAddress);
+            tx = await ERC20V3FactoryInstance.changeCreateFee("100000000000000000");
+            logger.log("Set ERC20V3 fee tx: ", tx.tx);
 
             //DODOMineV2Factory 设置个人账户为owner
             const dodoMineV2FactoryInstance = await DODOMineV2Factory.at(DODOMineV2FactoryAddress);
