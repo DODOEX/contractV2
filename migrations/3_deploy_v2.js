@@ -188,7 +188,6 @@ module.exports = async (deployer, network, accounts) => {
         }
 
 
-        // todo: 这个需不需要验证
         // if (UserQuotaAddress == "") {
         //     await deployer.deploy(UserQuota);
         //     UserQuotaAddress = UserQuota.address;
