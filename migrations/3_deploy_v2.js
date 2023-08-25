@@ -315,7 +315,6 @@ module.exports = async (deployer, network, accounts) => {
 
         //Factory
         /*
-        疑似废弃
         if (ERC20V2FactoryAddress == "") {
             await deployer.deploy(
                 ERC20V2Factory,
@@ -572,7 +571,7 @@ module.exports = async (deployer, network, accounts) => {
         if (network == 'kovan' || network == 'rinkeby' ||network == "boba_test" || network == "dashboard") {
             var tx;
             
-            //ApproveProxy init以及添加ProxyList
+            //ApproveProxy init
             console.log("DODOApproveProxy init")
             const DODOApproveProxyInstance = await DODOApproveProxy.at(DODOApproveProxyAddress);
             tx = await DODOApproveProxyInstance.init(multiSigAddress, [DODOV2ProxyAddress, DODODspProxyAddress, DODOCpProxyAddress, DODODppProxyAddress, DODOMineV3ProxyAddress, DODOFeeRouteProxy1Address, DODOFeeRouteProxy2Address]);
@@ -589,12 +588,12 @@ module.exports = async (deployer, network, accounts) => {
             tx = await FeeRateModelInstance.setFeeProxy(FeeRateDIP3ImplAddress);
             logger.log("Set FeeRateImpl tx: ", tx.tx);
 
-            //ERC20V3Factory 设置fee
+            //ERC20V3Factory set fee
             // const ERC20V3FactoryInstance = await ERC20V3Factory.at(ERC20V3FactoryAddress);
             // tx = await ERC20V3FactoryInstance.changeCreateFee("100000000000000000");
             // logger.log("Set ERC20V3 fee tx: ", tx.tx);
 
-            //DODOMineV2Factory 设置个人账户为owner
+            //DODOMineV2Factory set owner
             const dodoMineV2FactoryInstance = await DODOMineV2Factory.at(DODOMineV2FactoryAddress);
             var tx = await dodoMineV2FactoryInstance.initOwner(multiSigAddress);
             logger.log("Init DODOMineV2Factory Tx:", tx.tx);
