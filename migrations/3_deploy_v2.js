@@ -54,6 +54,8 @@ const DODOProxyV2 = artifacts.require("DODOV2Proxy02");
 const DODOV1Adapter = artifacts.require("DODOV1Adapter");
 const DODOV2Adapter = artifacts.require("DODOV2Adapter");
 const UniAdapter = artifacts.require("UniAdapter");
+const FeeManager = artifacts.require("FeeManager");
+
 
 
 module.exports = async (deployer, network, accounts) => {
@@ -609,5 +611,27 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("DPPFactory Add DPPProxy tx: ", tx.tx);
         }
 
+    }
+    if(deploySwitch.MULTIHOP) {
+        logger.log("====================================================");
+        logger.log("network type: " + network);
+        logger.log("Deploy time: " + new Date().toLocaleString());
+        logger.log("Deploy type: V2");
+
+        await deployer.deploy(
+            FeeManager,
+            "0x1Dc662D3D7De14a57CD369e3a9E774f8F80d4214"
+        )
+        FeeManagerAddress = FeeManager.address;
+        logger.log("RouteFeeManager Address:", FeeManager.address)
+
+        await deployer.deploy(
+            DODORouteProxy,
+            WETHAddress,
+            DODOApproveProxyAddress,
+            FeeManagerAddress
+        );
+        DODOApproveProxyAddress = DODORouteProxy.address;
+        logger.log("DODORouteProxy Address: ", DODORouteProxy.address);
     }
 };

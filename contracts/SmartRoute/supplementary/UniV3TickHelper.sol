@@ -30,8 +30,14 @@ contract UniV3TickHelper {
     function getOnePoolCurrentTicks(
         address pool,
         int16 varWords,
-        uint256 leastTicks
-    ) public view returns(PopulatedTick[] memory res, uint256 len, int16 wordPos, int16 varW){
+        uint256 maxTicks
+    ) public view returns(PopulatedTick[] memory res, uint256 len, int16 wordP, int16 varW){
+        // if pool not exist
+        if (_isContract(pool) == false) {
+            res = new PopulatedTick[](0);
+            return (res, 0, -1, -1);
+        }
+
         int16 wordPos;
         {
         int24 slot0Tick;
@@ -55,7 +61,7 @@ contract UniV3TickHelper {
         {
             int16 iRight = wordPos;
             int16 iLeft = wordPos;
-            while(totalTick < leastTicks || iRight - wordPos < varWords) {
+            while(totalTick < maxTicks && iRight - wordPos < varWords) {
                 iRight++;
                 iLeft--;
                 totalTick = totalTick + _calTickNumberInWord(pool, iRight);
@@ -91,7 +97,6 @@ contract UniV3TickHelper {
     }
 
     function getWordPos(address pool) public view returns(int16 wordPos) {
-        int16 wordPos;
         int24 curTick;
         int24 tickSpacing = IUniswapV3Pool(pool).tickSpacing();
         ( ,curTick, , , , , ) = IUniswapV3Pool(pool).slot0();
@@ -111,13 +116,13 @@ contract UniV3TickHelper {
     function getTotalTick(
         address pool, 
         int16 varWords,
-        uint256 leastTicks,
+        uint256 maxTicks,
         int16 wordPos
     ) public view returns(uint256 totalTicks, int16 varW) {
         uint256 totalTick = _calTickNumberInWord(pool, wordPos);
         int16 iRight = wordPos;
         int16 iLeft = wordPos;
-        while(totalTick < leastTicks || iRight - wordPos < varWords) {
+        while(totalTick > maxTicks && iRight - wordPos < varWords) {
             iRight++;
             iLeft--;
             totalTick = totalTick + _calTickNumberInWord(pool, iRight);
@@ -168,6 +173,12 @@ contract UniV3TickHelper {
             if (bitmap & (1 << i) > 0) numberOfPopulatedTicks++;
         }
         return numberOfPopulatedTicks;
+    }
+
+    function _isContract(address addr) public view returns (bool) {
+        uint size;
+        assembly { size := extcodesize(addr) }
+        return size > 0;
     }
 
 }

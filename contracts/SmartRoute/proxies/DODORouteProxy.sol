@@ -15,6 +15,8 @@ import {SafeMath} from "../../lib/SafeMath.sol";
 import {UniversalERC20} from "../lib/UniversalERC20.sol";
 import {SafeERC20} from "../../lib/SafeERC20.sol";
 import {IDODOAdapter} from "../intf/IDODOAdapter.sol";
+import {IFeeManager} from "../intf/IFeeManager.sol";
+import {InitializableOwnable} from "../../lib/InitializableOwnable.sol";
 
 
 /**
@@ -23,7 +25,7 @@ import {IDODOAdapter} from "../intf/IDODOAdapter.sol";
  *
  * @notice Entrance of Split trading in DODO platform
  */
-contract DODORouteProxy {
+contract DODORouteProxy is InitializableOwnable{
     using SafeMath for uint256;
     using UniversalERC20 for IERC20;
 
@@ -32,6 +34,8 @@ contract DODORouteProxy {
     address constant _ETH_ADDRESS_ = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     address public immutable _WETH_;
     address public immutable _DODO_APPROVE_PROXY_;
+    address public _FEE_MANAGER_;
+    mapping (address => bool) public isWhiteListed;
 
     struct PoolInfo {
         uint256 direction;
@@ -40,6 +44,12 @@ contract DODORouteProxy {
         address pool;
         address adapter;
         bytes moreInfo;
+    }
+    
+    struct FeeInfo {
+        address rebateTo;
+        uint8 fee;
+        uint256 feeAmount;
     }
 
     // ============ Events ============
@@ -65,11 +75,101 @@ contract DODORouteProxy {
 
     constructor (
         address payable weth,
-        address dodoApproveProxy
+        address dodoApproveProxy,
+        address feeManager
     ) public {
         _WETH_ = weth;
         _DODO_APPROVE_PROXY_ = dodoApproveProxy;
+        _FEE_MANAGER_ = feeManager;
     }
+
+    function setNewFeeManager(address _feeManager) external onlyOwner {
+        _FEE_MANAGER_ = _feeManager;
+    }
+
+    function addWhiteList (address contractAddr) public onlyOwner {
+        isWhiteListed[contractAddr] = true;
+    }
+
+    function removeWhiteList (address contractAddr) public onlyOwner {
+        isWhiteListed[contractAddr] = false;
+    }
+
+    // ============ Swap ============
+
+    function externalSwap(
+        address fromToken,
+        address toToken,
+        address approveTarget,
+        address swapTarget,
+        uint256 fromTokenAmount,
+        uint256 minReturnAmount,
+        bytes memory callDataConcat,
+        bytes memory feeData,
+        uint256 deadLine
+    )
+        external
+        payable
+        judgeExpired(deadLine)
+        returns (uint256 returnAmount)
+    {
+        require(minReturnAmount > 0, "DODORouteProxy: RETURN_AMOUNT_ZERO");
+        
+        uint256 _fromTokenAmount = fromTokenAmount;
+        {
+            
+            address _fromToken = fromToken;
+            FeeInfo memory feeInfo;
+            {
+                (address _rebateTo, uint8 _fee) = abi.decode(feeData, (address, uint8));
+                feeInfo.fee = _fee;
+                feeInfo.rebateTo = _rebateTo;
+            }
+            if(feeInfo.fee > 0) {
+                require(feeInfo.fee < 10000, "DODORouteProxy: fee overflow");
+                feeInfo.feeAmount = _fromTokenAmount.mul(feeInfo.fee).div(10000);
+                _fromTokenAmount -= feeInfo.feeAmount;
+                _deposit(msg.sender, _FEE_MANAGER_, _fromToken, feeInfo.feeAmount, _fromToken == _ETH_ADDRESS_);
+                IFeeManager(_FEE_MANAGER_).rebate(feeInfo.rebateTo, feeInfo.feeAmount, _fromToken);
+            }
+        
+        
+            if (_fromToken != _ETH_ADDRESS_) {
+                IDODOApproveProxy(_DODO_APPROVE_PROXY_).claimTokens(
+                    _fromToken,
+                    msg.sender,
+                    address(this),
+                    _fromTokenAmount
+                );
+                IERC20(_fromToken).universalApproveMax(approveTarget, _fromTokenAmount);
+            }
+        }
+
+        uint256 toTokenOriginBalance = IERC20(toToken).universalBalanceOf(msg.sender);
+        {
+        require(isWhiteListed[swapTarget], "DODORouteProxy: Not Whitelist Contract");
+        (bool success, ) = swapTarget.call{value: fromToken == _ETH_ADDRESS_ ? _fromTokenAmount : 0}(callDataConcat);
+
+        require(success, "DODORouteProxy: External Swap execution Failed");
+        }
+
+        IERC20(toToken).universalTransfer(
+            msg.sender,
+            IERC20(toToken).universalBalanceOf(address(this))
+        );
+
+        returnAmount = IERC20(toToken).universalBalanceOf(msg.sender).sub(toTokenOriginBalance);
+        require(returnAmount >= minReturnAmount, "DODORouteProxy: Return amount is not enough");
+
+        emit OrderHistory(
+            fromToken,
+            toToken,
+            msg.sender,
+            fromTokenAmount,
+            returnAmount
+        );
+    }
+
 
     function mixSwap(
         address fromToken,
@@ -81,6 +181,7 @@ contract DODORouteProxy {
         address[] memory assetTo,
         uint256 directions,
         bytes[] memory moreInfos,
+        bytes memory feeData,
         uint256 deadLine
     ) external payable judgeExpired(deadLine) returns (uint256 returnAmount) {
         require(mixPairs.length > 0, "DODORouteProxy: PAIRS_EMPTY");
@@ -88,9 +189,28 @@ contract DODORouteProxy {
         require(mixPairs.length == assetTo.length - 1, "DODORouteProxy: PAIR_ASSETTO_NOT_MATCH");
         require(minReturnAmount > 0, "DODORouteProxy: RETURN_AMOUNT_ZERO");
 
-        address _fromToken = fromToken;
-        address _toToken = toToken;
+        {
         uint256 _fromTokenAmount = fromTokenAmount;
+        address _fromToken = fromToken;
+        
+        {
+            FeeInfo memory feeInfo;
+            {
+                (address _rebateTo, uint8 _fee) = abi.decode(feeData, (address, uint8));
+                feeInfo.fee = _fee;
+                feeInfo.rebateTo = _rebateTo;
+            }
+            if(feeInfo.fee > 0) {
+                require(feeInfo.fee < 10000, "DODORouteProxy: fee overflow");
+                feeInfo.feeAmount = _fromTokenAmount.mul(feeInfo.fee).div(10000);
+                _fromTokenAmount -= feeInfo.feeAmount;
+                _deposit(msg.sender, _FEE_MANAGER_, _fromToken, feeInfo.feeAmount, _fromToken == _ETH_ADDRESS_);
+                IFeeManager(_FEE_MANAGER_).rebate(feeInfo.rebateTo, feeInfo.feeAmount, _fromToken);
+            }
+        }
+
+        
+        address _toToken = toToken;
         
         uint256 toTokenOriginBalance = IERC20(_toToken).universalBalanceOf(msg.sender);
         
@@ -114,12 +234,13 @@ contract DODORouteProxy {
         }
 
         require(returnAmount >= minReturnAmount, "DODORouteProxy: Return amount is not enough");
+        }
 
         emit OrderHistory(
-            _fromToken,
-            _toToken,
+            fromToken,
+            toToken,
             msg.sender,
-            _fromTokenAmount,
+            fromTokenAmount,
             returnAmount
         );
     }
@@ -132,12 +253,30 @@ contract DODORouteProxy {
         address[] memory midToken,
         address[] memory assetFrom,
         bytes[] memory sequence,
+        bytes memory feeData,
         uint256 deadLine
     ) external payable judgeExpired(deadLine) returns (uint256 returnAmount) {
+        {
         require(assetFrom.length == splitNumber.length, 'DODORouteProxy: PAIR_ASSETTO_NOT_MATCH');        
         require(minReturnAmount > 0, "DODORouteProxy: RETURN_AMOUNT_ZERO");
-        
         uint256 _fromTokenAmount = fromTokenAmount;
+        
+        {
+            FeeInfo memory feeInfo;
+            {
+                (address _rebateTo, uint8 _fee) = abi.decode(feeData, (address, uint8));
+                feeInfo.fee = _fee;
+                feeInfo.rebateTo = _rebateTo;
+            }
+            if(feeInfo.fee > 0) {
+                require(feeInfo.fee < 10000, "DODORouteProxy: fee overflow");
+                feeInfo.feeAmount = _fromTokenAmount.mul(feeInfo.fee).div(10000);
+                _fromTokenAmount -= feeInfo.feeAmount;
+                _deposit(msg.sender, _FEE_MANAGER_, midToken[0], feeInfo.feeAmount, midToken[0] == _ETH_ADDRESS_);
+                IFeeManager(_FEE_MANAGER_).rebate(feeInfo.rebateTo, feeInfo.feeAmount, midToken[0]);
+            }
+        }
+        
         address fromToken = midToken[0];
         address toToken = midToken[midToken.length - 1];
 
@@ -156,12 +295,13 @@ contract DODORouteProxy {
         }
 
         require(returnAmount >= minReturnAmount, "DODORouteProxy: Return amount is not enough");
+        }
     
         emit OrderHistory(
-            fromToken,
-            toToken,
+            midToken[0], //fromToken
+            midToken[midToken.length - 1], //toToken
             msg.sender,
-            _fromTokenAmount,
+            fromTokenAmount,
             returnAmount
         );    
     }
@@ -224,7 +364,7 @@ contract DODORouteProxy {
     ) internal {
         if (isETH) {
             if (amount > 0) {
-                require(msg.value == amount, "ETH_VALUE_WRONG");
+                //require(msg.value == amount, "ETH_VALUE_WRONG");
                 IWETH(_WETH_).deposit{value: amount}();
                 if (to != address(this)) SafeERC20.safeTransfer(IERC20(_WETH_), to, amount);
             }

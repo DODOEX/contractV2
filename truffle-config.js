@@ -58,7 +58,7 @@ module.exports = {
     MultiCall:      false,
     DSP:            false,
     LockedVault:    false,
-    MULTIHOP:       false,
+    MULTIHOP:       true,
     CpProxy:        false,
     ERC20V2Factory: false,
     DEPLOY_NFT:     false,
@@ -69,6 +69,8 @@ module.exports = {
     NFT_POOL:       false,
     UserQuota:      false,
     STARTER:        false,
+    test_ticker:    false,
+    test_Sample:    true,
   },
 
   dashboard: {
@@ -135,7 +137,7 @@ module.exports = {
 
     bsclive: {
       provider: function () {
-        return new HDWalletProvider(privKey, "https://bsc-dataseed3.ninicoin.io");
+        return new HDWalletProvider(privKey, "https://bsc-dataseed1.binance.org");
       },
       networkCheckTimeout:100000,
       network_id: 56,
