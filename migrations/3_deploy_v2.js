@@ -475,18 +475,22 @@ module.exports = async (deployer, network, accounts) => {
         }
 
         //Adapter
+        /*
         if (DODOV1AdpaterAddress == "") {
             await deployer.deploy(DODOV1Adapter, DODOSellHelperAddress);
             logger.log("DODOV1Adapter Address: ", DODOV1Adapter.address);
         }
+        */
         if (DODOV2AdapterAddress == "") {
             await deployer.deploy(DODOV2Adapter)
             logger.log("DODOV2Adapter Address: ", DODOV2Adapter.address);
         }
+        /*
         if (UniAdapterAddress == "") {
             await deployer.deploy(UniAdapter)
             logger.log("UniAdapter Address: ", UniAdapter.address);
         }
+        */
 
 
         //Proxy 
@@ -578,25 +582,31 @@ module.exports = async (deployer, network, accounts) => {
             logger.log("DODOApproveProxy Init tx: ", tx.tx);
 
             //Approve init
+            console.log("DODOApprove init");
             const DODOApproveInstance = await DODOApprove.at(DODOApproveAddress);
             tx = await DODOApproveInstance.init(multiSigAddress, DODOApproveProxyAddress);
             logger.log("DODOApprove Init tx: ", tx.tx);
+
+            //DODOMineV2Factory set owner
+            console.log("DODOMineV2Factory set owner");
+            const dodoMineV2FactoryInstance = await DODOMineV2Factory.at(DODOMineV2FactoryAddress);
+            var tx = await dodoMineV2FactoryInstance.initOwner(multiSigAddress);
+            logger.log("Init DODOMineV2Factory Tx:", tx.tx);
             
 
-            //Set FeeRateImpl
+            //Set FeeRateImpl, need owner
+            console.log("Set FeeRateImpl");
             const FeeRateModelInstance = await FeeRateModelTemplate.at(DefaultMtFeeRateAddress);
             tx = await FeeRateModelInstance.setFeeProxy(FeeRateDIP3ImplAddress);
             logger.log("Set FeeRateImpl tx: ", tx.tx);
+            
 
             //ERC20V3Factory set fee
+            // console.log("ERC20V3Factory set fee");
             // const ERC20V3FactoryInstance = await ERC20V3Factory.at(ERC20V3FactoryAddress);
             // tx = await ERC20V3FactoryInstance.changeCreateFee("100000000000000000");
             // logger.log("Set ERC20V3 fee tx: ", tx.tx);
 
-            //DODOMineV2Factory set owner
-            const dodoMineV2FactoryInstance = await DODOMineV2Factory.at(DODOMineV2FactoryAddress);
-            var tx = await dodoMineV2FactoryInstance.initOwner(multiSigAddress);
-            logger.log("Init DODOMineV2Factory Tx:", tx.tx);
 
             //DODOMineV3Registry add Proxy as admin
             const dodoMineV3RegistryInstance = await DODOMineV3Registry.at(DODOMineV3RegistryAddress);
