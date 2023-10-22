@@ -17,6 +17,7 @@ const { BASE_CONFIG } = require("./config/base-config");
 const { SCROLL_SEPOLIA_CONFIG } = require("./config/scroll-sepolia-config");
 const { MANTA_TESTNET_CONFIG } = require("./config/manta-testnet-config");
 const { OPTIMISM_CONFIG } = require("./config/optimism-config");
+const { SCROLL_CONFIG } = require("./config/scroll-config");
 
 exports.GetConfig = function (network, accounts) {
     var CONFIG = {}
@@ -61,7 +62,7 @@ exports.GetConfig = function (network, accounts) {
             CONFIG = BASE_CONFIG
             break;
         case "dashboard":     
-            CONFIG = CFX_CONFIG
+            CONFIG = SCROLL_CONFIG
             break;
         //testnet
         case "kovan":
