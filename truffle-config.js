@@ -77,9 +77,14 @@ module.exports = {
   },
 
   api_keys: {
+    etherscan: process.env.ETHERSCAN_API_KEY,
+    arbiscan: process.env.ARBISCAN_API_KEY,
     lineascan: LINEASCAN_API_KEY,
     basescan: BASESCAN_API_KEY,
+    polygonscan: process.env.POLYGONSCAN_API_KEY,
+    snowtrace: process.env.SNOWTRACE_API_KEY,
     scroll: "fakekey",
+    calderaexplorer:"fakekey",
   },
 
   networks: {
