@@ -7,7 +7,7 @@ pragma experimental ABIEncoderV2;
 /// @author Nick Johnson <arachnid@notdot.net>
 
 // WithValid
-contract Multicall {
+contract MulticallWithValid {
     struct Call {
         address target;
         bytes callData;

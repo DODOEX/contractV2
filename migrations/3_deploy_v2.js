@@ -589,7 +589,7 @@ module.exports = async (deployer, network, accounts) => {
 
             //DODOMineV2Factory set owner
             console.log("DODOMineV2Factory set owner");
-            const dodoMineV2FactoryInstance = await DODOMineV2Factory.at(DODOMineV2FactoryAddress);
+            const dodoMineV2FactoryInstance = await MineV2Factory.at(DODOMineV2FactoryAddress);
             var tx = await dodoMineV2FactoryInstance.initOwner(multiSigAddress);
             logger.log("Init DODOMineV2Factory Tx:", tx.tx);
             
