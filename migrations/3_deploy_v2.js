@@ -16,6 +16,7 @@ const DODOV2RouteHelper = artifacts.require("DODOV2RouteHelper");
 const DODOSwapCalcHelper = artifacts.require("DODOSwapCalcHelper");
 const ERC20Helper = artifacts.require("ERC20Helper");
 const MultiCall = artifacts.require("Multicall");
+const MultiCallWithValid = artifacts.require("MulticallWithValid");
 const DODOCalleeHelper = artifacts.require("DODOCalleeHelper");
 
 const DvmTemplate = artifacts.require("DVM");
@@ -70,6 +71,7 @@ module.exports = async (deployer, network, accounts) => {
     let DODOSwapCalcHelperAddress = CONFIG.DODOSwapCalcHelper;
     let ERC20HelperAddress = CONFIG.ERC20Helper;
     let MultiCallAddress = CONFIG.MultiCall;
+    let MultiCallWithValidAddress = CONFIG.MultiCallWithValid;
 
     //Template
     let CloneFactoryAddress = CONFIG.CloneFactory;
@@ -141,6 +143,12 @@ module.exports = async (deployer, network, accounts) => {
             await deployer.deploy(MultiCall);
             MultiCallAddress = MultiCall.address;
             logger.log("MultiCallAddress: ", MultiCallAddress);
+        }
+
+        if (MultiCallWithValidAddress == "") {
+            await deployer.deploy(MultiCallWithValid);
+            MultiCallWithValidAddress = MultiCallWithValid.address;
+            logger.log("MultiCallWithValidAddress: ", MultiCallWithValidAddress);
         }
 
         if (DODOSellHelperAddress == "") {
