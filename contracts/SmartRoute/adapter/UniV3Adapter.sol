@@ -103,7 +103,7 @@ contract UniV3Adapter is IDODOAdapter, IUniswapV3SwapCallback, InitializableOwna
         if (token == _WETH_ && address(this).balance >= value) {
             // pay with WETH9
             IWETH(_WETH_).deposit{value: value}(); // wrap only what is needed to pay
-            IWETH(_WETH_).transfer(recipient, value);
+            SafeERC20.safeTransfer(IERC20(_WETH_), recipient, value);
         } else if (payer == address(this)) {
             // pay with tokens already in the contract (for the exact input multihop case)
             SafeERC20.safeTransfer(IERC20(token), recipient, value);
