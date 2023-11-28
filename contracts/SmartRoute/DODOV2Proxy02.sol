@@ -226,7 +226,8 @@ contract DODOV2Proxy02 is IDODOV2Proxy01, ReentrancyGuard, InitializableOwnable 
         
         uint256 originToTokenBalance = IERC20(toToken).balanceOf(msg.sender);
         IWETH(_WETH_).deposit{value: msg.value}();
-        IWETH(_WETH_).transfer(dodoPairs[0], msg.value);
+        bool success = IWETH(_WETH_).transfer(dodoPairs[0], msg.value);
+        require(success, "WETH_TRANSFER_FAIL");
 
         for (uint256 i = 0; i < dodoPairs.length; i++) {
             if (i == dodoPairs.length - 1) {
