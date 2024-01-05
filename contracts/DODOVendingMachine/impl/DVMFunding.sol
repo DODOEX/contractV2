@@ -44,8 +44,10 @@ contract DVMFunding is DVMVault {
         // But May Happen，reserve >0 But totalSupply = 0
         if (totalSupply == 0) {
             // case 1. initial supply
-            require(baseBalance >= 10**3, "INSUFFICIENT_LIQUIDITY_MINED");
             shares = baseBalance; // 以免出现balance很大但shares很小的情况
+            require(shares > 2001, "MINT_AMOUNT_NOT_ENOUGH");
+            _mint(address(0), 1001);
+            shares -= 1001;
         } else if (baseReserve > 0 && quoteReserve == 0) {
             // case 2. supply when quote reserve is 0
             shares = baseInput.mul(totalSupply).div(baseReserve);
@@ -72,6 +74,7 @@ contract DVMFunding is DVMVault {
     ) external preventReentrant returns (uint256 baseAmount, uint256 quoteAmount) {
         require(deadline >= block.timestamp, "TIME_EXPIRED");
         require(shareAmount <= _SHARES_[msg.sender], "DLP_NOT_ENOUGH");
+        require(to != address(this), "SELL_BACK_NOT_ALLOWED");
         uint256 baseBalance = _BASE_TOKEN_.balanceOf(address(this));
         uint256 quoteBalance = _QUOTE_TOKEN_.balanceOf(address(this));
         uint256 totalShares = totalSupply;
