@@ -187,6 +187,9 @@ library DODOMath {
         uint256 numerator;
         if (bSig) {
             numerator = squareRoot.sub(bAbs);
+            if (numerator == 0) {
+                revert("DODOMath: should not be zero");
+            }
         } else {
             numerator = bAbs.add(squareRoot);
         }
