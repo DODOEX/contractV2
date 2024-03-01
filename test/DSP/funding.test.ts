@@ -48,6 +48,12 @@ describe("Funding", () => {
             await ctx.transferBaseToDSP(lp, decimalStr("10"))
             await truffleAssert.reverts(
                 ctx.DSP.methods.buyShares(lp).send(ctx.sendParam(lp)),
+                "ZERO_QUOTE_AMOUNT"
+            )
+            await ctx.transferBaseToDSP(lp, "100")
+            await ctx.transferQuoteToDSP(lp, "100")
+            await truffleAssert.reverts(
+                ctx.DSP.methods.buyShares(lp).send(ctx.sendParam(lp)),
                 "MINT_AMOUNT_NOT_ENOUGH"
             )
         })
@@ -56,7 +62,7 @@ describe("Funding", () => {
             await ctx.transferBaseToDSP(lp, decimalStr("100"))
             await ctx.transferQuoteToDSP(lp, decimalStr("100"))
             await ctx.DSP.methods.buyShares(lp).send(ctx.sendParam(lp));
-            assert.equal(await ctx.DSP.methods.balanceOf(lp).call(), decimalStr("100"))
+            assert.equal(await ctx.DSP.methods.balanceOf(lp).call(), "99999999999999998999")
             assert.equal(await ctx.DSP.methods.getMidPrice().call(), decimalStr("1"))
         })
 
@@ -129,19 +135,20 @@ describe("Funding", () => {
 
     describe("sell shares", () => {
         it("not the last one sell shares", async () => {
-            await ctx.transferBaseToDSP(lp, decimalStr("100"))
-            await ctx.transferQuoteToDSP(lp, decimalStr("100"))
-            await ctx.DSP.methods.buyShares(lp).send(ctx.sendParam(lp))
-
+            
             await ctx.transferBaseToDSP(trader, decimalStr("10"))
             await ctx.transferQuoteToDSP(trader, decimalStr("10"))
             await ctx.DSP.methods.buyShares(trader).send(ctx.sendParam(trader))
 
+            await ctx.transferBaseToDSP(lp, decimalStr("100"))
+            await ctx.transferQuoteToDSP(lp, decimalStr("100"))
+            await ctx.DSP.methods.buyShares(lp).send(ctx.sendParam(lp))
+
             var vaultShares = new BigNumber(await ctx.DSP.methods.balanceOf(lp).call())
             var bob = ctx.SpareAccounts[5]
             await ctx.DSP.methods.sellShares(vaultShares.div(2).toFixed(0), bob, 0, 0, "0x", MAX_UINT256).send(ctx.sendParam(lp))
-            assert.equal(await ctx.BASE.methods.balanceOf(bob).call(), decimalStr("50"))
-            assert.equal(await ctx.QUOTE.methods.balanceOf(bob).call(), decimalStr("50"))
+            assert.equal(await ctx.BASE.methods.balanceOf(bob).call(), "50000000000000000000")
+            assert.equal(await ctx.QUOTE.methods.balanceOf(bob).call(), "50000000000000000000")
 
             await ctx.DSP.methods.sellShares(vaultShares.div(2).toFixed(0), bob, 0, 0, "0x", MAX_UINT256).send(ctx.sendParam(lp))
             assert.equal(await ctx.BASE.methods.balanceOf(bob).call(), decimalStr("100"))
@@ -156,8 +163,8 @@ describe("Funding", () => {
             var vaultShares = await ctx.DSP.methods.balanceOf(lp).call()
             var bob = ctx.SpareAccounts[5]
             await ctx.DSP.methods.sellShares(vaultShares, bob, 0, 0, "0x", MAX_UINT256).send(ctx.sendParam(lp))
-            assert.equal(await ctx.BASE.methods.balanceOf(bob).call(), decimalStr("100"))
-            assert.equal(await ctx.QUOTE.methods.balanceOf(bob).call(), decimalStr("100"))
+            assert.equal(await ctx.BASE.methods.balanceOf(bob).call(), "99999999999999998999")
+            assert.equal(await ctx.QUOTE.methods.balanceOf(bob).call(), "99999999999999998999")
         })
 
         it("revert cases", async () => {

@@ -15,6 +15,7 @@ const {CFX_CONFIG} = require("./config/cfx-config.js");
 const { LINEA_CONFIG } = require("./config/linea-config");
 const { BASE_CONFIG } = require("./config/base-config");
 const { SCROLL_SEPOLIA_CONFIG } = require("./config/scroll-sepolia-config");
+const { SEPOLIA_CONFIG } = require("./config/sepolia-config");
 const { MANTA_TESTNET_CONFIG } = require("./config/manta-testnet-config");
 const { MANTA_CONFIG } = require("./config/manta-config");
 const { MANTLE_CONFIG } = require("./config/mantle-config");
@@ -64,7 +65,7 @@ exports.GetConfig = function (network, accounts) {
             CONFIG = BASE_CONFIG
             break;
         case "dashboard":     
-            CONFIG = MANTLE_CONFIG
+            CONFIG = SEPOLIA_CONFIG
             break;
         //testnet
         case "kovan":
