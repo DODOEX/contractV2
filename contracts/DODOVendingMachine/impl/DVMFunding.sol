@@ -45,7 +45,6 @@ contract DVMFunding is DVMVault {
         if (totalSupply == 0) {
             // case 1. initial supply
             shares = baseBalance; // 以免出现balance很大但shares很小的情况
-            require(_QUOTE_TARGET_ > 0, "QUOTE_TARGET_IS_ZERO");
             require(shares > 2001, "MINT_AMOUNT_NOT_ENOUGH");
             _mint(address(0), 1001);
             shares -= 1001;

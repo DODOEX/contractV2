@@ -44,6 +44,7 @@ contract DSPFunding is DSPVault {
         // But May Happen，reserve >0 But totalSupply = 0
         if (totalSupply == 0) {
             // case 1. initial supply
+            require(_QUOTE_TARGET_ > 0, "QUOTE_TARGET_IS_ZERO");
             require(quoteBalance > 0, "ZERO_QUOTE_AMOUNT");
             shares = quoteBalance < DecimalMath.mulFloor(baseBalance, _I_)
                 ? DecimalMath.divFloor(quoteBalance, _I_)

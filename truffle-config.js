@@ -17,7 +17,7 @@
  * phrase from a file you've .gitignored so it doesn't accidentally become public.
  *
  */
-
+require("dotenv").config();
 var HDWalletProvider = require("@truffle/hdwallet-provider");
 var privKey = process.env.privKey;
 var infuraId = process.env.infuraId;
@@ -41,7 +41,7 @@ module.exports = {
    */
   deploySwitch: {
     DEPLOY_V1:      false,
-    DEPLOY_V2:      false,
+    DEPLOY_V2:      true,
     ERC20V3Factory: false,
     MOCK_TOKEN:     false,
     MOCK_V2_POOL:   false,
@@ -84,7 +84,7 @@ module.exports = {
     polygonscan: process.env.POLYGONSCAN_API_KEY,
     snowtrace: process.env.SNOWTRACE_API_KEY,
     scroll: "fakekey",
-    calderaexplorer:"fakekey",
+    calderaexplorer: "fakekey",
   },
 
   networks: {
@@ -245,6 +245,7 @@ module.exports = {
       // timeoutBlocks: 200,
       skipDryRun: true
     },
+
     base: {
       networkCheckTimeout: 1000000,
       provider: () => {
@@ -263,6 +264,19 @@ module.exports = {
         return new HDWalletProvider(privKey, 'https://mainnet.optimism.io')
       },
       network_id: "10"
+    },
+
+    dodotest: {
+      networkCheckTimeout: 100000,
+      provider: () => { 
+        return new HDWalletProvider({
+          privateKeys: [privKey],
+          providerOrUrl: 'https://dodochain-testnet.alt.technology',
+          chainId: 53457
+        })
+      },
+      network_id: '53457',
+      skipDryRun: true
     },
 
     coverage: {

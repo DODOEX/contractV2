@@ -24,7 +24,7 @@
     "node": "ganache-cli --port 8545 -l 0x1fffffffffffff -i 5777 -g 1 --allowUnlimitedContractSize"
   },
   "dependencies": {
-    "@truffle/hdwallet-provider": "^1.5.1",
+    "@truffle/hdwallet-provider": "^1.7.0",
     "@types/chai": "^4.2.11",
     "@types/es6-promisify": "^6.0.0",
     "@types/ethereumjs-abi": "^0.6.3",
@@ -36,13 +36,15 @@
     "bignumber.js": "^9.0.0",
     "chai-bignumber": "^3.0.0",
     "debug": "^4.1.1",
-    "dotenv-flow": "^3.1.0",
+    "dotenv": "^16.4.5",
+    "dotenv-flow": "^3.3.0",
     "es6-promisify": "^6.1.1",
     "ethereumjs-util": "^7.0.7",
     "ethjs": "^0.4.0",
     "lodash": "^4.17.20",
     "mocha": "^7.2.0",
     "solc": "^0.6.9",
+    "truffle-hdwallet-provider": "^1.0.17",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.5",
     "web3": "^1.2.8",
@@ -52,6 +54,7 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "ganache-cli": "^6.9.1",
+    "hardhat": "^2.22.2",
     "prettier": "^2.0.5",
     "prettier-plugin-solidity": "^1.0.0-alpha.52",
     "solidity-coverage": "^0.7.7",

@@ -11,7 +11,7 @@ const { MOONRIVER_CONFIG } = require("./config/moonriver-config");
 const { BOBA_CONFIG } = require("./config/boba-config");
 const { AVAX_CONFIG } = require("./config/avax-config"); 
 const { DASHBOARD_CONFIG } = require("./config/dashboard-config"); 
-const {CFX_CONFIG} = require("./config/cfx-config.js");
+const { CFX_CONFIG } = require("./config/cfx-config.js");
 const { LINEA_CONFIG } = require("./config/linea-config");
 const { BASE_CONFIG } = require("./config/base-config");
 const { SCROLL_SEPOLIA_CONFIG } = require("./config/scroll-sepolia-config");
@@ -21,6 +21,7 @@ const { MANTA_CONFIG } = require("./config/manta-config");
 const { MANTLE_CONFIG } = require("./config/mantle-config");
 const { OPTIMISM_CONFIG } = require("./config/optimism-config");
 const { SCROLL_CONFIG } = require("./config/scroll-config");
+const { DODO_TESTNET_CONFIG } = require("./config/dodo-testnet-config");
 
 exports.GetConfig = function (network, accounts) {
     var CONFIG = {}
@@ -84,6 +85,8 @@ exports.GetConfig = function (network, accounts) {
         case "manta-testnet":
             CONFIG = MANTA_TESTNET_CONFIG
             break;
+        case "dodotest":
+            CONFIG = DODO_TESTNET_CONFIG
     }
     return CONFIG
 }

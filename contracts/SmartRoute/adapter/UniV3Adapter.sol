@@ -7,7 +7,7 @@ pragma solidity 0.6.9;
 pragma experimental ABIEncoderV2;
 
 import {IDODOAdapter} from "../intf/IDODOAdapter.sol";
-import {IUniswapV3SwapCallback} from "../intf/IUniswapV3SwapCallback.sol";
+import {IUniswapV3SwapCallback} from "../intf/IUniswapV3SwapCallBack.sol";
 import {IUniV3} from "../intf/IUniV3.sol";
 import {IERC20} from "../../intf/IERC20.sol";
 import {SafeMath} from "../../lib/SafeMath.sol";
