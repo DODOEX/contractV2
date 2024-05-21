@@ -44,7 +44,6 @@ contract DSPFunding is DSPVault {
         // But May Happen，reserve >0 But totalSupply = 0
         if (totalSupply == 0) {
             // case 1. initial supply
-            require(_QUOTE_TARGET_ > 0, "QUOTE_TARGET_IS_ZERO");
             require(quoteBalance > 0, "ZERO_QUOTE_AMOUNT");
             shares = quoteBalance < DecimalMath.mulFloor(baseBalance, _I_)
                 ? DecimalMath.divFloor(quoteBalance, _I_)
@@ -52,6 +51,7 @@ contract DSPFunding is DSPVault {
             _BASE_TARGET_ = uint112(shares);
             _QUOTE_TARGET_ = uint112(DecimalMath.mulFloor(shares, _I_));
             require(shares > 2001, "MINT_AMOUNT_NOT_ENOUGH");
+            require(_QUOTE_TARGET_ > 0, "QUOTE_TARGET_IS_ZERO");
             _mint(address(0), 1001);
             shares -= 1001;
         } else if (baseReserve > 0 && quoteReserve > 0) {
