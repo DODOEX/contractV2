@@ -27,7 +27,7 @@ var infuraId = process.env.infuraId;
 require("ts-node/register"); // eslint-disable-line
 require("dotenv-flow").config(); // eslint-disable-line
 
-const { LINEASCAN_API_KEY, BASESCAN_API_KEY } = process.env;
+const { LINEASCAN_API_KEY, BASESCAN_API_KEY, SCROLL_API_KEY } = process.env;
 
 module.exports = {
   /**

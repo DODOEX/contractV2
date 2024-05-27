@@ -34,6 +34,7 @@ export class VDODOContext {
   DODOApproveProxy: Contract;
 
   DODOCirculationHelper: Contract;
+  DODONewCirculationHelper: Contract;
   // Governance: Contract;
 
   lastRewardBlock: number;
@@ -91,6 +92,10 @@ export class VDODOContext {
       ]
     );
 
+    this.DODONewCirculationHelper = await contracts.newContract(
+      contracts.VDODO_NO_FEE
+    );
+
     // await this.Governance.methods.initOwner(
     //   this.Deployer
     // ).send(this.sendParam(this.Deployer))
@@ -108,7 +113,7 @@ export class VDODOContext {
     ).send(this.sendParam(this.Deployer))
 
 
-    await this.VDODO.methods.updateDODOCirculationHelper(this.DODOCirculationHelper.options.address).send(this.sendParam(this.Deployer));
+    await this.VDODO.methods.updateDODOCirculationHelper(this.DODONewCirculationHelper.options.address).send(this.sendParam(this.Deployer));
     await this.mintTestToken(allAccounts[8], decimalStr("10000"));
     await this.approveProxy(allAccounts[8]);
 
