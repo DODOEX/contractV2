@@ -22,6 +22,7 @@ const { MANTLE_CONFIG } = require("./config/mantle-config");
 const { OPTIMISM_CONFIG } = require("./config/optimism-config");
 const { SCROLL_CONFIG } = require("./config/scroll-config");
 const { DODO_TESTNET_CONFIG } = require("./config/dodo-testnet-config");
+const { BITLAYER_CONFIG } = require("./config/bitlayer-config");
 
 exports.GetConfig = function (network, accounts) {
     var CONFIG = {}
@@ -87,6 +88,8 @@ exports.GetConfig = function (network, accounts) {
             break;
         case "dodotest":
             CONFIG = DODO_TESTNET_CONFIG
+        case "bitlayer":
+            CONFIG = BITLAYER_CONFIG
     }
     return CONFIG
 }
