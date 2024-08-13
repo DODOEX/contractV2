@@ -66,6 +66,7 @@ contract DODODspProxy is ReentrancyGuard {
         address baseToken,
         address quoteToken,
         uint256 lpFeeRate,
+        uint256 mtFeeRate,
         uint256 i,
         uint256 k,
         bool isOpenTWAP,
@@ -84,6 +85,7 @@ contract DODODspProxy is ReentrancyGuard {
                 _baseToken,
                 _quoteToken,
                 lpFeeRate,
+                mtFeeRate,
                 i,
                 k,
                 isOpenTWAP

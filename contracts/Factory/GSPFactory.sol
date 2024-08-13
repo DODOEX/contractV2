@@ -52,6 +52,7 @@ interface IGSPFactory {
         address baseToken,
         address quoteToken,
         uint256 lpFeeRate,
+        uint256 mtFeeRate,
         uint256 i,
         uint256 k,
         bool isOpenTWAP
