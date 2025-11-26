@@ -215,9 +215,10 @@ describe("VDODO", () => {
 
       let [dodoReceive, burnDodoAmount, withdrawFeeDodoAmount] = await ctx.VDODO.methods.getWithdrawResult(decimalStr("1")).call();
 
-      assert.equal(dodoReceive, decimalStr("0.85"));
+      assert.equal(dodoReceive, decimalStr("1")); // 0.15
       assert.equal(burnDodoAmount, decimalStr("0"));
-      assert.equal(withdrawFeeDodoAmount, decimalStr("0.15"));
+      assert.equal(withdrawFeeDodoAmount, decimalStr("0")); //0.85
+
     });
 
 
@@ -235,8 +236,8 @@ describe("VDODO", () => {
       let userInfo = await getUserInfo(ctx, account0, "User after");
       let superiorInfo = await getUserInfo(ctx, dodoTeam, "Superior after")
       let [, dodo_u] = await dodoBalance(ctx, account0, "after")
-
-      assert.equal(alpha, "1015242271212274241");
+      
+      assert.equal(alpha, "1000090909090909090"); // 1015242271212274241
       assert.equal(userInfo.stakingPower, "9000090900827197526589");
       assert.equal(userInfo.superiorSP, "900009090082719752659");
       assert.equal(userInfo.credit, "0");
@@ -247,8 +248,8 @@ describe("VDODO", () => {
       assert.equal(superiorInfo.credit, "900000000000000000001");
       assert.equal(superiorInfo.superior, "0x0000000000000000000000000000000000000000");
 
-      assert.equal(dodo_u, "90850000000000000000000")
-
+      assert.equal(dodo_u, "91000000000000000000000") // 90850000000000000000000
+      
     });
 
 
@@ -265,15 +266,16 @@ describe("VDODO", () => {
       await dodoBalance(ctx, dodoTeam, "before")
 
       let dodoTeamVdodoAmount = await ctx.VDODO.methods.balanceOf(dodoTeam).call()
+      assert.equal(dodoTeamVdodoAmount, 2727272727272726);
 
       await logGas(await ctx.VDODO.methods.redeem((dodoTeamVdodoAmount - 3000) + "", false), ctx.sendParam(dodoTeam), "redeem-partial-NotMint");
 
-      let [alpha,] = await getGlobalState(ctx, "after");
+      let [alpha,] = await getGlobalState(ctx, "after"); // nofee:1.019005171524637248   fee15:1.01909911791414464
       let userInfo = await getUserInfo(ctx, dodoTeam, "User after");
       let superiorInfo = await getUserInfo(ctx, account3, "One of referer after")
-      let [, dodo_u] = await dodoBalance(ctx, dodoTeam, "after")
-
-      assert.equal(alpha, "1019099117914144640");
+      let [, dodo_u] = await dodoBalance(ctx, dodoTeam, "after") // nofee:10399.7272727272730274  fee15:10399.76818181818207329
+      
+      assert.equal(alpha, "1019005171524637248"); //1019099117914144640
       assert.equal(userInfo.stakingPower, "39343185109576338546");
       assert.equal(userInfo.superiorSP, "0");
       assert.equal(userInfo.credit, "39999999999999999997");
@@ -284,7 +286,8 @@ describe("VDODO", () => {
       assert.equal(superiorInfo.credit, "0");
       assert.equal(superiorInfo.superior, dodoTeam);
 
-      assert.equal(dodo_u, "231818181817926710")
+      assert.equal(dodo_u, "272727272726972600"); // 231818181817926710 
+      
     });
 
 
@@ -304,8 +307,8 @@ describe("VDODO", () => {
       let userInfo = await getUserInfo(ctx, account1, "User after");
       let superiorInfo = await getUserInfo(ctx, dodoTeam, "Superior after")
       let [, dodo_u] = await dodoBalance(ctx, account1, "after")
-
-      assert.equal(alpha, "1001544677264954465");
+  
+      assert.equal(alpha, "1000180918172818090"); // 1001544677264954465
       assert.equal(userInfo.stakingPower, "0");
       assert.equal(userInfo.superiorSP, "0");
       assert.equal(userInfo.credit, "0");
@@ -316,8 +319,8 @@ describe("VDODO", () => {
       assert.equal(superiorInfo.credit, "999999099990999910008");
       assert.equal(superiorInfo.superior, "0x0000000000000000000000000000000000000000");
 
-      assert.equal(dodo_u, "985007650076500764931")
-
+      assert.equal(dodo_u, "1000009000090000899918") // 985007650076500764931
+      
     });
 
 
@@ -340,7 +343,10 @@ describe("VDODO", () => {
       let superiorInfo = await getUserInfo(ctx, account3, "One of referer after")
       let [, dodo_u] = await dodoBalance(ctx, dodoTeam, "after")
 
-      assert.equal(alpha, "1019130459045726342");
+      console.log(alpha, "1019130459045726342");
+      console.log(dodo_u, "309090909090909029");
+
+      assert.equal(alpha, "1019005171524637248"); //1019130459045726342
       assert.equal(userInfo.stakingPower, "39253971537899000903");
       assert.equal(userInfo.superiorSP, "0");
       assert.equal(userInfo.credit, "39999999999999999997");
@@ -351,7 +357,7 @@ describe("VDODO", () => {
       assert.equal(superiorInfo.credit, "0");
       assert.equal(superiorInfo.superior, dodoTeam);
 
-      assert.equal(dodo_u, "309090909090909029")
+      assert.equal(dodo_u, "363636363636363563") // 309090909090909029
     });
   })
 });

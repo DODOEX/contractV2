@@ -53,6 +53,7 @@ export const DODO_GOVERNANCE = "Governance"
 export const DODO_PROXY_NAME = "DODOV2Proxy02"
 export const ERC20_MINE = "ERC20Mine"
 export const VDODO_MINE = "vDODOMine"
+export const VDODO_NO_FEE = "DODONewCirculationHelper"
 
 export const NFT_VAULT = "NFTCollateralVault"
 export const NFT_FEE = "FeeDistributor"
