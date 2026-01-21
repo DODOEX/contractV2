@@ -16,6 +16,8 @@ import {DecimalMath} from "../../lib/DecimalMath.sol";
 import {ReentrancyGuard} from "../../lib/ReentrancyGuard.sol";
 import {IDSP} from "../../DODOStablePool/intf/IDSP.sol";
 import {IDSPFactory} from "../../Factory/DSPFactory.sol";
+import {IGSP} from "../../Factory/GSPFactory.sol";
+import {IGSPFactory} from "../../Factory/GSPFactory.sol";
 
 /**
  * @title DODODspProxy
@@ -32,6 +34,7 @@ contract DODODspProxy is ReentrancyGuard {
     address public immutable _WETH_;
     address public immutable _DODO_APPROVE_PROXY_;
     address public immutable _DSP_FACTORY_;
+    address public immutable _GSP_FACTORY_;
 
     // ============ Modifiers ============
 
@@ -46,12 +49,69 @@ contract DODODspProxy is ReentrancyGuard {
 
     constructor(
         address dspFactory,
+        address gspFactory,
         address payable weth,
         address dodoApproveProxy
     ) public {
         _DSP_FACTORY_ = dspFactory;
+        _GSP_FACTORY_ = gspFactory;
         _WETH_ = weth;
         _DODO_APPROVE_PROXY_ = dodoApproveProxy;
+    }
+
+    // ============ GSP Functions (create & add liquidity) ============
+
+    function createDODOGasSavingPair(
+        address admin,
+        address baseToken,
+        address quoteToken,
+        uint256 lpFeeRate,
+        uint256 mtFeeRate,
+        uint256 i,
+        uint256 k,
+        bool isOpenTWAP,
+        uint256 deadLine
+    )
+        external
+        preventReentrant
+        judgeExpired(deadLine)
+        returns (address newGasSavingPair, uint256 shares)
+    {
+        {
+            address _baseToken = baseToken == _ETH_ADDRESS_ ? _WETH_ : baseToken;
+            address _quoteToken = quoteToken == _ETH_ADDRESS_ ? _WETH_ : quoteToken;
+            newGasSavingPair = IGSPFactory(_GSP_FACTORY_).createDODOGasSavingPool(
+                admin,
+                _baseToken,
+                _quoteToken,
+                lpFeeRate,
+                mtFeeRate,
+                i,
+                k,
+                isOpenTWAP
+            );
+        }
+
+        {
+            address _baseToken = baseToken;
+            address _quoteToken = quoteToken;
+            _deposit(
+                msg.sender,
+                newGasSavingPair,
+                _baseToken,
+                IERC20(_baseToken).balanceOf(msg.sender),
+                _baseToken == _ETH_ADDRESS_
+            );
+            _deposit(
+                msg.sender,
+                newGasSavingPair,
+                _quoteToken,
+                IERC20(_quoteToken).balanceOf(msg.sender),
+                _quoteToken == _ETH_ADDRESS_
+            );
+        }
+
+        (shares, , ) = IGSP(newGasSavingPair).buyShares(msg.sender);
     }
 
     // ============ DSP Functions (create & add liquidity) ============
